@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html xmlns:th="www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terranova - Dashboard del Comprador</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#388e3c',
+                        secondary: '#ffcf00'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen bg-gray-50">
+
+<div th:replace="fragments/comprador/navbarComprador :: navbarComprador"></div>
+
+<section class="bg-white py-8 border-b">
+    <div class="container mx-auto px-4">
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-800 mb-2" th:text="'¡Buen día, ' + ${usuario.nombres} + '!'"></h1>
+                <p class="text-gray-600">Tienes 3 nuevas propiedades que coinciden con tus búsquedas guardadas</p>
+            </div>
+
+            <div class="flex flex-wrap gap-3">
+                <button class="bg-[#388e3c] hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                    Buscar Propiedades
+                </button>
+                <button class="border border-[#388e3c] text-[#388e3c] hover:bg-[#388e3c] hover:text-white bg-transparent px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                    </svg>
+                    Filtros Guardados
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-6 bg-white">
+    <div class="container mx-auto px-4">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+
+            <div class="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-lg hover:border-gray-300 transition-all duration-300 group">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center group-hover:bg-red-100 transition-colors">
+                        <svg class="w-6 h-6 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        </svg>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-bold text-gray-800" th:text="${favoritos}"></div>
+                        <div class="text-sm text-gray-500 font-medium">Favoritos</div>
+                    </div>
+                </div>
+                <div class="text-xs text-gray-400">+3 esta semana</div>
+            </div>
+
+            <div class="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-lg hover:border-gray-300 transition-all duration-300 group">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center group-hover:bg-blue-100 transition-colors">
+                        <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-bold text-gray-800" th:text="${citas}"></div>
+                        <div class="text-sm text-gray-500 font-medium">Citas</div>
+                    </div>
+                </div>
+                <div class="text-xs text-gray-400">2 activas</div>
+            </div>
+
+            <div class="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-lg hover:border-gray-300 transition-all duration-300 group">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center group-hover:bg-orange-100 transition-colors">
+                        <svg class="w-6 h-6 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM9 7H4l5-5v5zm6 10V7a1 1 0 00-1-1H5a1 1 0 00-1 1v10a1 1 0 001 1h9a1 1 0 001-1z"/>
+                        </svg>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-bold text-gray-800" th:text="${notificaciones}"></div>
+                        <div class="text-sm text-gray-500 font-medium">Notificaciones</div>
+                    </div>
+                </div>
+                <div class="text-xs text-gray-400">5 nuevas</div>
+            </div>
+
+            <div class="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-lg hover:border-gray-300 transition-all duration-300 group">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center group-hover:bg-green-100 transition-colors">
+                        <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-bold text-gray-800" th:text="${visitados}"></div>
+                        <div class="text-sm text-gray-500 font-medium">Visitadas</div>
+                    </div>
+                </div>
+                <div class="text-xs text-gray-400">Hoy</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-8">
+    <div class="container mx-auto px-4">
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h2 class="text-2xl font-bold text-[#388e3c] mb-1">Recomendado para ti</h2>
+                <p class="text-gray-600">Basado en tus búsquedas y preferencias</p>
+            </div>
+            <button class="text-[#388e3c] font-medium hover:underline">Ver todas</button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                <div class="relative">
+                    <div class="h-48 bg-gradient-to-r from-green-400 to-[#388e3c] flex items-center justify-center">
+                        <span class="text-6xl">🐄</span>
+                    </div>
+                    <div class="absolute top-4 left-4 bg-[#ffcf00] text-[#388e3c] px-3 py-1 rounded-full text-sm font-semibold">
+                        95% Match
+                    </div>
+                    <div class="absolute top-4 right-4 bg-white bg-opacity-90 backdrop-blur-sm p-2 rounded-full cursor-pointer">
+                        <svg class="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="text-lg font-bold text-gray-800">Ganado Holstein A1</h3>
+                        <span class="text-xl font-bold text-[#388e3c]">$2,800</span>
+                    </div>
+                    <p class="text-gray-600 mb-3">📍 Cundinamarca • 2.5 km de ti</p>
+                    <div class="flex items-center gap-3 text-sm text-gray-500 mb-4">
+                        <span>🐄 30 cabezas</span>
+                        <span>📅 2-4 años</span>
+                        <span>⭐ 4.9</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="flex-1 bg-[#388e3c] text-white py-2 rounded-lg hover:bg-green-700 transition-colors text-sm">
+                            Ver detalles
+                        </button>
+                        <button class="px-3 py-2 border border-[#388e3c] text-[#388e3c] rounded-lg hover:bg-[#388e3c] hover:text-white transition-colors">
+                            💬
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                <div class="relative">
+                    <div class="h-48 bg-gradient-to-r from-[#ffcf00] to-yellow-500 flex items-center justify-center">
+                        <span class="text-6xl">🌾</span>
+                    </div>
+                    <div class="absolute top-4 left-4 bg-[#388e3c] text-white px-3 py-1 rounded-full text-sm font-semibold">
+                        Nuevo
+                    </div>
+                    <div class="absolute top-4 right-4 bg-white bg-opacity-90 backdrop-blur-sm p-2 rounded-full cursor-pointer">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="text-lg font-bold text-gray-800">Terreno Productivo</h3>
+                        <span class="text-xl font-bold text-[#388e3c]">$920M</span>
+                    </div>
+                    <p class="text-gray-600 mb-3">📍 Valle del Cauca • En tu zona</p>
+                    <div class="flex items-center gap-3 text-sm text-gray-500 mb-4">
+                        <span>📏 45 hectáreas</span>
+                        <span>💧 Riego</span>
+                        <span>⭐ 4.8</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="flex-1 bg-[#388e3c] text-white py-2 rounded-lg hover:bg-green-700 transition-colors text-sm">
+                            Ver detalles
+                        </button>
+                        <button class="px-3 py-2 border border-[#388e3c] text-[#388e3c] rounded-lg hover:bg-[#388e3c] hover:text-white transition-colors">
+                            💬
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                <div class="relative">
+                    <div class="h-48 bg-gradient-to-r from-green-600 to-green-800 flex items-center justify-center">
+                        <span class="text-6xl">🏡</span>
+                    </div>
+                    <div class="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                        Precio Bajo
+                    </div>
+                    <div class="absolute top-4 right-4 bg-white bg-opacity-90 backdrop-blur-sm p-2 rounded-full cursor-pointer">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="text-lg font-bold text-gray-800">Finca Completa</h3>
+                        <span class="text-xl font-bold text-[#388e3c]">$1.1B</span>
+                    </div>
+                    <p class="text-gray-600 mb-3">📍 Antioquia • Precio reducido</p>
+                    <div class="flex items-center gap-3 text-sm text-gray-500 mb-4">
+                        <span>🏠 Casa + establo</span>
+                        <span>📏 100 ha</span>
+                        <span>⭐ 4.7</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="flex-1 bg-[#388e3c] text-white py-2 rounded-lg hover:bg-green-700 transition-colors text-sm">
+                            Ver detalles
+                        </button>
+                        <button class="px-3 py-2 border border-[#388e3c] text-[#388e3c] rounded-lg hover:bg-[#388e3c] hover:text-white transition-colors">
+                            💬
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-8 bg-white">
+    <div class="container mx-auto px-4">
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h2 class="text-2xl font-bold text-[#388e3c] mb-1">Tus Favoritos</h2>
+                <p class="text-gray-600">Propiedades que has guardado recientemente</p>
+            </div>
+            <button class="text-[#388e3c] font-medium hover:underline">Ver todos (24)</button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            <div class="bg-gray-50 rounded-2xl p-4 hover:bg-gray-100 transition-colors">
+                <div class="flex gap-4">
+                    <div class="w-20 h-20 bg-gradient-to-r from-[#388e3c] to-green-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <span class="text-2xl">🐄</span>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex justify-between items-start mb-1">
+                            <h3 class="font-bold text-gray-800">Ganado Brahman</h3>
+                            <svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                            </svg>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-2">📍 Córdoba • Hace 2 días</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-bold text-[#388e3c]">$3,200</span>
+                            <button class="text-sm bg-[#388e3c] text-white px-3 py-1 rounded-lg hover:bg-green-700">
+                                Ver
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 rounded-2xl p-4 hover:bg-gray-100 transition-colors">
+                <div class="flex gap-4">
+                    <div class="w-20 h-20 bg-gradient-to-r from-[#ffcf00] to-yellow-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <span class="text-2xl">🏡</span>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex justify-between items-start mb-1">
+                            <h3 class="font-bold text-gray-800">Finca Cafetera</h3>
+                            <svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                            </svg>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-2">📍 Quindío • Hace 1 semana</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-bold text-[#388e3c]">$2.8B</span>
+                            <button class="text-sm bg-[#388e3c] text-white px-3 py-1 rounded-lg hover:bg-green-700">
+                                Ver
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-8">
+    <div class="container mx-auto px-4">
+        <div class="bg-gradient-to-r from-[#2d5a2f] to-[#388e3c] rounded-2xl p-6 text-white">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <h2 class="text-2xl font-bold mb-2 text-white">🔔 Alertas Activas</h2>
+                    <p class="text-gray-100">Te notificaremos cuando aparezcan nuevas oportunidades</p>
+                </div>
+                <button class="bg-white bg-opacity-25 backdrop-blur-sm px-4 py-2 rounded-lg hover:bg-opacity-35 transition-colors text-white font-medium">
+                    Gestionar
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-black bg-opacity-20 backdrop-blur-sm rounded-xl p-4 border border-white border-opacity-20">
+                    <div class="text-lg font-semibold mb-1 text-white">Ganado Holstein</div>
+                    <div class="text-sm text-gray-200">Cundinamarca • $2,000-$3,500</div>
+                </div>
+                <div class="bg-black bg-opacity-20 backdrop-blur-sm rounded-xl p-4 border border-white border-opacity-20">
+                    <div class="text-lg font-semibold mb-1 text-white">Terrenos 20-50 ha</div>
+                    <div class="text-sm text-gray-200">Valle • Hasta $1B</div>
+                </div>
+                <div class="bg-black bg-opacity-20 backdrop-blur-sm rounded-xl p-4 border border-white border-opacity-20">
+                    <div class="text-lg font-semibold mb-1 text-white">Fincas Cafeteras</div>
+                    <div class="text-sm text-gray-200">Eje Cafetero • Cualquier precio</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    function toggleUserDropdown() {
+        const dropdown = document.getElementById('userDropdown');
+        const arrow = document.getElementById('dropdownArrow');
+
+        if (dropdown.classList.contains('opacity-0')) {
+            // Mostrar dropdown
+            dropdown.classList.remove('opacity-0', 'invisible', 'scale-95');
+            dropdown.classList.add('opacity-100', 'visible', 'scale-100');
+            arrow.style.transform = 'rotate(180deg)';
+        } else {
+            // Ocultar dropdown
+            dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
+            dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
+            arrow.style.transform = 'rotate(0deg)';
+        }
+    }
+
+    document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('userDropdown');
+        const userButton = event.target.closest('[onclick="toggleUserDropdown()"]');
+
+        if (!userButton && !dropdown.contains(event.target)) {
+            dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
+            dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
+            document.getElementById('dropdownArrow').style.transform = 'rotate(0deg)';
+        }
+    });
+</script>
+</body>
+</html>

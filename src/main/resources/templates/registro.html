@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registro</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+<div class="max-w-md mx-auto mt-[100px] bg-white rounded-2xl shadow-lg p-6">
+  <h1 class="text-center text-2xl text-green-700 font-bold mb-6">Regístrate y prueba nuestros servicios</h1>
+
+  <button class="w-5/6 mx-auto block bg-blue-600 text-white py-2 rounded-full font-semibold text-sm mb-4">Iniciar sesión con Google</button>
+
+  <p class="text-center font-semibold text-lg mb-4">O</p>
+
+  <form id="registroForm" th:action="@{/usuarios/registro}" th:object="${usuarioDTO}" th:method="post" class="space-y-4" novalidate>
+    <input type="hidden" name="accion" value="registrar">
+
+    <div class="flex gap-3">
+      <input th:field="*{nombres}"  id="nombres" type="text" placeholder="Nombre" required
+             pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ ]{2,}" title="Solo letras, mínimo 2 caracteres"
+             class="flex-1 p-2 border-b border-green-700 rounded-md focus:outline-none" />
+
+      <input th:field="*{apellidos}" id="apellidos" type="text" placeholder="Apellido" required
+             pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ ]{2,}" title="Solo letras, mínimo 2 caracteres"
+             class="flex-1 p-2 border-b border-green-700 rounded-md focus:outline-none" />
+    </div>
+
+    <input th:field="*{cedula}" id="numeroID" type="text" placeholder="Número de cedula" required
+           pattern="[0-9]{6,12}" title="Solo números entre 6 y 12 dígitos"
+           class="w-full p-2 border-b border-green-700 rounded-md focus:outline-none" />
+
+    <input th:field="*{telefono}" id="telefono" type="tel" placeholder="Teléfono" required
+           pattern="[0-9]{10}" title="Debe tener 10 dígitos"
+           class="w-full p-2 border-b border-green-700 rounded-md focus:outline-none" />
+
+    <input th:field="*{email}" id="correo" type="email" placeholder="Correo Electrónico" required
+           class="w-full p-2 border-b border-green-700 rounded-md focus:outline-none" />
+
+    <input th:field="*{contrasena}" id="contraseña" type="password" placeholder="Contraseña" required
+           minlength="6" title="Mínimo 6 caracteres"
+           class="w-full p-2 border-b border-green-700 rounded-md focus:outline-none" />
+
+    <input th:field="*{nacimiento}" id="fechaNacimiento" type="date" required
+           class="w-full p-2 border-b border-green-700 text-gray-500 rounded-md focus:outline-none" />
+
+    <div class="flex items-center space-x-2">
+      <input id="terms" type="checkbox" required class="w-4 h-4" />
+      <label for="terms" class="text-sm">Acepto los términos y condiciones</label>
+    </div>
+
+    <p th:if="${param.yaExiste}" class="text-red-500 text-sm mb-4">Ya existe un usuario registrado con ese correo o cedula</p>
+
+    <div id="error" class="text-red-600 text-sm whitespace-pre-line"></div>
+
+    <button type="submit" class="w-full bg-green-700 text-white py-2 rounded-full font-semibold">Regístrate ahora</button>
+  </form>
+</div>
+
+<script>
+  document.getElementById("registroForm").addEventListener("submit", function (e) {
+      const errorDiv = document.getElementById("error");
+      errorDiv.textContent = ""; // Limpia errores previos
+
+      const nacimiento = document.getElementById("fechaNacimiento").value;
+      const fechaNacimiento = new Date(nacimiento);
+      const hoy = new Date();
+      const edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
+      const diferenciaMes = hoy.getMonth() - fechaNacimiento.getMonth();
+
+      if (edad < 18 || (edad === 18 && diferenciaMes < 0)) {
+          e.preventDefault();
+          errorDiv.textContent = "Debes tener al menos 18 años para registrarte.";
+          return;
+      }
+
+      const rol = document.getElementById("rol").value;
+      if (rol === "" || rol === "Rol") {
+          e.preventDefault();
+          errorDiv.textContent = "Debes seleccionar un rol.";
+          return;
+      }
+
+      // Validación extra de nombre/apellido
+      const nombre = document.getElementById("nombres").value;
+      const apellido = document.getElementById("apellidos").value;
+      if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñ ]{2,}$/.test(nombre) || !/^[A-Za-zÁÉÍÓÚáéíóúÑñ ]{2,}$/.test(apellido)) {
+          e.preventDefault();
+          errorDiv.textContent = "Nombre y apellido deben tener solo letras y al menos 2 caracteres.";
+          return;
+      }
+  });
+</script>
+</body>
+</html>
