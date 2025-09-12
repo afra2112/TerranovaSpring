@@ -1,6 +1,7 @@
 package com.proyecto.terranova.restController;
 
 import com.proyecto.terranova.dto.DisponibilidadDTO;
+import com.proyecto.terranova.entity.Disponibilidad;
 import com.proyecto.terranova.service.DisponibilidadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -29,9 +30,9 @@ public class DisponibilidadControllerRest {
     }
 
     @PostMapping("/crearDisponibilidad")
-    public ResponseEntity<DisponibilidadDTO> crearDisponibilidad(@RequestBody DisponibilidadDTO dtoDisponibilidad){
-        serviceDisponibilidad.save(dtoDisponibilidad);
-        return ResponseEntity.ok(dtoDisponibilidad);
+    public ResponseEntity<Disponibilidad> crearDisponibilidad(@RequestBody Disponibilidad disponibilidad){
+        serviceDisponibilidad.save(disponibilidad);
+        return ResponseEntity.ok(disponibilidad);
     }
 
     @DeleteMapping("/eliminarDisponibilidad/{id}")

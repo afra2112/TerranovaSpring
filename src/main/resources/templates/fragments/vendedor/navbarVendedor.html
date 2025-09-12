@@ -17,9 +17,9 @@
                 </div>
 
                 <nav class="hidden md:flex space-x-8">
-                    <a href="#" class="text-[#388e3c] font-medium border-b-2 border-[#388e3c] pb-1">Dashboard</a>
+                    <a th:classappend="${dashboard} ? 'text-[#388e3c] font-medium border-b-2 border-[#388e3c] pb-1' : 'text-gray-600'" th:href="@{/vendedor/dashboard}"  class="hover:text-[#388e3c] transition-colors">Dashboard</a>
                     <a href="#" class="text-gray-600 hover:text-[#388e3c] transition-colors">Productos</a>
-                    <a href="#" class="text-gray-600 hover:text-[#388e3c] transition-colors">Citas</a>
+                    <a th:classappend="${calendario} ? 'text-[#388e3c] font-medium border-b-2 border-[#388e3c] pb-1' : 'text-gray-600'"  th:href="@{/vendedor/mi-calendario}" class="hover:text-[#388e3c] transition-colors">Calendario</a>
                     <a href="#" class="text-gray-600 hover:text-[#388e3c] transition-colors">Ventas</a>
                     <a href="#" class="text-gray-600 hover:text-[#388e3c] transition-colors">Notificaciones</a>
                 </nav>

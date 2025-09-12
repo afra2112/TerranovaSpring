@@ -1,5 +1,6 @@
 package com.proyecto.terranova.entity;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -21,8 +22,10 @@ public class Disponibilidad {
     @Column(nullable = false)
     private LocalTime hora;
 
-    @Column(nullable = false)
-    private boolean disponible;
+    private boolean disponible = true;
+
+    @Nullable
+    private String descripcion;
 
     @ManyToOne
     @JoinColumn(name = "cedula", nullable = false)

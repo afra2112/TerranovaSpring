@@ -1,15 +1,18 @@
 package com.proyecto.terranova.controller;
 
 import com.proyecto.terranova.config.enums.RolEnum;
+import com.proyecto.terranova.entity.Disponibilidad;
 import com.proyecto.terranova.entity.Usuario;
+import com.proyecto.terranova.service.DisponibilidadService;
 import com.proyecto.terranova.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @Controller
@@ -18,6 +21,9 @@ public class VendedorController {
 
     @Autowired
     UsuarioService usuarioService;
+
+    @Autowired
+    DisponibilidadService disponibilidadService;
 
     @ModelAttribute("esVendedor")
     public boolean esVendedor(Authentication authentication){
@@ -42,7 +48,25 @@ public class VendedorController {
     }
 
     @GetMapping("/dashboard")
-    public String indexVendedor(){
+    public String indexVendedor(Model model) {
+        model.addAttribute("dashboard", true);
         return "vendedor/dashboard";
+    }
+
+    @GetMapping("/mi-calendario")
+    public String calendario(Model model){
+        model.addAttribute("calendario", true);
+        return "vendedor/calendario";
+    }
+
+    @PostMapping("/registrar-disponibilidad")
+    public String registrarDisponibilidad(@RequestParam(name = "fecha")LocalDate fecha, @RequestParam(name = "hora") LocalTime hora, @RequestParam(required = false,name = "descripcion") String descripcion, Authentication authentication){
+        Disponibilidad disponibilidad = new Disponibilidad();
+        disponibilidad.setUsuario(usuario(authentication));
+        disponibilidad.setHora(hora);
+        disponibilidad.setFecha(fecha);
+        disponibilidad.setDescripcion(descripcion);
+        disponibilidadService.save(disponibilidad);
+        return "redirect:/vendedor/mi-calendario";
     }
 }

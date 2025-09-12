@@ -14,7 +14,7 @@
 
   <p class="text-center font-semibold text-lg mb-4">O</p>
 
-  <form id="registroForm" th:action="@{/usuarios/registro}" th:object="${usuarioDTO}" th:method="post" class="space-y-4" novalidate>
+  <form id="registroForm" th:action="@{/registro}" th:object="${usuarioDTO}" th:method="post" class="space-y-4" novalidate>
     <input type="hidden" name="accion" value="registrar">
 
     <div class="flex gap-3">

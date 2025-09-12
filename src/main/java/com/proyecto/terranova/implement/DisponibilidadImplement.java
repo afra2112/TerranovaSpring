@@ -27,14 +27,8 @@ public class DisponibilidadImplement implements DisponibilidadService {
     private ModelMapper modelMapper;
 
     @Override
-    public DisponibilidadDTO save(DisponibilidadDTO dto) {
-        Disponibilidad entidadDisponibilidad = modelMapper.map(dto, Disponibilidad.class);
-        Usuario usuario = usuarioRepository.findById(dto.getCedulaUsuario())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
-        entidadDisponibilidad.setUsuario(usuario);
-        Disponibilidad entidadGuardada = repository.save(entidadDisponibilidad);
-        return modelMapper.map(entidadGuardada, DisponibilidadDTO.class);
+    public Disponibilidad save(Disponibilidad disponibilidad) {
+        return repository.save(disponibilidad);
     }
 
     @Override

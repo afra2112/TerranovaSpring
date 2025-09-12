@@ -5,11 +5,17 @@ import com.proyecto.terranova.entity.Usuario;
 import com.proyecto.terranova.service.CompradorService;
 import com.proyecto.terranova.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -56,8 +62,16 @@ public class CompradorController {
 
     @PostMapping("/mi-perfil/ser-vendedor")
     public String serVendedor(Authentication authentication, RedirectAttributes redirectAttributes) {
+        Usuario usuario = usuario(authentication);
+
         usuarioService.volverVendedor(usuario(authentication).getCedula());
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        usuario.getRoles().forEach(r -> authorities.add(new SimpleGrantedAuthority(r.getNombreRol().toString().toUpperCase())));
+        UsernamePasswordAuthenticationToken nuevoAuth = new UsernamePasswordAuthenticationToken(authentication.getPrincipal(), authentication.getCredentials(), authorities);
+        SecurityContextHolder.getContext().setAuthentication(nuevoAuth);
+
         redirectAttributes.addFlashAttribute("vendedorExitoso", true);
-        return "redirect:/comprador/mi-perfil";
+
+        return "redirect:/usuarios/mi-perfil?id=1";
     }
 }

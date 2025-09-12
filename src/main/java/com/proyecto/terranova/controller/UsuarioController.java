@@ -85,7 +85,11 @@ public class UsuarioController {
         Usuario usuario = usuario(authentication);
         usuario.setFoto(nombreArchivo);
         serviceUsuario.update(usuario);
-        return "redirect:/mi-perfil";
+
+        if(esVendedor(authentication)){
+            return "redirect:/usuarios/mi-perfil?id=2";
+        }
+        return "redirect:/usuarios/mi-perfil?id=1";
     }
 
     @PostMapping("/mi-perfil/editar")
@@ -96,6 +100,9 @@ public class UsuarioController {
         usuario.setTelefono(usuarioNuevo.getTelefono());
         usuario.setNacimiento(usuarioNuevo.getNacimiento());
         serviceUsuario.update(usuario);
-        return "redirect:/mi-perfil";
+        if(esVendedor(authentication)){
+            return "redirect:/usuarios/mi-perfil?id=2";
+        }
+        return "redirect:/usuarios/mi-perfil?id=1";
     }
 }
