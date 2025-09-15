@@ -25,7 +25,15 @@
                 <i class='bx bx-home text-xl'></i>
                 <span>Inicio</span>
             </a>
+            <a  th:classappend="${posicionProductos} ? 'bg-emerald-50/50 text-emerald-700' : 'text-gray-600'" th:href="@{/vendedor/productos}" class="sidebar-item flex items-center space-x-3 p-3 rounded-xl hover:bg-emerald-50/50 hover:text-emerald-700 font-medium">
+                <i class='bx bx-home text-xl'></i>
+                <span>Productos</span>
+            </a>
             <a th:classappend="${calendario} ? 'bg-emerald-50/50 text-emerald-700' : 'text-gray-600'" th:href="@{/vendedor/mi-calendario}" class="sidebar-item flex items-center space-x-3 p-3 rounded-xl hover:bg-emerald-50/50 hover:text-emerald-700 font-medium">
+                <i class='bx bx-calendar text-xl'></i>
+                <span>Mi Calendario</span>
+            </a>
+            <a th:classappend="${posicionCitas} ? 'bg-emerald-50/50 text-emerald-700' : 'text-gray-600'" th:href="@{/vendedor/citas}" class="sidebar-item flex items-center space-x-3 p-3 rounded-xl hover:bg-emerald-50/50 hover:text-emerald-700 font-medium">
                 <i class='bx bx-calendar text-xl'></i>
                 <span>Gestión de Citas</span>
             </a>

@@ -35,8 +35,8 @@ public class Cita {
     private Usuario comprador;
 
     @ManyToOne
-    @JoinColumn(name = "cedula_vendedor")
-    private Usuario vendedor;
+    @JoinColumn(name = "id_disponibilidad")
+    private Disponibilidad disponibilidad;
 
     @OneToOne
     @JoinColumn(name = "idUbicacion")

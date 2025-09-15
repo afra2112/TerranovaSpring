@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -35,7 +36,7 @@ public class Producto {
 
     @ManyToOne
     @JoinColumn(name = "cedulaVendedor", nullable = false)
-    private Usuario usuario;
+    private Usuario vendedor;
 
     @OneToOne
     @JoinColumn(name = "idUbicacion")
@@ -43,4 +44,7 @@ public class Producto {
 
     @OneToMany(mappedBy = "producto")
     private List<Imagen> imagenes;
+
+    @OneToMany(mappedBy = "producto",  cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Disponibilidad> disponibilidades = new ArrayList<>();
 }

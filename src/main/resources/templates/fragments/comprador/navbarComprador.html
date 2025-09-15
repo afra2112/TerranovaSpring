@@ -61,7 +61,7 @@
                       </svg>
                       Mi Perfil
                   </a>
-                  <a th:href="@{/vendedor/dashboard}" class="flex items-center px-5 py-4 text-gray-700 hover:bg-gray-50 transition-colors text-base">
+                  <a th:if="${esVendedor}" th:href="@{/vendedor/dashboard}" class="flex items-center px-5 py-4 text-gray-700 hover:bg-gray-50 transition-colors text-base">
                       <svg class="w-5 h-5 mr-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M7 7h.01M3 11l9-9 9 9-9 9-9-9z"/>

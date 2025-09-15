@@ -31,7 +31,7 @@ public class ProductoImplement implements ProductoService {
         Usuario usuario = usuarioRepository.findById(dto.getCedulaVendedor())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        entidadProducto.setUsuario(usuario);
+        entidadProducto.setVendedor(usuario);
         Producto entidadGuardada = repository.save(entidadProducto);
         return modelMapper.map(entidadGuardada, ProductoDTO.class);
     }

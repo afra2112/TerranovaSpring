@@ -1,8 +1,10 @@
 package com.proyecto.terranova.controller;
 
+import com.proyecto.terranova.config.enums.EstadoCitaEnum;
 import com.proyecto.terranova.config.enums.RolEnum;
 import com.proyecto.terranova.entity.Disponibilidad;
 import com.proyecto.terranova.entity.Usuario;
+import com.proyecto.terranova.service.CitaService;
 import com.proyecto.terranova.service.DisponibilidadService;
 import com.proyecto.terranova.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,9 @@ public class VendedorController {
 
     @Autowired
     DisponibilidadService disponibilidadService;
+
+    @Autowired
+    CitaService citaService;
 
     @ModelAttribute("esVendedor")
     public boolean esVendedor(Authentication authentication){
@@ -62,13 +67,31 @@ public class VendedorController {
         return "vendedor/calendario";
     }
 
+    @GetMapping("/citas")
+    public String citas(Model model, Authentication authentication){
+        model.addAttribute("posicionCitas", true);
+        model.addAttribute("foto", usuarioService.findByEmail(authentication.getName()).getFoto());
+        model.addAttribute("numReservadas", citaService.encontrarPorEstado(EstadoCitaEnum.RESERVADA).size());
+        model.addAttribute("numFinalizadas", citaService.encontrarPorEstado(EstadoCitaEnum.FINALIZADA).size());
+        model.addAttribute("numCanceladas", citaService.encontrarPorEstado(EstadoCitaEnum.CANCELADA).size());
+
+        model.addAttribute("citas", citaService.findAll());
+
+        return "vendedor/citas";
+    }
+
+    @GetMapping("/productos")
+    public String productos(Model model, Authentication authentication){
+        model.addAttribute("posicionCitas", true);
+        return "vendedor/productos";
+    }
+
     @PostMapping("/mi-calendario/registrar-disponibilidad")
     public String registrarDisponibilidad(@RequestParam(name = "fecha") LocalDate fecha, @RequestParam(name = "hora") LocalTime hora, @RequestParam(name = "descripcion", required = false) String descripcion, Authentication authentication){
         Disponibilidad disponibilidad = new Disponibilidad();
         disponibilidad.setFecha(fecha);
         disponibilidad.setHora(hora);
         disponibilidad.setDescripcion(descripcion);
-        disponibilidad.setUsuario(usuarioService.findByEmail(authentication.getName()));
         disponibilidadService.save(disponibilidad);
         return "redirect:/vendedor/mi-calendario";
     }

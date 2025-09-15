@@ -6,6 +6,8 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "disponibilidades")
@@ -29,5 +31,8 @@ public class Disponibilidad {
 
     @ManyToOne
     @JoinColumn(name = "cedula", nullable = false)
-    private Usuario usuario;
+    private Producto producto;
+
+    @OneToMany(mappedBy = "disponibilidad")
+    private List<Cita> citas = new ArrayList<>();
 }

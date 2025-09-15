@@ -57,8 +57,11 @@ public class Usuario {
     )
     private List<Producto> favoritos;
 
-    @OneToMany(mappedBy = "usuario")
-    private List<Disponibilidad> disponibilidad;
+    @OneToMany(mappedBy = "vendedor")
+    private List<Producto> disponibilidad;
+
+    @OneToMany(mappedBy = "comprador")
+    private List<Cita> citas;
 
     //estos campos son para el oauth2
     private String provider;

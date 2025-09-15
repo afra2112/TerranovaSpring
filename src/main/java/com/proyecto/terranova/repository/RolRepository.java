@@ -16,4 +16,6 @@ public interface RolRepository extends JpaRepository<Rol, Long> {
     List<String> findByRolesAndCedula(@Param("cedula") String cedula);
 
     Rol findBynombreRol(RolEnum nombre);
+
+    boolean existsByNombreRol(RolEnum nombre);
 }

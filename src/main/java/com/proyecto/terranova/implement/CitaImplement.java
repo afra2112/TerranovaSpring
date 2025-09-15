@@ -1,5 +1,6 @@
 package com.proyecto.terranova.implement;
 
+import com.proyecto.terranova.config.enums.EstadoCitaEnum;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,11 @@ public class CitaImplement implements CitaService {
         return repository.findAll().stream()
             .map(entity -> modelMapper.map(entity, CitaDTO.class))
             .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Cita> encontrarPorEstado(EstadoCitaEnum estado) {
+        return repository.findByEstadoCita(estado);
     }
 
     @Override
