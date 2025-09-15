@@ -49,10 +49,8 @@ public class DisponibilidadImplement implements DisponibilidadService {
     }
 
     @Override
-    public List<DisponibilidadDTO> findAll() {
-        return repository.findAll().stream()
-            .map(entity -> modelMapper.map(entity, DisponibilidadDTO.class))
-            .collect(Collectors.toList());
+    public List<Disponibilidad> findAll() {
+        return repository.findAll();
     }
 
     @Override

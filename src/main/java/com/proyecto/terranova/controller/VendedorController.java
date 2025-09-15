@@ -55,17 +55,20 @@ public class VendedorController {
 
     @GetMapping("/mi-calendario")
     public String calendario(Model model){
+        List<Disponibilidad> disponibilidades = disponibilidadService.findAll();
+
         model.addAttribute("calendario", true);
+        model.addAttribute("disponibilidades", disponibilidades);
         return "vendedor/calendario";
     }
 
-    @PostMapping("/registrar-disponibilidad")
-    public String registrarDisponibilidad(@RequestParam(name = "fecha")LocalDate fecha, @RequestParam(name = "hora") LocalTime hora, @RequestParam(required = false,name = "descripcion") String descripcion, Authentication authentication){
+    @PostMapping("/mi-calendario/registrar-disponibilidad")
+    public String registrarDisponibilidad(@RequestParam(name = "fecha") LocalDate fecha, @RequestParam(name = "hora") LocalTime hora, @RequestParam(name = "descripcion", required = false) String descripcion, Authentication authentication){
         Disponibilidad disponibilidad = new Disponibilidad();
-        disponibilidad.setUsuario(usuario(authentication));
-        disponibilidad.setHora(hora);
         disponibilidad.setFecha(fecha);
+        disponibilidad.setHora(hora);
         disponibilidad.setDescripcion(descripcion);
+        disponibilidad.setUsuario(usuarioService.findByEmail(authentication.getName()));
         disponibilidadService.save(disponibilidad);
         return "redirect:/vendedor/mi-calendario";
     }

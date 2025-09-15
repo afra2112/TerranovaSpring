@@ -6,6 +6,8 @@
     <title>Calendario - Panel Vendedor</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         .fc-event-title { font-weight: 500; }
         .fc-event-time { font-size: 0.85em; }
@@ -14,122 +16,180 @@
         .cita-aceptada-event { background-color: #2196f3 !important; border-color: #1976d2 !important; }
         .cita-finalizada-event { background-color: #4caf50 !important; border-color: #388e3c !important; }
         .cita-cancelada-event { background-color: #f44336 !important; border-color: #d32f2f !important; }
+        .gradient-bg {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+        }
+        .modal-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .modal-backdrop {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }.floating-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+        .product-option {
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.02) 100%);
+            border: 2px solid rgba(16, 185, 129, 0.1);
+        }
+        .product-option:hover {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.08) 100%);
+            border-color: rgba(16, 185, 129, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.15);
+        }
     </style>
 </head>
 <body class="bg-gray-50">
 
 <div th:replace="fragments/vendedor/navbarVendedor :: navbarVendedor"></div>
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="ml-64 flex flex-col min-h-screen">
+    <main class="lg:px-10 py-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-    <div class="mb-8">
-        <div class="flex justify-between items-center">
-            <div>
-                <h1 class="text-3xl font-bold text-gray-900">Calendario de Citas</h1>
-                <p class="text-gray-600 mt-2">Gestiona tus disponibilidades y citas programadas</p>
-            </div>
-            <button onclick="openDisponibilidadModal()" class="bg-[#388e3c] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#2e7d32] transition-colors flex items-center space-x-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                </svg>
-                <span>Agregar Disponibilidad</span>
-            </button>
-        </div>
-    </div>
-
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
-        <h3 class="font-semibold text-gray-800 mb-3">Leyenda</h3>
-        <div class="flex flex-wrap gap-4">
-            <div class="flex items-center space-x-2">
-                <div class="w-4 h-4 bg-[#388e3c] rounded"></div>
-                <span class="text-sm text-gray-600">Disponibilidades</span>
-            </div>
-            <div class="flex items-center space-x-2">
-                <div class="w-4 h-4 bg-[#ff9800] rounded"></div>
-                <span class="text-sm text-gray-600">Citas Pendientes</span>
-            </div>
-            <div class="flex items-center space-x-2">
-                <div class="w-4 h-4 bg-[#2196f3] rounded"></div>
-                <span class="text-sm text-gray-600">Citas Aceptadas</span>
-            </div>
-            <div class="flex items-center space-x-2">
-                <div class="w-4 h-4 bg-[#4caf50] rounded"></div>
-                <span class="text-sm text-gray-600">Citas Finalizadas</span>
-            </div>
-            <div class="flex items-center space-x-2">
-                <div class="w-4 h-4 bg-[#f44336] rounded"></div>
-                <span class="text-sm text-gray-600">Citas Canceladas</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <div id="calendar"></div>
-    </div>
-</div>
-
-<!-- Modal Disponibilidad -->
-<div id="disponibilidadModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 opacity-0 invisible transition-all duration-300">
-    <div class="bg-white rounded-2xl p-6 max-w-md w-full mx-4 transform scale-95 transition-transform duration-300">
-        <div class="flex justify-between items-center mb-6">
-            <h3 class="text-xl font-bold text-gray-800" id="disponibilidadModalTitle">Agregar Disponibilidad</h3>
-            <button onclick="closeDisponibilidadModal()" class="text-gray-400 hover:text-gray-600">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-            </button>
-        </div>
-
-        <form id="disponibilidadForm">
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Fecha</label>
-                    <input type="date" id="disponibilidadFecha" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Hora</label>
-                    <input type="time" id="disponibilidadHoraInicio" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Descripción (Opcional)</label>
-                    <textarea id="disponibilidadDescripcion" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent" placeholder="Ej: Visita a finca, Evaluación de ganado..."></textarea>
+            <div class="mb-8">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900">Calendario de Citas</h1>
+                        <p class="text-gray-600 mt-2">Gestiona tus disponibilidades y citas programadas</p>
+                    </div>
+                    <button onclick="openDisponibilidadModal()" class="bg-[#388e3c] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#2e7d32] transition-colors flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                        </svg>
+                        <span>Agregar Disponibilidad</span>
+                    </button>
                 </div>
             </div>
 
-            <div class="flex space-x-3 mt-6">
-                <button type="button" onclick="closeDisponibilidadModal()" class="flex-1 border border-gray-300 text-gray-700 px-4 py-3 rounded-xl font-medium hover:bg-gray-50 transition-colors">
-                    Cancelar
-                </button>
-                <button type="submit" class="flex-1 bg-[#388e3c] text-white px-4 py-3 rounded-xl font-medium hover:bg-[#2e7d32] transition-colors">
-                    Guardar
-                </button>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
+                <h3 class="font-semibold text-gray-800 mb-3">Leyenda</h3>
+                <div class="flex flex-wrap gap-4">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-4 h-4 bg-[#388e3c] rounded"></div>
+                        <span class="text-sm text-gray-600">Disponibilidades</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-4 h-4 bg-[#ff9800] rounded"></div>
+                        <span class="text-sm text-gray-600">Citas Pendientes</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-4 h-4 bg-[#2196f3] rounded"></div>
+                        <span class="text-sm text-gray-600">Citas Aceptadas</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-4 h-4 bg-[#4caf50] rounded"></div>
+                        <span class="text-sm text-gray-600">Citas Finalizadas</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-4 h-4 bg-[#f44336] rounded"></div>
+                        <span class="text-sm text-gray-600">Citas Canceladas</span>
+                    </div>
+                </div>
             </div>
-        </form>
-    </div>
-</div>
 
-<!-- Modal Cita -->
-<div id="citaModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 opacity-0 invisible transition-all duration-300">
-    <div class="bg-white rounded-2xl p-6 max-w-md w-full mx-4 transform scale-95 transition-transform duration-300">
-        <div class="flex justify-between items-center mb-6">
-            <h3 class="text-xl font-bold text-gray-800">Detalles de la Cita</h3>
-            <button onclick="closeCitaModal()" class="text-gray-400 hover:text-gray-600">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-            </button>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <div id="calendar"></div>
+            </div>
         </div>
 
-        <div id="citaContent" class="space-y-4">
-            <!--aqui se va a colocar el js-->
+        <div id="disponibilidadModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 opacity-0 invisible transition-all duration-300">
+            <div class="bg-white rounded-2xl p-6 max-w-md w-full mx-4 transform scale-95 transition-transform duration-300">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold text-gray-800" id="disponibilidadModalTitle">Agregar Disponibilidad</h3>
+                    <button onclick="closeDisponibilidadModal()" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <form id="disponibilidadForm" th:action="@{/vendedor/mi-calendario/registrar-disponibilidad}" method="post">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Fecha</label>
+                            <input required type="date" id="disponibilidadFecha" name="fecha" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Hora</label>
+                            <input required type="time" id="disponibilidadHoraInicio" name="hora" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Descripción (Opcional)</label>
+                            <textarea id="disponibilidadDescripcion" rows="3" name="descripcion" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent" placeholder="Ej: Visita a finca, Evaluación de ganado..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="flex space-x-3 mt-6">
+                        <button type="button" onclick="closeDisponibilidadModal()" class="flex-1 border border-gray-300 text-gray-700 px-4 py-3 rounded-xl font-medium hover:bg-gray-50 transition-colors">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="flex-1 bg-[#388e3c] text-white px-4 py-3 rounded-xl font-medium hover:bg-[#2e7d32] transition-colors">
+                            Guardar
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
 
-        <div id="citaActions" class="flex space-x-3 mt-6">
+        <div id="citaModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 opacity-0 invisible transition-all duration-300">
+            <div class="bg-white rounded-2xl p-6 max-w-md w-full mx-4 transform scale-95 transition-transform duration-300">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Detalles de la Cita</h3>
+                    <button onclick="closeCitaModal()" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
 
+                <div id="citaContent" class="space-y-4">
+                    <!--aqui se va a colocar el js-->
+                </div>
+
+                <div id="citaActions" class="flex space-x-3 mt-6">
+
+                </div>
+            </div>
         </div>
-    </div>
+
+        <!--c:if test="${not empty param.registroDisponibilidad || not empty param.eliminacionDisponibilidad || not empty param.edicionDisponibilidad}">
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                const modal = document.getElementById('disponibilidadRegistrada');
+                const modalContent = document.getElementById('modalContentDisponibilidadRegistrada');
+                let titulo;
+                <c:choose>
+                    <c:when test="${param.registroDisponibilidad eq 'exitoso'}">
+                titulo = document.getElementById('tituloRegistrada');
+                    </c:when>
+                    <c:when test="${param.eliminacionDisponibilidad eq 'exitoso'}">
+                titulo = document.getElementById('tituloEliminada');
+                    </c:when>
+                    <c:when test="${param.edicionDisponibilidad eq 'exitoso'}">
+                titulo = document.getElementById('tituloEditada');
+                    </c:when>
+                </c:choose>
+
+                if (titulo) {
+                titulo.classList.remove('hidden');
+                modal.classList.remove('hidden');
+                requestAnimationFrame(() => {
+                modalContent.classList.remove('scale-75', 'opacity-0');
+                modalContent.classList.add('scale-100', 'opacity-100');
+                });
+                }
+                });
+            </script>
+        </c:if-->
+
+    </main>
 </div>
 
 <script>
@@ -153,7 +213,6 @@
                 week: 'Semana',
                 day: 'Día'
             },
-            events: [...disponibilidades, ...citas],
             eventClick: function(info) {
                 currentEvent = info.event;
                 if (info.event.extendedProps.type === 'disponibilidad') {
@@ -164,9 +223,15 @@
             },
             dateClick: function(info) {
                 openDisponibilidadModal(info.dateStr);
+            },
+            events: {
+                title: 'Día no disponible',
+                start: '2025-09-15',
+                end: '2025-09-17',
+                rendering: 'background',
+                selectable: false
             }
         });
-
         calendar.render();
     });
 
@@ -331,18 +396,6 @@
         alert('Funcionalidad de ejemplo - Cita eliminada');
         closeCitaModal();
     }
-
-    document.getElementById('disponibilidadForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        const fecha = document.getElementById('disponibilidadFecha').value;
-        const horaInicio = document.getElementById('disponibilidadHoraInicio').value;
-        const descripcion = document.getElementById('disponibilidadDescripcion').value;
-
-        alert(`Disponibilidad guardada:\nFecha: ${fecha}\nHora: ${horaInicio}\nDescripción: ${descripcion || 'Sin descripción'}`);
-
-        closeDisponibilidadModal();
-    });
 
     // Modal utilities
     function showModal(modalId) {

@@ -18,8 +18,8 @@ public class DisponibilidadControllerRest {
 
 
     @GetMapping("/listarTodo")
-    public ResponseEntity<List<DisponibilidadDTO>> obtenerTodosLosDisponibilidads(){
-        List<DisponibilidadDTO> entidadesDisponibilidad = serviceDisponibilidad.findAll();
+    public ResponseEntity<List<Disponibilidad>> obtenerTodosLosDisponibilidads(){
+        List<Disponibilidad> entidadesDisponibilidad = serviceDisponibilidad.findAll();
         return ResponseEntity.ok(entidadesDisponibilidad);
     }
 

@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Vendedor - Terranova</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
@@ -17,264 +19,346 @@
             }
         }
     </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+        }
+        .modal-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .modal-backdrop {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }.floating-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+        .product-option {
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.02) 100%);
+            border: 2px solid rgba(16, 185, 129, 0.1);
+        }
+        .product-option:hover {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.08) 100%);
+            border-color: rgba(16, 185, 129, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.15);
+        }
+    </style>
 </head>
 <body class="bg-gray-50">
 
 <div th:replace="fragments/vendedor/navbarVendedor :: navbarVendedor"></div>
 
-<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div class="mb-8">
-        <h2 class="text-3xl font-bold text-gray-900 mb-2" th:text="'¡Bienvenido de vuelta, ' + ${usuario.nombres} + '!'"></h2>
-        <p class="text-gray-600">Gestiona tu negocio rural desde tu panel de vendedor</p>
-    </div>
+<div class="ml-64 flex flex-col min-h-screen">
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <button class="bg-[#388e3c] text-white p-6 rounded-2xl hover:bg-[#2e7d32] transition-colors flex items-center justify-between w-full">
-            <div>
-                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center mb-4">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                    </svg>
-                </div>
-                <h3 class="font-semibold text-lg mb-2">Publicar Producto</h3>
-                <p class="text-white text-opacity-80 text-sm">Agrega nuevos productos a tu catálogo</p>
-            </div>
-            <div>
-                <svg class="w-6 h-6 text-white text-opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-            </div>
-        </button>
-
-        <a th:href="@{/vendedor/mi-calendario}"><button class="bg-white border border-gray-200 p-6 rounded-2xl hover:shadow-lg transition-all flex items-center justify-between w-full">
-            <div>
-                <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
-                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                    </svg>
-                </div>
-                <h3 class="font-semibold text-lg mb-2 text-gray-900">Gestionar Disponibilidades</h3>
-                <p class="text-gray-600 text-sm">Programa visitas con compradores</p>
-            </div>
-            <div>
-                <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-            </div>
-        </button></a>
-
-    </div>
-
-    <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div class="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-all">
-            <div class="flex items-center justify-between mb-4">
-                <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
-                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
-                    </svg>
-                </div>
-                <span class="text-2xl font-bold text-gray-900">$2.4M</span>
-            </div>
-            <h3 class="font-medium text-gray-600 mb-1">Ventas del Mes</h3>
-            <p class="text-sm text-green-600 font-medium">+12% vs mes anterior</p>
-        </div>
-
-        <div class="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-all">
-            <div class="flex items-center justify-between mb-4">
-                <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-                    </svg>
-                </div>
-                <span class="text-2xl font-bold text-gray-900">23</span>
-            </div>
-            <h3 class="font-medium text-gray-600 mb-1">Productos Activos</h3>
-            <p class="text-sm text-blue-600 font-medium">3 nuevos esta semana</p>
-        </div>
-
-        <div class="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-all">
-            <div class="flex items-center justify-between mb-4">
-                <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                    </svg>
-                </div>
-                <span class="text-2xl font-bold text-gray-900">8</span>
-            </div>
-            <h3 class="font-medium text-gray-600 mb-1">Citas Pendientes</h3>
-            <p class="text-sm text-purple-600 font-medium">2 para hoy</p>
-        </div>
-
-        <div class="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-all">
-            <div class="flex items-center justify-between mb-4">
-                <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
-                    <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"/>
-                    </svg>
-                </div>
-                <span class="text-2xl font-bold text-gray-900">12</span>
-            </div>
-            <h3 class="font-medium text-gray-600 mb-1">Mensajes Nuevos</h3>
-            <p class="text-sm text-orange-600 font-medium">5 sin leer</p>
-        </div>
-    </div>
-
-    <!-- Recent Activity & Notifications -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-        <!-- Recent Products -->
-        <div class="bg-white rounded-2xl p-6 border border-gray-200">
-            <div class="flex items-center justify-between mb-6">
-                <h3 class="text-xl font-semibold text-gray-900">Productos Recientes</h3>
-                <button class="text-[#388e3c] font-medium hover:text-[#2e7d32] transition-colors">Ver todos</button>
-            </div>
-
-            <div class="space-y-4">
-                <div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-xl">
-                    <div class="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center text-2xl">🐄</div>
-                    <div class="flex-1">
-                        <h4 class="font-semibold text-gray-900">Ganado Holstein Premium</h4>
-                        <p class="text-gray-600 text-sm">Publicado hace 2 días</p>
-                        <p class="text-[#388e3c] font-semibold">$850,000</p>
+    <main class="lg:px-10 py-10">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <button onclick="openProductModal()" class="gradient-bg text-white p-6 rounded-2xl hover-lift shadow-lg hover:shadow-emerald-200 transition-all duration-300 flex items-center justify-between w-full">
+                <div>
+                    <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                        </svg>
                     </div>
-                    <span class="px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full">Activo</span>
+                    <h3 class="font-semibold text-lg mb-2">Publicar Producto</h3>
+                    <p class="text-white text-opacity-80 text-sm">Agrega nuevos productos a tu catálogo</p>
                 </div>
-
-                <div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-xl">
-                    <div class="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center text-2xl">🌾</div>
-                    <div class="flex-1">
-                        <h4 class="font-semibold text-gray-900">Terreno Agrícola 50 Ha</h4>
-                        <p class="text-gray-600 text-sm">Publicado hace 5 días</p>
-                        <p class="text-[#388e3c] font-semibold">$2,500,000</p>
-                    </div>
-                    <span class="px-3 py-1 bg-blue-100 text-blue-700 text-sm font-medium rounded-full">Destacado</span>
+                <div>
+                    <svg class="w-6 h-6 text-white text-opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
                 </div>
+            </button>
 
-                <div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-xl">
-                    <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center text-2xl">🏡</div>
-                    <div class="flex-1">
-                        <h4 class="font-semibold text-gray-900">Finca Cafetera 15 Ha</h4>
-                        <p class="text-gray-600 text-sm">Publicado hace 1 semana</p>
-                        <p class="text-[#388e3c] font-semibold">$1,200,000</p>
-                    </div>
-                    <span class="px-3 py-1 bg-yellow-100 text-yellow-700 text-sm font-medium rounded-full">Pendiente</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Notifications & Messages -->
-        <div class="bg-white rounded-2xl p-6 border border-gray-200">
-            <div class="flex items-center justify-between mb-6">
-                <h3 class="text-xl font-semibold text-gray-900">Notificaciones</h3>
-                <button class="text-[#388e3c] font-medium hover:text-[#2e7d32] transition-colors">Marcar como leídas</button>
-            </div>
-
-            <div class="space-y-4">
-                <div class="flex items-start space-x-4 p-4 bg-blue-50 rounded-xl border-l-4 border-blue-400">
-                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <a th:href="@{/vendedor/mi-calendario}"><button class="bg-white border border-gray-200 p-6 rounded-2xl hover:shadow-lg transition-all flex items-center justify-between w-full">
+                <div>
+                    <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
                     </div>
-                    <div class="flex-1">
-                        <h4 class="font-semibold text-gray-900">Nueva cita programada</h4>
-                        <p class="text-gray-600 text-sm">María González quiere visitar tu finca el viernes a las 2:00 PM</p>
-                        <p class="text-blue-600 text-xs font-medium mt-1">Hace 30 minutos</p>
-                    </div>
+                    <h3 class="font-semibold text-lg mb-2 text-gray-900">Gestionar Disponibilidades</h3>
+                    <p class="text-gray-600 text-sm">Programa visitas con compradores</p>
                 </div>
+                <div>
+                    <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </div>
+            </button>
+            </a>
 
-                <div class="flex items-start space-x-4 p-4 bg-green-50 rounded-xl border-l-4 border-green-400">
-                    <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-all">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
                         </svg>
                     </div>
-                    <div class="flex-1">
-                        <h4 class="font-semibold text-gray-900">¡Venta realizada!</h4>
-                        <p class="text-gray-600 text-sm">Se completó la venta de "Ganado Holstein Premium" por $850,000</p>
-                        <p class="text-green-600 text-xs font-medium mt-1">Hace 2 horas</p>
-                    </div>
+                    <span class="text-2xl font-bold text-gray-900">$2.4M</span>
                 </div>
+                <h3 class="font-medium text-gray-600 mb-1">Ventas del Mes</h3>
+                <p class="text-sm text-green-600 font-medium">+12% vs mes anterior</p>
+            </div>
 
-                <div class="flex items-start space-x-4 p-4 bg-yellow-50 rounded-xl border-l-4 border-yellow-400">
-                    <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center flex-shrink-0">
-                        <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-all">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                        </svg>
+                    </div>
+                    <span class="text-2xl font-bold text-gray-900">23</span>
+                </div>
+                <h3 class="font-medium text-gray-600 mb-1">Productos Activos</h3>
+                <p class="text-sm text-blue-600 font-medium">3 nuevos esta semana</p>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-all">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                        <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <span class="text-2xl font-bold text-gray-900">8</span>
+                </div>
+                <h3 class="font-medium text-gray-600 mb-1">Citas Pendientes</h3>
+                <p class="text-sm text-purple-600 font-medium">2 para hoy</p>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-all">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
+                        <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"/>
                         </svg>
                     </div>
-                    <div class="flex-1">
-                        <h4 class="font-semibold text-gray-900">Nuevo mensaje</h4>
-                        <p class="text-gray-600 text-sm">Carlos Ruiz pregunta sobre disponibilidad del terreno agrícola</p>
-                        <p class="text-yellow-600 text-xs font-medium mt-1">Hace 4 horas</p>
+                    <span class="text-2xl font-bold text-gray-900">12</span>
+                </div>
+                <h3 class="font-medium text-gray-600 mb-1">Mensajes Nuevos</h3>
+                <p class="text-sm text-orange-600 font-medium">5 sin leer</p>
+            </div>
+        </div>
+
+        <!-- Recent Activity & Notifications -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <!-- Recent Products -->
+            <div class="bg-white rounded-2xl p-6 border border-gray-200">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-semibold text-gray-900">Productos Recientes</h3>
+                    <button class="text-[#388e3c] font-medium hover:text-[#2e7d32] transition-colors">Ver todos</button>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-xl">
+                        <div class="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center text-2xl">🐄</div>
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-gray-900">Ganado Holstein Premium</h4>
+                            <p class="text-gray-600 text-sm">Publicado hace 2 días</p>
+                            <p class="text-[#388e3c] font-semibold">$850,000</p>
+                        </div>
+                        <span class="px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full">Activo</span>
+                    </div>
+
+                    <div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-xl">
+                        <div class="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center text-2xl">🌾</div>
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-gray-900">Terreno Agrícola 50 Ha</h4>
+                            <p class="text-gray-600 text-sm">Publicado hace 5 días</p>
+                            <p class="text-[#388e3c] font-semibold">$2,500,000</p>
+                        </div>
+                        <span class="px-3 py-1 bg-blue-100 text-blue-700 text-sm font-medium rounded-full">Destacado</span>
+                    </div>
+
+                    <div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-xl">
+                        <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center text-2xl">🏡</div>
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-gray-900">Finca Cafetera 15 Ha</h4>
+                            <p class="text-gray-600 text-sm">Publicado hace 1 semana</p>
+                            <p class="text-[#388e3c] font-semibold">$1,200,000</p>
+                        </div>
+                        <span class="px-3 py-1 bg-yellow-100 text-yellow-700 text-sm font-medium rounded-full">Pendiente</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notifications & Messages -->
+            <div class="bg-white rounded-2xl p-6 border border-gray-200">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-semibold text-gray-900">Notificaciones</h3>
+                    <button class="text-[#388e3c] font-medium hover:text-[#2e7d32] transition-colors">Marcar como leídas</button>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="flex items-start space-x-4 p-4 bg-blue-50 rounded-xl border-l-4 border-blue-400">
+                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-gray-900">Nueva cita programada</h4>
+                            <p class="text-gray-600 text-sm">María González quiere visitar tu finca el viernes a las 2:00 PM</p>
+                            <p class="text-blue-600 text-xs font-medium mt-1">Hace 30 minutos</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start space-x-4 p-4 bg-green-50 rounded-xl border-l-4 border-green-400">
+                        <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-gray-900">¡Venta realizada!</h4>
+                            <p class="text-gray-600 text-sm">Se completó la venta de "Ganado Holstein Premium" por $850,000</p>
+                            <p class="text-green-600 text-xs font-medium mt-1">Hace 2 horas</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start space-x-4 p-4 bg-yellow-50 rounded-xl border-l-4 border-yellow-400">
+                        <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-gray-900">Nuevo mensaje</h4>
+                            <p class="text-gray-600 text-sm">Carlos Ruiz pregunta sobre disponibilidad del terreno agrícola</p>
+                            <p class="text-yellow-600 text-xs font-medium mt-1">Hace 4 horas</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Upcoming Appointments -->
-    <div class="bg-white rounded-2xl p-6 border border-gray-200">
-        <div class="flex items-center justify-between mb-6">
-            <h3 class="text-xl font-semibold text-gray-900">Próximas Citas</h3>
-            <button class="bg-[#388e3c] text-white px-4 py-2 rounded-xl font-medium hover:bg-[#2e7d32] transition-colors">
-                Programar Nueva Cita
+        <!-- Upcoming Appointments -->
+        <div class="bg-white rounded-2xl p-6 border border-gray-200">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl font-semibold text-gray-900">Próximas Citas</h3>
+                <button class="bg-[#388e3c] text-white px-4 py-2 rounded-xl font-medium hover:bg-[#2e7d32] transition-colors">
+                    Programar Nueva Cita
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="border border-gray-200 rounded-xl p-4 hover:shadow-lg transition-all">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="px-3 py-1 bg-blue-100 text-blue-700 text-sm font-medium rounded-full">Hoy</span>
+                        <span class="text-sm text-gray-500">2:00 PM</span>
+                    </div>
+                    <h4 class="font-semibold text-gray-900 mb-2">María González</h4>
+                    <p class="text-gray-600 text-sm mb-3">Visita a Finca Cafetera 15 Ha</p>
+                    <div class="flex space-x-2">
+                        <button class="flex-1 bg-[#388e3c] text-white py-2 px-3 rounded-lg text-sm font-medium hover:bg-[#2e7d32] transition-colors">
+                            Confirmar
+                        </button>
+                        <button class="flex-1 border border-gray-300 text-gray-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors">
+                            Reagendar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="border border-gray-200 rounded-xl p-4 hover:shadow-lg transition-all">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full">Mañana</span>
+                        <span class="text-sm text-gray-500">10:00 AM</span>
+                    </div>
+                    <h4 class="font-semibold text-gray-900 mb-2">Roberto Silva</h4>
+                    <p class="text-gray-600 text-sm mb-3">Inspección de Ganado Holstein</p>
+                    <div class="flex space-x-2">
+                        <button class="flex-1 bg-[#388e3c] text-white py-2 px-3 rounded-lg text-sm font-medium hover:bg-[#2e7d32] transition-colors">
+                            Confirmar
+                        </button>
+                        <button class="flex-1 border border-gray-300 text-gray-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors">
+                            Reagendar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="border border-gray-200 rounded-xl p-4 hover:shadow-lg transition-all">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="px-3 py-1 bg-purple-100 text-purple-700 text-sm font-medium rounded-full">Viernes</span>
+                        <span class="text-sm text-gray-500">4:00 PM</span>
+                    </div>
+                    <h4 class="font-semibold text-gray-900 mb-2">Ana Martínez</h4>
+                    <p class="text-gray-600 text-sm mb-3">Evaluación de Terreno Agrícola</p>
+                    <div class="flex space-x-2">
+                        <button class="flex-1 bg-[#388e3c] text-white py-2 px-3 rounded-lg text-sm font-medium hover:bg-[#2e7d32] transition-colors">
+                            Confirmar
+                        </button>
+                        <button class="flex-1 border border-gray-300 text-gray-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors">
+                            Reagendar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<div id="productModal" class="fixed inset-0 modal-backdrop hidden items-center justify-center z-50">
+    <div class="modal-content rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl">
+        <div class="text-center mb-6">
+            <div class="w-16 h-16 gradient-bg rounded-2xl flex items-center justify-center mx-auto mb-4 floating-animation">
+                <i class='bx bx-plus text-white text-2xl'></i>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-800 mb-2">Agregar Producto</h3>
+            <p class="text-gray-600">Selecciona el tipo de producto que deseas agregar</p>
+        </div>
+
+        <div class="space-y-4">
+            <div class="product-option rounded-2xl p-6 cursor-pointer" onclick="selectProductType('ganado')">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                        <i class='bx bx-heart text-blue-600 text-xl'></i>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-800">Ganado</h4>
+                        <p class="text-sm text-gray-600">Vacas, toros, terneros, etc.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-option rounded-2xl p-6 cursor-pointer" onclick="selectProductType('finca')">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
+                        <i class='bx bx-home text-yellow-600 text-xl'></i>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-800">Finca</h4>
+                        <p class="text-sm text-gray-600">Propiedades rurales equipadas</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-option rounded-2xl p-6 cursor-pointer" onclick="selectProductType('terreno')">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                        <i class='bx bx-map text-purple-600 text-xl'></i>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-800">Terreno</h4>
+                        <p class="text-sm text-gray-600">Lotes y parcelas disponibles</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-center mt-8">
+            <button onclick="closeProductModal()" class="px-6 py-2 text-gray-600 hover:text-gray-800 font-medium transition-colors">
+                Cancelar
             </button>
         </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div class="border border-gray-200 rounded-xl p-4 hover:shadow-lg transition-all">
-                <div class="flex items-center justify-between mb-3">
-                    <span class="px-3 py-1 bg-blue-100 text-blue-700 text-sm font-medium rounded-full">Hoy</span>
-                    <span class="text-sm text-gray-500">2:00 PM</span>
-                </div>
-                <h4 class="font-semibold text-gray-900 mb-2">María González</h4>
-                <p class="text-gray-600 text-sm mb-3">Visita a Finca Cafetera 15 Ha</p>
-                <div class="flex space-x-2">
-                    <button class="flex-1 bg-[#388e3c] text-white py-2 px-3 rounded-lg text-sm font-medium hover:bg-[#2e7d32] transition-colors">
-                        Confirmar
-                    </button>
-                    <button class="flex-1 border border-gray-300 text-gray-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors">
-                        Reagendar
-                    </button>
-                </div>
-            </div>
-
-            <div class="border border-gray-200 rounded-xl p-4 hover:shadow-lg transition-all">
-                <div class="flex items-center justify-between mb-3">
-                    <span class="px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full">Mañana</span>
-                    <span class="text-sm text-gray-500">10:00 AM</span>
-                </div>
-                <h4 class="font-semibold text-gray-900 mb-2">Roberto Silva</h4>
-                <p class="text-gray-600 text-sm mb-3">Inspección de Ganado Holstein</p>
-                <div class="flex space-x-2">
-                    <button class="flex-1 bg-[#388e3c] text-white py-2 px-3 rounded-lg text-sm font-medium hover:bg-[#2e7d32] transition-colors">
-                        Confirmar
-                    </button>
-                    <button class="flex-1 border border-gray-300 text-gray-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors">
-                        Reagendar
-                    </button>
-                </div>
-            </div>
-
-            <div class="border border-gray-200 rounded-xl p-4 hover:shadow-lg transition-all">
-                <div class="flex items-center justify-between mb-3">
-                    <span class="px-3 py-1 bg-purple-100 text-purple-700 text-sm font-medium rounded-full">Viernes</span>
-                    <span class="text-sm text-gray-500">4:00 PM</span>
-                </div>
-                <h4 class="font-semibold text-gray-900 mb-2">Ana Martínez</h4>
-                <p class="text-gray-600 text-sm mb-3">Evaluación de Terreno Agrícola</p>
-                <div class="flex space-x-2">
-                    <button class="flex-1 bg-[#388e3c] text-white py-2 px-3 rounded-lg text-sm font-medium hover:bg-[#2e7d32] transition-colors">
-                        Confirmar
-                    </button>
-                    <button class="flex-1 border border-gray-300 text-gray-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors">
-                        Reagendar
-                    </button>
-                </div>
-            </div>
-        </div>
     </div>
-</main>
+</div>
 
 <script>
     function toggleUserDropdown() {
@@ -300,6 +384,22 @@
             dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
             dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
             document.getElementById('dropdownArrow').style.transform = 'rotate(0deg)';
+        }
+    });
+
+    function openProductModal() {
+        document.getElementById('productModal').classList.remove('hidden');
+        document.getElementById('productModal').classList.add('flex');
+    }
+
+    function closeProductModal() {
+        document.getElementById('productModal').classList.add('hidden');
+        document.getElementById('productModal').classList.remove('flex');
+    }
+
+    document.getElementById('productModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeProductModal();
         }
     });
 </script>
