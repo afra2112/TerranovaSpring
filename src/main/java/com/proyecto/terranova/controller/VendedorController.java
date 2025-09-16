@@ -66,6 +66,7 @@ public class VendedorController {
     @GetMapping("/mi-calendario")
     public String calendario(Model model, Authentication authentication){
         model.addAttribute("calendario", true);
+        model.addAttribute("productos", productoService.findAll());
         return "vendedor/calendario";
     }
 
@@ -92,16 +93,5 @@ public class VendedorController {
             return "vendedor/productos";
         }
         return "vendedor/productos";
-    }
-
-    @PostMapping("/mi-calendario/registrar-disponibilidad")
-    public String registrarDisponibilidad(@RequestParam(name = "fecha") LocalDate fecha, @RequestParam(name = "hora") LocalTime hora, @RequestParam(name = "descripcion", required = false) String descripcion, @RequestParam(name = "idProducto") Long idProducto, Authentication authentication){
-        Disponibilidad disponibilidad = new Disponibilidad();
-        disponibilidad.setFecha(fecha);
-        disponibilidad.setHora(hora);
-        disponibilidad.setDescripcion(descripcion);
-        disponibilidad.setProducto(productoService.findById(idProducto));
-        disponibilidadService.save(disponibilidad);
-        return "redirect:/vendedor/mi-calendario";
     }
 }

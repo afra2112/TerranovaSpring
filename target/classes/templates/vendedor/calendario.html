@@ -41,6 +41,9 @@
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(16, 185, 129, 0.15);
         }
+        .gradient-bg {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -57,7 +60,7 @@
                         <h1 class="text-3xl font-bold text-gray-900">Calendario de Citas</h1>
                         <p class="text-gray-600 mt-2">Gestiona tus disponibilidades y citas programadas</p>
                     </div>
-                    <button onclick="openDisponibilidadModal()" class="bg-[#388e3c] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#2e7d32] transition-colors flex items-center space-x-2">
+                    <button onclick="openDisponibilidadModal()" class="gradient-bg text-white px-6 py-3 rounded-xl font-medium hover:bg-[#2e7d32] transition-colors flex items-center space-x-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
                         </svg>
@@ -70,7 +73,7 @@
                 <h3 class="font-semibold text-gray-800 mb-3">Leyenda</h3>
                 <div class="flex flex-wrap gap-4">
                     <div class="flex items-center space-x-2">
-                        <div class="w-4 h-4 bg-[#388e3c] rounded"></div>
+                        <div class="w-4 h-4 bg-[#2196f3] rounded"></div>
                         <span class="text-sm text-gray-600">Disponibilidades</span>
                     </div>
                     <div class="flex items-center space-x-2">
@@ -78,7 +81,7 @@
                         <span class="text-sm text-gray-600">Citas Pendientes</span>
                     </div>
                     <div class="flex items-center space-x-2">
-                        <div class="w-4 h-4 bg-[#2196f3] rounded"></div>
+                        <div class="w-4 h-4 bg-[#388e3c] rounded"></div>
                         <span class="text-sm text-gray-600">Citas Aceptadas</span>
                     </div>
                     <div class="flex items-center space-x-2">
@@ -121,6 +124,14 @@
                         </div>
 
                         <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Producto</label>
+                            <select required id="disponibilidadProducto" name="idProducto" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent">
+                                <option th:each="producto : ${productos}" th:text="${producto.nombreProducto}" th:value="${producto.idProducto}"></option>
+                                <option th:if="${productos.isEmpty()}">No tienes productos publicados aun.</option>
+                            </select>
+                        </div>
+
+                        <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Descripción (Opcional)</label>
                             <textarea id="disponibilidadDescripcion" rows="3" name="descripcion" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent" placeholder="Ej: Visita a finca, Evaluación de ganado..."></textarea>
                         </div>
@@ -130,7 +141,7 @@
                         <button type="button" onclick="closeDisponibilidadModal()" class="flex-1 border border-gray-300 text-gray-700 px-4 py-3 rounded-xl font-medium hover:bg-gray-50 transition-colors">
                             Cancelar
                         </button>
-                        <button type="submit" class="flex-1 bg-[#388e3c] text-white px-4 py-3 rounded-xl font-medium hover:bg-[#2e7d32] transition-colors">
+                        <button type="submit" class="flex-1 gradient-bg text-white px-4 py-3 rounded-xl font-medium hover:bg-[#2e7d32] transition-colors">
                             Guardar
                         </button>
                     </div>
@@ -159,38 +170,76 @@
             </div>
         </div>
 
-        <!--c:if test="${not empty param.registroDisponibilidad || not empty param.eliminacionDisponibilidad || not empty param.edicionDisponibilidad}">
-            <script>
-                document.addEventListener('DOMContentLoaded', function () {
-                const modal = document.getElementById('disponibilidadRegistrada');
-                const modalContent = document.getElementById('modalContentDisponibilidadRegistrada');
-                let titulo;
-                <c:choose>
-                    <c:when test="${param.registroDisponibilidad eq 'exitoso'}">
-                titulo = document.getElementById('tituloRegistrada');
-                    </c:when>
-                    <c:when test="${param.eliminacionDisponibilidad eq 'exitoso'}">
-                titulo = document.getElementById('tituloEliminada');
-                    </c:when>
-                    <c:when test="${param.edicionDisponibilidad eq 'exitoso'}">
-                titulo = document.getElementById('tituloEditada');
-                    </c:when>
-                </c:choose>
-
-                if (titulo) {
-                titulo.classList.remove('hidden');
-                modal.classList.remove('hidden');
-                requestAnimationFrame(() => {
-                modalContent.classList.remove('scale-75', 'opacity-0');
-                modalContent.classList.add('scale-100', 'opacity-100');
-                });
-                }
-                });
-            </script>
-        </c:if-->
 
     </main>
 </div>
+
+<!-- Modal de Detalles de Disponibilidad -->
+<div id="detalleDisponibilidadModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 opacity-0 invisible transition-all duration-300">
+    <div class="bg-white rounded-2xl p-6 max-w-md w-full mx-4 transform scale-95 transition-transform duration-300">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-xl font-bold text-gray-800" id="detalleDisponibilidadModalTitle">Detalle de Disponibilidad</h3>
+            <button onclick="closeDetalleDisponibilidadModal()" class="text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Fecha</label>
+                <p class="text-gray-800" id="detalleDisponibilidadFecha"></p>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Hora</label>
+                <p class="text-gray-800" id="detalleDisponibilidadHora"></p>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Descripción</label>
+                <p class="text-gray-800" id="detalleDisponibilidadDescripcion">No hay descripción</p>
+            </div>
+
+            <div>
+                <a href="#" id="detalleDisponibilidadProductoLink" class="gradient-bg inline-block text-white px-4 py-2 rounded-xl font-medium hover:bg-[#2e7d32] transition-colors">
+                    Ver Producto
+                </a>
+            </div>
+        </div>
+
+        <div class="flex justify-end mt-6">
+            <button type="button" onclick="closeDetalleDisponibilidadModal()" class="border border-gray-300 text-gray-700 px-4 py-3 rounded-xl font-medium hover:bg-gray-50 transition-colors">
+                Cerrar
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openDetalleDisponibilidadModal(disponibilidad) {
+        document.getElementById('detalleDisponibilidadFecha').textContent = disponibilidad.fecha;
+        document.getElementById('detalleDisponibilidadHora').textContent = disponibilidad.hora;
+        document.getElementById('detalleDisponibilidadDescripcion').textContent = disponibilidad.descripcion || 'No hay descripción';
+        document.getElementById('detalleDisponibilidadProductoLink').href = '/vendedor/productos/detalle/' + disponibilidad.idProducto;
+
+        const modal = document.getElementById('detalleDisponibilidadModal');
+        modal.classList.remove('opacity-0', 'invisible');
+        modal.classList.add('opacity-100', 'visible');
+        modal.querySelector('.transform').classList.remove('scale-95');
+        modal.querySelector('.transform').classList.add('scale-100');
+    }
+
+    function closeDetalleDisponibilidadModal() {
+        const modal = document.getElementById('detalleDisponibilidadModal');
+        modal.classList.add('opacity-0', 'invisible');
+        modal.classList.remove('opacity-100', 'visible');
+        modal.querySelector('.transform').classList.add('scale-95');
+        modal.querySelector('.transform').classList.remove('scale-100');
+    }
+</script>
+
 
 <script>
     let calendar;
@@ -214,12 +263,7 @@
                 day: 'Día'
             },
             eventClick: function(info) {
-                currentEvent = info.event;
-                if (info.event.extendedProps.type === 'disponibilidad') {
-                    editDisponibilidad(info.event);
-                } else {
-                    showCitaDetails(info.event);
-                }
+                openDetalleDisponibilidadModal(info.event.extendedProps);
             },
             dateClick: function(info) {
                 openDisponibilidadModal(info.dateStr);
@@ -232,13 +276,15 @@
                         return {
                           title: d.disponible ? "Disponible" : "No disponible",
                           start: d.fecha + "T" + d.hora,
-                          end: d.fecha + "T" + d.hora
+                          end: d.fecha + "T" + d.hora,
+                          extendedProps: { ...d }
                         }
                       });
                       successCallback(events);
                     })
                     .catch(error => failureCallback(error));
-                 }
+            }
+
         });
         calendar.render();
     });

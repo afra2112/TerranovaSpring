@@ -389,10 +389,9 @@
             <div>
                 <div class="flex items-center justify-between mb-4">
                     <h4 class="text-lg font-semibold text-gray-800">Horarios Disponibles</h4>
-                    <button class="gradient-bg text-white px-4 py-2 rounded-xl text-sm font-medium hover:shadow-lg transition-all">
-                        <i class='bx bx-plus mr-1'></i>
-                        Agregar
-                    </button>
+                    <a th:href="@{/vendedor/mi-calendario}"><button class="gradient-bg text-white px-4 py-2 rounded-xl text-sm font-medium hover:shadow-lg transition-all">
+                        Ver Todo
+                    </button></a>
                 </div>
 
                 <div class="space-y-3">
@@ -401,7 +400,7 @@
                             <div>
                                 <div class="flex items-center space-x-2 mb-1">
                                     <i class='bx bx-calendar text-green-600'></i>
-                                    <span class="font-medium text-gray-800">Lunes 15 Enero</span>
+                                    <span class="font-medium text-gray-800" th:text="${#strings.capitalize(#temporals.format(disponibilidad.fecha, 'EEEE d MMMM', T(java.util.Locale).forLanguageTag('es-ES')))}"></span>
                                 </div>
                                 <div class="flex items-center space-x-2 text-sm text-gray-600">
                                     <i class='bx bx-time'></i>
@@ -412,49 +411,7 @@
                                 <span th:if="${disponibilidad.disponible}" class="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">Disponible</span>
                                 <span th:if="${!disponibilidad.disponible}" class="px-2 py-1 bg-red-100 text-red-700 text-xs font-medium rounded-full">No Disponible</span>
                                 <button class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center hover:bg-red-200 transition-colors">
-                                    <i class='bx bx-trash text-red-600 text-sm'></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="availability-slot bg-gray-50 rounded-xl p-4 border border-gray-200 cursor-pointer">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <div class="flex items-center space-x-2 mb-1">
-                                    <i class='bx bx-calendar text-green-600'></i>
-                                    <span class="font-medium text-gray-800">Martes 16 Enero</span>
-                                </div>
-                                <div class="flex items-center space-x-2 text-sm text-gray-600">
-                                    <i class='bx bx-time'></i>
-                                    <span>2:00 PM - 4:00 PM</span>
-                                </div>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <span class="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs font-medium rounded-full">Reservado</span>
-                                <button class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center hover:bg-red-200 transition-colors">
-                                    <i class='bx bx-trash text-red-600 text-sm'></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="availability-slot bg-gray-50 rounded-xl p-4 border border-gray-200 cursor-pointer">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <div class="flex items-center space-x-2 mb-1">
-                                    <i class='bx bx-calendar text-green-600'></i>
-                                    <span class="font-medium text-gray-800">Miércoles 17 Enero</span>
-                                </div>
-                                <div class="flex items-center space-x-2 text-sm text-gray-600">
-                                    <i class='bx bx-time'></i>
-                                    <span>10:00 AM - 12:00 PM</span>
-                                </div>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <span class="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">Disponible</span>
-                                <button class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center hover:bg-red-200 transition-colors">
-                                    <i class='bx bx-trash text-red-600 text-sm'></i>
+                                    <a th:href="@{/vendedor/eliminar-disponibilidad(idDisponibilidad=${disponibilidad.idDisponibilidad}, idProducto=${producto.idProducto})}"><i class='bx bx-trash text-red-600 text-sm'></i></a>
                                 </button>
                             </div>
                         </div>
