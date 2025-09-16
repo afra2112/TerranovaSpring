@@ -6,11 +6,8 @@ import lombok.Data;
 @Entity
 @Table(name = "fincas")
 @Data
-public class Finca {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idFinca;
+@DiscriminatorValue("FINCA")
+public class Finca extends Producto {
 
     @Column(nullable = false, length = 30)
     private String espacioTotal;

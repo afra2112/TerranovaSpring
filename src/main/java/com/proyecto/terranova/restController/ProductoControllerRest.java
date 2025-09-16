@@ -1,6 +1,7 @@
 package com.proyecto.terranova.restController;
 
 import com.proyecto.terranova.dto.ProductoDTO;
+import com.proyecto.terranova.entity.Producto;
 import com.proyecto.terranova.service.ProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +24,8 @@ public class ProductoControllerRest {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductoDTO> obtenerProductoPorId(@PathVariable Long id){
-        ProductoDTO dtoProducto = serviceProducto.findById(id);
+    public ResponseEntity<Producto> obtenerProductoPorId(@PathVariable Long id){
+        Producto dtoProducto = serviceProducto.findById(id);
         return ResponseEntity.ok(dtoProducto);
     }
 

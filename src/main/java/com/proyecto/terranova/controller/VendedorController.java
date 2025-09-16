@@ -6,6 +6,7 @@ import com.proyecto.terranova.entity.Disponibilidad;
 import com.proyecto.terranova.entity.Usuario;
 import com.proyecto.terranova.service.CitaService;
 import com.proyecto.terranova.service.DisponibilidadService;
+import com.proyecto.terranova.service.ProductoService;
 import com.proyecto.terranova.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -26,6 +27,9 @@ public class VendedorController {
 
     @Autowired
     DisponibilidadService disponibilidadService;
+
+    @Autowired
+    ProductoService productoService;
 
     @Autowired
     CitaService citaService;
@@ -81,17 +85,24 @@ public class VendedorController {
     }
 
     @GetMapping("/productos")
-    public String productos(Model model, Authentication authentication){
-        model.addAttribute("posicionCitas", true);
+    public String productos(@RequestParam(required = false, name = "idProducto") Long idProducto,Model model, Authentication authentication){
+        model.addAttribute("posicionProductos", true);
+        model.addAttribute("productos", productoService.findAll());
+        if(idProducto != null){
+            model.addAttribute("producto", productoService.findById(idProducto));
+            model.addAttribute("mostrarModalDisponibilidades", true);
+            return "vendedor/productos";
+        }
         return "vendedor/productos";
     }
 
     @PostMapping("/mi-calendario/registrar-disponibilidad")
-    public String registrarDisponibilidad(@RequestParam(name = "fecha") LocalDate fecha, @RequestParam(name = "hora") LocalTime hora, @RequestParam(name = "descripcion", required = false) String descripcion, Authentication authentication){
+    public String registrarDisponibilidad(@RequestParam(name = "fecha") LocalDate fecha, @RequestParam(name = "hora") LocalTime hora, @RequestParam(name = "descripcion", required = false) String descripcion, @RequestParam(name = "idProducto") Long idProducto, Authentication authentication){
         Disponibilidad disponibilidad = new Disponibilidad();
         disponibilidad.setFecha(fecha);
         disponibilidad.setHora(hora);
         disponibilidad.setDescripcion(descripcion);
+        disponibilidad.setProducto(productoService.findById(idProducto));
         disponibilidadService.save(disponibilidad);
         return "redirect:/vendedor/mi-calendario";
     }

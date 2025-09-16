@@ -37,8 +37,4 @@ public class Cita {
     @ManyToOne
     @JoinColumn(name = "id_disponibilidad")
     private Disponibilidad disponibilidad;
-
-    @OneToOne
-    @JoinColumn(name = "idUbicacion")
-    private Ubicacion ubicacion;
 }

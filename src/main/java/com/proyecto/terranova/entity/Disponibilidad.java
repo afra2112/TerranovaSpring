@@ -30,7 +30,7 @@ public class Disponibilidad {
     private String descripcion;
 
     @ManyToOne
-    @JoinColumn(name = "cedula", nullable = false)
+    @JoinColumn(name = "id_producto", nullable = false)
     private Producto producto;
 
     @OneToMany(mappedBy = "disponibilidad")

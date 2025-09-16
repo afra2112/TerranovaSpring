@@ -6,11 +6,8 @@ import lombok.Data;
 @Entity
 @Table(name = "ganados")
 @Data
-public class Ganado {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idGanado;
+@DiscriminatorValue("GANADO")
+public class Ganado extends Producto {
 
     @Column(nullable = false, length = 30)
     private String razaGanado;

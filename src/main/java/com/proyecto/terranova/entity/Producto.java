@@ -10,7 +10,9 @@ import java.util.List;
 @Entity
 @Table(name = "productos")
 @Data
-public class Producto {
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "tipo_producto", discriminatorType = DiscriminatorType.STRING)
+public abstract class Producto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,9 +20,6 @@ public class Producto {
 
     @Column(length = 30, nullable = false)
     private String nombreProducto;
-
-    @Column(length = 30, nullable = false)
-    private String tipoProducto;
 
     @Column(length = 20, nullable = false)
     private Long precioProducto;
@@ -39,8 +38,8 @@ public class Producto {
     private Usuario vendedor;
 
     @OneToOne
-    @JoinColumn(name = "idUbicacion")
-    private Ubicacion ubicacion;
+    @JoinColumn(name = "idCiudad")
+    private Ciudad ciudad;
 
     @OneToMany(mappedBy = "producto")
     private List<Imagen> imagenes;

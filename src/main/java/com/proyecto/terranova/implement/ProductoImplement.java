@@ -48,9 +48,8 @@ public class ProductoImplement implements ProductoService {
     }
 
     @Override
-    public ProductoDTO findById(Long id) {
-        Producto entidadProducto = repository.findById(id).orElseThrow(() -> new RuntimeException("Producto no encontrado"));
-        return modelMapper.map(entidadProducto, ProductoDTO.class);
+    public Producto findById(Long id) {
+        return  repository.findById(id).orElseThrow();
     }
 
     @Override
