@@ -60,6 +60,11 @@ public class ProductoImplement implements ProductoService {
     }
 
     @Override
+    public List<Producto> obtenerTodosPorVendedor(Usuario vendedor) {
+        return repository.findByVendedor(vendedor);
+    }
+
+    @Override
     public boolean delete(Long id) {
         if(!repository.existsById(id)){
                return false;

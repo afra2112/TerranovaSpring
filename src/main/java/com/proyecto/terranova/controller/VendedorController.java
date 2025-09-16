@@ -3,6 +3,7 @@ package com.proyecto.terranova.controller;
 import com.proyecto.terranova.config.enums.EstadoCitaEnum;
 import com.proyecto.terranova.config.enums.RolEnum;
 import com.proyecto.terranova.entity.Disponibilidad;
+import com.proyecto.terranova.entity.Producto;
 import com.proyecto.terranova.entity.Usuario;
 import com.proyecto.terranova.service.CitaService;
 import com.proyecto.terranova.service.DisponibilidadService;
@@ -63,11 +64,8 @@ public class VendedorController {
     }
 
     @GetMapping("/mi-calendario")
-    public String calendario(Model model){
-        List<Disponibilidad> disponibilidades = disponibilidadService.findAll();
-
+    public String calendario(Model model, Authentication authentication){
         model.addAttribute("calendario", true);
-        model.addAttribute("disponibilidades", disponibilidades);
         return "vendedor/calendario";
     }
 

@@ -58,9 +58,8 @@ public class UsuarioImplement implements UsuarioService {
     }
 
     @Override
-    public UsuarioDTO findById(String cedula) {
-        Usuario entidadUsuario = repository.findById(cedula).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        return modelMapper.map(entidadUsuario, UsuarioDTO.class);
+    public Usuario findById(String cedula) {
+     return repository.findById(cedula).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
     }
 
     @Override

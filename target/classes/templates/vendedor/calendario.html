@@ -224,13 +224,21 @@
             dateClick: function(info) {
                 openDisponibilidadModal(info.dateStr);
             },
-            events: {
-                title: 'Día no disponible',
-                start: '2025-09-15',
-                end: '2025-09-17',
-                rendering: 'background',
-                selectable: false
-            }
+            events: function(fetchInfo, successCallback, failureCallback) {
+                   fetch('/api/Productos/vendedor/1234567890')
+                    .then(response => response.json())
+                    .then(data => {
+                      let events = data.map(d => {
+                        return {
+                          title: d.disponible ? "Disponible" : "No disponible",
+                          start: d.fecha + "T" + d.hora,
+                          end: d.fecha + "T" + d.hora
+                        }
+                      });
+                      successCallback(events);
+                    })
+                    .catch(error => failureCallback(error));
+                 }
         });
         calendar.render();
     });

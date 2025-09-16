@@ -10,7 +10,7 @@ import com.proyecto.terranova.entity.Usuario;
 public interface UsuarioService {
     boolean save(UsuarioDTO dto);
     void update(Usuario usuario);
-    UsuarioDTO findById(String id);
+    Usuario findById(String id);
     Usuario findByEmail(String email);
     List<UsuarioDTO> findAll();
     boolean delete(String id);

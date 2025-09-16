@@ -2,10 +2,13 @@ package com.proyecto.terranova.implement;
 
 import com.proyecto.terranova.entity.Producto;
 import com.proyecto.terranova.entity.Usuario;
+import com.proyecto.terranova.repository.ProductoRepository;
 import com.proyecto.terranova.repository.UsuarioRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +25,9 @@ public class DisponibilidadImplement implements DisponibilidadService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private ProductoRepository productoRepository;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -51,6 +57,17 @@ public class DisponibilidadImplement implements DisponibilidadService {
     @Override
     public List<Disponibilidad> findAll() {
         return repository.findAll();
+    }
+
+    @Override
+    public List<DisponibilidadDTO> encontrarTodasPorVendedor(Usuario vendedor) {
+        List<Producto> productos = productoRepository.findByVendedor(vendedor);
+        List<Disponibilidad> disponibilidades = new ArrayList<>();
+        for (Producto producto : productos){
+            disponibilidades.addAll(producto.getDisponibilidades());
+        }
+
+        return disponibilidades.stream().map(disponibilidad -> modelMapper.map(disponibilidad, DisponibilidadDTO.class)).toList();
     }
 
     @Override

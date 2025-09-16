@@ -17,4 +17,8 @@ public class DisponibilidadDTO {
     private boolean disponible;
 
     private String cedulaUsuario;
+
+    private String descripcion;
+
+    private Long idProducto;
 }

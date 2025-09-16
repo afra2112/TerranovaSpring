@@ -21,12 +21,6 @@ public class UsuarioControllerRest {
         return ResponseEntity.ok(entidadesUsuario);
     }
 
-    @GetMapping("/{cedula}")
-    public ResponseEntity<UsuarioDTO> obtenerUsuarioPorId(@PathVariable String cedula){
-        UsuarioDTO dtoUsuario = serviceUsuario.findById(cedula);
-        return ResponseEntity.ok(dtoUsuario);
-    }
-
     @PostMapping("/crearUsuario")
     public ResponseEntity<UsuarioDTO> crearUsuario(@RequestBody UsuarioDTO dtoUsuario){
         serviceUsuario.save(dtoUsuario);
