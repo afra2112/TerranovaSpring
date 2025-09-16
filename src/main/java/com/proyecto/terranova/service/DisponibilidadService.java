@@ -9,6 +9,7 @@ public interface DisponibilidadService {
     DisponibilidadDTO update(Long id, DisponibilidadDTO dto); // Actualizar
     DisponibilidadDTO findById(Long id);
     List<Disponibilidad> findAll();
+    List<Disponibilidad> encontrarTodasPorVendedor();
     boolean delete(Long id);
     boolean existsById(Long id); // ValidaciÃ³n
     long count(); // Contar registros
