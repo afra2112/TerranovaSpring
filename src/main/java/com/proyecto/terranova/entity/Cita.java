@@ -17,14 +17,8 @@ public class Cita {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idCita;
 
-    @Column(nullable = false)
-    private LocalDate fechaCita;
-
-    @Column(nullable = false, length = 30)
+    @Enumerated(EnumType.STRING)
     private EstadoCitaEnum estadoCita;
-
-    @Column(nullable = false)
-    private LocalTime horaCita;
 
     @ManyToOne
     @JoinColumn(name = "idProducto")

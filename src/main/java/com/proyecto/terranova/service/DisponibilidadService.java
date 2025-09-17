@@ -8,8 +8,9 @@ import com.proyecto.terranova.entity.Usuario;
 public interface DisponibilidadService {
     Disponibilidad save(Disponibilidad disponibilidad);
     DisponibilidadDTO update(Long id, DisponibilidadDTO dto); // Actualizar
-    DisponibilidadDTO findById(Long id);
+    Disponibilidad findById(Long id);
     List<Disponibilidad> findAll();
+    List<Disponibilidad> encontrarPorProducto(Long idProducto, boolean disponible);
     List<DisponibilidadDTO> encontrarTodasPorVendedor(Usuario vendedor);
     boolean delete(Long id);
     boolean existsById(Long id); // ValidaciÃ³n

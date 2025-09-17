@@ -12,5 +12,7 @@ import java.util.List;
 public interface CitaRepository extends JpaRepository<Cita, Long> {
     List<Cita> findByComprador(Usuario usuario);
 
-    List<Cita> findByEstadoCita(EstadoCitaEnum estadoCitaEnum);
+    List<Cita> findByDisponibilidad_Producto_VendedorAndEstadoCita(Usuario vendedor, EstadoCitaEnum estadoCitaEnum);
+
+    List<Cita> findByDisponibilidad_Producto_Vendedor(Usuario vendedor);
 }

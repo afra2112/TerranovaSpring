@@ -49,14 +49,18 @@ public class DisponibilidadImplement implements DisponibilidadService {
     }
 
     @Override
-    public DisponibilidadDTO findById(Long id) {
-        Disponibilidad entidadDisponibilidad = repository.findById(id).orElseThrow(() -> new RuntimeException("Disponibilidad no encontrado"));
-        return modelMapper.map(entidadDisponibilidad, DisponibilidadDTO.class);
+    public Disponibilidad findById(Long id) {
+        return repository.findById(id).orElseThrow(() -> new RuntimeException("Disponibilidad no encontrado"));
     }
 
     @Override
     public List<Disponibilidad> findAll() {
         return repository.findAll();
+    }
+
+    @Override
+    public List<Disponibilidad> encontrarPorProducto(Long idProducto, boolean dispobile) {
+        return repository.findByProductoAndDisponible(productoRepository.findById(idProducto).orElseThrow(), true);
     }
 
     @Override

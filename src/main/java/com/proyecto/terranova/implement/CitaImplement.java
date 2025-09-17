@@ -1,6 +1,7 @@
 package com.proyecto.terranova.implement;
 
 import com.proyecto.terranova.config.enums.EstadoCitaEnum;
+import com.proyecto.terranova.entity.Usuario;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +23,8 @@ public class CitaImplement implements CitaService {
     private ModelMapper modelMapper;
 
     @Override
-    public CitaDTO save(CitaDTO dto) {
-        Cita entidadCita = modelMapper.map(dto, Cita.class);
-        Cita entidadGuardada = repository.save(entidadCita);
-        return modelMapper.map(entidadGuardada, CitaDTO.class);
+    public Cita save(Cita cita) {
+        return repository.save(cita);
     }
 
     @Override
@@ -40,21 +39,24 @@ public class CitaImplement implements CitaService {
     }
 
     @Override
-    public CitaDTO findById(Long id) {
-        Cita entidadCita = repository.findById(id).orElseThrow(() -> new RuntimeException("Cita no encontrado"));
-        return modelMapper.map(entidadCita, CitaDTO.class);
+    public Cita findById(Long id) {
+        return repository.findById(id).orElseThrow(() -> new RuntimeException("Cita no encontrado"));
     }
 
     @Override
-    public List<CitaDTO> findAll() {
-        return repository.findAll().stream()
-            .map(entity -> modelMapper.map(entity, CitaDTO.class))
-            .collect(Collectors.toList());
+    public List<Cita> findAll() {
+        return repository.findAll();
     }
 
     @Override
-    public List<Cita> encontrarPorEstado(EstadoCitaEnum estado) {
-        return repository.findByEstadoCita(estado);
+    public List<Cita> encontrarPorVendedor(Usuario vendedor) {
+        return repository.findByDisponibilidad_Producto_Vendedor(vendedor);
+    }
+
+    @Override
+    public List<Cita> encontrarPorEstado(Usuario vendedor, EstadoCitaEnum estado) {
+
+        return repository.findByDisponibilidad_Producto_VendedorAndEstadoCita(vendedor,estado);
     }
 
     @Override

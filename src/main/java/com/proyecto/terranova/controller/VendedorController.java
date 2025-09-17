@@ -2,6 +2,7 @@ package com.proyecto.terranova.controller;
 
 import com.proyecto.terranova.config.enums.EstadoCitaEnum;
 import com.proyecto.terranova.config.enums.RolEnum;
+import com.proyecto.terranova.entity.Cita;
 import com.proyecto.terranova.entity.Disponibilidad;
 import com.proyecto.terranova.entity.Producto;
 import com.proyecto.terranova.entity.Usuario;
@@ -17,7 +18,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/vendedor")
@@ -72,13 +75,13 @@ public class VendedorController {
 
     @GetMapping("/citas")
     public String citas(Model model, Authentication authentication){
+        Usuario vendedor = usuarioService.findByEmail(authentication.getName());
         model.addAttribute("posicionCitas", true);
-        model.addAttribute("foto", usuarioService.findByEmail(authentication.getName()).getFoto());
-        model.addAttribute("numReservadas", citaService.encontrarPorEstado(EstadoCitaEnum.RESERVADA).size());
-        model.addAttribute("numFinalizadas", citaService.encontrarPorEstado(EstadoCitaEnum.FINALIZADA).size());
-        model.addAttribute("numCanceladas", citaService.encontrarPorEstado(EstadoCitaEnum.CANCELADA).size());
+        model.addAttribute("numReservadas", citaService.encontrarPorEstado(vendedor,EstadoCitaEnum.RESERVADA).size());
+        model.addAttribute("numFinalizadas", citaService.encontrarPorEstado(vendedor,EstadoCitaEnum.FINALIZADA).size());
+        model.addAttribute("numCanceladas", citaService.encontrarPorEstado(vendedor,EstadoCitaEnum.CANCELADA).size());
 
-        model.addAttribute("citas", citaService.findAll());
+        model.addAttribute("citas", citaService.encontrarPorVendedor(vendedor));
 
         return "vendedor/citas";
     }

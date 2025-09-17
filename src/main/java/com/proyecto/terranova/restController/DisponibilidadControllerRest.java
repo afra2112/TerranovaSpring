@@ -24,8 +24,8 @@ public class DisponibilidadControllerRest {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DisponibilidadDTO> obtenerDisponibilidadPorId(@PathVariable Long id){
-        DisponibilidadDTO dtoDisponibilidad = serviceDisponibilidad.findById(id);
+    public ResponseEntity<Disponibilidad> obtenerDisponibilidadPorId(@PathVariable Long id){
+        Disponibilidad dtoDisponibilidad = serviceDisponibilidad.findById(id);
         return ResponseEntity.ok(dtoDisponibilidad);
     }
 
