@@ -24,4 +24,10 @@ public class ProductoDTO {
     private String cedulaVendedor;
 
     private Long idUbicacion;
+
+    private TerrenoDTO terrenoDTO;
+
+    private FincaDTO  fincaDTO;
+
+    private GanadoDTO ganadoDTO;
 }

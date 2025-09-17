@@ -21,6 +21,7 @@ public abstract class Producto {
     @Column(length = 30, nullable = false)
     private String nombreProducto;
 
+
     @Column(length = 20, nullable = false)
     private Long precioProducto;
 
@@ -41,8 +42,8 @@ public abstract class Producto {
     @JoinColumn(name = "idCiudad")
     private Ciudad ciudad;
 
-    @OneToMany(mappedBy = "producto")
-    private List<Imagen> imagenes;
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Imagen> imagenes = new ArrayList<>();
 
     @OneToMany(mappedBy = "producto",  cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Disponibilidad> disponibilidades = new ArrayList<>();

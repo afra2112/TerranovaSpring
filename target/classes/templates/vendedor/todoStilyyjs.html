@@ -1,0 +1,225 @@
+<!-- fragments/product-modals.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- Modal 1: Selección de tipo -->
+<div th:fragment="productModal">
+    <div id="productModal"
+         class="fixed inset-0 modal-backdrop hidden items-center justify-center z-50">
+        <div class="modal-content rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 gradient-bg rounded-2xl flex items-center justify-center mx-auto mb-4 floating-animation">
+                    <i class='bx bx-plus text-white text-2xl'></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">Agregar Producto</h3>
+                <p class="text-gray-600">Selecciona el tipo de producto que deseas agregar</p>
+            </div>
+
+            <div class="space-y-4">
+                <div class="product-option rounded-2xl p-6 cursor-pointer"
+                     onclick="selectProductType('ganado')">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                            <i class='bx bx-heart text-blue-600 text-xl'></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-800">Ganado</h4>
+                            <p class="text-sm text-gray-600">Vacas, toros, terneros, etc.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="product-option rounded-2xl p-6 cursor-pointer"
+                     onclick="selectProductType('finca')">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
+                            <i class='bx bx-home text-yellow-600 text-xl'></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-800">Finca</h4>
+                            <p class="text-sm text-gray-600">Propiedades rurales equipadas</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="product-option rounded-2xl p-6 cursor-pointer"
+                     onclick="selectProductType('terreno')">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                            <i class='bx bx-map text-purple-600 text-xl'></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-800">Terreno</h4>
+                            <p class="text-sm text-gray-600">Lotes y parcelas disponibles</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-center mt-8">
+                <button onclick="closeProductModal()"
+                        class="px-6 py-2 text-gray-600 hover:text-gray-800 font-medium transition-colors">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal 2: Formulario de producto dinámico -->
+<div th:fragment="formModal(productoRegistroDTO)">
+    <div id="formModal"
+         class="fixed inset-0 modal-backdrop hidden items-center justify-center z-50">
+        <div id="modalFormulario"
+             class="modal-form-content bg-white rounded-3xl max-w-4xl w-full mx-4 shadow-2xl border border-gray-100">
+            <div class="bg-gradient-to-r from-green-50 to-emerald-50 px-8 py-6 rounded-t-3xl border-b border-gray-100">
+                <h2 class="text-3xl font-bold text-gray-800 flex items-center gap-3">
+                    <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M12 4v16m8-8H4"></path>
+                        </svg>
+                    </div>
+                    Agregar Producto
+                </h2>
+                <p class="text-gray-600 mt-2">Complete la información del producto</p>
+            </div>
+
+            <div class="p-8 max-h-[70vh] overflow-y-auto">
+                <form id="formularioProducto"
+                      th:action="@{/vendedor/productos/guardar}"
+                      th:object="${productos}"
+                      method="post"
+                      enctype="multipart/form-data"
+                      class="space-y-6">
+
+                    <!-- Campo oculto para el tipo seleccionado -->
+                    <input type="hidden" th:field="*{tipo_producto}" id="tipoSeleccionado" />
+
+                    <!-- Información básica -->
+                    <div class="bg-gray-50 rounded-2xl p-6 space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700">Nombre</label>
+                            <input type="text" th:field="*{nombreProducto}" required
+                                   class="w-full px-4 py-3 border rounded-xl" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700">Precio</label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-1/2 transform -translate-y-1/2">$</span>
+                                <input type="number" th:field="*{precio}" step="0.01" required
+                                       class="w-full pl-8 py-3 border rounded-xl" />
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700">Descripción</label>
+                            <textarea th:field="*{descripcion}" rows="3" required
+                                      class="w-full px-4 py-3 border rounded-xl resize-none"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Campos específicos -->
+                    <div id="camposGanado" class="hidden bg-gray-50 rounded-2xl p-6 space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700">Raza</label>
+                            <input type="text" th:field="*{ganadoDTO.raza}" required
+                                   class="w-full px-4 py-3 border rounded-xl" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700">Edad</label>
+                            <input type="number" th:field="*{ganadoDTO.edad}" required
+                                   class="w-full px-4 py-3 border rounded-xl" />
+                        </div>
+                    </div>
+
+                    <div id="camposFinca" class="hidden bg-gray-50 rounded-2xl p-6 space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700">Hectáreas</label>
+                            <input type="number" th:field="*{fincaDTO.hectareas}" required
+                                   class="w-full px-4 py-3 border rounded-xl" />
+                        </div>
+                        <div>
+                            <label class="flex items-center gap-2">
+                                <input type="checkbox" th:field="*{fincaDTO.tieneCasa}" />
+                                ¿Tiene casa?
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="camposTerreno" class="hidden bg-gray-50 rounded-2xl p-6 space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700">Área (m²)</label>
+                            <input type="number" th:field="*{terrenoDTO.area}" step="0.01" required
+                                   class="w-full px-4 py-3 border rounded-xl" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700">Ubicación</label>
+                            <input type="text" th:field="*{terrenoDTO.ubicacion}" required
+                                   class="w-full px-4 py-3 border rounded-xl" />
+                        </div>
+                    </div>
+
+                    <!-- Imágenes -->
+                    <div class="bg-gray-50 rounded-2xl p-6">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Imágenes</label>
+                        <input type="file" th:field="*{imagenes}" multiple class="w-full" />
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="flex justify-end gap-4">
+                        <button type="button" onclick="closeFormModal()"
+                                class="px-6 py-2 border rounded-xl">Cancelar</button>
+                        <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded-xl">
+                            Guardar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</html>
+
+
+<script>
+    function toggleUserDropdown() {
+        const dropdown = document.getElementById('userDropdown');
+        const arrow = document.getElementById('dropdownArrow');
+
+        if (dropdown.classList.contains('opacity-0')) {
+            dropdown.classList.remove('opacity-0', 'invisible', 'scale-95');
+            dropdown.classList.add('opacity-100', 'visible', 'scale-100');
+            arrow.style.transform = 'rotate(180deg)';
+        } else {
+            dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
+            dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
+            arrow.style.transform = 'rotate(0deg)';
+        }
+    }
+
+    document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('userDropdown');
+        const userButton = event.target.closest('[onclick="toggleUserDropdown()"]');
+
+        if (!userButton && !dropdown.contains(event.target)) {
+            dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
+            dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
+            document.getElementById('dropdownArrow').style.transform = 'rotate(0deg)';
+        }
+    });
+
+    function openProductModal() {
+        document.getElementById('productModal').classList.remove('hidden');
+        document.getElementById('productModal').classList.add('flex');
+    }
+
+    function closeProductModal() {
+        document.getElementById('productModal').classList.add('hidden');
+        document.getElementById('productModal').classList.remove('flex');
+    }
+
+    document.getElementById('productModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeProductModal();
+        }
+    });
+</script>

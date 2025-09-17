@@ -1,6 +1,6 @@
 package com.proyecto.terranova.implement;
 
-import com.proyecto.terranova.entity.Usuario;
+import com.proyecto.terranova.entity.*;
 import com.proyecto.terranova.repository.UsuarioRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 import com.proyecto.terranova.service.ProductoService;
 import com.proyecto.terranova.repository.ProductoRepository;
 import com.proyecto.terranova.dto.ProductoDTO;
-import com.proyecto.terranova.entity.Producto;
 
 @Service
 public class ProductoImplement implements ProductoService {
@@ -34,6 +33,31 @@ public class ProductoImplement implements ProductoService {
         entidadProducto.setVendedor(usuario);
         Producto entidadGuardada = repository.save(entidadProducto);
         return modelMapper.map(entidadGuardada, ProductoDTO.class);
+    }
+
+
+    @Override
+    public Producto crearProductoBase(ProductoDTO productoDTO){
+        Producto producto = null;
+        
+        switch (producto.getClass().getSimpleName()){
+            case "terreno":
+                producto = modelMapper.map(productoDTO, Terreno.class);
+                modelMapper.map(productoDTO.getTerrenoDTO(),producto);
+                break;
+            case "ganado":
+                producto = modelMapper.map(productoDTO, Ganado.class);
+                modelMapper.map(productoDTO.getGanadoDTO(),producto);
+                break;
+            case "finca":
+                producto = modelMapper.map(productoDTO, Finca.class);
+                modelMapper.map(productoDTO.getFincaDTO(),producto);
+                break;
+            default:
+                throw new IllegalArgumentException("Tipo no válido");
+        }
+        return repository.save(producto);
+
     }
 
     @Override

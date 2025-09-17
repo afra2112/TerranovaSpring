@@ -6,6 +6,7 @@ import com.proyecto.terranova.entity.Producto;
 import com.proyecto.terranova.entity.Usuario;
 
 public interface ProductoService {
+    Producto crearProductoBase(ProductoDTO productoDTO);
     ProductoDTO save(ProductoDTO dto);
     ProductoDTO update(Long id, ProductoDTO dto); // Actualizar
     Producto findById(Long id);

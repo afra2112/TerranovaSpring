@@ -1,24 +1,60 @@
 package com.proyecto.terranova.implement;
 
+import com.proyecto.terranova.entity.Producto;
+import com.proyecto.terranova.repository.ProductoRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.proyecto.terranova.service.ImagenService;
 import com.proyecto.terranova.repository.ImagenRepository;
 import com.proyecto.terranova.dto.ImagenDTO;
 import com.proyecto.terranova.entity.Imagen;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class ImagenImplement implements ImagenService {
 
     @Autowired
     private ImagenRepository repository;
-
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private ProductoRepository productoRepository;
+    @Autowired
+    private ImagenRepository imagenRepository;
+
+    public void  guardarImagen(Long IdProducto , List<MultipartFile> archivo){
+        Producto producto = productoRepository.findById(IdProducto).orElseThrow();
+
+        List<Imagen> imagenes = archivo.stream().map(file -> {
+            String url = guardarImagen(file);
+            Imagen img = new Imagen();
+            img.setNombreArchivo(url);
+            img.setProducto(producto);
+            return img;
+        }).collect(Collectors.toList());
+        imagenRepository.saveAll(imagenes);
+
+    }
+    private String guardarImagen(MultipartFile file){
+        String nombre = UUID.randomUUID() + "_" + file.getOriginalFilename();
+        Path ruta =  Paths.get("C:\\Users\\moren\\Desktop\\"+ nombre); // nombre de la tuta
+        try{
+            Files.copy(file.getInputStream(), ruta);
+        }catch (IOException q){
+            throw new RuntimeException("Error al guardar el archivo",q);
+        }
+        return "/uploads"+nombre;
+    }
 
     @Override
     public ImagenDTO save(ImagenDTO dto) {
