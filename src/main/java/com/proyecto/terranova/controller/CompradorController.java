@@ -1,8 +1,13 @@
 package com.proyecto.terranova.controller;
 
+import com.proyecto.terranova.config.enums.EstadoCitaEnum;
 import com.proyecto.terranova.config.enums.RolEnum;
+import com.proyecto.terranova.entity.Cita;
+import com.proyecto.terranova.entity.Disponibilidad;
 import com.proyecto.terranova.entity.Usuario;
+import com.proyecto.terranova.service.CitaService;
 import com.proyecto.terranova.service.CompradorService;
+import com.proyecto.terranova.service.DisponibilidadService;
 import com.proyecto.terranova.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,6 +33,12 @@ public class CompradorController {
 
     @Autowired
     UsuarioService usuarioService;
+
+    @Autowired
+    CitaService citaService;
+
+    @Autowired
+    DisponibilidadService disponibilidadService;
 
     @ModelAttribute("usuario")
     public Usuario usuario(Authentication authentication){
@@ -58,6 +69,30 @@ public class CompradorController {
         Map<String, Integer> estadisticas = compradorService.prepararIndex(usuario(authentication).getCedula());
         model.addAllAttributes(estadisticas);
         return "comprador/principalComprador";
+    }
+
+    @GetMapping("/citas")
+    public String citas(Model model, Authentication authentication){
+        model.addAttribute("posicionCitas", true);
+        model.addAttribute("citas", citaService.encontrarPorComprador(usuarioService.findByEmail(authentication.getName())));
+        return "comprador/citas";
+    }
+
+    @PostMapping("/citas/cancelar-cita")
+    public String cancelarCita(@RequestParam(name = "idCita") Long idCita){
+        Cita cita = citaService.findById(idCita);
+        cita.setEstadoCita(EstadoCitaEnum.CANCELADA);
+        citaService.save(cita);
+        return "redirect:/comprador/citas";
+    }
+
+    @PostMapping("/citas/reprogramar-cita")
+    public String reprogramarCita(@RequestParam(name = "idCita") Long idCita, @RequestParam(name = "idDisponibilidad") Long idDisponibilidad){
+        Cita cita = citaService.findById(idCita);
+        Disponibilidad disponibilidad = disponibilidadService.findById(idDisponibilidad);
+        cita.setDisponibilidad(disponibilidad);
+        citaService.save(cita);
+        return "redirect:/comprador/citas";
     }
 
     @PostMapping("/mi-perfil/ser-vendedor")
