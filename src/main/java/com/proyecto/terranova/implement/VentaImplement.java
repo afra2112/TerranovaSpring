@@ -1,5 +1,6 @@
 package com.proyecto.terranova.implement;
 
+import com.proyecto.terranova.entity.Usuario;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,11 @@ public class VentaImplement implements VentaService {
         return repository.findAll().stream()
             .map(entity -> modelMapper.map(entity, VentaDTO.class))
             .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Venta> encontrarPorVendedor(Usuario vendedor) {
+        return repository.findByVendedor(vendedor);
     }
 
     @Override

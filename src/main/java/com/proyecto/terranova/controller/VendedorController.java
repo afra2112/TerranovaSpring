@@ -6,10 +6,7 @@ import com.proyecto.terranova.entity.Cita;
 import com.proyecto.terranova.entity.Disponibilidad;
 import com.proyecto.terranova.entity.Producto;
 import com.proyecto.terranova.entity.Usuario;
-import com.proyecto.terranova.service.CitaService;
-import com.proyecto.terranova.service.DisponibilidadService;
-import com.proyecto.terranova.service.ProductoService;
-import com.proyecto.terranova.service.UsuarioService;
+import com.proyecto.terranova.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -30,7 +27,7 @@ public class VendedorController {
     UsuarioService usuarioService;
 
     @Autowired
-    DisponibilidadService disponibilidadService;
+    VentaService ventaService;
 
     @Autowired
     ProductoService productoService;
@@ -84,6 +81,14 @@ public class VendedorController {
         model.addAttribute("citas", citaService.encontrarPorVendedor(vendedor));
 
         return "vendedor/citas";
+    }
+
+
+    @GetMapping("/ventas")
+    public String ventas(Model model, Authentication authentication){
+        model.addAttribute("posicionVentas", true);
+        model.addAttribute("ventas", ventaService.encontrarPorVendedor(usuarioService.findByEmail(authentication.getName())));
+        return "vendedor/ventas";
     }
 
     @GetMapping("/productos")

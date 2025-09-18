@@ -207,7 +207,7 @@
                                 </div>
                                 <div class="flex items-center gap-2 mt-1">
                                     <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-green-100 text-green-700" th:text="${cita.estadoCita}"></span>
-                                    <p class="text-xs text-gray-500 mt-1" th:text="'📅' + ${cita.disponibilidad.fecha} + ' - ' + ${cita.disponibilidad.hora}"></p>
+                                    <p class="text-xs text-gray-500 mt-1" th:text="'📅' + ${#strings.capitalize(#temporals.format(cita.disponibilidad.fecha, 'EEEE d MMMM', T(java.util.Locale).forLanguageTag('es-ES')))} + ' - ' + ${cita.disponibilidad.hora}"></p>
                                 </div>
                             </div>
                         </div>
@@ -253,7 +253,7 @@
                                 </div>
                                 <div class="flex items-center gap-2 mt-1">
                                     <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-gray-100 text-gray-700" th:text="${cita.estadoCita}"></span>
-                                    <p class="text-xs text-gray-500 mt-1" th:text="'📅' + ${cita.disponibilidad.fecha} + ' - ' + ${cita.disponibilidad.hora}"></p>
+                                    <p class="text-xs text-gray-500 mt-1" th:text="'📅' + ${#strings.capitalize(#temporals.format(cita.disponibilidad.fecha, 'EEEE d MMMM', T(java.util.Locale).forLanguageTag('es-ES')))} + ' - ' + ${cita.disponibilidad.hora}"></p>
                                 </div>
                             </div>
                         </div>

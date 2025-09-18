@@ -15,8 +15,11 @@ public class Venta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idVenta;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private LocalDateTime fechaVenta;
+
+    @Column(nullable = false)
+    private LocalDateTime fechaInicioVenta;
 
     @Column(nullable = false)
     private String estado; //ENUM ('En Proceso', 'Finalizada', 'Cancelada', 'Pendiente Confirmacion')
