@@ -4,6 +4,8 @@
     <title>Panel de Ventas | Terranova</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
@@ -219,7 +221,7 @@
                                                 </div>
                                                 <div class="flex justify-between py-1 border-b border-gray-100">
                                                     <span class="text-gray-600 text-sm">Fecha De Publicacion:</span>
-                                                    <span class="font-medium text-gray-800 text-sm" th:text="${venta.producto.fechaPublicacion}"></span>
+                                                    <span class="font-medium text-gray-800 text-sm" th:text="${#strings.capitalize(#temporals.format(venta.producto.fechaPublicacion, 'EEEE d MMMM', T(java.util.Locale).forLanguageTag('es-ES')))}"></span>
                                                 </div>
                                                 <div class="flex justify-between py-1">
                                                     <span class="text-gray-600 text-sm">Detalle del producto: </span>
@@ -262,7 +264,7 @@
                                                 </div>
                                                 Venta
                                             </h4>
-                                            <div id="modo-vision-ventas-${v.idVenta}">
+                                            <div th:id="'modo-vision-ventas-' + ${venta.idVenta}">
                                                 <div class="space-y-2">
                                                     <div class="flex justify-between py-1 border-b border-gray-100">
                                                         <span class="text-gray-600 text-sm">Precio:</span>
@@ -288,7 +290,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div id="modo-edicion-ventas-${v.idVenta}" class="hidden">
+                                            <div th:id="'modo-edicion-ventas-' + ${venta.idVenta}" class="hidden">
                                                 <!-- Venta EDICION-->
                                                 <form id="formulario-venta-${v.idVenta}">
                                                     <input type="hidden" name="idVenta" value="${v.idVenta}"/>
@@ -297,7 +299,7 @@
                                                         <!-- Precio (Solo lectura) -->
                                                         <div class="p-3 bg-white rounded-lg shadow-sm border border-gray-100">
                                                             <label class="block text-sm font-medium text-gray-600 mb-1">Precio del producto</label>
-                                                            <div class="font-bold text-green-700 text-lg" th:text="${venta.producto.precioProducto}"></div>
+                                                            <div class="font-bold text-green-700 text-lg" th:text="'$' + ${#numbers.formatInteger(venta.producto.precioProducto, 0, 'COMMA')}"></div>
                                                         </div>
 
                                                         <!-- Estado (Solo lectura) -->
@@ -330,7 +332,7 @@
                                                                 <option th:each="metodo : ${T(java.util.List).of('Efectivo','Transferencia','Cheque','Credito','Consignacion')}"
                                                                         th:value="${metodo}"
                                                                         th:text="${metodo == 'Credito' ? 'Crédito' : (metodo == 'Consignacion' ? 'Consignación' : metodo)}"
-                                                                        th:selected="${v.metodoPago != null} ? ${v.metodoPago.equals(metodo)} : false">
+                                                                        th:selected="${venta.metodoPago != null} ? ${venta.metodoPago.equals(metodo)} : false">
                                                                 </option>
                                                             </select>
 
@@ -348,7 +350,7 @@
                                         </div>
                                     </div>
                                     <!-- COLUMNA DERECHA: Detalles Adicionales -->
-                                    <div id="modo-vision-resto-${v.idVenta}">
+                                    <div th:id="'modo-vision-resto-' + ${venta.idVenta}">
                                         <div class="space-y-4">
 
                                             <!-- Gastos Adicionales -->
@@ -360,34 +362,32 @@
                                                     Gastos
                                                 </h4>
                                                 <div class="space-y-2">
-                                                    <!--c:choose>
-                                                        <c:when test="${not empty v.listaGastos || v.estado eq 'Finalizada'}">
-                                                            <c:forEach var="g" items="${v.listaGastos}">
-                                                                <div class="flex justify-between items-center py-1 border-b border-gray-100">
-                                                                    <span id="nombre-span" class="text-gray-700 text-sm">${g.nombreGasto}</span>
-                                                                    <span id="valor-span" class="font-semibold text-gray-900 text-sm">$<fmt:formatNumber value="${g.valorGasto}" type="number" groupingUsed="true"/></span>
-                                                                </div>
-                                                            </c:forEach>
+                                                    <div th:if="${not #lists.isEmpty(venta.listaGastos) or venta.estado == 'Finalizada'}">
+                                                        <div th:each="gasto : ${venta.listaGastos}">
+                                                            <div class="flex justify-between items-center py-1 border-b border-gray-100">
+                                                                <span id="nombre-span" class="text-gray-700 text-sm" th:text="${gasto.nombreGasto}"></span>
+                                                                <span id="valor-span" class="font-semibold text-gray-900 text-sm" th:text="'$' + ${#numbers.formatDecimal(gasto.valorGasto, 0, 'POINT', 0, 'COMMA')}"></span>
+                                                            </div>
                                                             <div class="flex justify-between items-center py-2 bg-gradient-to-r from-red-50 to-red-100 rounded px-3 border border-red-200">
                                                                 <span class="font-semibold text-gray-800 text-sm">Total:</span>
-                                                                <span class="font-bold text-red-600">$<fmt:formatNumber value="${v.totalGastos}" type="number" groupingUsed="true"/></span>
+                                                                <span class="font-bold text-red-600" th:text="'$' + ${#numbers.formatDecimal(venta.totalGastos, 0, 'COMMA')}"></span>
                                                             </div>
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
-                                                                <div class="flex">
-                                                                    <div class="flex-shrink-0">
-                                                                        <i class="fas fa-info-circle text-blue-400 text-lg"></i>
-                                                                    </div>
-                                                                    <div class="ml-3">
-                                                                        <p class="text-sm text-blue-700 leading-relaxed">
-                                                                            Aun no has registrado gastos para esta venta. Recuerda que estos gastos son solo visibles para ti y no afectan el valor del producto o la venta.
-                                                                        </p>
-                                                                    </div>
+                                                        </div>
+                                                    </div>
+                                                    <div th:unless="${not #lists.isEmpty(venta.listaGastos) or venta.estado == 'Finalizada'}">
+                                                        <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
+                                                            <div class="flex">
+                                                                <div class="flex-shrink-0">
+                                                                    <i class="fas fa-info-circle text-blue-400 text-lg"></i>
+                                                                </div>
+                                                                <div class="ml-3">
+                                                                    <p class="text-sm text-blue-700 leading-relaxed">
+                                                                        Aun no has registrado gastos para esta venta. Recuerda que estos gastos son solo visibles para ti y no afectan el valor del producto o la venta.
+                                                                    </p>
                                                                 </div>
                                                             </div>
-                                                        </c:otherwise>
-                                                    </c:choose-->
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
 
@@ -397,38 +397,35 @@
                                                     <div class="w-6 h-6 bg-gradient-to-r from-purple-500 to-purple-600 rounded-md flex items-center justify-center mr-2">
                                                         <i class="fas fa-paperclip text-white text-xs"></i>
                                                     </div>
-                                                    Archivos (<!--c:out value="${v.listaComprobantes.size()}"/-->)
+                                                    <div th:text="'Archivos(' + ${venta.listaComprobantes.size()} + ')'"></div>
                                                 </h4>
                                                 <div class="space-y-2">
-                                                    <!--c:choose>
-                                                        <c:when test="${not empty v.listaComprobantes}">
-                                                            <c:forEach var="c" items="${v.listaComprobantes}">
-                                                                <div class="flex items-center space-x-3 p-2 bg-gradient-to-r from-gray-50 to-gray-100 rounded border border-gray-200">
-                                                                    <div class="file-icon bg-red-100 text-red-600">
-                                                                        <i class="fas fa-file-pdf"></i>
-                                                                    </div>
-                                                                    <div class="flex-1">
-                                                                        <p class="font-medium text-gray-800 text-sm">${c.nombreComprobante}</p>
-                                                                    </div>
+                                                    <div th:if="${not #lists.isEmpty(venta.listaComprobantes)}">
+                                                        <div th:each="comprobante : ${venta.listaComprobantes}">
+                                                            <div class="flex items-center space-x-3 p-2 bg-gradient-to-r from-gray-50 to-gray-100 rounded border border-gray-200">
+                                                                <div class="file-icon bg-red-100 text-red-600">
+                                                                    <i class="fas fa-file-pdf"></i>
                                                                 </div>
-                                                            </c:forEach>
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
-                                                                <div class="flex">
-                                                                    <div class="flex-shrink-0">
-                                                                        <i class="fas fa-info-circle text-blue-400 text-lg"></i>
-                                                                    </div>
-                                                                    <div class="ml-3">
-                                                                        <p class="text-sm text-blue-700 leading-relaxed">
-                                                                            Aun no has subido comprobantes para esta venta. Recuerda que debes subir al menos un archivo que compruebe la venta para poder finalizarla.
-                                                                        </p>
-                                                                    </div>
+                                                                <div class="flex-1">
+                                                                    <p class="font-medium text-gray-800 text-sm" th:text="${comprobante.nombreComprobante}"></p>
                                                                 </div>
                                                             </div>
-                                                        </c:otherwise>
-                                                    </c:choose-->
-
+                                                        </div>
+                                                    </div>
+                                                    <div th:unless="${not #lists.isEmpty(venta.listaComprobantes)}">
+                                                        <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
+                                                            <div class="flex">
+                                                                <div class="flex-shrink-0">
+                                                                    <i class="fas fa-info-circle text-blue-400 text-lg"></i>
+                                                                </div>
+                                                                <div class="ml-3">
+                                                                    <p class="text-sm text-blue-700 leading-relaxed">
+                                                                            Aun no has subido comprobantes para esta venta. Recuerda que debes subir al menos un archivo que compruebe la venta para poder finalizarla.
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
 
@@ -440,17 +437,14 @@
                                                     </div>
                                                     Notas
                                                 </h4>
-                                                <!--c:choose>
-
-                                                    <c:when test="${v.nota != null && v.nota != '' || v.estado eq 'Finalizada'}">
-                                                        <p class="text-gray-700 text-sm leading-relaxed bg-gradient-to-r from-gray-50 to-gray-100 p-3 rounded">${v.nota}</p>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <p class="text-gray-700 text-sm leading-relaxed bg-gradient-to-r from-gray-50 to-gray-100 p-3 rounded">
-                                                            Puedes hacer click en <strong>"Editar"</strong> para escribir detalles de la venta que solo son visibles para ti.
-                                                        </p>
-                                                    </c:otherwise>
-                                                </c:choose-->
+                                                <div th:if="${(venta.nota != null and !#strings.isEmpty(venta.nota)) or (venta.estado == 'Finalizada')}">
+                                                    <p class="text-gray-700 text-sm leading-relaxed bg-gradient-to-r from-gray-50 to-gray-100 p-3 rounded" th:text="${venta.nota}"></p>
+                                                </div>
+                                                <div th:unless="${(venta.nota != null and !#strings.isEmpty(venta.nota)) or (venta.estado == 'Finalizada')}">
+                                                    <p class="text-gray-700 text-sm leading-relaxed bg-gradient-to-r from-gray-50 to-gray-100 p-3 rounded">
+                                                        Puedes hacer click en <strong>"Editar"</strong> para escribir detalles de la venta que solo son visibles para ti.
+                                                    </p>
+                                                </div>
                                             </div>
 
 
@@ -462,14 +456,14 @@
                                                                 </div>
                                                                 Ganancia Neta:
                                                             </span>
-                                                    <span class="text-xl font-bold text-green-700">ganancia neta</span>
+                                                    <span class="text-xl font-bold text-green-700" th:text="'$' + ${#numbers.formatInteger(venta.gananciaNeta, 0, 'COMMA')}"></span>
                                                 </div>
                                                 <p class="text-xs text-green-600 mt-1 ml-8">Precio - Gastos</p>
                                             </div>
 
                                         </div>
                                     </div>
-                                    <div id="modo-edicion-resto-${v.idVenta}" class="hidden">
+                                    <div th:id="'modo-edicion-resto-' + ${venta.idVenta}" class="hidden">
                                         <div class="space-y-4">
 
                                             <!-- Gastos Adicionales EDICION -->
@@ -479,118 +473,129 @@
                                                         <i class="fas fa-receipt text-white text-xs"></i>
                                                     </div>
                                                     Editar gastos
-                                                    <button class="btn-small btn-add ml-auto" id="btn-add-gasto-${v.idVenta}" onclick="agregarGasto(${v.idVenta})">
+                                                    <button class="btn-small btn-add ml-auto" th:id="'btn-add-gasto-' + ${venta.idVenta}" th:onclick="|agregarGasto(${venta.idVenta})|">
                                                         <i class="fas fa-plus mr-1"></i>Agregar
                                                     </button>
                                                 </h4>
 
                                                 <!-- Lista de gastos existentes -->
                                                 <div class="space-y-2" id="gastos-edit-${v.idVenta}">
-                                                    <!--c:choose>
-                                                        <c:when test="${not empty v.listaGastos}">
-                                                            <c:forEach var="g" items="${v.listaGastos}">
-                                                                <div class="gasto-editable flex items-center space-x-3 p-2 bg-gradient-to-r from-gray-50 to-gray-100 rounded border border-gray-200 gasto-item">
-                                                                    <div class="file-icon bg-red-100 text-red-600">
-                                                                        <i class="fas fa-receipt"></i>
-                                                                    </div>
-                                                                    <div class="flex-1 space-y-1">
-                                                                        <input type="text" name="nombreGasto" value="${g.nombreGasto}" placeholder="Concepto del gasto"
-                                                                               class="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:border-red-500 focus:ring-1 focus:ring-red-500">
-                                                                        <input type="number" name="valorGasto" value="${g.valorGasto}" placeholder="0.00"
-                                                                               class="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:border-red-500 focus:ring-1 focus:ring-red-500"
-                                                                               min="0" step="0.01">
-                                                                    </div>
-                                                                    <button type="button" class="text-red-600 hover:text-red-800 px-2 py-1 rounded hover:bg-red-100 transition-colors"
-                                                                            onclick="eliminarGasto(this,${g.idGasto})" title="Eliminar gasto">
-                                                                        <i class="fas fa-trash text-xs"></i>
-                                                                    </button>
-                                                                </div>
-                                                            </c:forEach>
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
-                                                                <div class="flex">
-                                                                    <div class="flex-shrink-0">
-                                                                        <i class="fas fa-info-circle text-blue-400 text-lg"></i>
-                                                                    </div>
-                                                                    <div class="ml-3">
-                                                                        <p class="text-sm text-blue-700 leading-relaxed">
-                                                                            Aún no has registrado gastos para esta venta. Puedes agregar gastos usando el botón "Agregar".
-                                                                        </p>
-                                                                    </div>
-                                                                </div>
+                                                    <div th:if="${venta.listaGastos != null and !#lists.isEmpty(venta.listaGastos)}">
+                                                        <div th:each="g : ${venta.listaGastos}"
+                                                             class="gasto-editable flex items-center space-x-3 p-2 bg-gradient-to-r from-gray-50 to-gray-100 rounded border border-gray-200 gasto-item">
+
+                                                            <div class="file-icon bg-red-100 text-red-600">
+                                                                <i class="fas fa-receipt"></i>
                                                             </div>
-                                                        </c:otherwise>
-                                                    </c:choose-->
+
+                                                            <div class="flex-1 space-y-1">
+                                                                <input type="text" name="nombreGasto" th:value="${g.nombreGasto}" placeholder="Concepto del gasto"
+                                                                       class="nombreGasto w-full px-2 py-1 border border-gray-300 rounded text-sm focus:border-red-500 focus:ring-1 focus:ring-red-500">
+
+                                                                <input type="number" name="valorGasto" th:value="${g.valorGasto}" placeholder="0.00"
+                                                                       class="valorGasto w-full px-2 py-1 border border-gray-300 rounded text-sm focus:border-red-500 focus:ring-1 focus:ring-red-500"
+                                                                       min="0" step="0.01">
+                                                            </div>
+
+                                                            <button type="button" class="text-red-600 hover:text-red-800 px-2 py-1 rounded hover:bg-red-100 transition-colors"
+                                                                    th:onclick="|eliminarGasto(this, ${g.idGasto})|" title="Eliminar gasto">
+                                                                <i class="fas fa-trash text-xs"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                    <div th:unless="${venta.listaGastos != null and !#lists.isEmpty(venta.listaGastos)}"
+                                                         class="bg-blue-50 border-l-4 border-blue-400 p-4">
+                                                        <div class="flex">
+                                                            <div class="flex-shrink-0">
+                                                                <i class="fas fa-info-circle text-blue-400 text-lg"></i>
+                                                            </div>
+                                                            <div class="ml-3">
+                                                                <p class="text-sm text-blue-700 leading-relaxed">
+                                                                    Aún no has registrado gastos para esta venta. Puedes agregar gastos usando el botón "Agregar".
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
 
                                                 <!-- Contenedor para nuevos gastos -->
-                                                <div class="space-y-2 mt-3" id="lista-gastos-${v.idVenta}">
+                                                <div class="space-y-2 mt-3" th:id="'lista-gastos-' + ${venta.idVenta}">
 
                                                 </div>
                                             </div>
 
                                             <!-- Comprobantes EDICION -->
-                                            <div class="section-card rounded-lg p-4 bg-purple-50 border border-purple-200" id="formulario-comprobantes-${v.idVenta}">
+                                            <div class="section-card rounded-lg p-4 bg-purple-50 border border-purple-200" th:id="'formulario-comprobantes-' + ${venta.idVenta}">
                                                 <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
                                                     <div class="w-6 h-6 bg-gradient-to-r from-purple-500 to-purple-600 rounded-md flex items-center justify-center mr-2">
                                                         <i class="fas fa-paperclip text-white text-xs"></i>
                                                     </div>
-                                                    Editar archivos (<span id="contador-archivos-${v.idVenta}">23</span>)
+                                                    Editar archivos (<span th:id="'contador-archivos-' + ${venta.idVenta}"></span>)
                                                 </h4>
 
                                                 <!-- Archivos existentes -->
-                                                <div class="space-y-2 mb-4" id="archivos-existentes-${v.idVenta}">
-                                                    <!--c:choose>
-                                                        <c:when test="${not empty v.listaComprobantes}">
-                                                            <c:forEach var="c" items="${v.listaComprobantes}">
-                                                                <div class="comprobante-editable flex items-center space-x-3 p-2 bg-white rounded archivo-existente"
-                                                                     data-archivo-id="${c.idComprobante}">
-                                                                    <div class="file-icon bg-red-100 text-red-600">
-                                                                        <i class="fas fa-file-pdf"></i>
-                                                                    </div>
-                                                                    <div class="flex-1">
-                                                                        <p class="font-medium text-gray-800 text-sm">${c.nombreComprobante}</p>
-                                                                        <p class="text-xs text-gray-500">Archivo existente</p>
-                                                                    </div>
-                                                                    <button type="button" class="text-red-600 hover:text-red-800 px-2 py-1 rounded hover:bg-red-100 transition-colors"
-                                                                            onclick="eliminarComprobante(this,${c.idComprobante})" title="Eliminar archivo">
-                                                                        <i class="fas fa-trash text-xs"></i>
-                                                                    </button>
-                                                                </div>
-                                                            </c:forEach>
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            <div class="bg-blue-50 border-l-4 border-blue-400 p-3 rounded">
-                                                                <div class="flex">
-                                                                    <div class="flex-shrink-0">
-                                                                        <i class="fas fa-info-circle text-blue-400"></i>
-                                                                    </div>
-                                                                    <div class="ml-3">
-                                                                        <p class="text-sm text-blue-700">
-                                                                            No hay archivos subidos. Puedes agregar archivos usando el botón de abajo.
-                                                                        </p>
-                                                                    </div>
-                                                                </div>
+                                                <div class="space-y-2 mb-4" th:id="'archivos-existentes-' + ${venta.idVenta}">
+                                                    <div th:if="${venta.listaComprobantes != null and !#lists.isEmpty(venta.listaComprobantes)}">
+                                                        <div th:each="c : ${venta.listaComprobantes}"
+                                                             class="comprobante-editable flex items-center space-x-3 p-2 bg-white rounded archivo-existente"
+                                                             th:attr="data-archivo-id=${c.idComprobante}">
+
+                                                            <div class="file-icon bg-red-100 text-red-600">
+                                                                <i class="fas fa-file-pdf"></i>
                                                             </div>
-                                                        </c:otherwise>
-                                                    </c:choose-->
+
+                                                            <div class="flex-1">
+                                                                <p class="font-medium text-gray-800 text-sm" th:text="${c.nombreComprobante}">Archivo.pdf</p>
+                                                                <p class="text-xs text-gray-500">Archivo existente</p>
+                                                            </div>
+
+                                                            <button type="button"
+                                                                    class="text-red-600 hover:text-red-800 px-2 py-1 rounded hover:bg-red-100 transition-colors"
+                                                                    th:onclick="|eliminarComprobante(this, ${c.idComprobante})|"
+                                                                    title="Eliminar archivo">
+                                                                <i class="fas fa-trash text-xs"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                    <div th:unless="${venta.listaComprobantes != null and !#lists.isEmpty(venta.listaComprobantes)}"
+                                                         class="bg-blue-50 border-l-4 border-blue-400 p-3 rounded">
+                                                        <div class="flex">
+                                                            <div class="flex-shrink-0">
+                                                                <i class="fas fa-info-circle text-blue-400"></i>
+                                                            </div>
+                                                            <div class="ml-3">
+                                                                <p class="text-sm text-blue-700">
+                                                                    No hay archivos subidos. Puedes agregar archivos usando el botón de abajo.
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
 
                                                 <!-- Nuevos archivos seleccionados -->
-                                                <div class="space-y-2 mb-4" id="archivos-nuevos-${v.idVenta}">
+                                                <div class="space-y-2 mb-4" th:id="'archivos-nuevos-' + ${venta.idVenta}">
 
                                                 </div>
 
                                                 <!-- Input para subir archivos -->
                                                 <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center bg-white">
-                                                    <input type="file" name="comprobantes[]" id="input-archivos-${v.idVenta}" class="hidden input-comprobantes" data-id="${v.idVenta}" multiple
-                                                           accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.txt" onchange="manejarArchivosSeleccionados(this)">
-                                                    <button type="button" onclick="document.getElementById('input-archivos-${v.idVenta}').click()"
+                                                    <input type="file" name="comprobantes[]"
+                                                           th:id="'input-archivos-' + ${venta.idVenta}"
+                                                           class="hidden input-comprobantes"
+                                                           th:attr="data-id=${venta.idVenta}"
+                                                           multiple
+                                                           accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.txt"
+                                                           onchange="manejarArchivosSeleccionados(this)">
+
+                                                    <button type="button"
+                                                            th:onclick="|document.getElementById('input-archivos-${venta.idVenta}').click()|"
                                                             class="text-sm px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded transition-colors flex items-center gap-2 mx-auto">
                                                         <i class="fas fa-upload"></i>
                                                         Seleccionar archivos
                                                     </button>
+
                                                     <p class="text-xs text-gray-500 mt-2">
                                                         Formatos permitidos: PDF, JPG, PNG, DOC, DOCX, TXT (Máximo 10MB por archivo)
                                                     </p>
@@ -598,7 +603,9 @@
                                             </div>
 
                                             <!-- Notas EDICION -->
-                                            <div class="section-card rounded-lg p-4 bg-gray-50 border border-gray-200" id="formulario-notas-${v.idVenta}">
+                                            <div class="section-card rounded-lg p-4 bg-gray-50 border border-gray-200"
+                                                 th:id="'formulario-notas-' + ${venta.idVenta}">
+
                                                 <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
                                                     <div class="w-6 h-6 bg-gradient-to-r from-gray-500 to-gray-600 rounded-md flex items-center justify-center mr-2">
                                                         <i class="fas fa-sticky-note text-white text-xs"></i>
@@ -607,86 +614,89 @@
                                                 </h4>
 
                                                 <div class="space-y-2">
-                                                            <textarea id="nota-input-${v.idVenta}" name="nota" rows="4"
-                                                                      class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-gray-500 focus:ring-1 focus:ring-gray-500 resize-vertical"
-                                                                      placeholder="Escribe aquí tus notas sobre esta venta. Estas notas son privadas y solo las puedes ver tú.">${v.nota}</textarea>
+                                                    <textarea th:id="'nota-input-' + ${venta.idVenta}"
+                                                      name="nota"
+                                                      rows="4"
+                                                      class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-gray-500 focus:ring-1 focus:ring-gray-500 resize-vertical"
+                                                      placeholder="Escribe aquí tus notas sobre esta venta. Estas notas son privadas y solo las puedes ver tú."
+                                                      th:text="${venta.nota}">
+                                                    </textarea>
                                                     <div class="flex justify-between text-xs text-gray-500">
                                                         <span>Notas privadas - Solo visibles para ti</span>
-                                                        <span id="contador-caracteres-${v.idVenta}">0 caracteres</span>
+                                                        <span th:id="'contador-caracteres-' + ${venta.idVenta}">0 caracteres</span>
                                                     </div>
                                                 </div>
                                             </div>
-
                                         </div>
                                     </div>
                                 </div>
-                                <!--c:choose>
-                                    <c:when test="${v.estado eq 'Finalizada'}">
-                                        <div class="mt-4 bg-green-50 border-l-4 border-green-400 p-3 rounded">
-                                            <div class="flex">
-                                                <div class="flex-shrink-0">
-                                                    <i class="fas fa-check text-green-400"></i>
-                                                </div>
-                                                <div class="ml-3">
-                                                    <p class="text-sm text-green-700">
-                                                        Tu venta ha sido finalizada con exito.
-                                                    </p>
-                                                </div>
+                                <div th:switch="${venta.estado}">
+                                    <!-- Caso: Finalizada -->
+                                    <div th:case="'Finalizada'" class="mt-4 bg-green-50 border-l-4 border-green-400 p-3 rounded">
+                                        <div class="flex">
+                                            <div class="flex-shrink-0">
+                                                <i class="fas fa-check text-green-400"></i>
+                                            </div>
+                                            <div class="ml-3">
+                                                <p class="text-sm text-green-700">
+                                                    Tu venta ha sido finalizada con éxito.
+                                                </p>
                                             </div>
                                         </div>
-                                    </c:when>
-                                    <c:when test="${v.estado != 'Pendiente Confirmacion'}">
-                                        <div id="modo-vision-botones-${v.idVenta}" class="mt-5 flex justify-end space-x-3 pt-4 border-t border-gray-200">
-                                            <button onclick="activarEdicion(${v.idVenta})" class="px-4 py-2 bg-gradient-to-r from-gray-100 to-gray-200 hover:from-gray-200 hover:to-gray-300 text-gray-700 rounded-lg font-medium transition-all duration-200 flex items-center shadow-sm text-sm">
-                                                <i class="fas fa-edit mr-1"></i>
-                                                Editar
+                                    </div>
+
+                                    <!-- Caso: En proceso (o lo que necesites para habilitar los botones) -->
+                                    <div th:case="'En Proceso'" th:id="'modo-vision-botones-' + ${venta.idVenta}"
+                                         class="mt-5 flex justify-end space-x-3 pt-4 border-t border-gray-200">
+                                        <button type="button" th:onclick="'activarEdicion(' + ${venta.idVenta} + ')'" class="px-4 py-2 bg-gradient-to-r from-gray-100 to-gray-200 hover:from-gray-200 hover:to-gray-300 text-gray-700 rounded-lg font-medium transition-all duration-200 flex items-center shadow-sm text-sm">
+                                            <i class="fas fa-edit mr-1"></i> Editar
+                                        </button>
+
+                                        <form th:action="@{/vendedor/venta/enviar-peticion-venta}" method="post">
+                                            <input type="hidden" name="cedulaComprador" th:value="${venta.comprador.cedula}">
+                                            <input type="hidden" name="nombreProducto" th:value="${venta.producto.nombreProducto}">
+                                            <input type="hidden" name="fechaVenta" th:value="${venta.fechaVenta}">
+                                            <input type="hidden" name="metodoPago" th:value="${venta.metodoPago}">
+                                            <input type="hidden" name="listaComprobantes"
+                                                   th:value="${#lists.isEmpty(venta.listaComprobantes)} ? 'vacio' : 'lleno'">
+                                            <input type="hidden" name="idVenta" th:value="${venta.idVenta}">
+
+                                            <button class="px-4 py-2 accent-green hover:from-green-600 hover:to-green-700 text-white rounded-lg font-medium transition-all duration-200 flex items-center shadow-md text-sm">
+                                                <i class="fas fa-check-circle mr-1"></i> Finalizar
                                             </button>
-                                            <form action="VentaController?accion=enviarPeticionVenta" method="POST">
-                                                <input type="hidden" name="cedulaComprador" value="${v.cedulaComprador}">
-                                                <input type="hidden" name="nombreProducto" value="${v.producto.nombreProducto}">
-                                                <input type="hidden" name="fechaVenta" value="${v.fechaVenta}">
-                                                <input type="hidden" name="metodoPago" value="${v.metodoPago}">
-                                                <c:choose>
-                                                    <c:when test="${empty v.listaComprobantes}">
-                                                        <input type="hidden" name="listaComprobantes" value="vacio">
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <input type="hidden" name="listaComprobantes" value="lleno">
-                                                    </c:otherwise>
-                                                </c:choose>
-                                                <input type="hidden" name="idVenta" value="${v.idVenta}">
-                                                <button class="px-4 py-2 accent-green hover:from-green-600 hover:to-green-700 text-white rounded-lg font-medium transition-all duration-200 flex items-center shadow-md text-sm">
-                                                    <i class="fas fa-check-circle mr-1"></i>
-                                                    Finalizar
-                                                </button>
-                                            </form>
-                                        </div>
-                                        <div id="modo-edicion-botones-${v.idVenta}" class="mt-5 flex justify-end space-x-3 pt-4 border-t border-gray-200 hidden">
-                                            <button onclick="cancelarEdicion(${v.idVenta})" class="px-4 py-2 accent-red hover:from-red-600 hover:to-red-700 text-white rounded-lg font-medium transition-all duration-200 flex items-center shadow-md text-sm">
-                                                <i class="fas fa-x mr-1"></i>
-                                                Cancelar
-                                            </button>
-                                            <button onclick="guardarCambios(${v.idVenta})" class="px-4 py-2 accent-green hover:from-green-600 hover:to-green-700 text-white rounded-lg font-medium transition-all duration-200 flex items-center shadow-md text-sm">
-                                                <i class="fas fa-check-circle mr-1"></i>
-                                                Guardar Cambios
-                                            </button>
-                                        </div>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <div class="mt-4 bg-blue-50 border-l-4 border-blue-400 p-3 rounded">
-                                            <div class="flex">
-                                                <div class="flex-shrink-0">
-                                                    <i class="fas fa-info-circle text-blue-400"></i>
-                                                </div>
-                                                <div class="ml-3">
-                                                    <p class="text-sm text-blue-700">
-                                                        Tu venta fue enviada al comprador para que acepte o rechaze la peticion de finalizacion.
-                                                    </p>
-                                                </div>
+                                        </form>
+                                    </div>
+
+                                    <div th:id="'modo-edicion-botones-' + ${venta.idVenta}"
+                                         class="mt-5 flex justify-end space-x-3 pt-4 border-t border-gray-200 hidden">
+
+                                        <button th:onclick="'cancelarEdicion(' + ${venta.idVenta} + ')'"
+                                                class="px-4 py-2 accent-red hover:from-red-600 hover:to-red-700 text-white rounded-lg font-medium transition-all duration-200 flex items-center shadow-md text-sm">
+                                            <i class="fas fa-x mr-1"></i>
+                                            Cancelar
+                                        </button>
+
+                                        <button th:onclick="'guardarCambios(' + ${venta.idVenta} + ')'"
+                                                class="px-4 py-2 accent-green hover:from-green-600 hover:to-green-700 text-white rounded-lg font-medium transition-all duration-200 flex items-center shadow-md text-sm">
+                                            <i class="fas fa-check-circle mr-1"></i>
+                                            Guardar Cambios
+                                        </button>
+                                    </div>
+
+                                    <!-- Caso: Pendiente Confirmación -->
+                                    <div th:case="'Pendiente Confirmacion'" class="mt-4 bg-blue-50 border-l-4 border-blue-400 p-3 rounded">
+                                        <div class="flex">
+                                            <div class="flex-shrink-0">
+                                                <i class="fas fa-info-circle text-blue-400"></i>
+                                            </div>
+                                            <div class="ml-3">
+                                                <p class="text-sm text-blue-700">
+                                                    Tu venta fue enviada al comprador para que acepte o rechace la petición de finalización.
+                                                </p>
                                             </div>
                                         </div>
-                                    </c:otherwise>
-                                </c:choose-->
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div id="modalPeticionVenta"
@@ -725,32 +735,31 @@
                                 </button>
                             </div>
                         </div>
-                        <!--c:if test="${param.modal eq 'peticionHecha'}">
-                            <script>
-                                document.addEventListener('DOMContentLoaded', function () {
-                                    const modal = document.getElementById('modalPeticionVenta');
-                                    const modalContent = document.getElementById('modalContentPeticionVenta');
-                                    modal.classList.remove('hidden');
-                                    requestAnimationFrame(() => {
-                                        modalContent.classList.remove('scale-75', 'opacity-0');
-                                        modalContent.classList.add('scale-100', 'opacity-100');
-                                    });
+                        <!-- Mostrar modal de petición hecha -->
+                        <script th:if="${param.modal == 'peticionHecha'}">
+                            document.addEventListener('DOMContentLoaded', function () {
+                                const modal = document.getElementById('modalPeticionVenta');
+                                const modalContent = document.getElementById('modalContentPeticionVenta');
+                                modal.classList.remove('hidden');
+                                requestAnimationFrame(() => {
+                                    modalContent.classList.remove('scale-75', 'opacity-0');
+                                    modalContent.classList.add('scale-100', 'opacity-100');
                                 });
-                            </script>
-                        </c:if-->
-                        <!--c:if test="${param.modal eq 'errorDatosIncompletos'}">
-                            <script>
-                                document.addEventListener('DOMContentLoaded', function () {
-                                    const modal = document.getElementById('modalDatosIncompletos');
-                                    const modalContent = document.getElementById('modalContentDatosIncompletos');
-                                    modal.classList.remove('hidden');
-                                    requestAnimationFrame(() => {
-                                        modalContent.classList.remove('scale-75', 'opacity-0');
-                                        modalContent.classList.add('scale-100', 'opacity-100');
-                                    });
+                            });
+                        </script>
+
+                        <!-- Mostrar modal de error por datos incompletos -->
+                        <script th:if="${param.modal == 'errorDatosIncompletos'}">
+                            document.addEventListener('DOMContentLoaded', function () {
+                                const modal = document.getElementById('modalDatosIncompletos');
+                                const modalContent = document.getElementById('modalContentDatosIncompletos');
+                                modal.classList.remove('hidden');
+                                requestAnimationFrame(() => {
+                                    modalContent.classList.remove('scale-75', 'opacity-0');
+                                    modalContent.classList.add('scale-100', 'opacity-100');
                                 });
-                            </script>
-                        </c:if-->
+                            });
+                        </script>
                     </div>
                 </div>
         </main>
@@ -815,28 +824,27 @@
     function guardarCambios(id) {
         const datos = new FormData();
 
-        datos.append("accion", "actualizarDatos");
         datos.append("idVenta", id);
         datos.append("fechaVenta", document.getElementById('fecha-input-' + id).value);
         datos.append("metodoPago", document.getElementById('metodo-input-' + id).value);
         datos.append("nota", document.getElementById('nota-input-' + id).value);
 
-        document.querySelectorAll(".gasto").forEach(div => {
+        document.querySelectorAll(".gasto").forEach((div, index) => {
             const nombre = div.querySelector(".nombreGasto").value.trim();
             const valor = div.querySelector(".valorGasto").value.trim();
 
             if (nombre !== "" && valor !== "") {
-                datos.append("nombreGasto[]", nombre);
-                datos.append("valorGasto[]", valor);
+                datos.append(`listaGastos[${index}].nombreGasto`, nombre);
+                datos.append(`listaGastos[${index}].valorGasto`, valor);
             }
         });
 
         idsGastosEliminados.forEach(idGasto => {
-            datos.append("idsGastosEliminados[]", idGasto);
+            datos.append("idsGastosEliminados", idGasto);
         });
 
         idsComprobantesEliminados.forEach(idComprobante => {
-            datos.append("idsComprobantesEliminados[]", idComprobante);
+            datos.append("idsComprobantesEliminados", idComprobante);
         });
 
         const inputFile = document.getElementById("input-archivos-" + id);
@@ -849,9 +857,16 @@
             });
         }
 
-        fetch("VentaController", {
+        const token = document.querySelector('meta[name="_csrf"]').content;
+        const header = document.querySelector('meta[name="_csrf_header"]').content;
+
+        fetch("/vendedor/ventas/actualizar-datos", {
             method: "POST",
-            body: datos
+            body: datos,
+            credentials: "same-origin",
+            headers: {
+                [header]: token
+            }
         })
                 .then(response => response.text())
                 .then(responseText => {
@@ -864,7 +879,7 @@
                 })
                 .catch(err => {
                     console.error(err);
-                    alert("❌ Error al guardar");
+                    alert("Error al guardar");
                 });
     }
 
@@ -893,9 +908,9 @@
     <i class="fas fa-receipt"></i>
 </div>
 <div class="flex-1 space-y-1 gasto">
-            <input id="nombreGasto-input-${v.idVenta}" type="text" name="nombreGasto" placeholder="Concepto del gasto"
+            <input id="nombreGasto-input-${idVenta}" type="text" name="nombreGasto" placeholder="Concepto del gasto"
                 class="nombreGasto w-full px-2 py-1 border border-gray-300 rounded text-sm focus:border-red-500 focus:ring-1 focus:ring-red-500">
-            <input id="valorGasto-input-${v.idVenta}" type="number" name="valorGasto" placeholder="0"
+            <input id="valorGasto-input-${idVenta}" type="number" name="valorGasto" placeholder="0"
             class="valorGasto w-full px-2 py-1 border border-gray-300 rounded text-sm focus:border-red-500 focus:ring-1 focus:ring-red-500"
             min="0">
 </div>

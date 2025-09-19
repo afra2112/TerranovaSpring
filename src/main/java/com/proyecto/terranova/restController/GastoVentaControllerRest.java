@@ -1,6 +1,7 @@
 package com.proyecto.terranova.restController;
 
 import com.proyecto.terranova.dto.GastoVentaDTO;
+import com.proyecto.terranova.entity.GastoVenta;
 import com.proyecto.terranova.service.GastoVentaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +30,7 @@ public class GastoVentaControllerRest {
     }
 
     @PostMapping("/crearGastoVenta")
-    public ResponseEntity<GastoVentaDTO> crearGastoVenta(@RequestBody GastoVentaDTO dtoGastoVenta){
+    public ResponseEntity<GastoVenta> crearGastoVenta(@RequestBody GastoVenta dtoGastoVenta){
         serviceGastoVenta.save(dtoGastoVenta);
         return ResponseEntity.ok(dtoGastoVenta);
     }

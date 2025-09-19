@@ -1,6 +1,7 @@
 package com.proyecto.terranova.restController;
 
 import com.proyecto.terranova.dto.VentaDTO;
+import com.proyecto.terranova.entity.Venta;
 import com.proyecto.terranova.service.VentaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,13 +24,13 @@ public class VentaControllerRest {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<VentaDTO> obtenerVentaPorId(@PathVariable Long id){
-        VentaDTO dtoVenta = serviceVenta.findById(id);
+    public ResponseEntity<Venta> obtenerVentaPorId(@PathVariable Long id){
+        Venta dtoVenta = serviceVenta.findById(id);
         return ResponseEntity.ok(dtoVenta);
     }
 
     @PostMapping("/crearVenta")
-    public ResponseEntity<VentaDTO> crearVenta(@RequestBody VentaDTO dtoVenta){
+    public ResponseEntity<Venta> crearVenta(@RequestBody Venta dtoVenta){
         serviceVenta.save(dtoVenta);
         return ResponseEntity.ok(dtoVenta);
     }

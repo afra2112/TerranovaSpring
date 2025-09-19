@@ -6,9 +6,9 @@ import com.proyecto.terranova.entity.Usuario;
 import com.proyecto.terranova.entity.Venta;
 
 public interface VentaService {
-    VentaDTO save(VentaDTO dto);
+    Venta save(Venta venta);
     VentaDTO update(Long id, VentaDTO dto); // Actualizar
-    VentaDTO findById(Long id);
+    Venta findById(Long id);
     List<VentaDTO> findAll();
     List<Venta> encontrarPorVendedor(Usuario vendedor);
     boolean delete(Long id);

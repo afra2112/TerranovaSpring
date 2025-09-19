@@ -21,10 +21,8 @@ public class GastoVentaImplement implements GastoVentaService {
     private ModelMapper modelMapper;
 
     @Override
-    public GastoVentaDTO save(GastoVentaDTO dto) {
-        GastoVenta entidadGastoVenta = modelMapper.map(dto, GastoVenta.class);
-        GastoVenta entidadGuardada = repository.save(entidadGastoVenta);
-        return modelMapper.map(entidadGuardada, GastoVentaDTO.class);
+    public GastoVenta save(GastoVenta gastoVenta) {
+        return repository.save(gastoVenta);
     }
 
     @Override

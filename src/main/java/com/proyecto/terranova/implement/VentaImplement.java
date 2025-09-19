@@ -22,10 +22,8 @@ public class VentaImplement implements VentaService {
     private ModelMapper modelMapper;
 
     @Override
-    public VentaDTO save(VentaDTO dto) {
-        Venta entidadVenta = modelMapper.map(dto, Venta.class);
-        Venta entidadGuardada = repository.save(entidadVenta);
-        return modelMapper.map(entidadGuardada, VentaDTO.class);
+    public Venta save(Venta venta) {
+        return repository.save(venta);
     }
 
     @Override
@@ -40,9 +38,8 @@ public class VentaImplement implements VentaService {
     }
 
     @Override
-    public VentaDTO findById(Long id) {
-        Venta entidadVenta = repository.findById(id).orElseThrow(() -> new RuntimeException("Venta no encontrado"));
-        return modelMapper.map(entidadVenta, VentaDTO.class);
+    public Venta findById(Long id) {
+        return repository.findById(id).orElseThrow(() -> new RuntimeException("Venta no encontrado"));
     }
 
     @Override
