@@ -5,6 +5,7 @@ import com.proyecto.terranova.config.enums.RolEnum;
 import com.proyecto.terranova.entity.Disponibilidad;
 import com.proyecto.terranova.entity.Producto;
 import com.proyecto.terranova.entity.Usuario;
+import com.proyecto.terranova.repository.CiudadRepository;
 import com.proyecto.terranova.service.CitaService;
 import com.proyecto.terranova.service.DisponibilidadService;
 import com.proyecto.terranova.service.ProductoService;
@@ -35,6 +36,11 @@ public class VendedorController {
     @Autowired
     CitaService citaService;
 
+    @Autowired
+    CiudadRepository CiudadRepository;
+    @Autowired
+    private CiudadRepository ciudadRepository;
+
     @ModelAttribute("esVendedor")
     public boolean esVendedor(Authentication authentication){
         List<RolEnum> rolesUsuario = usuarioService.obtenerNombresRoles(usuario(authentication));
@@ -62,6 +68,7 @@ public class VendedorController {
         if (productoId != null) {
             model.addAttribute("productoId", productoId);
         }
+        model.addAttribute("ciudades", ciudadRepository.findAll());
         model.addAttribute("dashboard", true);
         return "vendedor/dashboard";
     }

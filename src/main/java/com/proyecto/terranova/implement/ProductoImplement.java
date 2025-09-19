@@ -1,6 +1,7 @@
 package com.proyecto.terranova.implement;
 
 import com.proyecto.terranova.entity.*;
+import com.proyecto.terranova.repository.CiudadRepository;
 import com.proyecto.terranova.repository.UsuarioRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -29,9 +30,11 @@ public class ProductoImplement implements ProductoService {
     private ModelMapper modelMapper;
     @Autowired
     private ProductoRepository productoRepository;
+    @Autowired
+    private CiudadRepository ciudadRepository;
 
     @Override
-    public Producto crearProductoBase(Map<String, String> datosForm, String correo) {
+    public Producto crearProductoBase(Map<String, String> datosForm, String correo , Long idciudad) {
         Producto producto;
         String tipo = datosForm.get("tipoProducto");
         System.out.println("Datos recibidos: " + datosForm);
@@ -50,6 +53,8 @@ public class ProductoImplement implements ProductoService {
                 throw new IllegalArgumentException("Tipo de Producto No valido");
         }
 
+        Ciudad ciudad = ciudadRepository.findById(idciudad).orElseThrow();
+        producto.setCiudad(ciudad);
         producto.setFechaPublicacion(LocalDate.now());
         producto.setEstado("Disponible");
 
@@ -134,10 +139,8 @@ public class ProductoImplement implements ProductoService {
     }
 
     @Override
-    public List<ProductoDTO> findAll() {
-        return repository.findAll().stream()
-            .map(entity -> modelMapper.map(entity, ProductoDTO.class))
-            .collect(Collectors.toList());
+    public List<Producto> findAll() {
+        return repository.findAll();
     }
 
     @Override

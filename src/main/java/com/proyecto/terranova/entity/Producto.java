@@ -38,7 +38,7 @@ public abstract class Producto {
     @JoinColumn(name = "cedulaVendedor", nullable = false)
     private Usuario vendedor;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "idCiudad")
     private Ciudad ciudad;
 

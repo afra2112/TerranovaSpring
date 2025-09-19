@@ -23,6 +23,10 @@
         .gradient-bg {
             background: linear-gradient(135deg, #059669 0%, #10b981 100%);
         }
+        .modal-backdrop {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
         .gradient-edit {
             background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
         }
@@ -33,10 +37,6 @@
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .modal-backdrop {
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(5px);
         }
         .product-card {
             transition: all 0.3s ease;
@@ -149,7 +149,7 @@
             <!-- Product Card 1 -->
             <div th:each="prod : ${productos}" class="bg-white rounded-2xl border border-gray-200 overflow-hidden product-card">
                 <div class="relative">
-                    <img th:src="${#lists.isEmpty(prod.imagenes) ? '/placeholder.svg?height=200&width=400' : prod.imagenes[1].nombreArchivo}"
+                    <img th:src="${#lists.isEmpty(prod.imagenes) ? '/placeholder.svg?height=200&width=400' : prod.imagenes[0].nombreArchivo}"
                          alt="Imagen del producto"
                          class="w-full h-48 object-cover rounded">
                     <div class="absolute top-4 left-4">
@@ -163,16 +163,16 @@
                 </div>
                 <div class="p-6">
                     <div class="flex items-center justify-between mb-2">
-                        <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full" th:text="${prod.tipoProducto}" ></span>
+                        <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full"  ></span>
                         <span class="text-sm text-gray-500" th:text="'Publicado el '+${prod.fechaPublicacion}" ></span>
                     </div>
                     <h3 class="text-xl font-semibold text-gray-900 mb-2" th:text="${prod.nombreProducto}" ></h3>
-                    <p class="text-gray-600 text-sm mb-4 line-clamp-2" th:text="prod.descripcion" ></p>
+                    <p class="text-gray-600 text-sm mb-4 line-clamp-2" th:text="${prod.descripcion}" ></p>
                     <div class="flex items-center justify-between mb-4">
                         <span class="text-2xl font-bold text-green-600" th:text="'$'+${prod.precioProducto}" ></span>
-                        <div class="flex items-center text-sm text-gray-500">
+                        <div class="flex items-center text-sm text-gray-500" >
                             <i class='bx bx-map-pin mr-1'></i>
-                            <span >Cundinamarca</span>
+                            <span th:text="${prod.ciudad.nombreCiudad}" ></span>
                         </div>
                     </div>
                     <div class="flex items-center justify-between mb-4">
@@ -191,9 +191,12 @@
                             <i class='bx bx-calendar mr-1'></i>
                             Disponibilidades
                         </a>
-                        <button onclick="openEditModal('1')" class="gradient-edit text-white py-2 px-4 rounded-xl text-sm font-medium hover:shadow-lg transition-all">
+
+                        <!--onclick="openEditModal('1')"-->
+
+                        <a th:href="@{/vendedor/productos/Detalle}"  class="gradient-edit text-white py-2 px-4 rounded-xl text-sm font-medium hover:shadow-lg transition-all">
                             <i class='bx bx-edit'></i>
-                        </button>
+                        </a>
                         <button onclick="confirmDelete('1')" class="gradient-delete text-white py-2 px-4 rounded-xl text-sm font-medium hover:shadow-lg transition-all">
                             <i class='bx bx-trash'></i>
                         </button>

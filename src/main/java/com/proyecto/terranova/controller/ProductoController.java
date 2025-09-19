@@ -3,7 +3,9 @@ package com.proyecto.terranova.controller;
 
 
 import com.proyecto.terranova.entity.Producto;
+import com.proyecto.terranova.entity.Usuario;
 import com.proyecto.terranova.service.ProductoService;
+import com.proyecto.terranova.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -18,21 +20,36 @@ import java.util.Map;
 public class ProductoController {
 
     @Autowired
+    UsuarioService  usuarioService;
+
+    @Autowired
     ProductoService productoService;
+
+    @ModelAttribute("usuario")
+    public Usuario usuario(Authentication authentication){
+        return usuarioService.findByEmail(authentication.getName());
+    }
+
 
     @GetMapping("/disponibilidades/{id}")
     public String mostrarModalDisponibilidades(@PathVariable(name = "id") Long idProducto){
         return "redirect:/vendedor/productos?idProducto=" + idProducto;
     }
 
+    @GetMapping("/Detalle")
+    public String mostrarModalDetalle(Model model, Authentication authentication){
+        model.addAttribute("productos", productoService.findAll());
+        model.addAttribute("usuario", usuario(authentication));
+        return "vendedor/detalleProductoV";
+    }
+
     @PostMapping("/guardarP")
-    public String guardarProducto(@RequestParam Map<String,String> formdatos ,Authentication authentication , Model model){
+    public String guardarProducto(@RequestParam Map<String,String> formdatos ,Authentication authentication,  @RequestParam(name = "idCiudad") Long idCiudad){
         if (!formdatos.containsKey("cercado")) {
             formdatos.put("cercado", "false");
         }
-
         String correo = authentication.getName(); // ahora es claro que es el correo
-        Producto producto = productoService.crearProductoBase(formdatos, correo);
+        Producto producto = productoService.crearProductoBase(formdatos, correo, idCiudad);
 
         return "redirect:/vendedor/dashboard?productoId=" + producto.getIdProducto();
     }

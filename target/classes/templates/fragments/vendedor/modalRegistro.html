@@ -10,7 +10,9 @@
                     <input type="text" name="nombreProducto" placeholder="Nombre" required>
                     <input type="number" name="precioProducto" placeholder="Precio" required>
                     <input type="text" name="descripcion" placeholder="Descripción" required>
-                    <input type="number" name="idUbicacion" placeholder="ID Ciudad" required>
+                    <select  name="idCiudad">
+                        <option th:each="ciudad : ${ciudades}" th:value="${ciudad.idCiudad}"  th:text="${ciudad.nombreCiudad}"></option>
+                    </select>
 
                     <div id="camposTipoProducto"></div>
 

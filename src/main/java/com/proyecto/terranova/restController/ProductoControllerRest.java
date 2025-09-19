@@ -27,8 +27,8 @@ public class ProductoControllerRest {
 
 
     @GetMapping("/listarTodo")
-    public ResponseEntity<List<ProductoDTO>> obtenerTodosLosProductos(){
-        List<ProductoDTO> entidadesProducto = serviceProducto.findAll();
+    public ResponseEntity<List<Producto>> obtenerTodosLosProductos(){
+        List<Producto> entidadesProducto = serviceProducto.findAll();
         return ResponseEntity.ok(entidadesProducto);
     }
 
