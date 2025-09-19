@@ -58,7 +58,10 @@ public class VendedorController {
     }
 
     @GetMapping("/dashboard")
-    public String indexVendedor(Model model) {
+    public String indexVendedor(@RequestParam(required = false) Long productoId,Model model) {
+        if (productoId != null) {
+            model.addAttribute("productoId", productoId);
+        }
         model.addAttribute("dashboard", true);
         return "vendedor/dashboard";
     }

@@ -1,15 +1,17 @@
 
 package com.proyecto.terranova.controller;
 
-import com.proyecto.terranova.dto.ProductoDTO;
+
 import com.proyecto.terranova.entity.Producto;
 import com.proyecto.terranova.service.ProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.Map;
 
 @Controller
 @RequestMapping("/vendedor/productos")
@@ -23,22 +25,31 @@ public class ProductoController {
         return "redirect:/vendedor/productos?idProducto=" + idProducto;
     }
 
-    @GetMapping("/registar")
-    public String mostrarModalRegistar(Model model){
-        model.addAttribute("productos", new ProductoDTO());
-        return "vendedor/dashboard";
+    @PostMapping("/guardarP")
+    public String guardarProducto(@RequestParam Map<String,String> formdatos ,Authentication authentication , Model model){
+        if (!formdatos.containsKey("cercado")) {
+            formdatos.put("cercado", "false");
+        }
+
+        String correo = authentication.getName(); // ahora es claro que es el correo
+        Producto producto = productoService.crearProductoBase(formdatos, correo);
+
+        return "redirect:/vendedor/dashboard?productoId=" + producto.getIdProducto();
     }
 
-    @PostMapping("/guardar")
-    public String guardarProducto(@ModelAttribute ProductoDTO productoDTOdto, RedirectAttributes redirect) {
-        Producto producto = productoService.crearProductoBase(productoDTOdto);
-        redirect.addAttribute("id", producto.getIdProducto());
-        return "redirect:/productos/imagenes" + producto.getIdProducto();
-    }
+    /*
+    public ResponseEntity<Long> guardarProducto(@RequestParam Map<String , String> datosForm , Authentication authentication) {
+        String cedula = authentication.getName();
+        Producto producto = productoService.crearProductoBase(datosForm,cedula);
+        return ResponseEntity.ok(producto.getIdProducto());
+    }*/
 
-    @GetMapping("/imagenes")
+
+    /*@GetMapping("/imagenes")
     public String mostrarFormularioImagenes(@RequestParam Long id, Model model) {
-        model.addAttribute("productoId", id);
-        return "productos/formulario-imagenes";
-    }
+        if (id != null) {
+            model.addAttribute("productoId", id);
+        }
+        return "vendedor/dashboard";
+    }*/
 }

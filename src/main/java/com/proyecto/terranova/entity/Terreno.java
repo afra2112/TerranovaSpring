@@ -30,7 +30,4 @@ public class Terreno extends Producto {
     @Column(nullable = false)
     private boolean cercado;
 
-    @OneToOne
-    @JoinColumn(name = "idProducto")
-    private Producto producto;
 }

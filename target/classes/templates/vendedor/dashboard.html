@@ -32,8 +32,8 @@
             background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(5px);
         }.floating-animation {
-            animation: float 6s ease-in-out infinite;
-        }
+             animation: float 6s ease-in-out infinite;
+         }
         .product-option {
             transition: all 0.3s ease;
             background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.02) 100%);
@@ -52,9 +52,10 @@
 <div th:replace="fragments/vendedor/navbarVendedor :: navbarVendedor"></div>
 
 <div class="ml-64 flex flex-col min-h-screen">
+
     <main class="lg:px-10 py-10">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <button onclick="openSelectionModal()" class="gradient-bg text-white p-6 rounded-2xl hover-lift shadow-lg hover:shadow-emerald-200 transition-all duration-300 flex items-center justify-between w-full">
+            <button onclick="openProductModal()" class="gradient-bg text-white p-6 rounded-2xl hover-lift shadow-lg hover:shadow-emerald-200 transition-all duration-300 flex items-center justify-between w-full">
                 <div>
                     <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center mb-4">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -300,10 +301,11 @@
                 </div>
             </div>
         </div>
+
+
+
     </main>
 </div>
-
-
 
 <div id="productModal" class="fixed inset-0 modal-backdrop hidden items-center justify-center z-50">
     <div class="modal-content rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl">
@@ -360,88 +362,132 @@
         </div>
     </div>
 </div>
+<div th:replace="fragments/vendedor/modalRegistro :: formProducto"></div>
+<!-- Modal para subir imágenes -->
+<div id="modalImagenes" class="fixed inset-0 hidden items-center justify-center z-50 bg-black bg-opacity-50">
+    <div class="bg-white p-6 rounded shadow-lg w-full max-w-md">
+        <h2 class="text-xl font-bold mb-4">Subir imágenes del producto</h2>
 
+        <form th:action="@{/imagenes/SubirImgs}" id="formImagenes" method="post" enctype="multipart/form-data">
+            <input type="file" name="imagen" multiple accept="image/*" required class="mb-4 w-full">
 
-<!-- Modal principal: selección de tipo -->
-<div id="selectionModal" class="modal hidden">
-    <div class="modal-content">
-        <h3>Selecciona el tipo de producto</h3>
-        <div class="options">
-            <div onclick="selectProductType('ganado')">Ganado 🐮</div>
-            <div onclick="selectProductType('finca')">Finca 🏡</div>
-            <div onclick="selectProductType('terreno')">Terreno 🌄</div>
-        </div>
-        <button onclick="closeSelectionModal()">Cancelar</button>
+            <input type="hidden" name="idProducto" th:value="${productoId}" id="idProductoInput">
+
+            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                Subir imágenes
+            </button>
+        </form>
     </div>
-</div>
-
-<!-- Modal de registro -->
-<div id="registroModal" class="modal hidden">
-    <form th:action="@{/vendedor/productos/guardar}" th:object="${productoDTO}" method="post" enctype="multipart/form-data">
-        <input type="hidden" th:field="*{tipo}" id="tipoSeleccionado"/>
-
-        <input type="text" th:field="*{nombre}" placeholder="Nombre"/>
-        <input type="number" th:field="*{precio}" placeholder="Precio"/>
-
-        <!-- Campos dinámicos -->
-        <div id="camposGanado" class="hidden">
-            <input type="text" th:field="*{ganadoDTO.raza}" placeholder="Raza"/>
-            <input type="number" th:field="*{ganadoDTO.edad}" placeholder="Edad"/>
-        </div>
-
-        <div id="camposFinca" class="hidden">
-            <input type="number" th:field="*{fincaDTO.hectareas}" placeholder="Hectáreas"/>
-            <label><input type="checkbox" th:field="*{fincaDTO.tieneCasa}"/> Tiene casa</label>
-        </div>
-
-        <div id="camposTerreno" class="hidden">
-            <input type="number" th:field="*{terrenoDTO.area}" placeholder="Área"/>
-            <input type="text" th:field="*{terrenoDTO.ubicacion}" placeholder="Ubicación"/>
-        </div>
-
-        <input type="file" th:field="*{imagenes}" multiple/>
-        <button type="submit">Guardar</button>
-        <button type="button" onclick="closeRegistroModal()">Cancelar</button>
-    </form>
 </div>
 
 
 <script>
-    function openSelectionModal() {
-        document.getElementById('selectionModal').classList.remove('hidden');
-    }
+    document.addEventListener('DOMContentLoaded', function () {
+        // Dropdown de usuario
+        function toggleUserDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            const arrow = document.getElementById('dropdownArrow');
 
-    function closeSelectionModal() {
-        document.getElementById('selectionModal').classList.add('hidden');
-    }
-
-    function selectProductType(tipo) {
-        // Setear el tipo en el campo oculto
-        document.getElementById('tipoSeleccionado').value = tipo;
-
-        // Ocultar todos los bloques
-        document.getElementById('camposGanado').classList.add('hidden');
-        document.getElementById('camposFinca').classList.add('hidden');
-        document.getElementById('camposTerreno').classList.add('hidden');
-
-        // Mostrar el bloque correspondiente
-        if (tipo === 'ganado') {
-            document.getElementById('camposGanado').classList.remove('hidden');
-        } else if (tipo === 'finca') {
-            document.getElementById('camposFinca').classList.remove('hidden');
-        } else if (tipo === 'terreno') {
-            document.getElementById('camposTerreno').classList.remove('hidden');
+            if (dropdown.classList.contains('opacity-0')) {
+                dropdown.classList.remove('opacity-0', 'invisible', 'scale-95');
+                dropdown.classList.add('opacity-100', 'visible', 'scale-100');
+                arrow.style.transform = 'rotate(180deg)';
+            } else {
+                dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
+                dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
+                arrow.style.transform = 'rotate(0deg)';
+            }
         }
 
-        // Cerrar selección y abrir registro
-        closeSelectionModal();
-        document.getElementById('registroModal').classList.remove('hidden');
-    }
+        document.addEventListener('click', function (event) {
+            const dropdown = document.getElementById('userDropdown');
+            const userButton = event.target.closest('[onclick="toggleUserDropdown()"]');
 
-    function closeRegistroModal() {
-        document.getElementById('registroModal').classList.add('hidden');
-    }
+            if (!userButton && !dropdown.contains(event.target)) {
+                dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
+                dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
+                document.getElementById('dropdownArrow').style.transform = 'rotate(0deg)';
+            }
+        });
+
+        // Modal de selección de tipo
+        window.openProductModal = function () {
+            document.getElementById('productModal').classList.remove('hidden');
+            document.getElementById('productModal').classList.add('flex');
+        };
+
+
+        function closeProductModal() {
+            document.getElementById('productModal').classList.add('hidden');
+            document.getElementById('productModal').classList.remove('flex');
+        }
+
+        document.getElementById('productModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeProductModal();
+            }
+        });
+
+        // Selección de tipo y apertura de formulario
+        window.selectProductType = function (tipo) {
+            closeProductModal();
+            abrirModalRegistro(tipo);
+        };
+
+        window.abrirModalRegistro = function (tipo) {
+            const modal = document.getElementById('registerModal');
+            const tipoInput = document.getElementById('tipoProducto');
+            const container = document.getElementById('camposTipoProducto');
+
+            if (!modal || !tipoInput || !container) {
+                console.error('No se encontró el modal o los campos necesarios');
+                return;
+            }
+
+            tipoInput.value = tipo;
+            container.innerHTML = '';
+
+            if (tipo === 'terreno') {
+                container.innerHTML = `
+          <input type="number" name="tamanoTerreno" placeholder="Tamaño (m²)" required class="input-field">
+          <input type="text" name="tipoTerreno" placeholder="Tipo Terreno" required class="input-field">
+          <input type="text" name="topografiaTerreno" placeholder="Topografía" required class="input-field">
+          <input type="text" name="acceso" placeholder="Acceso" required class="input-field">
+          <input type="text" name="servicios" placeholder="Servicios" required class="input-field">
+          <input type="text" name="usoActual" placeholder="Uso Actual" required class="input-field">
+          <label><input type="checkbox" name="cercado" value="true"> Cercado</label>
+        `;
+            }
+
+            // Puedes agregar más bloques para finca y ganado si lo deseas
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        };
+
+        window.cerrarModalRegistro = function () {
+            const modal = document.getElementById('registerModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        };
+    });
 </script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const params = new URLSearchParams(window.location.search);
+        const productoId = params.get("productoId");
+
+        if (productoId) {
+            const modal = document.getElementById("modalImagenes");
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+        }
+    });
+</script>
+
+
 
 </body>
 </html>

@@ -1,12 +1,14 @@
 package com.proyecto.terranova.service;
 
 import java.util.List;
+import java.util.Map;
+
 import com.proyecto.terranova.dto.ProductoDTO;
 import com.proyecto.terranova.entity.Producto;
 import com.proyecto.terranova.entity.Usuario;
 
 public interface ProductoService {
-    Producto crearProductoBase(ProductoDTO productoDTO);
+    Producto crearProductoBase(Map<String,String> datosForm , String cedula);
     ProductoDTO save(ProductoDTO dto);
     ProductoDTO update(Long id, ProductoDTO dto); // Actualizar
     Producto findById(Long id);
