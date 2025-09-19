@@ -5,17 +5,25 @@ import com.proyecto.terranova.config.enums.RolEnum;
 import com.proyecto.terranova.entity.*;
 import com.proyecto.terranova.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/vendedor")
@@ -35,6 +43,9 @@ public class VendedorController {
 
     @Autowired
     GastoVentaService gastoVentaService;
+
+    @Autowired
+    ComprobanteService comprobanteService;
 
     @ModelAttribute("esVendedor")
     public boolean esVendedor(Authentication authentication){
@@ -120,12 +131,39 @@ public class VendedorController {
                 }
             }
 
+            if(idsComprobantesEliminados != null){
+                ventaAcual.getListaComprobantes().removeIf(comprobante -> idsComprobantesEliminados.contains(comprobante.getIdComprobante()));
+            }
+
+            if(venta.getListaComprobantes() != null){
+                for (MultipartFile file : comprobantes){
+                    String nombreArchivo = UUID.randomUUID() + "_" + file.getOriginalFilename();
+                    Path rutaArchivo = Paths.get("archivos").resolve(nombreArchivo);
+                    Files.write(rutaArchivo, file.getBytes());
+
+                    Comprobante comprobante = new Comprobante();
+                    comprobante.setFechaSubida(LocalDateTime.now());
+                    comprobante.setVenta(ventaAcual);
+                    comprobante.setNombreComprobante(file.getOriginalFilename());
+                    ventaAcual.getListaComprobantes().add(comprobante);
+                }
+            }
+
             ventaService.save(ventaAcual);
 
             return "ok";
         } catch (Exception e) {
             return "error: " + e.getMessage();
         }
+    }
+
+    @PostMapping("/venta/enviar-peticion-venta")
+    public String enviarPeticionVenta(@ModelAttribute Venta venta, RedirectAttributes redirectAttributes) {
+        if(venta.getFechaVenta() == null || venta.getMetodoPago() == null){
+            redirectAttributes.addFlashAttribute("ventaIncompleta", true);
+            return "redirect:/vendedor/ventas";
+        }
+        return "redirect:/vendedor/ventas";
     }
 
     @GetMapping("/productos")

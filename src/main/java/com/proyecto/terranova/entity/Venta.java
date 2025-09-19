@@ -27,6 +27,8 @@ public class Venta {
 
     private String nota;
 
+    private int interesados;
+
     @Column(length = 30, nullable = true)
     private String metodoPago;
 

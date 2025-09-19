@@ -115,7 +115,7 @@
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-xs font-medium text-gray-600 mb-1">Total Ventas</p>
-                                <p class="text-2xl font-bold text-gray-800">23</p>
+                                <p class="text-2xl font-bold text-gray-800" th:text="${ventas.size()}"></p>
                                 <p class="text-xs text-blue-600 font-medium">Ventas Totales</p>
                             </div>
                             <div class="w-10 h-10 accent-blue rounded-lg flex items-center justify-center shadow-lg">
@@ -370,7 +370,7 @@
                                                             </div>
                                                             <div class="flex justify-between items-center py-2 bg-gradient-to-r from-red-50 to-red-100 rounded px-3 border border-red-200">
                                                                 <span class="font-semibold text-gray-800 text-sm">Total:</span>
-                                                                <span class="font-bold text-red-600" th:text="'$' + ${#numbers.formatDecimal(venta.totalGastos, 0, 'COMMA')}"></span>
+                                                                <span class="font-bold text-red-600" th:text="'$' + ${venta.totalGastos}"></span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -716,7 +716,7 @@
                                 </button>
                             </div>
                         </div>
-                        <div id="modalDatosIncompletos"
+                        <div th:if="${ventaIncompleta}" id="modalDatosIncompletos"
                              class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 hidden">
                             <div id="modalContentDatosIncompletos"
                                  class="bg-white rounded-2xl shadow-xl p-10 transform scale-75 opacity-0 transition duration-300 ease-out">

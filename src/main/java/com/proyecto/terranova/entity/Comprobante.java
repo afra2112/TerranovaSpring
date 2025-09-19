@@ -17,7 +17,6 @@ public class Comprobante {
     @Column(nullable = false, length = 100)
     private String nombreComprobante;
 
-    @Column(nullable = false, length = 255)
     private String rutaArchivo;
 
     @Column(nullable = false)

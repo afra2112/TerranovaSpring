@@ -1,6 +1,7 @@
 package com.proyecto.terranova.restController;
 
 import com.proyecto.terranova.dto.ComprobanteDTO;
+import com.proyecto.terranova.entity.Comprobante;
 import com.proyecto.terranova.service.ComprobanteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +30,7 @@ public class ComprobanteControllerRest {
     }
 
     @PostMapping("/crearComprobante")
-    public ResponseEntity<ComprobanteDTO> crearComprobante(@RequestBody ComprobanteDTO dtoComprobante){
+    public ResponseEntity<Comprobante> crearComprobante(@RequestBody Comprobante dtoComprobante){
         serviceComprobante.save(dtoComprobante);
         return ResponseEntity.ok(dtoComprobante);
     }
