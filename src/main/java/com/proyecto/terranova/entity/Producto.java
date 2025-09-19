@@ -47,4 +47,8 @@ public abstract class Producto {
 
     @OneToMany(mappedBy = "producto",  cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Disponibilidad> disponibilidades = new ArrayList<>();
+
+    /*public String getTipoProducto() {
+        return this.getClass().getSimpleName().toUpperCase();
+    }*/
 }

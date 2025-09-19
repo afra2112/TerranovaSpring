@@ -10,7 +10,7 @@ public class ImagenDTO {
 
     private Long idImagen;
 
-    private List<MultipartFile> nombreArchivo;
+    private String  nombreArchivo;
 
     private Long idProducto;
 }

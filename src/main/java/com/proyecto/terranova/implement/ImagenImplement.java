@@ -3,10 +3,13 @@ package com.proyecto.terranova.implement;
 import com.proyecto.terranova.entity.Producto;
 import com.proyecto.terranova.repository.ProductoRepository;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,6 +25,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class ImagenImplement implements ImagenService {
+
+    @Value("${imagenes.directorio}")
+    private String directorioImagenes;
 
     @Autowired
     private ImagenRepository repository;
@@ -46,14 +52,23 @@ public class ImagenImplement implements ImagenService {
 
     }
     private String guardarImagen(MultipartFile file){
-        String nombre = UUID.randomUUID() + "_" + file.getOriginalFilename();
-        Path ruta =  Paths.get("C:\\Users\\moren\\Desktop\\"+ nombre); // nombre de la tuta
+
+        String original = file.getOriginalFilename();
+
+        String limpio = original.replaceAll("[^a-zA-Z0-9\\.\\-_]", "_");
+
+        String nombre = UUID.randomUUID() + "_" + limpio;
+
+        // Codificar el nombre para URL
+        String nombreCodificado = URLEncoder.encode(nombre, StandardCharsets.UTF_8);
+
+        Path ruta =  Paths.get(directorioImagenes + nombreCodificado); // nombre de la tuta
         try{
             Files.copy(file.getInputStream(), ruta);
         }catch (IOException q){
             throw new RuntimeException("Error al guardar el archivo",q);
         }
-        return "/uploads"+nombre;
+        return "/imagenes/" + nombre;
     }
 
     @Override
