@@ -128,7 +128,7 @@
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-xs font-medium text-gray-600 mb-1">Ingresos Totales</p>
-                                <p class="text-2xl font-bold text-gray-800">23</p>
+                                <p class="text-2xl font-bold text-gray-800" th:text="'$' + ${#numbers.formatInteger(ingresosTotales, 0, 'COMMA')}"></p>
                                 <p class="text-xs text-yellow-600 font-medium">Valor Bruto</p>
                             </div>
                             <div class="w-10 h-10 accent-yellow rounded-lg flex items-center justify-center shadow-lg">
@@ -141,7 +141,7 @@
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-xs font-medium text-gray-600 mb-1">Gastos Totales</p>
-                                <p class="text-2xl font-bold text-gray-800">23</p>
+                                <p class="text-2xl font-bold text-gray-800" th:text="'$' + ${#numbers.formatInteger(gastosTotales, 0, 'COMMA')}"></p>
                                 <p class="text-xs text-red-600 font-medium">Valor Total</p>
                             </div>
                             <div class="w-10 h-10 accent-red rounded-lg flex items-center justify-center shadow-lg">
@@ -154,7 +154,7 @@
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-xs font-medium text-gray-600 mb-1">Balance Final</p>
-                                <p class="text-2xl font-bold text-gray-800">23</p>
+                                <p class="text-2xl font-bold text-gray-800" th:text="'$' + ${#numbers.formatInteger(balanceFinal, 0, 'COMMA')}"></p>
                                 <p class="text-xs text-green-600 font-medium">Ingresos Brutos - Total Gastos</p>
                             </div>
                             <div class="w-10 h-10 accent-green rounded-lg flex items-center justify-center shadow-lg">
@@ -195,7 +195,7 @@
 
                             <div class="p-5">
                                 <!-- Layout Principal: 2 Columnas -->
-                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                                <div th:classappend="${venta.estado == 'En Proceso' ? 'opacity-100' : 'opacity-75'}" class="grid grid-cols-1 lg:grid-cols-2 gap-5">
 
                                     <!-- COLUMNA IZQUIERDA: Info Principal -->
                                     <div class="space-y-4">
@@ -368,10 +368,10 @@
                                                                 <span id="nombre-span" class="text-gray-700 text-sm" th:text="${gasto.nombreGasto}"></span>
                                                                 <span id="valor-span" class="font-semibold text-gray-900 text-sm" th:text="'$' + ${#numbers.formatDecimal(gasto.valorGasto, 0, 'POINT', 0, 'COMMA')}"></span>
                                                             </div>
-                                                            <div class="flex justify-between items-center py-2 bg-gradient-to-r from-red-50 to-red-100 rounded px-3 border border-red-200">
-                                                                <span class="font-semibold text-gray-800 text-sm">Total:</span>
-                                                                <span class="font-bold text-red-600" th:text="'$' + ${venta.totalGastos}"></span>
-                                                            </div>
+                                                        </div>
+                                                        <div class="mt-5 flex justify-between items-center py-2 bg-gradient-to-r from-red-50 to-red-100 rounded px-3 border border-red-200">
+                                                            <span class="font-semibold text-gray-800 text-sm">Total:</span>
+                                                            <span class="font-bold text-red-600" th:text="'$' + ${#numbers.formatDecimal(venta.totalGastos, 0, 'POINT', 0, 'COMMA')}"></span>
                                                         </div>
                                                     </div>
                                                     <div th:unless="${not #lists.isEmpty(venta.listaGastos) or venta.estado == 'Finalizada'}">
@@ -402,14 +402,16 @@
                                                 <div class="space-y-2">
                                                     <div th:if="${not #lists.isEmpty(venta.listaComprobantes)}">
                                                         <div th:each="comprobante : ${venta.listaComprobantes}">
-                                                            <div class="flex items-center space-x-3 p-2 bg-gradient-to-r from-gray-50 to-gray-100 rounded border border-gray-200">
-                                                                <div class="file-icon bg-red-100 text-red-600">
-                                                                    <i class="fas fa-file-pdf"></i>
+                                                            <a th:href="@{'/archivos/' + ${comprobante.rutaArchivo}}" target="_blank" class="hover:bg-gray-200 cursor-pointer">
+                                                                <div class="flex items-center space-x-3 p-2 bg-gradient-to-r from-gray-50 to-gray-100 rounded border border-gray-200">
+                                                                    <div class="file-icon bg-red-100 text-red-600">
+                                                                        <i class="fas fa-file-pdf"></i>
+                                                                    </div>
+                                                                    <div class="flex-1">
+                                                                        <p class="font-medium text-gray-800 text-sm" th:text="${comprobante.nombreComprobante}"></p>
+                                                                    </div>
                                                                 </div>
-                                                                <div class="flex-1">
-                                                                    <p class="font-medium text-gray-800 text-sm" th:text="${comprobante.nombreComprobante}"></p>
-                                                                </div>
-                                                            </div>
+                                                            </a>
                                                         </div>
                                                     </div>
                                                     <div th:unless="${not #lists.isEmpty(venta.listaComprobantes)}">
@@ -657,9 +659,8 @@
                                             <input type="hidden" name="nombreProducto" th:value="${venta.producto.nombreProducto}">
                                             <input type="hidden" name="fechaVenta" th:value="${venta.fechaVenta}">
                                             <input type="hidden" name="metodoPago" th:value="${venta.metodoPago}">
-                                            <input type="hidden" name="listaComprobantes"
-                                                   th:value="${#lists.isEmpty(venta.listaComprobantes)} ? 'vacio' : 'lleno'">
                                             <input type="hidden" name="idVenta" th:value="${venta.idVenta}">
+                                            <input type="hidden" name="comprobantes" th:value="${venta.listaComprobantes.size()}">
 
                                             <button class="px-4 py-2 accent-green hover:from-green-600 hover:to-green-700 text-white rounded-lg font-medium transition-all duration-200 flex items-center shadow-md text-sm">
                                                 <i class="fas fa-check-circle mr-1"></i> Finalizar
@@ -716,7 +717,7 @@
                                 </button>
                             </div>
                         </div>
-                        <div th:if="${ventaIncompleta}" id="modalDatosIncompletos"
+                        <div id="modalDatosIncompletos"
                              class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 hidden">
                             <div id="modalContentDatosIncompletos"
                                  class="bg-white rounded-2xl shadow-xl p-10 transform scale-75 opacity-0 transition duration-300 ease-out">
@@ -736,7 +737,7 @@
                             </div>
                         </div>
                         <!-- Mostrar modal de petición hecha -->
-                        <script th:if="${param.modal == 'peticionHecha'}">
+                        <script th:if="${peticionHecha}">
                             document.addEventListener('DOMContentLoaded', function () {
                                 const modal = document.getElementById('modalPeticionVenta');
                                 const modalContent = document.getElementById('modalContentPeticionVenta');
@@ -749,7 +750,7 @@
                         </script>
 
                         <!-- Mostrar modal de error por datos incompletos -->
-                        <script th:if="${param.modal == 'errorDatosIncompletos'}">
+                        <script th:if="${ventaIncompleta}">
                             document.addEventListener('DOMContentLoaded', function () {
                                 const modal = document.getElementById('modalDatosIncompletos');
                                 const modalContent = document.getElementById('modalContentDatosIncompletos');

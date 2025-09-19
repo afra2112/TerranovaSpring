@@ -32,7 +32,7 @@
                   <i class='bx bx-bell text-xl'></i>
                   <span>Citas</span>
               </a>
-              <a href="#" class="sidebar-item flex items-center space-x-3 p-3 rounded-xl hover:bg-emerald-50/50 text-gray-700 hover:text-emerald-700 font-medium">
+              <a th:classappend="${posicionCompras} ? 'bg-emerald-50/50 text-emerald-700' : 'text-gray-600'" th:href="@{/comprador/compras}" class="sidebar-item flex items-center space-x-3 p-3 rounded-xl hover:bg-emerald-50/50 text-gray-700 hover:text-emerald-700 font-medium">
                   <i class='bx bx-cart text-xl'></i>
                   <span>Mis Compras</span>
               </a>
@@ -46,7 +46,7 @@
                       </svg>
                   </div>
                   <div th:if="${usuario.foto != null}" class="w-9 h-9 rounded-full overflow-hidden flex items-center justify-center">
-                      <img th:src="@{'/' + ${usuario.foto}}" alt="Foto de perfil" class="w-full h-full object-cover">
+                      <img th:src="@{'/imagenes/' + ${usuario.foto}}" alt="Foto de perfil" class="w-full h-full object-cover">
                   </div>
                   <span class="text-base font-medium text-gray-700" th:text="${nombreMostrar}"></span>
                   <svg class="w-5 h-5 text-gray-500 transition-transform duration-200" id="dropdownArrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">

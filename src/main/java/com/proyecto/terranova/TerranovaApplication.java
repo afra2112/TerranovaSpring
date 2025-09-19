@@ -31,6 +31,7 @@ public class TerranovaApplication {
             if (!rolRepository.existsByNombreRol(RolEnum.COMPRADOR)) {
                 Rol rol = new Rol();
                 rol.setNombreRol(RolEnum.COMPRADOR);
+
                 rolRepository.save(rol);
             }
             if (!rolRepository.existsByNombreRol(RolEnum.VENDEDOR)) {

@@ -5,10 +5,7 @@ import com.proyecto.terranova.config.enums.RolEnum;
 import com.proyecto.terranova.entity.Cita;
 import com.proyecto.terranova.entity.Disponibilidad;
 import com.proyecto.terranova.entity.Usuario;
-import com.proyecto.terranova.service.CitaService;
-import com.proyecto.terranova.service.CompradorService;
-import com.proyecto.terranova.service.DisponibilidadService;
-import com.proyecto.terranova.service.UsuarioService;
+import com.proyecto.terranova.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -39,6 +36,9 @@ public class CompradorController {
 
     @Autowired
     DisponibilidadService disponibilidadService;
+
+    @Autowired
+    VentaService ventaService;
 
     @ModelAttribute("usuario")
     public Usuario usuario(Authentication authentication){
@@ -76,6 +76,13 @@ public class CompradorController {
         model.addAttribute("posicionCitas", true);
         model.addAttribute("citas", citaService.encontrarPorComprador(usuarioService.findByEmail(authentication.getName())));
         return "comprador/citas";
+    }
+
+    @GetMapping("/compras")
+    public String compras(Model model, Authentication authentication){
+        model.addAttribute("posicionCompras", true);
+        model.addAttribute("compras", ventaService.encontrarPorComprador(usuario(authentication)));
+        return "comprador/compras";
     }
 
     @PostMapping("/citas/cancelar-cita")

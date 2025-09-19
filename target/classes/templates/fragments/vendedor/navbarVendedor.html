@@ -51,7 +51,7 @@
                     </svg>
                 </div>
                 <div th:if="${usuario.foto != null}" class="w-9 h-9 rounded-full overflow-hidden flex items-center justify-center">
-                    <img th:src="@{'/' + ${usuario.foto}}" alt="Foto de perfil" class="w-full h-full object-cover">
+                    <img th:src="@{'/imagenes/' + ${usuario.foto}}" alt="Foto de perfil" class="w-full h-full object-cover">
                 </div>
                 <span class="text-base font-medium text-gray-700" th:text="${nombreMostrar}"></span>
                 <svg class="w-5 h-5 text-gray-500 transition-transform duration-200" id="dropdownArrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">

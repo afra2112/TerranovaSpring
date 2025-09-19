@@ -27,8 +27,6 @@ public class Venta {
 
     private String nota;
 
-    private int interesados;
-
     @Column(length = 30, nullable = true)
     private String metodoPago;
 
@@ -36,7 +34,6 @@ public class Venta {
     @JoinColumn(name = "idProducto")
     private Producto producto;
 
-    @Column(nullable = false)
     private Long gananciaNeta;
 
     @ManyToOne
@@ -54,5 +51,10 @@ public class Venta {
     private List<Comprobante> listaComprobantes = new ArrayList<>();
 
     @Transient
-    private Long totalGastos;
+    public Long getTotalGastos() {
+        if (listaGastos == null) return 0L;
+        return listaGastos.stream()
+                .mapToLong(GastoVenta::getValorGasto)
+                .sum();
+    }
 }

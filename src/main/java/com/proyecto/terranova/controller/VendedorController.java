@@ -98,8 +98,23 @@ public class VendedorController {
 
     @GetMapping("/ventas")
     public String ventas(Model model, Authentication authentication){
+        List<Venta> ventas = ventaService.encontrarPorVendedor(usuarioService.findByEmail(authentication.getName()));
+
+        Long ingresosTotales = 0L;
+        Long gastosTotales = 0L;
+        Long balanceFinal = 0L;
+
+        for (Venta venta : ventas){
+            ingresosTotales += venta.getProducto().getPrecioProducto();
+            gastosTotales += venta.getTotalGastos();
+            balanceFinal = ingresosTotales - gastosTotales;
+        }
+
         model.addAttribute("posicionVentas", true);
-        model.addAttribute("ventas", ventaService.encontrarPorVendedor(usuarioService.findByEmail(authentication.getName())));
+        model.addAttribute("ingresosTotales", ingresosTotales);
+        model.addAttribute("gastosTotales", gastosTotales);
+        model.addAttribute("balanceFinal", balanceFinal);
+        model.addAttribute("ventas", ventas);
         return "vendedor/ventas";
     }
 
@@ -111,46 +126,8 @@ public class VendedorController {
             @RequestParam(required = false) List<Long> idsComprobantesEliminados,
             @RequestParam(required = false) List<MultipartFile> comprobantes
     ) {
-        System.out.println("venta recibida: "+venta);
-        System.out.println("lista degastos recibida: "+ venta.getListaGastos());
         try {
-            Venta ventaAcual = ventaService.findById(venta.getIdVenta());
-            ventaAcual.setFechaVenta(venta.getFechaVenta());
-            ventaAcual.setMetodoPago(venta.getMetodoPago());
-            ventaAcual.setNota(venta.getNota());
-
-            if(idsGastosEliminados != null){
-                ventaAcual.getListaGastos().removeIf(gastoVenta -> idsGastosEliminados.contains(gastoVenta.getIdGasto()));
-            }
-
-            if(venta.getListaGastos() != null){
-                for (GastoVenta gasto : venta.getListaGastos()){
-                    gasto.setVenta(ventaAcual);
-                    ventaAcual.getListaGastos().add(gasto);
-                    ventaAcual.setTotalGastos(ventaAcual.getTotalGastos() == null ? 0L : ventaAcual.getTotalGastos() + gasto.getValorGasto());
-                }
-            }
-
-            if(idsComprobantesEliminados != null){
-                ventaAcual.getListaComprobantes().removeIf(comprobante -> idsComprobantesEliminados.contains(comprobante.getIdComprobante()));
-            }
-
-            if(venta.getListaComprobantes() != null){
-                for (MultipartFile file : comprobantes){
-                    String nombreArchivo = UUID.randomUUID() + "_" + file.getOriginalFilename();
-                    Path rutaArchivo = Paths.get("archivos").resolve(nombreArchivo);
-                    Files.write(rutaArchivo, file.getBytes());
-
-                    Comprobante comprobante = new Comprobante();
-                    comprobante.setFechaSubida(LocalDateTime.now());
-                    comprobante.setVenta(ventaAcual);
-                    comprobante.setNombreComprobante(file.getOriginalFilename());
-                    ventaAcual.getListaComprobantes().add(comprobante);
-                }
-            }
-
-            ventaService.save(ventaAcual);
-
+            ventaService.actualizarDatosVenta(venta, idsComprobantesEliminados, idsGastosEliminados, comprobantes);
             return "ok";
         } catch (Exception e) {
             return "error: " + e.getMessage();
@@ -158,11 +135,14 @@ public class VendedorController {
     }
 
     @PostMapping("/venta/enviar-peticion-venta")
-    public String enviarPeticionVenta(@ModelAttribute Venta venta, RedirectAttributes redirectAttributes) {
-        if(venta.getFechaVenta() == null || venta.getMetodoPago() == null){
+    public String enviarPeticionVenta(@ModelAttribute Venta venta, @RequestParam(name = "comprobantes") int comprobantes, RedirectAttributes redirectAttributes) {
+        if(venta.getFechaVenta() == null || (venta.getMetodoPago() == null || venta.getMetodoPago().isBlank()) || comprobantes == 0){
             redirectAttributes.addFlashAttribute("ventaIncompleta", true);
             return "redirect:/vendedor/ventas";
         }
+        //ENVIAR NOTIFICACION AL COMPRADOR y luego:
+        ventaService.actualizarEstado(venta, "Pendiente Confirmacion");
+        redirectAttributes.addFlashAttribute("peticionHecha", true);
         return "redirect:/vendedor/ventas";
     }
 
