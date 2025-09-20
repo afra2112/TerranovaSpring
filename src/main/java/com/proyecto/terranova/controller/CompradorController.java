@@ -5,6 +5,7 @@ import com.proyecto.terranova.config.enums.RolEnum;
 import com.proyecto.terranova.entity.Cita;
 import com.proyecto.terranova.entity.Disponibilidad;
 import com.proyecto.terranova.entity.Usuario;
+import com.proyecto.terranova.entity.Venta;
 import com.proyecto.terranova.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -83,6 +84,30 @@ public class CompradorController {
         model.addAttribute("posicionCompras", true);
         model.addAttribute("compras", ventaService.encontrarPorComprador(usuario(authentication)));
         return "comprador/compras";
+    }
+
+    @PostMapping("/compras/actualizar-compra")
+    public String actualizarCompra(RedirectAttributes redirectAttributes, @RequestParam(name = "idVenta") Long idVenta, @RequestParam(name = "accion") String accion){
+        switch (accion){
+            case "cancelar":
+                Venta venta = ventaService.findById(idVenta);
+                venta.setGananciaNeta(0L);
+                ventaService.actualizarEstado(venta, "Cancelada");
+                redirectAttributes.addFlashAttribute("modalCancelar", true);
+                break;
+            case "finalizar":
+                ventaService.actualizarEstado(ventaService.findById(idVenta), "Finalizada");
+                redirectAttributes.addFlashAttribute("modalFinalizar", true);
+                break;
+
+            case "modificar":
+                ventaService.actualizarEstado(ventaService.findById(idVenta), "En Proceso");
+                redirectAttributes.addFlashAttribute("modalModificar", true);
+
+                //ENVIAR NOTIFICACIONES Y RAZON O PETICION EN LA NOTIFICACION e EMAIL
+                break;
+        }
+        return "redirect:/comprador/compras";
     }
 
     @PostMapping("/citas/cancelar-cita")
