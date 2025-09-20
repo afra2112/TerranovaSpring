@@ -19,22 +19,11 @@ public class ProductoControllerRest {
     @Autowired
     private ProductoService serviceProducto;
 
-    @Autowired
-    private DisponibilidadService disponibilidadService;
-
-    @Autowired
-    private UsuarioService usuarioService;
-
 
     @GetMapping("/listarTodo")
     public ResponseEntity<List<ProductoDTO>> obtenerTodosLosProductos(){
         List<ProductoDTO> entidadesProducto = serviceProducto.findAll();
         return ResponseEntity.ok(entidadesProducto);
-    }
-
-    @GetMapping("/vendedor/{cedula}")
-    public List<DisponibilidadDTO> obtenerPorVendedor(@PathVariable(name = "cedula") String cedula){
-        return disponibilidadService.encontrarTodasPorVendedor(usuarioService.findById(cedula));
     }
 
     @GetMapping("/{id}")

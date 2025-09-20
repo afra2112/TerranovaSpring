@@ -24,9 +24,6 @@ public class DisponibilidadImplement implements DisponibilidadService {
     private DisponibilidadRepository repository;
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
-
-    @Autowired
     private ProductoRepository productoRepository;
 
     @Autowired
@@ -64,13 +61,8 @@ public class DisponibilidadImplement implements DisponibilidadService {
     }
 
     @Override
-    public List<DisponibilidadDTO> encontrarTodasPorVendedor(Usuario vendedor) {
-        List<Producto> productos = productoRepository.findByVendedor(vendedor);
-        List<Disponibilidad> disponibilidades = new ArrayList<>();
-        for (Producto producto : productos){
-            disponibilidades.addAll(producto.getDisponibilidades());
-        }
-
+    public List<DisponibilidadDTO> encontrarTodasPorVendedorYDisponible(Usuario vendedor, boolean disponible) {
+        List<Disponibilidad> disponibilidades = repository.findByProducto_VendedorAndDisponible(vendedor, disponible);
         return disponibilidades.stream().map(disponibilidad -> modelMapper.map(disponibilidad, DisponibilidadDTO.class)).toList();
     }
 

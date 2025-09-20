@@ -27,14 +27,11 @@ import java.util.*;
 public class ReportService {
 
     public byte[] generarReporteVentas(List<Venta> ventas) throws Exception {
-        // Cargar el template JRXML
         InputStream jasperStream = new ClassPathResource("reports/reporte-ventas.jrxml").getInputStream();
         JasperReport jasperReport = JasperCompileManager.compileReport(jasperStream);
 
-        // Preparar parámetros
         Map<String, Object> parameters = new HashMap<>();
 
-        // Calcular totales
         int totalVentas = ventas.size();
         Long totalIngresos = ventas.stream()
                 .filter(v -> v.getProducto() != null)
@@ -51,14 +48,11 @@ public class ReportService {
         parameters.put("balance", new BigDecimal(balance));
         parameters.put("logoPath", "classpath:static/images/logo.jpg");
 
-        // Generar gráficos
         parameters.put("chartIngresos", generarGraficoLinea(ventas));
         parameters.put("chartPastel", generarGraficoPastel(ventas));
 
-        // Crear datasource
         JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(ventas);
 
-        // Generar reporte
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
 
         return JasperExportManager.exportReportToPdf(jasperPrint);

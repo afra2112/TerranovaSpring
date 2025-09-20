@@ -1,10 +1,15 @@
 package com.proyecto.terranova.implement;
 
 import com.proyecto.terranova.config.enums.EstadoCitaEnum;
+import com.proyecto.terranova.dto.DisponibilidadDTO;
+import com.proyecto.terranova.entity.Disponibilidad;
+import com.proyecto.terranova.entity.Producto;
 import com.proyecto.terranova.entity.Usuario;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,7 +55,29 @@ public class CitaImplement implements CitaService {
 
     @Override
     public List<Cita> encontrarPorVendedor(Usuario vendedor) {
-        return repository.findByDisponibilidad_Producto_Vendedor(vendedor);
+        return repository.findByProducto_Vendedor(vendedor);
+    }
+
+    @Override
+    public List<CitaDTO> encontrarPorVendedorParaCalendario(Usuario vendedor) {
+        List<Cita> citas = repository.findByProducto_Vendedor(vendedor);
+        List<CitaDTO> citasDto = new ArrayList<>();
+        for (Cita cita : citas){
+            CitaDTO citaDTO = new CitaDTO();
+            citaDTO.setEstadoCita(cita.getEstadoCita());
+            citaDTO.setNombreVendedor(cita.getProducto().getVendedor().getNombres());
+            citaDTO.setNombreComprador(cita.getComprador().getNombres());
+            citaDTO.setIdCita(cita.getIdCita());
+            citaDTO.setFecha(cita.getDisponibilidad().getFecha());
+            citaDTO.setHora(cita.getDisponibilidad().getHora());
+            citaDTO.setNombreProducto(cita.getProducto().getNombreProducto());
+            citaDTO.setUbicacion(cita.getProducto().getCiudad().getNombreCiudad());
+            citaDTO.setIdProducto(cita.getProducto().getIdProducto());
+            citaDTO.setIdDisponibilidad(cita.getDisponibilidad().getIdDisponibilidad());
+
+            citasDto.add(citaDTO);
+        }
+        return citasDto;
     }
 
     @Override

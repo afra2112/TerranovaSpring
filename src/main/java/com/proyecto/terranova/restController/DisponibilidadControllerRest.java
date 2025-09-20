@@ -3,6 +3,7 @@ package com.proyecto.terranova.restController;
 import com.proyecto.terranova.dto.DisponibilidadDTO;
 import com.proyecto.terranova.entity.Disponibilidad;
 import com.proyecto.terranova.service.DisponibilidadService;
+import com.proyecto.terranova.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,11 +17,19 @@ public class DisponibilidadControllerRest {
     @Autowired
     private DisponibilidadService serviceDisponibilidad;
 
+    @Autowired
+    private UsuarioService usuarioService;
+
 
     @GetMapping("/listarTodo")
     public ResponseEntity<List<Disponibilidad>> obtenerTodosLosDisponibilidads(){
         List<Disponibilidad> entidadesDisponibilidad = serviceDisponibilidad.findAll();
         return ResponseEntity.ok(entidadesDisponibilidad);
+    }
+
+    @GetMapping("/vendedor/{cedula}")
+    public List<DisponibilidadDTO> obtenerPorVendedorYDisponibleParaMostrar(@PathVariable(name = "cedula") String cedula){
+        return serviceDisponibilidad.encontrarTodasPorVendedorYDisponible(usuarioService.findById(cedula), true);
     }
 
     @GetMapping("/{id}")

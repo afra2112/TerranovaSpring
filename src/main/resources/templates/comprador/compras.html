@@ -88,8 +88,9 @@
         }
 
         .fondo-card {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
         }
+
     </style>
 </head>
 <body class="bg-gray-50">
@@ -101,57 +102,22 @@
     <div class="ml-64 flex flex-col min-h-screen">
         <main class="w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <!-- Updated header for buyer's purchase panel -->
-            <div class="mb-6">
-                <div class="glass-effect rounded-xl shadow-lg p-4 border-l-4 border-blue-500">
-                    <h1 class="text-2xl font-bold text-blue-600 mb-1 flex items-center">
-                        <i class="fas fa-shopping-cart text-blue-600 mr-2"></i>
-                        Panel de Compras
-                    </h1>
-                    <p class="text-gray-600 text-sm">Gestiona y supervisa todas tus compras realizadas</p>
+            <div class="mb-5 glass-effect rounded-xl shadow-lg p-4 border-l-4 border-green-500 flex items-center justify-between">
+                <!-- Título principal -->
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-shopping-cart text-green-600 text-xl"></i>
+                    <h1 class="text-2xl font-bold text-green-600">Panel de Compras</h1>
+                </div>
+
+                <!-- Indicador de total de compras -->
+                <div class="bg-white rounded-lg px-4 py-2 shadow flex items-center space-x-2">
+                    <i class="fas fa-list text-green-600"></i>
+                    <span class="font-semibold text-gray-800 text-sm">
+            Total Compras: <span th:text="${compras.size()}">0</span>
+        </span>
                 </div>
             </div>
 
-            <!-- Updated statistics for buyer perspective -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                <div class="glass-effect rounded-xl shadow-lg p-4 border-l-4 border-blue-500 hover:shadow-xl transition-all duration-300">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-xs font-medium text-gray-600 mb-1">Total Compras</p>
-                            <p class="text-2xl font-bold text-gray-800" th:text="${compras.size()}"></p>
-                            <p class="text-xs text-blue-600 font-medium">Compras Totales</p>
-                        </div>
-                        <div class="w-10 h-10 accent-blue rounded-lg flex items-center justify-center shadow-lg">
-                            <i class="fas fa-shopping-bag text-white"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="glass-effect rounded-xl shadow-lg p-4 border-l-4 border-yellow-500 hover:shadow-xl transition-all duration-300">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-xs font-medium text-gray-600 mb-1">Total Invertido</p>
-                            <p class="text-2xl font-bold text-gray-800" th:text="'$' + ${#numbers.formatInteger(totalInvertido, 0, 'COMMA')}"></p>
-                            <p class="text-xs text-yellow-600 font-medium">Valor Total</p>
-                        </div>
-                        <div class="w-10 h-10 accent-yellow rounded-lg flex items-center justify-center shadow-lg">
-                            <i class="fas fa-dollar-sign text-white"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="glass-effect rounded-xl shadow-lg p-4 border-l-4 border-green-500 hover:shadow-xl transition-all duration-300">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-xs font-medium text-gray-600 mb-1">Compras Finalizadas</p>
-                            <p class="text-2xl font-bold text-gray-800" th:text="${comprasFinalizadas}"></p>
-                            <p class="text-xs text-green-600 font-medium">Transacciones Exitosas</p>
-                        </div>
-                        <div class="w-10 h-10 accent-green rounded-lg flex items-center justify-center shadow-lg">
-                            <i class="fas fa-check-circle text-white"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             <!-- Updated purchase list for buyer perspective -->
             <div class="space-y-4">
@@ -162,9 +128,9 @@
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-3">
                                     <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-md">
-                                        <div th:if="${compra.producto instanceof T(com.proyecto.terranova.entity.Ganado)}"><i class="fas fa-cow text-blue-600 text-sm"></i></div>
-                                        <div th:if="${compra.producto instanceof T(com.proyecto.terranova.entity.Terreno)}"><i class="fas fa-mountain text-blue-600 text-sm"></i></div>
-                                        <div th:if="${compra.producto instanceof T(com.proyecto.terranova.entity.Finca)}"><i class="fas fa-house text-blue-600 text-sm"></i></div>
+                                        <div th:if="${compra.producto instanceof T(com.proyecto.terranova.entity.Ganado)}"><i class="fas fa-cow text-green-600 text-sm"></i></div>
+                                        <div th:if="${compra.producto instanceof T(com.proyecto.terranova.entity.Terreno)}"><i class="fas fa-mountain text-green-600 text-sm"></i></div>
+                                        <div th:if="${compra.producto instanceof T(com.proyecto.terranova.entity.Finca)}"><i class="fas fa-house text-green-600 text-sm"></i></div>
                                     </div>
                                     <div>
                                         <h3 class="text-lg font-bold text-white" th:text="${compra.producto.nombreProducto}">NombreProducto</h3>
@@ -184,16 +150,15 @@
                         </div>
 
                         <div class="p-5">
-                            <!-- Layout Principal: 2 Columnas -->
-                            <div th:classappend="${compra.estado == 'En Proceso' or compra.estado == 'Pendiente Confirmacion' ? 'opacity-100' : 'opacity-75'}" class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                            <!-- Layout Principal: Single Column with Horizontal Sections -->
+                            <div th:classappend="${compra.estado == 'En Proceso' or compra.estado == 'Pendiente Confirmacion' ? 'opacity-100' : 'opacity-75'}" class="space-y-4">
 
-                                <!-- COLUMNA IZQUIERDA: Info Principal -->
-                                <div class="space-y-4">
-
+                                <!-- FILA SUPERIOR: Producto y Vendedor lado a lado -->
+                                <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
                                     <!-- Producto -->
                                     <div class="section-card rounded-lg p-4">
                                         <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
-                                            <div class="w-6 h-6 accent-blue rounded-md flex items-center justify-center mr-2">
+                                            <div class="w-6 h-6 accent-green rounded-md flex items-center justify-center mr-2">
                                                 <i class="fas fa-box text-white text-xs"></i>
                                             </div>
                                             Producto
@@ -220,7 +185,7 @@
                                         </div>
                                     </div>
 
-                                    <!-- Changed from Comprador to Vendedor section -->
+                                    <!-- Vendedor -->
                                     <div class="section-card rounded-lg p-4">
                                         <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
                                             <div class="w-6 h-6 accent-green rounded-md flex items-center justify-center mr-2">
@@ -247,7 +212,10 @@
                                             </div>
                                         </div>
                                     </div>
+                                </div>
 
+                                <!-- FILA INFERIOR: Compra y Comprobantes lado a lado -->
+                                <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
                                     <!-- Compra -->
                                     <div class="section-card rounded-lg p-4">
                                         <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
@@ -268,24 +236,21 @@
                                             <div class="flex justify-between py-1 border-b border-gray-100">
                                                 <span class="text-gray-600 text-sm">Fecha:</span>
                                                 <span class="font-medium text-gray-800 text-sm">
-                                                        <span th:if="${compra.fechaVenta != null and compra.fechaVenta != ''}" th:text="${#strings.capitalize(#temporals.format(compra.fechaVenta, 'EEEE d MMMM - h:mm a', T(java.util.Locale).forLanguageTag('es-ES')))}"></span>
-                                                        <span th:unless="${compra.fechaVenta != null and compra.fechaVenta != ''}">Aún no se ha finalizado la compra</span>
-                                                    </span>
+                                                    <span th:if="${compra.fechaVenta != null and compra.fechaVenta != ''}" th:text="${#strings.capitalize(#temporals.format(compra.fechaVenta, 'EEEE d MMMM - h:mm a', T(java.util.Locale).forLanguageTag('es-ES')))}"></span>
+                                                    <span th:unless="${compra.fechaVenta != null and compra.fechaVenta != ''}">Aún no se ha finalizado la compra</span>
+                                                </span>
                                             </div>
                                             <div class="flex justify-between py-1">
                                                 <span class="text-gray-600 text-sm">Metodo De Pago:</span>
                                                 <span class="font-medium text-gray-800 text-sm">
-                                                        <span th:if="${compra.metodoPago != null and compra.metodoPago != ''}" th:text="${compra.metodoPago}"></span>
-                                                        <span th:unless="${compra.metodoPago != null and compra.metodoPago != ''}">Aún no se ha finalizado la compra</span>
-                                                    </span>
+                                                    <span th:if="${compra.metodoPago != null and compra.metodoPago != ''}" th:text="${compra.metodoPago}"></span>
+                                                    <span th:unless="${compra.metodoPago != null and compra.metodoPago != ''}">Aún no se ha finalizado la compra</span>
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <!-- COLUMNA DERECHA: Comprobantes únicamente -->
-                                <div class="space-y-4">
-                                    <!-- Only showing attachments section, removed expenses and notes -->
+                                    <!-- Comprobantes -->
                                     <div class="section-card rounded-lg p-4">
                                         <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
                                             <div class="w-6 h-6 bg-gradient-to-r from-purple-500 to-purple-600 rounded-md flex items-center justify-center mr-2">

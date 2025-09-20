@@ -14,5 +14,5 @@ public interface CitaRepository extends JpaRepository<Cita, Long> {
 
     List<Cita> findByDisponibilidad_Producto_VendedorAndEstadoCita(Usuario vendedor, EstadoCitaEnum estadoCitaEnum);
 
-    List<Cita> findByDisponibilidad_Producto_Vendedor(Usuario vendedor);
+    List<Cita> findByProducto_Vendedor(Usuario vendedor);
 }

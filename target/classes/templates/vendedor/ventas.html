@@ -88,7 +88,10 @@
         }
 
         .fondo-card {
-            background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+        }
+        .gradient-hero {
+            background: linear-gradient(135deg, #064e3b 0%, #059669 50%, #10b981 100%);
         }
     </style>
 </head>
@@ -98,85 +101,32 @@
     <div th:replace="fragments/vendedor/navbarVendedor :: navbarVendedor"></div>
     <div class="ml-64 flex flex-col min-h-screen">
         <main class="w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Header con gradiente -->
-            <div class="mb-6">
-                <div class="glass-effect rounded-xl shadow-lg p-4 border-l-4 border-green-500 flex justify-between items-center">
-                    <div>
-                        <h1 class="text-2xl font-bold text-green-600 mb-1 flex items-center">
-                            <i class="fas fa-chart-line text-green-600 mr-2"></i>
-                            Panel de Ventas
-                        </h1>
-                        <p class="text-gray-600 text-sm">Gestiona y supervisa todas tus ventas realizadas</p>
-                    </div>
-                    <a th:href="@{/api/reportes/ventas/{nombre}(nombre=${nombres})}"><button
-                            class="bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold px-5 py-2 rounded-lg shadow-md hover:scale-105 hover:shadow-lg transition transform duration-200 ease-in-out flex items-center gap-2">
+
+            <div class="gradient-hero rounded-3xl p-8 mb-8 text-white flex justify-between items-center relative overflow-hidden">
+                <!-- Fondo decorativo -->
+                <div class="absolute inset-0 bg-black/10"></div>
+                <div class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full"></div>
+                <div class="absolute -bottom-5 -left-5 w-32 h-32 bg-white/5 rounded-full"></div>
+
+                <div class="relative z-10 text-left max-w-xl">
+                    <h1 class="text-4xl font-bold mb-2">Mis Ventas</h1>
+                    <p class="text-emerald-100 text-lg">Gestiona tus ventas con compradores de manera eficiente</p>
+                </div>
+
+                <a th:href="@{/api/reportes/ventas/{nombre}(nombre=${nombres})}" class="relative z-10">
+                    <button
+                            class="bg-white/25 text-white border border-white px-6 py-3 rounded-lg font-semibold shadow-md hover:bg-emerald-800 hover:border-emerald-600 transition transform duration-200 flex items-center gap-2">
                         <i class="fas fa-file-pdf"></i>
                         Generar Reporte
-                    </button></a>
-                </div>
+                    </button>
+                </a>
             </div>
-
-
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                    <div class="glass-effect rounded-xl shadow-lg p-4 border-l-4 border-blue-500 hover:shadow-xl transition-all duration-300">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-xs font-medium text-gray-600 mb-1">Total Ventas</p>
-                                <p class="text-2xl font-bold text-gray-800" th:text="${ventas.size()}"></p>
-                                <p class="text-xs text-blue-600 font-medium">Ventas Totales</p>
-                            </div>
-                            <div class="w-10 h-10 accent-blue rounded-lg flex items-center justify-center shadow-lg">
-                                <i class="fas fa-handshake text-white"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="glass-effect rounded-xl shadow-lg p-4 border-l-4 border-yellow-500 hover:shadow-xl transition-all duration-300">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-xs font-medium text-gray-600 mb-1">Ingresos Totales</p>
-                                <p class="text-2xl font-bold text-gray-800" th:text="'$' + ${#numbers.formatInteger(ingresosTotales, 0, 'COMMA')}"></p>
-                                <p class="text-xs text-yellow-600 font-medium">Valor Bruto</p>
-                            </div>
-                            <div class="w-10 h-10 accent-yellow rounded-lg flex items-center justify-center shadow-lg">
-                                <i class="fas fa-dollar-sign text-white"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="glass-effect rounded-xl shadow-lg p-4 border-l-4 border-red-500 hover:shadow-xl transition-all duration-300">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-xs font-medium text-gray-600 mb-1">Gastos Totales</p>
-                                <p class="text-2xl font-bold text-gray-800" th:text="'$' + ${#numbers.formatInteger(gastosTotales, 0, 'COMMA')}"></p>
-                                <p class="text-xs text-red-600 font-medium">Valor Total</p>
-                            </div>
-                            <div class="w-10 h-10 accent-red rounded-lg flex items-center justify-center shadow-lg">
-                                <i class="fas fa-arrow-down text-white"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="glass-effect rounded-xl shadow-lg p-4 border-l-4 border-green-500 hover:shadow-xl transition-all duration-300">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-xs font-medium text-gray-600 mb-1">Balance Final</p>
-                                <p class="text-2xl font-bold text-gray-800" th:text="'$' + ${#numbers.formatInteger(balanceFinal, 0, 'COMMA')}"></p>
-                                <p class="text-xs text-green-600 font-medium">Ingresos Brutos - Total Gastos</p>
-                            </div>
-                            <div class="w-10 h-10 accent-green rounded-lg flex items-center justify-center shadow-lg">
-                                <i class="fas fa-trophy text-white"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Lista de Ventas -->
                 <div class="space-y-4">
                     <div th:each="venta : ${ventas}">
                         <div class="card-hover venta-card rounded-xl shadow-lg overflow-hidden">
                             <!-- Header compacto -->
-                            <div class="px-6 py-3 fondo-card border-gray-100">
+                            <div class="px-6 py-3 gradient-bg border-gray-100">
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center space-x-3">
                                         <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-md">

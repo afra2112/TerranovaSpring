@@ -27,19 +27,36 @@ public class DisponibilidadController {
     UsuarioService usuarioService;
 
     @PostMapping("/mi-calendario/registrar-disponibilidad")
-    public String registrarDisponibilidad(@RequestParam(name = "fecha") LocalDate fecha, @RequestParam(name = "hora") LocalTime hora, @RequestParam(name = "descripcion", required = false) String descripcion, @RequestParam(name = "idProducto") Long idProducto, Authentication authentication){
+    public String registrarDisponibilidad(
+            @RequestParam(name = "fecha") LocalDate fecha,
+            @RequestParam(name = "hora") LocalTime hora,
+            @RequestParam(name = "descripcion", required = false) String descripcion,
+            @RequestParam(name = "idProducto") Long idProducto,
+            @RequestParam(name = "vieneDe") String vieneDe,
+            Authentication authentication
+    ){
         Disponibilidad disponibilidad = new Disponibilidad();
         disponibilidad.setFecha(fecha);
         disponibilidad.setHora(hora);
         disponibilidad.setDescripcion(descripcion);
         disponibilidad.setProducto(productoService.findById(idProducto));
         disponibilidadService.save(disponibilidad);
+        if(vieneDe.equals("calendario")){
+            return "redirect:/vendedor/mi-calendario";
+        }
         return "redirect:/vendedor/productos?idProducto=" + idProducto;
     }
 
     @GetMapping("/eliminar-disponibilidad")
-    public String eliminarDisponibilidad(@RequestParam(name = "idDisponibilidad") Long idDisponibilidad, @RequestParam(name = "idProducto") Long idProducto){
+    public String eliminarDisponibilidad(
+            @RequestParam(name = "idDisponibilidad") Long idDisponibilidad,
+            @RequestParam(name = "idProducto") Long idProducto,
+            @RequestParam(name = "vieneDe") String vieneDe
+    ){
         disponibilidadService.delete(idDisponibilidad);
+        if(vieneDe.equals("calendario")){
+            return "redirect:/vendedor/mi-calendario";
+        }
         return "redirect:/vendedor/productos?idProducto=" + idProducto;
     }
 }
