@@ -39,4 +39,6 @@ public class NotificacionControllerRest {
         serviceNotificacion.delete(id);
         return ResponseEntity.ok(id);
     }
+
+
 }

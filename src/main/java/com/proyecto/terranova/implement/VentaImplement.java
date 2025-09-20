@@ -1,5 +1,6 @@
 package com.proyecto.terranova.implement;
 
+import com.proyecto.terranova.service.NotificacionService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,9 @@ public class VentaImplement implements VentaService {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    private NotificacionService service;
 
     @Override
     public VentaDTO save(VentaDTO dto) {
@@ -68,5 +72,11 @@ public class VentaImplement implements VentaService {
     @Override
     public long count() {
         return repository.count();
+    }
+
+    public void registrarVenta(Venta venta){
+        repository.save(venta);
+
+        service.crearNotificacionAutomatica("Has realizado una venta #" + venta.getIdVenta(),"VENTA", venta.getVendedor());
     }
 }
