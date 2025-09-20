@@ -1,8 +1,11 @@
 package com.proyecto.terranova.implement;
 
+import com.proyecto.terranova.entity.Usuario;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -68,5 +71,42 @@ public class NotificacionImplement implements NotificacionService {
     @Override
     public long count() {
         return repository.count();
+    }
+
+    @Override
+    public void crearNotificacionAutomatica(String mensaje, String tipo, Usuario usuario) {
+        Notificacion notificacion = new Notificacion();
+        notificacion.setMensajeNotificacion(mensaje);
+        notificacion.setTipo(tipo);
+        notificacion.setLeido(false);
+        notificacion.setFechaNotificacion(LocalDateTime.now());
+        notificacion.setUsuario(usuario);
+        repository.save(notificacion);
+
+    }
+
+    @Override
+    public List<NotificacionDTO> obtenerNoLeidasPorUsuario(Usuario usuario) {
+        return repository.findByUsuarioAndLeidoFalse(usuario)
+                .stream()
+                .map(notificacion -> modelMapper.map(notificacion, NotificacionDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void marcarComoLeida(Long idNotificacion) {
+        Notificacion notificacion = repository.findById(idNotificacion)
+                .orElseThrow(() -> new RuntimeException("Notificacion no encontrada"));
+        notificacion.setLeido(true);
+        repository.save(notificacion);
+
+    }
+
+    @Override
+    public void marcarTodasComoLeidas(Usuario usuario) {
+        List<Notificacion> notificaciones = repository.findByUsuarioAndLeidoFalse(usuario);
+        notificaciones.forEach(noti -> noti.setLeido(true));
+        repository.saveAll(notificaciones);
+
     }
 }

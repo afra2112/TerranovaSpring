@@ -31,6 +31,9 @@ public class VentaImplement implements VentaService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    private NotificacionService service;
+
     @Override
     public boolean actualizarDatosVenta(Venta venta, List<Long> idsComprobantesEliminados, List<Long> idsGastosEliminados, List<MultipartFile> comprobantes) throws IOException {
         Venta ventaAcual = repository.findById(venta.getIdVenta()).orElseThrow();
@@ -138,5 +141,11 @@ public class VentaImplement implements VentaService {
     @Override
     public long count() {
         return repository.count();
+    }
+
+    public void registrarVenta(Venta venta){
+        repository.save(venta);
+
+        service.crearNotificacionAutomatica("Has realizado una venta #" + venta.getIdVenta(),"VENTA", venta.getVendedor());
     }
 }

@@ -3,6 +3,7 @@ package com.proyecto.terranova.implement;
 import com.proyecto.terranova.config.enums.RolEnum;
 import com.proyecto.terranova.entity.Rol;
 import com.proyecto.terranova.repository.RolRepository;
+import com.proyecto.terranova.service.NotificacionService;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,9 @@ public class UsuarioImplement implements UsuarioService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private NotificacionService Service;
 
     @Override
     public boolean save(UsuarioDTO dto) {
@@ -141,6 +145,17 @@ public class UsuarioImplement implements UsuarioService {
             nombresRoles.add(rol.getNombreRol());
         });
         return nombresRoles;
+    }
+
+    public void actualizarPerfil(String cedula, String nuevoNombre, String nuevoCorreo, String nuevaFoto ){
+        Usuario usuario = repository.findById(cedula)
+                .orElseThrow(()-> new RuntimeException("Usuario no encontrado"));
+        usuario.setNombres(nuevoNombre);
+        usuario.setEmail(nuevoCorreo);
+        usuario.setFoto(nuevaFoto);
+        repository.save(usuario);
+
+        Service.crearNotificacionAutomatica("Has actualizado tu perfil", "PERFIL", usuario);
     }
 
 }

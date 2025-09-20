@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Notificaciones</title>
+  <link rel="stylesheet" href="/css/styles.css"/>
+  <style>
+    /* Reset básico */
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Arial', sans-serif; }
+
+    body {
+      background-color: #f8f9fa;
+      padding: 20px;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      font-size: 24px;
+      color: #212529;
+    }
+
+    .notificaciones-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+
+    .notificacion-card {
+      background-color: white;
+      border-radius: 12px;
+      padding: 15px 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s;
+    }
+
+    .notificacion-card:hover {
+      transform: translateY(-3px);
+    }
+
+    .notificacion-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      font-weight: 600;
+      font-size: 14px;
+      color: #495057;
+    }
+
+    .tipo-COMPRA { border-left: 4px solid #0f5132; }
+    .tipo-VENTA { border-left: 4px solid #055160; }
+    .tipo-PERFIL { border-left: 4px solid #664d03; }
+    .tipo-ARCHIVO { border-left: 4px solid #41464b; }
+
+    .mensaje {
+      font-size: 15px;
+      color: #212529;
+      margin-bottom: 10px;
+    }
+
+    .fecha {
+      font-size: 12px;
+      color: gray;
+    }
+
+    .marcar-leida-btn {
+      align-self: flex-end;
+      padding: 6px 12px;
+      background-color: #0d6efd;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: background-color 0.2s;
+    }
+
+    .marcar-leida-btn:hover {
+      background-color: #0b5ed7;
+    }
+
+    .leido {
+      opacity: 0.6;
+    }
+
+    .marcar-todas-btn {
+      margin-bottom: 20px;
+      padding: 8px 16px;
+      background-color: #198754;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.2s;
+    }
+
+    .marcar-todas-btn:hover {
+      background-color: #157347;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Notificaciones de <span th:text="${usuario.nombres} + ' ' + ${usuario.apellidos}"></span></h2>
+
+<!-- Botón para marcar todas como leídas -->
+<form th:action="@{/notificaciones/marcar-todas-leidas/{cedula}(cedula=${usuario.cedula})}" method="post">
+  <button type="submit" class="marcar-todas-btn">Marcar todas como leídas</button>
+</form>
+
+<div class="notificaciones-container">
+  <div th:each="noti : ${notificaciones}"
+       th:class="'notificacion-card tipo-' + ${noti.tipo} + (${noti.leido} ? ' leido' : '')">
+
+    <div class="notificacion-header">
+      <span th:text="${noti.tipo} + ':'"></span>
+    </div>
+
+    <div class="mensaje" th:text="${noti.mensajeNotificacion}"></div>
+    <div class="fecha" th:text="${#dates.format(noti.fechaNotificacion, 'dd/MM/yyyy HH:mm')}"></div>
+
+    <!-- Botón marcar como leída -->
+    <form th:action="@{/notificaciones/marcar-leida/{id}(id=${noti.idNotificacion})}" method="post">
+      <input type="hidden" name="cedula" th:value="${usuario.cedula}" />
+      <button type="submit" class="marcar-leida-btn">Marcar como leída</button>
+    </form>
+  </div>
+</div>
+
+</body>
+</html>
