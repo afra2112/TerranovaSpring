@@ -110,11 +110,14 @@ public class VendedorController {
             balanceFinal = ingresosTotales - gastosTotales;
         }
 
+        String nombreCompleto = usuario(authentication).getNombres() + " " + usuario(authentication).getApellidos();
+
         model.addAttribute("posicionVentas", true);
         model.addAttribute("ingresosTotales", ingresosTotales);
         model.addAttribute("gastosTotales", gastosTotales);
         model.addAttribute("balanceFinal", balanceFinal);
         model.addAttribute("ventas", ventas);
+        model.addAttribute("nombres", nombreCompleto);
         return "vendedor/ventas";
     }
 
