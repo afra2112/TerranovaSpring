@@ -24,4 +24,5 @@ public interface NotificacionService {
     List<Notificacion> obtenerPorUsuarioYTipo(Usuario usuario, String tipo);
     int contarNoLeidasPorUsuario(Usuario usuario, boolean leido);
     void borrarNotificacion(Long idNotificacion);
+    void eliminarHistorial(Usuario usuario);
 }

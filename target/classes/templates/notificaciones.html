@@ -152,10 +152,15 @@
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="font-semibold text-gray-800">Filtrar por tipo</h3>
-                <a th:href="@{/usuarios/notificaciones(id=${lugar == 'comprador' ? 1 : 2}, filtro='borradas')}" class="historial-btn px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center gap-2">
+                <a th:if="${borrada != true}" th:href="@{/usuarios/notificaciones(id=${lugar == 'comprador' ? 1 : 2}, filtro='borradas')}" class="historial-btn px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center gap-2">
                     <i class="bx bx-trash"></i>
                     Historial Borradas
                 </a>
+                <form th:unless="${borrada != true}" th:action="@{/usuarios/notificaciones/eliminar-historial}" method="post">
+                    <button type="submit"  class="historial-btn px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center gap-2">
+                        <i class="bx bx-trash"></i>Eliminar Historial
+                    </button>
+                </form>
             </div>
             <div class="flex gap-3 flex-wrap">
                 <a th:href="@{/usuarios/notificaciones(id=${lugar == 'comprador' ? 1 : 2}, filtro='todas')}"
@@ -253,35 +258,35 @@
                                 <!-- Botones de acción principales -->
                                 <div class="flex space-x-3" th:switch="${notif.tipo}">
                                     <a th:case="'Citas'"
-                                       href="/citas/mis-citas"
+                                       th:href="${notif.urlAccion}"
                                        class="inline-flex items-center px-4 py-2 rounded-lg text-white font-medium gradient-bg hover:opacity-90 transition-all duration-200 text-sm">
                                         <i class="bx bx-calendar mr-2"></i>
                                         Ver en mis Citas
                                     </a>
 
                                     <a th:case="'Ventas'"
-                                       th:href="${esVendedor} ? '/ventas/mis-ventas' : '/compras/mis-compras'"
+                                       th:href="${esVendedor} ? '/vendedor/ventas/' : '/comprador/compras'"
                                        class="inline-flex items-center px-4 py-2 rounded-lg text-white font-medium gradient-bg hover:opacity-90 transition-all duration-200 text-sm">
                                         <i class="bx bx-dollar mr-2"></i>
                                         <span th:text="${esVendedor} ? 'Ver en mis Ventas' : 'Ver en mis Compras'"></span>
                                     </a>
 
                                     <a th:case="'Sistema'"
-                                       href="/perfil"
+                                       th:href="${notif.urlAccion}"
                                        class="inline-flex items-center px-4 py-2 rounded-lg text-white font-medium gradient-bg hover:opacity-90 transition-all duration-200 text-sm">
                                         <i class="bx bx-user mr-2"></i>
                                         Ir a mi Perfil
                                     </a>
 
                                     <a th:case="'Productos'"
-                                       href="/productos"
+                                       th:href="${notif.urlAccion}"
                                        class="inline-flex items-center px-4 py-2 rounded-lg text-white font-medium gradient-bg hover:opacity-90 transition-all duration-200 text-sm">
                                         <i class="bx bx-package mr-2"></i>
                                         Ir a Productos
                                     </a>
 
                                     <a th:case="'Disponibilidad'"
-                                       href="/productos"
+                                       th:href="${notif.urlAccion}"
                                        class="inline-flex items-center px-4 py-2 rounded-lg text-white font-medium gradient-bg hover:opacity-90 transition-all duration-200 text-sm">
                                         <i class="bx bx-calendar mr-2"></i>
                                         Ir a Mi calendario

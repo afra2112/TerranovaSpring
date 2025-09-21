@@ -109,6 +109,16 @@ public class NotificacionController {
         return "redirect:/usuarios/notificaciones?id=1";
     }
 
+    @PostMapping("/notificaciones/eliminar-historial")
+    public String eliminarHistorial(Authentication authentication){
+        notificacionService.eliminarHistorial(usuario(authentication));
+
+        if(esVendedor(authentication)){
+            return "redirect:/usuarios/notificaciones?id=2";
+        }
+        return "redirect:/usuarios/notificaciones?id=1";
+    }
+
     @PostMapping("/notificaciones/marcar-leida")
     public String marcarComoLeida(@RequestParam(name = "idNotificacion") Long idNotificacion, Authentication authentication){
         notificacionService.marcarComoLeida(idNotificacion);

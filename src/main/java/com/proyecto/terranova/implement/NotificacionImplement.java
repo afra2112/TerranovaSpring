@@ -168,4 +168,12 @@ public class NotificacionImplement implements NotificacionService {
         repository.save(notificacion);
     }
 
+    @Override
+    public void eliminarHistorial(Usuario usuario) {
+        List<Notificacion> notificacionesBorradas = repository.findByUsuarioAndActivo(usuario, false);
+        for (Notificacion notificacion : notificacionesBorradas){
+            repository.delete(notificacion);
+        }
+    }
+
 }
