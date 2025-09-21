@@ -74,13 +74,15 @@ public class NotificacionImplement implements NotificacionService {
     }
 
     @Override
-    public void crearNotificacionAutomatica(String mensaje, String tipo, Usuario usuario) {
+    public void crearNotificacionAutomatica(String mensaje, String tipo, Usuario usuario, Long idReferencia, String urlAccion) {
         Notificacion notificacion = new Notificacion();
         notificacion.setMensajeNotificacion(mensaje);
         notificacion.setTipo(tipo);
         notificacion.setLeido(false);
         notificacion.setFechaNotificacion(LocalDateTime.now());
         notificacion.setUsuario(usuario);
+        notificacion.setReferenciaId(idReferencia);
+        notificacion.setUrlAccion(urlAccion);
         repository.save(notificacion);
 
     }
@@ -109,4 +111,20 @@ public class NotificacionImplement implements NotificacionService {
         repository.saveAll(notificaciones);
 
     }
+
+    @Override
+    public List<Notificacion> obtenerPorUsuario(Usuario usuario) {
+        return repository.findByUsuario(usuario);
+    }
+
+    @Override
+    public int contarPorUsuarioYTipo(Usuario usuario, String tipo) {
+        return repository.countByUsuarioAndTipo(usuario, tipo);
+    }
+
+    @Override
+    public int contarNoLeidasPorUsuario(Usuario usuario, boolean leido) {
+        return repository.countByUsuarioAndLeido(usuario, false);
+    }
+
 }

@@ -34,9 +34,6 @@ public class UsuarioImplement implements UsuarioService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private NotificacionService Service;
-
     @Override
     public boolean save(UsuarioDTO dto) {
         if(repository.existsByemail(dto.getEmail()) || repository.existsBycedula(dto.getCedula())){
@@ -154,8 +151,6 @@ public class UsuarioImplement implements UsuarioService {
         usuario.setEmail(nuevoCorreo);
         usuario.setFoto(nuevaFoto);
         repository.save(usuario);
-
-        Service.crearNotificacionAutomatica("Has actualizado tu perfil", "PERFIL", usuario);
     }
 
 }

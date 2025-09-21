@@ -26,6 +26,12 @@ public class Notificacion {
     @Column(nullable = false)
     private boolean leido;
 
+    private boolean activo = true;
+
+    private String urlAccion;
+
+    private Long referenciaId;
+
     @ManyToOne
     @JoinColumn(name = "cedula")
     private Usuario usuario;

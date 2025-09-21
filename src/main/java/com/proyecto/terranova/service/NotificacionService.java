@@ -2,6 +2,7 @@ package com.proyecto.terranova.service;
 
 import java.util.List;
 import com.proyecto.terranova.dto.NotificacionDTO;
+import com.proyecto.terranova.entity.Notificacion;
 import com.proyecto.terranova.entity.Usuario;
 
 public interface NotificacionService {
@@ -12,8 +13,11 @@ public interface NotificacionService {
     boolean delete(Long id);
     boolean existsById(Long id); // ValidaciÃ³n
     long count(); // Contar registros
-    void crearNotificacionAutomatica(String mensaje, String tipo, Usuario usuario);
+    void crearNotificacionAutomatica(String mensaje, String tipo, Usuario usuario, Long idReferencia, String urlAccion);
     List<NotificacionDTO> obtenerNoLeidasPorUsuario(Usuario usuario);
     void marcarComoLeida(Long idNotificacion);
     void marcarTodasComoLeidas(Usuario usuario);
+    List<Notificacion> obtenerPorUsuario(Usuario usuario);
+    int contarPorUsuarioYTipo(Usuario usuario, String tipo);
+    int contarNoLeidasPorUsuario(Usuario usuario, boolean leido);
 }

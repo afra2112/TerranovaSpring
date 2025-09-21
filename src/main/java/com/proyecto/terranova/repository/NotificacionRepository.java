@@ -11,5 +11,6 @@ import java.util.List;
 public interface NotificacionRepository extends JpaRepository<Notificacion, Long> {
     List<Notificacion> findByUsuarioAndLeidoFalse(Usuario usuario);
     List<Notificacion> findByUsuario(Usuario usuario);
-
+    int countByUsuarioAndTipo(Usuario usuario, String tipo);
+    int countByUsuarioAndLeido(Usuario usuario, boolean leido);
 }

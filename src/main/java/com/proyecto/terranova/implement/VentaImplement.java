@@ -3,6 +3,7 @@ package com.proyecto.terranova.implement;
 import com.proyecto.terranova.entity.Comprobante;
 import com.proyecto.terranova.entity.GastoVenta;
 import com.proyecto.terranova.entity.Usuario;
+import com.proyecto.terranova.service.NotificacionService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -143,9 +144,4 @@ public class VentaImplement implements VentaService {
         return repository.count();
     }
 
-    public void registrarVenta(Venta venta){
-        repository.save(venta);
-
-        service.crearNotificacionAutomatica("Has realizado una venta #" + venta.getIdVenta(),"VENTA", venta.getVendedor());
-    }
 }

@@ -203,37 +203,47 @@
                                         <i class='bx bx-x'></i> Cancelar
                                     </button>
                                 </div>
-                                <div id="availabilityModal" class="fixed hidden inset-0 modal-backdrop flex items-center justify-center z-50">
-                                    <div class="modal-content rounded-3xl p-8 max-w-2xl w-full mx-4 shadow-2xl max-h-[90vh] overflow-y-auto">
-                                        <div class="flex items-center justify-between mb-6">
-                                            <h3 class="text-2xl font-bold text-gray-800" th:text="${cita.producto.nombreProducto}"></h3>
-                                            <button onclick="closeAvailabilityModal()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors"> <i class='bx bx-x text-gray-600'></i> </button>
-                                        </div>
-                                        <div>
-                                            <div class="flex items-center justify-between mb-4">
-                                                <h4 class="text-lg font-semibold text-gray-800">Disponibilidades</h4>
-                                            </div>
-                                            <div class="space-y-3">
-                                                <div th:each="disponibilidad : ${cita.disponibilidad.producto.disponibilidades}" th:if="${disponibilidad.idDisponibilidad != cita.disponibilidad.idDisponibilidad}" class="availability-slot bg-gray-50 rounded-xl p-4 border border-gray-200 cursor-pointer">
-                                                    <div class="flex items-center justify-between">
-                                                        <div>
-                                                            <div class="flex items-center space-x-2 mb-1"> <i class='bx bx-calendar text-green-600'></i>
-                                                                <span class="font-medium text-gray-800" th:text="${#strings.capitalize(#temporals.format(disponibilidad.fecha, 'EEEE d MMMM', T(java.util.Locale).forLanguageTag('es-ES')))}"></span>
-                                                            </div>
-                                                            <div class="flex items-center space-x-2 text-sm text-gray-600"> <i class='bx bx-time'></i> <span th:text="${disponibilidad.hora}"></span>
-                                                            </div>
-                                                        </div>
-                                                        <form th:action="@{/vendedor/citas/reprogramar-cita}" method="post">
-                                                            <input type="hidden" name="idCita" th:value="${cita.idCita}">
-                                                            <input type="hidden" name="idDisponibilidad" th:value="${disponibilidad.idDisponibilidad}">
-                                                            <button type="submit" class="gradient-bg text-white px-4 py-2 rounded-xl text-sm font-medium hover:shadow-lg transition-all">Reprogramar</button>
-                                                        </form>
-                                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="availabilityModal" class="fixed hidden inset-0 modal-backdrop flex items-center justify-center z-50">
+                        <div class="modal-content rounded-3xl p-8 max-w-2xl w-full mx-4 shadow-2xl max-h-[90vh] overflow-y-auto">
+
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-2xl font-bold text-gray-800" th:text="${cita.producto.nombreProducto}"></h3>
+                                <button onclick="closeAvailabilityModal()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors">
+                                    <i class='bx bx-x text-gray-600'></i>
+                                </button>
+                            </div>
+
+                            <div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="text-lg font-semibold text-gray-800">Disponibilidades</h4>
+                                </div>
+
+                                <div class="space-y-3">
+                                    <div th:each="disponibilidad : ${cita.disponibilidad.producto.disponibilidades}" th:if="${disponibilidad.idDisponibilidad != cita.disponibilidad.idDisponibilidad}" class="availability-slot bg-gray-50 rounded-xl p-4 border border-gray-200 cursor-pointer">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <div class="flex items-center space-x-2 mb-1">
+                                                    <i class='bx bx-calendar text-green-600'></i>
+                                                    <span class="font-medium text-gray-800" th:text="${#strings.capitalize(#temporals.format(disponibilidad.fecha, 'EEEE d MMMM', T(java.util.Locale).forLanguageTag('es-ES')))}"></span>
                                                 </div>
-                                                <button onclick="closeAvailabilityModal()" class="w-full bg-red-600 text-white mt-4 px-6 py-3 rounded-xl font-medium hover:bg-red-700 transition-colors"> Cancelar </button>
+                                                <div class="flex items-center space-x-2 text-sm text-gray-600">
+                                                    <i class='bx bx-time'></i>
+                                                    <span th:text="${disponibilidad.hora}"></span>
+                                                </div>
                                             </div>
+                                            <form th:action="@{/vendedor/citas/reprogramar-cita}" method="post">
+                                                <input type="hidden" name="idCita" th:value="${cita.idCita}">
+                                                <input type="hidden" name="idDisponibilidad" th:value="${disponibilidad.idDisponibilidad}">
+                                                <button type="submit" class="gradient-bg text-white px-4 py-2 rounded-xl text-sm font-medium hover:shadow-lg transition-all">Reprogramar</button>
+                                            </form>
                                         </div>
                                     </div>
+                                    <button onclick="closeAvailabilityModal()" class="w-full bg-red-600 text-white mt-4 px-6 py-3 rounded-xl font-medium hover:bg-red-700 transition-colors">
+                                        Cancelar
+                                    </button>
                                 </div>
                             </div>
                         </div>

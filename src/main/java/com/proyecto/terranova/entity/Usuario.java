@@ -41,6 +41,18 @@ public class Usuario {
 
     private String foto;
 
+    private boolean notificacionesDisponibilidades = true;
+
+    private boolean notificacionesCitas = true;
+
+    private boolean notificacionesVentas = true;
+
+    private boolean notificacionesProductos = true;
+
+    private boolean notificacionesSistema = true;
+
+    private boolean recibirCorreos = true;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "usuario_rol",
