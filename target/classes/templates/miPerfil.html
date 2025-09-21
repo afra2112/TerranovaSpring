@@ -219,7 +219,6 @@
 
                     <form th:action="@{/usuarios/mi-perfil/notificaciones}" method="post" class="space-y-4">
 
-                        <!-- Notificaciones por Email -->
                         <div class="flex justify-between items-center py-3 border-b border-gray-100">
                             <div>
                                 <h3 class="font-medium text-gray-900">Notificaciones por Email</h3>
@@ -232,7 +231,6 @@
                             </label>
                         </div>
 
-                        <!-- Ventas o Compras -->
                         <div class="flex justify-between items-center py-3 border-b border-gray-100">
                             <div>
                                 <h3 class="font-medium text-gray-900" th:text="${esVendedor} ? 'Ventas' : 'Compras'"></h3>
@@ -245,7 +243,6 @@
                             </label>
                         </div>
 
-                        <!-- Citas -->
                         <div class="flex justify-between items-center py-3 border-b border-gray-100">
                             <div>
                                 <h3 class="font-medium text-gray-900">Citas</h3>
@@ -258,7 +255,6 @@
                             </label>
                         </div>
 
-                        <!-- Disponibilidades (solo vendedor) -->
                         <div th:if="${esVendedor}" class="flex justify-between items-center py-3 border-b border-gray-100">
                             <div>
                                 <h3 class="font-medium text-gray-900">Disponibilidades</h3>
@@ -271,11 +267,10 @@
                             </label>
                         </div>
 
-                        <!-- Sistema -->
                         <div class="flex justify-between items-center py-3 border-b border-gray-100">
                             <div>
                                 <h3 class="font-medium text-gray-900">Sistema</h3>
-                                <p class="text-sm text-gray-600">Avisos importantes de la plataforma</p>
+                                <p class="text-sm text-gray-600">Avisos importantes de la plataforma y de cambios en tu perfil</p>
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" name="sistema" th:checked="${usuario.notificacionesSistema}" class="sr-only peer">
@@ -284,7 +279,6 @@
                             </label>
                         </div>
 
-                        <!-- Productos (solo vendedor) -->
                         <div th:if="${esVendedor}" class="flex justify-between items-center py-3">
                             <div>
                                 <h3 class="font-medium text-gray-900">Productos</h3>
@@ -297,7 +291,6 @@
                             </label>
                         </div>
 
-                        <!-- Guardar cambios -->
                         <div class="flex justify-end pt-4">
                             <button type="submit" class="gradient-bg text-white px-6 py-2 rounded-lg font-medium hover:opacity-90 transition">
                                 Guardar Preferencias

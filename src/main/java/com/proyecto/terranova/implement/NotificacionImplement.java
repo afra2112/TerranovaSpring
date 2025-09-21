@@ -74,22 +74,48 @@ public class NotificacionImplement implements NotificacionService {
     }
 
     @Override
-    public void crearNotificacionAutomatica(String mensaje, String tipo, Usuario usuario, Long idReferencia, String urlAccion) {
-        Notificacion notificacion = new Notificacion();
-        notificacion.setMensajeNotificacion(mensaje);
-        notificacion.setTipo(tipo);
-        notificacion.setLeido(false);
-        notificacion.setFechaNotificacion(LocalDateTime.now());
-        notificacion.setUsuario(usuario);
-        notificacion.setReferenciaId(idReferencia);
-        notificacion.setUrlAccion(urlAccion);
-        repository.save(notificacion);
+    public void crearNotificacionAutomatica(String titulo, String mensaje, String tipo, Usuario usuario, Long idReferencia, String urlAccion) {
+        if (validarSiEnviarNotificacionONo(usuario, tipo)){
+            Notificacion notificacion = new Notificacion();
+            notificacion.setTitulo(titulo);
+            notificacion.setMensajeNotificacion(mensaje);
+            notificacion.setTipo(tipo);
+            notificacion.setLeido(false);
+            notificacion.setFechaNotificacion(LocalDateTime.now());
+            notificacion.setUsuario(usuario);
+            notificacion.setReferenciaId(idReferencia);
+            notificacion.setUrlAccion(urlAccion);
+            repository.save(notificacion);
+        }
+    }
 
+    @Override
+    public boolean validarSiEnviarNotificacionONo(Usuario usuario, String tipo) {
+        boolean enviar = true;
+
+        switch (tipo){
+            case "Disponibilidades":
+                enviar = usuario.isNotificacionesDisponibilidades();
+                break;
+            case "Productos":
+                enviar = usuario.isNotificacionesProductos();
+                break;
+            case "Citas":
+                enviar = usuario.isNotificacionesCitas();
+                break;
+            case "Ventas":
+                enviar = usuario.isNotificacionesVentas();
+                break;
+            case "Sistema":
+                enviar = usuario.isNotificacionesSistema();
+                break;
+        }
+        return enviar;
     }
 
     @Override
     public List<NotificacionDTO> obtenerNoLeidasPorUsuario(Usuario usuario) {
-        return repository.findByUsuarioAndLeidoFalse(usuario)
+        return repository.findByUsuarioAndLeidoFalseAndActivo(usuario, true)
                 .stream()
                 .map(notificacion -> modelMapper.map(notificacion, NotificacionDTO.class))
                 .collect(Collectors.toList());
@@ -97,34 +123,49 @@ public class NotificacionImplement implements NotificacionService {
 
     @Override
     public void marcarComoLeida(Long idNotificacion) {
-        Notificacion notificacion = repository.findById(idNotificacion)
-                .orElseThrow(() -> new RuntimeException("Notificacion no encontrada"));
-        notificacion.setLeido(true);
-        repository.save(notificacion);
+        Notificacion notificacion = repository.findById(idNotificacion).orElseThrow(() -> new RuntimeException("Notificacion no encontrada"));
 
+        if(!notificacion.isLeido()){
+            notificacion.setLeido(true);
+        }else {
+            notificacion.setLeido(false);
+        }
+        repository.save(notificacion);
     }
 
     @Override
     public void marcarTodasComoLeidas(Usuario usuario) {
-        List<Notificacion> notificaciones = repository.findByUsuarioAndLeidoFalse(usuario);
+        List<Notificacion> notificaciones = repository.findByUsuarioAndLeidoFalseAndActivo(usuario, true);
         notificaciones.forEach(noti -> noti.setLeido(true));
         repository.saveAll(notificaciones);
-
     }
 
     @Override
-    public List<Notificacion> obtenerPorUsuario(Usuario usuario) {
-        return repository.findByUsuario(usuario);
+    public List<Notificacion> obtenerPorUsuarioYActivo(Usuario usuario, boolean activo) {
+        return repository.findByUsuarioAndActivo(usuario, activo);
     }
 
     @Override
     public int contarPorUsuarioYTipo(Usuario usuario, String tipo) {
-        return repository.countByUsuarioAndTipo(usuario, tipo);
+        return repository.countByUsuarioAndTipoAndActivo(usuario, tipo, true);
+    }
+
+    @Override
+    public List<Notificacion> obtenerPorUsuarioYTipo(Usuario usuario, String tipo) {
+        return repository.findByUsuarioAndTipo(usuario, tipo);
     }
 
     @Override
     public int contarNoLeidasPorUsuario(Usuario usuario, boolean leido) {
-        return repository.countByUsuarioAndLeido(usuario, false);
+        return repository.countByUsuarioAndLeidoAndActivo(usuario, false, true);
+    }
+
+    @Override
+    public void borrarNotificacion(Long idNotificacion) {
+        Notificacion notificacion = repository.findById(idNotificacion).orElseThrow();
+        notificacion.setActivo(false);
+        notificacion.setLeido(true);
+        repository.save(notificacion);
     }
 
 }

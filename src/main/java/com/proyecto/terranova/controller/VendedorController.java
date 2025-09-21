@@ -47,6 +47,9 @@ public class VendedorController {
     @Autowired
     ComprobanteService comprobanteService;
 
+    @Autowired
+    NotificacionService notificacionService;
+
     @ModelAttribute("esVendedor")
     public boolean esVendedor(Authentication authentication){
         List<RolEnum> rolesUsuario = usuarioService.obtenerNombresRoles(usuario(authentication));
@@ -127,10 +130,16 @@ public class VendedorController {
             @ModelAttribute Venta venta,
             @RequestParam(required = false) List<Long> idsGastosEliminados,
             @RequestParam(required = false) List<Long> idsComprobantesEliminados,
-            @RequestParam(required = false) List<MultipartFile> comprobantes
+            @RequestParam(required = false) List<MultipartFile> comprobantes,
+            Authentication authentication
     ) {
         try {
             ventaService.actualizarDatosVenta(venta, idsComprobantesEliminados, idsGastosEliminados, comprobantes);
+
+            String titulo = "Actualizacion de datos en una venta.";
+            String mensaje = "Haz actualizado los datos de tu venta para el producto: " + venta.getProducto().getNombreProducto() + ". Con el comprador: " + venta.getComprador().getNombres();
+            notificacionService.crearNotificacionAutomatica(titulo, mensaje, "Ventas", usuario(authentication), venta.getIdVenta(), "/vendedor/ventas");
+
             return "ok";
         } catch (Exception e) {
             return "error: " + e.getMessage();
@@ -138,12 +147,16 @@ public class VendedorController {
     }
 
     @PostMapping("/venta/enviar-peticion-venta")
-    public String enviarPeticionVenta(@ModelAttribute Venta venta, @RequestParam(name = "comprobantes") int comprobantes, RedirectAttributes redirectAttributes) {
+    public String enviarPeticionVenta(@ModelAttribute Venta venta, @RequestParam(name = "comprobantes") int comprobantes, RedirectAttributes redirectAttributes, Authentication authentication) {
         if(venta.getFechaVenta() == null || (venta.getMetodoPago() == null || venta.getMetodoPago().isBlank()) || comprobantes == 0){
             redirectAttributes.addFlashAttribute("ventaIncompleta", true);
             return "redirect:/vendedor/ventas";
         }
-        //ENVIAR NOTIFICACION AL COMPRADOR y luego:
+
+        String titulo = "Peticion de finalizacion de venta.";
+        String mensaje = "Haz enviado un peticion para finalizar la venta para el producto: " + venta.getProducto().getNombreProducto() + ". Con el comprador: " + venta.getComprador().getNombres();
+        notificacionService.crearNotificacionAutomatica(titulo, mensaje, "Ventas", usuario(authentication), venta.getIdVenta(), "/vendedor/ventas");
+
         ventaService.actualizarEstado(venta, "Pendiente Confirmacion");
         redirectAttributes.addFlashAttribute("peticionHecha", true);
         return "redirect:/vendedor/ventas";

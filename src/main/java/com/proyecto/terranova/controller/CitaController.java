@@ -53,12 +53,17 @@ public class CitaController {
         cita.setDisponibilidad(disponibilidad);
         citaService.save(cita);
 
+        String titulo = "Actualizacion en tu cita. Reprogramacion.";
         String mensaje = "Tu cita para el producto: " + cita.getProducto().getNombreProducto() + ". Ha sido reprogramada por el vendedor para la nueva fecha: " + cita.getDisponibilidad().getFecha() + ". Y hora: " + cita.getDisponibilidad().getHora() + ".";
-        String mensajeVendedor = "Has reprogramado tu cita para el producto: " + cita.getProducto().getNombreProducto() + ". Para la nueva fecha: " + cita.getDisponibilidad().getFecha() + ". Y hora: " + cita.getDisponibilidad().getHora() + ".";
 
-        notificacionService.crearNotificacionAutomatica(mensaje, "Citas", cita.getComprador(), idCita, "Ninguna");
-        notificacionService.crearNotificacionAutomatica(mensajeVendedor, "Citas", usuario(authentication), idCita, "Ninguna");
+        if(notificacionService.validarSiEnviarNotificacionONo(usuario(authentication), "Citas")){
+            String mensajeVendedor = "Has reprogramado tu cita para el producto: " + cita.getProducto().getNombreProducto() + ". Para la nueva fecha: " + cita.getDisponibilidad().getFecha() + ". Y hora: " + cita.getDisponibilidad().getHora() + ".";
+            notificacionService.crearNotificacionAutomatica(titulo, mensajeVendedor, "Citas", usuario(authentication), idCita, "Ninguna");
+        }
 
+        if(notificacionService.validarSiEnviarNotificacionONo(cita.getComprador(), "Citas")){
+            notificacionService.crearNotificacionAutomatica(titulo, mensaje, "Citas", cita.getComprador(), idCita, "Ninguna");
+        }
         return "redirect:/vendedor/citas";
     }
 }

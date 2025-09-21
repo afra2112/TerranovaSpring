@@ -14,6 +14,8 @@ public class Notificacion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idNotificacion;
 
+    private String titulo;
+
     @Column(nullable = false, length = 255)
     private String mensajeNotificacion;
 

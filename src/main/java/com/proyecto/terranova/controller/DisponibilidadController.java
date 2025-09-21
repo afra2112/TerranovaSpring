@@ -58,8 +58,9 @@ public class DisponibilidadController {
             DateTimeFormatter fechaFormatter = DateTimeFormatter.ofPattern("EEEE d MMMM", new Locale("es", "ES"));
             DateTimeFormatter horaFormatter = DateTimeFormatter.ofPattern("h:mm a", new Locale("es", "ES"));
 
+            String titulo = "Creacion de disponibilidad.";
             String mensaje = "Haz creado una disponibilidad para el producto: "+disponibilidad.getProducto().getNombreProducto()+ ". Con la siguiente fecha: " + fechaFormatter.format(disponibilidad.getFecha()) + " a las "+ horaFormatter.format(disponibilidad.getHora());
-            notificacionService.crearNotificacionAutomatica(mensaje, "Disponibilidad", usuario(authentication), idProducto, "/vendedor/mi-calendario");
+            notificacionService.crearNotificacionAutomatica(titulo, mensaje, "Disponibilidad", usuario(authentication), idProducto, "/vendedor/mi-calendario");
         }
 
         if(vieneDe != null && vieneDe.equals("calendario")){
@@ -81,8 +82,9 @@ public class DisponibilidadController {
             DateTimeFormatter fechaFormatter = DateTimeFormatter.ofPattern("EEEE d MMMM", new Locale("es", "ES"));
             DateTimeFormatter horaFormatter = DateTimeFormatter.ofPattern("h:mm a", new Locale("es", "ES"));
 
+            String titulo = "Eliminacion de una disponibilidad";
             String mensaje = "Elimiaste la disponibilidad con fecha: " + fechaFormatter.format(disponibilidad.getFecha()) + ". A las: " + horaFormatter.format(disponibilidad.getHora()) + " Para el producto: " + disponibilidad.getProducto().getNombreProducto();
-            notificacionService.crearNotificacionAutomatica(mensaje, "Disponibilidad", usuario(authentication), idProducto, "/vendedor/mi-calendario");
+            notificacionService.crearNotificacionAutomatica(titulo, mensaje, "Disponibilidad", usuario(authentication), idProducto, "/vendedor/mi-calendario");
         }
 
         disponibilidadService.delete(idDisponibilidad);

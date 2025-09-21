@@ -50,7 +50,7 @@ public class NotificacionController {
     }
 
     @GetMapping("/notificaciones")
-    public String verNotificacionesUsuarioLogeado(@RequestParam(name = "id") Long id, Model model, Authentication auth) {
+    public String verNotificacionesUsuarioLogeado(@RequestParam(name = "id") Long id, @RequestParam(name = "filtro", required = false, defaultValue = "todas") String filtro, Model model, Authentication auth) {
         Usuario usuario = usuario(auth);
         String lugar = null;
         if(id == 1){
@@ -59,8 +59,34 @@ public class NotificacionController {
             lugar = "vendedor";
         }
 
-        List<Notificacion> notificaciones = notificacionService.obtenerPorUsuario(usuario);
+        List<Notificacion> notificaciones;
 
+        switch (filtro) {
+            case "producto":
+                notificaciones = notificacionService.obtenerPorUsuarioYTipo(usuario, "Productos");
+                break;
+            case "venta":
+                notificaciones = notificacionService.obtenerPorUsuarioYTipo(usuario, "Ventas");
+                break;
+            case "cita":
+                notificaciones = notificacionService.obtenerPorUsuarioYTipo(usuario, "Citas");
+                break;
+            case "disponibilidad":
+                notificaciones = notificacionService.obtenerPorUsuarioYTipo(usuario, "Disponibilidad");
+                break;
+            case "sistema":
+                notificaciones = notificacionService.obtenerPorUsuarioYTipo(usuario, "Sistema");
+                break;
+            case "borradas":
+                notificaciones = notificacionService.obtenerPorUsuarioYActivo(usuario, false);
+                model.addAttribute("borrada", true);
+                break;
+            default:
+                notificaciones = notificacionService.obtenerPorUsuarioYActivo(usuario, true);
+                break;
+        }
+
+        model.addAttribute("totalTodas", notificacionService.obtenerPorUsuarioYActivo(usuario, true).size());
         model.addAttribute("totalDisponibilidades", notificacionService.contarPorUsuarioYTipo(usuario, "Disponibilidades"));
         model.addAttribute("totalProducto", notificacionService.contarPorUsuarioYTipo(usuario, "Productos"));
         model.addAttribute("totalVenta", notificacionService.contarPorUsuarioYTipo(usuario, "Ventas"));
@@ -73,18 +99,35 @@ public class NotificacionController {
         return "notificaciones";
     }
 
-    @PostMapping("/marcar-leida/{id}")
-    public String marcarComoLeida(@PathVariable Long idNotificacion, @RequestParam String cedula ){
+    @PostMapping("/notificaciones/borrar")
+    public String borrarNotificacion(@RequestParam(name = "idNotificacion") Long idNotificacion, Authentication authentication){
+        notificacionService.borrarNotificacion(idNotificacion);
+
+        if(esVendedor(authentication)){
+            return "redirect:/usuarios/notificaciones?id=2";
+        }
+        return "redirect:/usuarios/notificaciones?id=1";
+    }
+
+    @PostMapping("/notificaciones/marcar-leida")
+    public String marcarComoLeida(@RequestParam(name = "idNotificacion") Long idNotificacion, Authentication authentication){
         notificacionService.marcarComoLeida(idNotificacion);
-        return "redirect:/notificaciones/usuario/" + cedula;
+
+        if(esVendedor(authentication)){
+            return "redirect:/usuarios/notificaciones?id=2";
+        }
+        return "redirect:/usuarios/notificaciones?id=1";
     }
 
-    @PostMapping("/marcar-todas-leidas/{cedula}")
-    public String marcarTodasComoLeidas(@PathVariable String cedula){
-        Usuario usuario = usuarioService.findById(cedula);
+    @PostMapping("/notificaciones/marcar-todas-leidas")
+    public String marcarTodasComoLeidas(Authentication authentication){
+        Usuario usuario = usuario(authentication);
         notificacionService.marcarTodasComoLeidas(usuario);
-        return "redirect:/notificaciones/usuario/" + cedula;
-    }
 
+        if(esVendedor(authentication)){
+            return "redirect:/usuarios/notificaciones?id=2";
+        }
+        return "redirect:/usuarios/notificaciones?id=1";
+    }
 
 }
