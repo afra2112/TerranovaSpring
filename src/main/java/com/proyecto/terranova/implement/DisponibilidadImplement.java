@@ -1,17 +1,13 @@
 package com.proyecto.terranova.implement;
 
-import com.proyecto.terranova.entity.Producto;
+import com.proyecto.terranova.entity.Cita;
 import com.proyecto.terranova.entity.Usuario;
 import com.proyecto.terranova.repository.ProductoRepository;
-import com.proyecto.terranova.repository.UsuarioRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
-
 import com.proyecto.terranova.service.DisponibilidadService;
 import com.proyecto.terranova.repository.DisponibilidadRepository;
 import com.proyecto.terranova.dto.DisponibilidadDTO;
@@ -83,5 +79,24 @@ public class DisponibilidadImplement implements DisponibilidadService {
     @Override
     public long count() {
         return repository.count();
+    }
+
+    @Override
+    public boolean validarSiPuedeReprogramar(Cita cita) {
+        int maxReprogramaciones = 2;
+        int totalReprogramaciones = cita.getNumReprogramaciones();
+
+        if(totalReprogramaciones < maxReprogramaciones){
+            return true;
+        }
+
+        if (cita.getUltimaReprogramacion() != null){
+            LocalDateTime ahora = LocalDateTime.now();
+            LocalDateTime limite = cita.getUltimaReprogramacion().plusHours(24);
+
+            return ahora.isAfter(limite);
+        }
+
+        return false;
     }
 }

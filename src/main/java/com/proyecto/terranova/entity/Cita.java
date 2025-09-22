@@ -1,6 +1,7 @@
 package com.proyecto.terranova.entity;
 
 import com.proyecto.terranova.config.enums.EstadoCitaEnum;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -23,6 +24,11 @@ public class Cita {
     @ManyToOne
     @JoinColumn(name = "idProducto")
     private Producto producto;
+
+    @Column(nullable = true)
+    private LocalDateTime ultimaReprogramacion;
+
+    private int numReprogramaciones = 0;
 
     @ManyToOne
     @JoinColumn(name = "cedula_comprador")

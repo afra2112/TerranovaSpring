@@ -109,4 +109,10 @@ public class CitaImplement implements CitaService {
     public long count() {
         return repository.count();
     }
+
+    @Override
+    public void cambiarEstado(Cita cita, EstadoCitaEnum estado) {
+        cita.setEstadoCita(estado);
+        repository.save(cita);
+    }
 }

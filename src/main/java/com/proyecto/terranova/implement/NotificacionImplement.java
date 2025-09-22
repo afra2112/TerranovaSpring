@@ -115,7 +115,7 @@ public class NotificacionImplement implements NotificacionService {
 
     @Override
     public List<NotificacionDTO> obtenerNoLeidasPorUsuario(Usuario usuario) {
-        return repository.findByUsuarioAndLeidoFalseAndActivo(usuario, true)
+        return repository.findByUsuarioAndLeidoFalseAndActivoOrderByFechaNotificacionDesc(usuario, true)
                 .stream()
                 .map(notificacion -> modelMapper.map(notificacion, NotificacionDTO.class))
                 .collect(Collectors.toList());
@@ -135,14 +135,14 @@ public class NotificacionImplement implements NotificacionService {
 
     @Override
     public void marcarTodasComoLeidas(Usuario usuario) {
-        List<Notificacion> notificaciones = repository.findByUsuarioAndLeidoFalseAndActivo(usuario, true);
+        List<Notificacion> notificaciones = repository.findByUsuarioAndLeidoFalseAndActivoOrderByFechaNotificacionDesc(usuario, true);
         notificaciones.forEach(noti -> noti.setLeido(true));
         repository.saveAll(notificaciones);
     }
 
     @Override
     public List<Notificacion> obtenerPorUsuarioYActivo(Usuario usuario, boolean activo) {
-        return repository.findByUsuarioAndActivo(usuario, activo);
+        return repository.findByUsuarioAndActivoOrderByFechaNotificacionDesc(usuario, activo);
     }
 
     @Override
@@ -152,7 +152,7 @@ public class NotificacionImplement implements NotificacionService {
 
     @Override
     public List<Notificacion> obtenerPorUsuarioYTipo(Usuario usuario, String tipo) {
-        return repository.findByUsuarioAndTipo(usuario, tipo);
+        return repository.findByUsuarioAndTipoOrderByFechaNotificacionDesc(usuario, tipo);
     }
 
     @Override
@@ -170,7 +170,7 @@ public class NotificacionImplement implements NotificacionService {
 
     @Override
     public void eliminarHistorial(Usuario usuario) {
-        List<Notificacion> notificacionesBorradas = repository.findByUsuarioAndActivo(usuario, false);
+        List<Notificacion> notificacionesBorradas = repository.findByUsuarioAndActivoOrderByFechaNotificacionDesc(usuario, false);
         for (Notificacion notificacion : notificacionesBorradas){
             repository.delete(notificacion);
         }

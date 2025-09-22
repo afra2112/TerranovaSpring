@@ -19,4 +19,5 @@ public interface CitaService {
     boolean delete(Long id);
     boolean existsById(Long id); // ValidaciÃ³n
     long count(); // Contar registros
+    void cambiarEstado(Cita cita, EstadoCitaEnum estado);
 }

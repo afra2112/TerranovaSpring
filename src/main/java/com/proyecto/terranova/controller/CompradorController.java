@@ -18,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,9 @@ public class CompradorController {
 
     @Autowired
     DisponibilidadService disponibilidadService;
+
+    @Autowired
+    NotificacionService notificacionService;
 
     @Autowired
     VentaService ventaService;
@@ -111,19 +115,44 @@ public class CompradorController {
     }
 
     @PostMapping("/citas/cancelar-cita")
-    public String cancelarCita(@RequestParam(name = "idCita") Long idCita){
+    public String cancelarCita(@RequestParam(name = "idCita") Long idCita, Authentication authentication){
+        Usuario usuario = usuario(authentication);
         Cita cita = citaService.findById(idCita);
         cita.setEstadoCita(EstadoCitaEnum.CANCELADA);
         citaService.save(cita);
+
+        String titulo = "Actualizacion en tu cita. Cancelacion.";
+        String mensajeVendedor = "Tu cita para el producto: " + cita.getProducto().getNombreProducto() + ". Ha sido cancelada por el comprador: " + usuario.getNombres() + ".";
+        String mensaje = "Has cancelado tu cita para el producto: " + cita.getProducto().getNombreProducto() + ".";
+
+        notificacionService.crearNotificacionAutomatica(titulo, mensajeVendedor, "Citas", usuario(authentication), idCita, "/vendedor/citas");
+        notificacionService.crearNotificacionAutomatica(titulo, mensaje, "Citas", cita.getComprador(), idCita, "/comprador/citas");
+
+
         return "redirect:/comprador/citas";
     }
 
     @PostMapping("/citas/reprogramar-cita")
-    public String reprogramarCita(@RequestParam(name = "idCita") Long idCita, @RequestParam(name = "idDisponibilidad") Long idDisponibilidad){
+    public String reprogramarCita(@RequestParam(name = "idCita") Long idCita, @RequestParam(name = "idDisponibilidad") Long idDisponibilidad, Authentication authentication, RedirectAttributes redirectAttributes){
         Cita cita = citaService.findById(idCita);
-        Disponibilidad disponibilidad = disponibilidadService.findById(idDisponibilidad);
-        cita.setDisponibilidad(disponibilidad);
-        citaService.save(cita);
+        if(disponibilidadService.validarSiPuedeReprogramar(cita)){
+            Usuario usuario = usuario(authentication);
+            Disponibilidad disponibilidad = disponibilidadService.findById(idDisponibilidad);
+            cita.setDisponibilidad(disponibilidad);
+            cita.setNumReprogramaciones(cita.getNumReprogramaciones() + 1);
+            cita.setUltimaReprogramacion(LocalDateTime.now());
+            citaService.save(cita);
+
+            String titulo = "Actualizacion en tu cita. Reprogramacion.";
+            String mensajeVendedor = "Tu cita para el producto: " + cita.getProducto().getNombreProducto() + ". Ha sido reprogramada por el comprador: "+ cita.getProducto().getVendedor().getNombres() + ". para la nueva fecha: " + cita.getDisponibilidad().getFecha() + ". Y hora: " + cita.getDisponibilidad().getHora() + ".";
+            String mensaje = "Has reprogramado tu cita para el producto: " + cita.getProducto().getNombreProducto() + ". Para la nueva fecha: " + cita.getDisponibilidad().getFecha() + ". Y hora: " + cita.getDisponibilidad().getHora() + ". Recuerda que solo puedes reprogramar 2 veces por cita, despues de esto tendras que esperar 24 horas para poder volver a reprogramar.";
+
+            notificacionService.crearNotificacionAutomatica(titulo, mensajeVendedor, "Citas", cita.getProducto().getVendedor(), idCita, "/vendedor/citas");
+            notificacionService.crearNotificacionAutomatica(titulo, mensaje, "Citas", cita.getComprador(), idCita, "/comprador/citas");
+        } else {
+            redirectAttributes.addFlashAttribute("esperar24Horas", true);
+        }
+
         return "redirect:/comprador/citas";
     }
 
@@ -140,5 +169,25 @@ public class CompradorController {
         redirectAttributes.addFlashAttribute("vendedorExitoso", true);
 
         return "redirect:/usuarios/mi-perfil?id=1";
+    }
+
+    @PostMapping("/generar-venta")
+    public String generarVenta(@RequestParam(name = "idCita") Long idCita, Authentication authentication, RedirectAttributes redirectAttributes) {
+        Usuario usuario = usuario(authentication);
+
+        Cita cita = citaService.findById(idCita);
+
+        ventaService.generarVenta(cita.getProducto().getIdProducto(), cita.getComprador());
+        citaService.cambiarEstado(cita, EstadoCitaEnum.FINALIZADA);
+
+        String titulo = "Creacion de compra";
+        String mensaje = "Se ha creado una nueva compra para el producto: " + cita.getProducto().getNombreProducto() + ". Ve al panel de compras para mas detalles. Recuerda que tu debes confirmar los datos obligatorios de la venta para finalizarla.";
+        String mensajeVendedor = "El comprador: " + cita.getComprador().getNombres() + ". Ha generado una venta para tu producto: " + cita.getProducto().getNombreProducto() + ". Recuerda que debes actualizar los datos obligatorios para finalziar la venta.";
+
+        notificacionService.crearNotificacionAutomatica(titulo, mensaje, "Ventas", usuario, cita.getIdCita(), "/comprador/compras");
+        notificacionService.crearNotificacionAutomatica(titulo, mensajeVendedor, "Ventas", cita.getProducto().getVendedor(), cita.getIdCita(), "/vendedor/ventas");
+
+        redirectAttributes.addFlashAttribute("ventaGenerada", true);
+        return "redirect:/comprador/compras";
     }
 }

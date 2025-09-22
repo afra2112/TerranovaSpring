@@ -19,4 +19,5 @@ public interface VentaService {
     boolean delete(Long id);
     boolean existsById(Long id); // ValidaciÃ³n
     long count(); // Contar registros
+    Venta generarVenta(Long idProducto, Usuario comprador);
 }

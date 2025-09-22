@@ -30,7 +30,7 @@ public class CompradorImplement implements CompradorService {
 
         int favoritos = usuario.getFavoritos().size();
         int citas = citaRepository.findByComprador(usuario).size();
-        int notificaciones = notificacionRepository.findByUsuarioAndLeidoFalseAndActivo(usuario, true).size();
+        int notificaciones = notificacionRepository.findByUsuarioAndLeidoFalseAndActivoOrderByFechaNotificacionDesc(usuario, true).size();
         int visitados = historialVistosRepository.findByUsuario(usuario).size();
 
         Map<String, Integer> estadisticas = new HashMap<>();

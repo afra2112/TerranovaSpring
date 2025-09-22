@@ -86,7 +86,9 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-
+        .gradient-hero {
+            background: linear-gradient(135deg, #064e3b 0%, #059669 50%, #10b981 100%);
+        }
         .fondo-card {
             background: linear-gradient(135deg, #059669 0%, #10b981 100%);
         }
@@ -102,24 +104,16 @@
     <div class="ml-64 flex flex-col min-h-screen">
         <main class="w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <!-- Updated header for buyer's purchase panel -->
-            <div class="mb-5 glass-effect rounded-xl shadow-lg p-4 border-l-4 border-green-500 flex items-center justify-between">
-                <!-- Título principal -->
-                <div class="flex items-center space-x-2">
-                    <i class="fas fa-shopping-cart text-green-600 text-xl"></i>
-                    <h1 class="text-2xl font-bold text-green-600">Panel de Compras</h1>
+            <div class="gradient-hero rounded-3xl p-8 mb-8 text-white relative overflow-hidden">
+                <div class="absolute inset-0 bg-black/10"></div>
+                <div class="relative z-10">
+                    <h1 class="text-4xl font-bold mb-3">Mis Compras</h1>
+                    <p class="text-emerald-100 text-lg">Gestiona tus compras manera eficiente</p>
                 </div>
-
-                <!-- Indicador de total de compras -->
-                <div class="bg-white rounded-lg px-4 py-2 shadow flex items-center space-x-2">
-                    <i class="fas fa-list text-green-600"></i>
-                    <span class="font-semibold text-gray-800 text-sm">
-            Total Compras: <span th:text="${compras.size()}">0</span>
-        </span>
-                </div>
+                <div class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full"></div>
+                <div class="absolute -bottom-5 -left-5 w-32 h-32 bg-white/5 rounded-full"></div>
             </div>
 
-
-            <!-- Updated purchase list for buyer perspective -->
             <div class="space-y-4">
                 <div th:each="compra : ${compras}">
 
@@ -400,6 +394,18 @@
                     </div>
                 </div>
             </div>
+
+            <div th:if="${#lists.isEmpty(compras)}" class="text-center py-12 fade-in">
+                <div class="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-calendar-times text-gray-400 text-3xl"></i>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">No tienes compras aun</h3>
+                <p class="text-gray-600 mb-6">Explora productos, agenda tu cita con un vendedor y si te gusta el producto genera una compra</p>
+                <a href="/productos" class="inline-flex items-center px-6 py-3 gradient-bg text-white rounded-xl hover:opacity-90 btn-animate">
+                    <i class="fas fa-search mr-2"></i>
+                    Explorar Productos
+                </a>
+            </div>
         </main>
     </div>
 </div>
@@ -445,7 +451,55 @@
     </div>
 </div>
 
+<div th:if="${ventaGenerada}"
+     id="modalVentaGenerada"
+     class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+
+    <!-- Contenido del modal -->
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 transform transition-all">
+        <div class="flex items-center mb-4">
+            <svg class="w-8 h-8 text-emerald-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 12l2 2l4 -4m6 2a9 9 0 11-18 0a9 9 0 0118 0z"/>
+            </svg>
+            <h3 class="text-lg font-semibold text-gray-900">
+                ¡Compra generada con éxito!
+            </h3>
+        </div>
+
+        <p class="text-gray-600 leading-relaxed">
+            Se ha generado una nueva compra. El siguiente paso es que el vendedor complete todos los
+            <b>datos obligatorios</b> en el sistema.
+        </p>
+
+        <p class="text-gray-600 mt-3 leading-relaxed">
+            Una vez el vendedor lo haga, podrá enviar una <b>petición de finalización</b> y
+            tú deberás revisar los cambios.
+        </p>
+
+        <p class="text-gray-600 mt-3 leading-relaxed">
+            Ten en cuenta que este proceso ocurre <b>por fuera de la plataforma</b>, por lo que deberás
+            <span class="font-semibold text-emerald-700">ponerte en contacto con el vendedor</span>
+            para el papeleo, legalización y demás gestiones.
+        </p>
+
+        <div class="mt-6 flex justify-end">
+            <button onclick="cerrarModalVenta()"
+                    class="px-4 py-2 bg-emerald-600 text-white rounded-lg shadow hover:bg-emerald-700 transition-colors">
+                Entendido
+            </button>
+        </div>
+    </div>
+</div>
+
 <script>
+    function cerrarModalVenta() {
+        const modal = document.getElementById("modalVentaGenerada");
+        if (modal) {
+            modal.classList.add("hidden");
+        }
+    }
+
     function openModal(modalId) {
        const modal = document.getElementById(modalId);
        if (modal) {

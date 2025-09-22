@@ -39,10 +39,19 @@ public class CitaController {
     }
 
     @PostMapping("/cancelar-cita")
-    public String cancelarCita(@RequestParam(name = "idCita") Long idCita){
+    public String cancelarCita(@RequestParam(name = "idCita") Long idCita, Authentication authentication){
+        Usuario usuario = usuario(authentication);
         Cita cita = citaService.findById(idCita);
         cita.setEstadoCita(EstadoCitaEnum.CANCELADA);
         citaService.save(cita);
+
+        String titulo = "Actualizacion en tu cita. Cancelacion.";
+        String mensaje = "Tu cita para el producto: " + cita.getProducto().getNombreProducto() + ". Ha sido cancelada por el vendedor: " + usuario.getNombres() + ".";
+        String mensajeVendedor = "Has cancelado tu cita para el producto: " + cita.getProducto().getNombreProducto() + ".";
+
+        notificacionService.crearNotificacionAutomatica(titulo, mensajeVendedor, "Citas", usuario(authentication), idCita, "/vendedor/citas");
+        notificacionService.crearNotificacionAutomatica(titulo, mensaje, "Citas", cita.getComprador(), idCita, "/comprador/citas");
+
         return "redirect:/vendedor/citas";
     }
 
@@ -55,15 +64,11 @@ public class CitaController {
 
         String titulo = "Actualizacion en tu cita. Reprogramacion.";
         String mensaje = "Tu cita para el producto: " + cita.getProducto().getNombreProducto() + ". Ha sido reprogramada por el vendedor para la nueva fecha: " + cita.getDisponibilidad().getFecha() + ". Y hora: " + cita.getDisponibilidad().getHora() + ".";
+        String mensajeVendedor = "Has reprogramado tu cita para el producto: " + cita.getProducto().getNombreProducto() + ". Para la nueva fecha: " + cita.getDisponibilidad().getFecha() + ". Y hora: " + cita.getDisponibilidad().getHora() + ".";
 
-        if(notificacionService.validarSiEnviarNotificacionONo(usuario(authentication), "Citas")){
-            String mensajeVendedor = "Has reprogramado tu cita para el producto: " + cita.getProducto().getNombreProducto() + ". Para la nueva fecha: " + cita.getDisponibilidad().getFecha() + ". Y hora: " + cita.getDisponibilidad().getHora() + ".";
-            notificacionService.crearNotificacionAutomatica(titulo, mensajeVendedor, "Citas", usuario(authentication), idCita, "Ninguna");
-        }
+        notificacionService.crearNotificacionAutomatica(titulo, mensajeVendedor, "Citas", usuario(authentication), idCita, "/vendedor/citas");
+        notificacionService.crearNotificacionAutomatica(titulo, mensaje, "Citas", cita.getComprador(), idCita, "/comprador/citas");
 
-        if(notificacionService.validarSiEnviarNotificacionONo(cita.getComprador(), "Citas")){
-            notificacionService.crearNotificacionAutomatica(titulo, mensaje, "Citas", cita.getComprador(), idCita, "Ninguna");
-        }
         return "redirect:/vendedor/citas";
     }
 }

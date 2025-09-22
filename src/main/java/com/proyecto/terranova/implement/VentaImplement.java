@@ -1,8 +1,7 @@
 package com.proyecto.terranova.implement;
 
-import com.proyecto.terranova.entity.Comprobante;
-import com.proyecto.terranova.entity.GastoVenta;
-import com.proyecto.terranova.entity.Usuario;
+import com.proyecto.terranova.entity.*;
+import com.proyecto.terranova.repository.ProductoRepository;
 import com.proyecto.terranova.service.NotificacionService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -20,7 +19,6 @@ import java.util.stream.Collectors;
 import com.proyecto.terranova.service.VentaService;
 import com.proyecto.terranova.repository.VentaRepository;
 import com.proyecto.terranova.dto.VentaDTO;
-import com.proyecto.terranova.entity.Venta;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -33,7 +31,7 @@ public class VentaImplement implements VentaService {
     private ModelMapper modelMapper;
 
     @Autowired
-    private NotificacionService service;
+    private ProductoRepository productoRepository;
 
     @Override
     public boolean actualizarDatosVenta(Venta venta, List<Long> idsComprobantesEliminados, List<Long> idsGastosEliminados, List<MultipartFile> comprobantes) throws IOException {
@@ -144,4 +142,18 @@ public class VentaImplement implements VentaService {
         return repository.count();
     }
 
+
+    @Override
+    public Venta generarVenta(Long idProducto, Usuario comprador) {
+        Producto producto = productoRepository.findById(idProducto).orElseThrow();
+
+        Venta venta = new Venta();
+        venta.setComprador(comprador);
+        venta.setEstado("En Proceso");
+        venta.setFechaInicioVenta(LocalDateTime.now());
+        venta.setProducto(producto);
+        venta.setVendedor(producto.getVendedor());
+
+        return repository.save(venta);
+    }
 }

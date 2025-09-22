@@ -121,6 +121,7 @@ public class VendedorController {
         model.addAttribute("balanceFinal", balanceFinal);
         model.addAttribute("ventas", ventas);
         model.addAttribute("nombres", nombreCompleto);
+
         return "vendedor/ventas";
     }
 
@@ -138,7 +139,10 @@ public class VendedorController {
 
             String titulo = "Actualizacion de datos en una venta.";
             String mensaje = "Haz actualizado los datos de tu venta para el producto: " + venta.getProducto().getNombreProducto() + ". Con el comprador: " + venta.getComprador().getNombres();
+            String mensajeComprador = "El vendedor ha actualizado los datos de tu compra para el producto: " + venta.getProducto().getNombreProducto() + ". Revisa en el panel de compras para mas detalles";
+
             notificacionService.crearNotificacionAutomatica(titulo, mensaje, "Ventas", usuario(authentication), venta.getIdVenta(), "/vendedor/ventas");
+            notificacionService.crearNotificacionAutomatica(titulo, mensajeComprador, "Ventas", venta.getComprador(), venta.getIdVenta(), "/comprador/compras");
 
             return "ok";
         } catch (Exception e) {
@@ -155,7 +159,10 @@ public class VendedorController {
 
         String titulo = "Peticion de finalizacion de venta.";
         String mensaje = "Haz enviado un peticion para finalizar la venta para el producto: " + venta.getProducto().getNombreProducto() + ". Con el comprador: " + venta.getComprador().getNombres();
+        String mensajeComprador = "El vendedor: " + venta.getVendedor().getNombres() + ". Ha realizado una peticion de finalizacion de tu compra para el producto: " + venta.getProducto().getNombreProducto();
+
         notificacionService.crearNotificacionAutomatica(titulo, mensaje, "Ventas", usuario(authentication), venta.getIdVenta(), "/vendedor/ventas");
+        notificacionService.crearNotificacionAutomatica(titulo, mensajeComprador, "Ventas", venta.getComprador(), venta.getIdVenta(), "/compras/comprador");
 
         ventaService.actualizarEstado(venta, "Pendiente Confirmacion");
         redirectAttributes.addFlashAttribute("peticionHecha", true);
