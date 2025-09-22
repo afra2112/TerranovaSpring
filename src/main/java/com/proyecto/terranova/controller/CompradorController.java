@@ -79,7 +79,7 @@ public class CompradorController {
     @GetMapping("/citas")
     public String citas(Model model, Authentication authentication){
         model.addAttribute("posicionCitas", true);
-        model.addAttribute("citas", citaService.encontrarPorComprador(usuarioService.findByEmail(authentication.getName())));
+        model.addAttribute("citas", citaService.encontrarPorComprador(usuarioService.findByEmail(authentication.getName()), true));
         return "comprador/citas";
     }
 
@@ -150,6 +150,11 @@ public class CompradorController {
             notificacionService.crearNotificacionAutomatica(titulo, mensajeVendedor, "Citas", cita.getProducto().getVendedor(), idCita, "/vendedor/citas");
             notificacionService.crearNotificacionAutomatica(titulo, mensaje, "Citas", cita.getComprador(), idCita, "/comprador/citas");
         } else {
+            if(cita.getUltimaReprogramacionBloqueada() == null){
+                cita.setUltimaReprogramacionBloqueada(LocalDateTime.now());
+                cita.setFechaHabilitarReprogramacion(LocalDateTime.now().plusSeconds(15));
+                citaService.save(cita);
+            }
             redirectAttributes.addFlashAttribute("esperar24Horas", true);
         }
 

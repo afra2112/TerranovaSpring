@@ -29,7 +29,7 @@ public class CompradorImplement implements CompradorService {
         Usuario usuario = usuarioRepository.findById(cedula).orElseThrow();
 
         int favoritos = usuario.getFavoritos().size();
-        int citas = citaRepository.findByComprador(usuario).size();
+        int citas = citaRepository.findByCompradorAndActivo(usuario, true).size();
         int notificaciones = notificacionRepository.findByUsuarioAndLeidoFalseAndActivoOrderByFechaNotificacionDesc(usuario, true).size();
         int visitados = historialVistosRepository.findByUsuario(usuario).size();
 

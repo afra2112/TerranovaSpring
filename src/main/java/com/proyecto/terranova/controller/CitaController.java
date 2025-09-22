@@ -49,8 +49,16 @@ public class CitaController {
         String mensaje = "Tu cita para el producto: " + cita.getProducto().getNombreProducto() + ". Ha sido cancelada por el vendedor: " + usuario.getNombres() + ".";
         String mensajeVendedor = "Has cancelado tu cita para el producto: " + cita.getProducto().getNombreProducto() + ".";
 
-        notificacionService.crearNotificacionAutomatica(titulo, mensajeVendedor, "Citas", usuario(authentication), idCita, "/vendedor/citas");
+        notificacionService.crearNotificacionAutomatica(titulo, mensajeVendedor, "Citas", cita.getProducto().getVendedor(), idCita, "/vendedor/citas");
         notificacionService.crearNotificacionAutomatica(titulo, mensaje, "Citas", cita.getComprador(), idCita, "/comprador/citas");
+
+        return "redirect:/vendedor/citas";
+    }
+
+    @PostMapping("/borrar-cita")
+    public String borrarCita(@RequestParam(name = "idCita") Long idCita, Authentication authentication){
+        Usuario usuario = usuario(authentication);
+        citaService.borrarCita(idCita);
 
         return "redirect:/vendedor/citas";
     }

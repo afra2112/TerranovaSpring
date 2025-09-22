@@ -54,13 +54,13 @@ public class CitaImplement implements CitaService {
     }
 
     @Override
-    public List<Cita> encontrarPorVendedor(Usuario vendedor) {
-        return repository.findByProducto_Vendedor(vendedor);
+    public List<Cita> encontrarPorVendedor(Usuario vendedor, boolean activo) {
+        return repository.findByProducto_VendedorAndActivo(vendedor, activo);
     }
 
     @Override
-    public List<CitaDTO> encontrarPorVendedorParaCalendario(Usuario vendedor) {
-        List<Cita> citas = repository.findByProducto_Vendedor(vendedor);
+    public List<CitaDTO> encontrarPorVendedorParaCalendario(Usuario vendedor, boolean activo) {
+        List<Cita> citas = repository.findByProducto_VendedorAndActivo(vendedor, activo);
         List<CitaDTO> citasDto = new ArrayList<>();
         for (Cita cita : citas){
             CitaDTO citaDTO = new CitaDTO();
@@ -81,14 +81,14 @@ public class CitaImplement implements CitaService {
     }
 
     @Override
-    public List<Cita> encontrarPorComprador(Usuario comprador) {
-        return repository.findByComprador(comprador);
+    public List<Cita> encontrarPorComprador(Usuario comprador, boolean activo) {
+        return repository.findByCompradorAndActivo(comprador, activo);
     }
 
     @Override
-    public List<Cita> encontrarPorEstado(Usuario vendedor, EstadoCitaEnum estado) {
+    public List<Cita> encontrarPorEstado(Usuario vendedor, EstadoCitaEnum estado, boolean activo) {
 
-        return repository.findByDisponibilidad_Producto_VendedorAndEstadoCita(vendedor,estado);
+        return repository.findByDisponibilidad_Producto_VendedorAndEstadoCitaAndActivo(vendedor,estado, activo);
     }
 
     @Override
@@ -113,6 +113,13 @@ public class CitaImplement implements CitaService {
     @Override
     public void cambiarEstado(Cita cita, EstadoCitaEnum estado) {
         cita.setEstadoCita(estado);
+        repository.save(cita);
+    }
+
+    @Override
+    public void borrarCita(Long idCita) {
+        Cita cita = repository.findById(idCita).orElseThrow();
+        cita.setActivo(false);
         repository.save(cita);
     }
 }

@@ -23,7 +23,7 @@ public class CitaControllerRest {
 
     @GetMapping("/vendedor/{cedula}")
     public List<CitaDTO> obtenerPorVendedor(@PathVariable(name = "cedula") String cedula){
-        return serviceCita.encontrarPorVendedorParaCalendario(usuarioService.findById(cedula));
+        return serviceCita.encontrarPorVendedorParaCalendario(usuarioService.findById(cedula), true);
     }
 
     @GetMapping("/listarTodo")

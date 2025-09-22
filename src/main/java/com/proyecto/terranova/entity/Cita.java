@@ -28,6 +28,14 @@ public class Cita {
     @Column(nullable = true)
     private LocalDateTime ultimaReprogramacion;
 
+    @Column(nullable = true)
+    private LocalDateTime ultimaReprogramacionBloqueada;
+
+    @Column(nullable = true)
+    private LocalDateTime fechaHabilitarReprogramacion;
+
+    private boolean activo = true;
+
     private int numReprogramaciones = 0;
 
     @ManyToOne

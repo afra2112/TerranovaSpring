@@ -89,11 +89,11 @@ public class VendedorController {
     public String citas(Model model, Authentication authentication){
         Usuario vendedor = usuarioService.findByEmail(authentication.getName());
         model.addAttribute("posicionCitas", true);
-        model.addAttribute("numReservadas", citaService.encontrarPorEstado(vendedor,EstadoCitaEnum.RESERVADA).size());
-        model.addAttribute("numFinalizadas", citaService.encontrarPorEstado(vendedor,EstadoCitaEnum.FINALIZADA).size());
-        model.addAttribute("numCanceladas", citaService.encontrarPorEstado(vendedor,EstadoCitaEnum.CANCELADA).size());
+        model.addAttribute("numReservadas", citaService.encontrarPorEstado(vendedor,EstadoCitaEnum.RESERVADA, true).size());
+        model.addAttribute("numFinalizadas", citaService.encontrarPorEstado(vendedor,EstadoCitaEnum.FINALIZADA, true).size());
+        model.addAttribute("numCanceladas", citaService.encontrarPorEstado(vendedor,EstadoCitaEnum.CANCELADA, true).size());
 
-        model.addAttribute("citas", citaService.encontrarPorVendedor(vendedor));
+        model.addAttribute("citas", citaService.encontrarPorVendedor(vendedor, true));
 
         return "vendedor/citas";
     }
