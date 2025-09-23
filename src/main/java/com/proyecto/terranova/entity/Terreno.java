@@ -27,7 +27,4 @@ public class Terreno extends Producto {
     @Column(nullable = false)
     private String usoActual;
 
-    @Column(nullable = false)
-    private boolean cercado;
-
 }

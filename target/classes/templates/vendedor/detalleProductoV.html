@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html xmlns:th="www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,24 +30,48 @@
     </style>
 </head>
 <body class="bg-gray-50">
-
 <div th:replace="fragments/vendedor/navbarVendedor :: navbarVendedor"></div>
 
 <!-- Main Content -->
-<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<main class="ml-64 max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
 
     <!-- Product Header -->
     <div class="bg-white rounded-2xl p-6 border border-gray-200 mb-8">
         <div class="flex items-center justify-between mb-6">
             <div class="flex items-center space-x-4">
-                <div class="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center text-3xl" id="productIcon">🐄</div>
+                <div id="productIcon"
+                     class="w-16 h-16 rounded-xl flex items-center justify-center text-3xl
+            [[${prod instanceof T(com.proyecto.terranova.entity.Ganado) ?
+                 'bg-gradient-to-br from-green-400 to-green-600' :
+                 (prod instanceof T(com.proyecto.terranova.entity.Finca) ?
+                     'bg-gradient-to-br from-green-500 to-emerald-600' :
+                     'bg-gradient-to-br from-yellow-400 to-orange-500')}]]">
+    <span th:text="${prod instanceof T(com.proyecto.terranova.entity.Ganado) ?
+                       '🐄' :
+                       (prod instanceof T(com.proyecto.terranova.entity.Finca) ?
+                           '🏡' :
+                           '🌾')}"></span>
+                </div>
+
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-900" id="productTitle">Ganado Holstein Premium</h1>
-                    <p class="text-gray-600">Tipo: <span id="productType" class="font-medium">Ganado</span></p>
+                    <h1 class="text-3xl font-bold text-gray-900" id="productTitle" th:text="${prod.nombreProducto}"></h1>
+
+                    <div th:if="${prod instanceof T(com.proyecto.terranova.entity.Terreno)}">
+                        <p class="text-gray-600">Tipo: <span id="productTypeT" class="font-medium" >Terreno</span></p>
+                    </div>
+
+                    <div th:if="${prod instanceof T(com.proyecto.terranova.entity.Finca)}">
+                        <p class="text-gray-600">Tipo: <span id="productTypeF" class="font-medium" >Finca</span></p>
+                    </div>
+
+                    <div th:if="${prod instanceof T(com.proyecto.terranova.entity.Ganado)}">
+                        <p class="text-gray-600">Tipo: <span id="productTypeG" class="font-medium" >Ganado</span></p>
+                    </div>
                 </div>
             </div>
             <div class="flex items-center space-x-3">
-                <span id="productStatus" class="px-4 py-2 bg-green-100 text-green-700 font-medium rounded-full">Activo</span>
+                <span id="productStatus" class="px-4 py-2 bg-green-100 text-green-700 font-medium rounded-full" th:text="${prod.estado}" ></span>
+                <!-- Cambié el onclick para toggleEditMode en lugar de abrir modal -->
                 <button onclick="toggleEditMode()" id="editButton" class="bg-[#388e3c] text-white px-6 py-2 rounded-xl font-medium hover:bg-[#2e7d32] transition-colors">
                     Editar Producto
                 </button>
@@ -59,159 +83,168 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Main Content -->
         <div class="lg:col-span-2 space-y-8">
+
             <!-- Basic Information -->
             <div class="bg-white rounded-2xl p-6 border border-gray-200">
                 <h2 class="text-xl font-semibold text-gray-900 mb-6">Información Básica</h2>
+                <!-- Agregando formulario con action y method para submit -->
+                <form th:action="@{'/vendedor/productos/editar/' + ${tipo}}" th:object="${prod}" method="post">
+                    <input type="hidden" th:field="*{idProducto}" />
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Nombre del Producto</label>
+                            <input th:field="*{nombreProducto}" type="text" id="nombreProducto" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent transition-all" readonly>
+                        </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Nombre del Producto</label>
-                        <input type="text" id="nombreProducto" value="Ganado Holstein Premium" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent transition-all" readonly>
-                    </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Precio</label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-3 text-gray-500">$</span>
+                                <input th:field="*{precioProducto}" type="text" id="precioProducto" class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent transition-all" readonly>
+                            </div>
+                        </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Precio</label>
-                        <div class="relative">
-                            <span class="absolute left-3 top-3 text-gray-500">$</span>
-                            <input type="text" id="precioProducto" value="850,000" class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent transition-all" readonly>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Estado</label>
+                            <select th:field="*{estado}" id="estado" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent transition-all" disabled>
+                                <option value="pausado">Pausado</option>
+                                <option value="vendido">Vendido</option>
+                                <option value="Disponible">Disponible</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Ciudad</label>
+                            <select th:field="*{ciudad.idCiudad}" id="ciudad" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent transition-all" disabled>
+                                <option th:each="ciudad : ${ciudades}" th:value="${ciudad.idCiudad}" th:text="${ciudad.nombreCiudad}"></option>
+                            </select>
+                        </div>
+
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Descripción</label>
+                            <textarea th:field="*{descripcion}" id="descripcion" rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent transition-all resize-none" readonly></textarea>
                         </div>
                     </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Estado</label>
-                        <select id="estado" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent transition-all" disabled>
-                            <option value="activo" selected>Activo</option>
-                            <option value="pausado">Pausado</option>
-                            <option value="vendido">Vendido</option>
-                            <option value="borrador">Borrador</option>
-                        </select>
+                    <!-- Product Type Specific Fields-->
+                    <div class="bg-white rounded-2xl p-6 border border-gray-200" id="specificFields">
+                        <!--Ganado Fields-->
+                        <div th:if="${prod instanceof T(com.proyecto.terranova.entity.Ganado)}">
+                            <h2 class="text-xl font-semibold text-gray-900 mb-6">Detalles Específicos - <span id="typeTitle">Ganado</span></h2>
+                            <div id="ganadoFields" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Raza</label>
+                                    <input type="text" id="raza" value="Holstein" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent transition-all" readonly>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Edad Promedio</label>
+                                    <input type="text" id="edad" value="2-3 años" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent transition-all" readonly>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Cantidad</label>
+                                    <input type="number" id="cantidad" value="15" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent transition-all" readonly>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Peso Promedio (kg)</label>
+                                    <input type="number" id="peso" value="450" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent transition-all" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--Finca Fields (Hidden by default)-->
+                        <div th:if="${prod instanceof T(com.proyecto.terranova.entity.Finca)}">
+                            <h2 class="text-xl font-semibold text-gray-900 mb-6">Detalles Específicos - <span >Finca</span></h2>
+                            <div id="fincaFields" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Hectáreas</label>
+                                    <input type="number" id="hectareas" value="15" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent transition-all" readonly>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de Cultivo</label>
+                                    <input type="text" id="tipoCultivo" value="Café" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent transition-all" readonly>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Altitud (msnm)</label>
+                                    <input type="number" id="altitud" value="1800" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent transition-all" readonly>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Acceso a Agua</label>
+                                    <select id="accesoAgua" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent transition-all" disabled>
+                                        <option value="si" selected>Sí</option>
+                                        <option value="no">No</option>
+                                        <option value="parcial">Parcial</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--Terreno Fields (Hidden by default)-->
+                        <div th:if="${prod instanceof T(com.proyecto.terranova.entity.Terreno)}">
+                            <h2 class="text-xl font-semibold text-gray-900 mb-6">Detalles Específicos - <span >Terreno</span></h2>
+                            <div id="terrenoFields" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Hectáreas</label>
+                                    <input th:field="*{tamanoTerreno}" type="number" id="hectareasTerreno" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent transition-all" readonly>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Uso del Suelo</label>
+                                    <input th:field="*{usoActual}" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent transition-all" readonly>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Topografía</label>
+                                    <input th:field="*{topografiaTerreno}" id="topografia" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent transition-all" readonly>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Servicios Públicos</label>
+                                    <input type="text" th:field="*{servicios}" id="servicios" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent transition-all" readonly>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Acceso</label>
+                                    <select type="text" th:field="*{acceso}" id="accesos" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent transition-all" disabled>
+                                        <option value="carretera">🛣️ Carretera</option>
+                                        <option value="trocha">🚗 Trocha</option>
+                                        <option value="camino">🚶 Camino</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Tipo Terreno</label>
+                                    <select th:field="*{tipoTerreno}" id="tipoTerreno" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent transition-all" disabled>
+                                        <option value="ganadero">🐄 Ganadero</option>
+                                        <option value="urbano">🏙️ Urbano</option>
+                                        <option value="mixto">🌆 Mixto</option>
+                                        <option value="otro">📍 Otro</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Ciudad</label>
-                        <input type="text" id="ciudad" value="Medellín, Antioquia" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent transition-all" readonly>
+                    <!-- Agregando botón submit con estilos consistentes -->
+                    <div class="flex justify-end mt-6">
+                        <button type="submit" id="submitButton" class="bg-[#388e3c] text-white px-8 py-3 rounded-xl font-semibold hover:bg-[#2e7d32] transition-all hidden">
+                            Guardar Cambios
+                        </button>
                     </div>
-
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Descripción</label>
-                        <textarea id="descripcion" rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent transition-all resize-none" readonly>Excelente ganado Holstein de alta calidad genética. Animales sanos, vacunados y con certificados sanitarios al día. Ideales para producción lechera o reproducción. Edad promedio de 2-3 años.</textarea>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Product Type Specific Fields -->
-            <div class="bg-white rounded-2xl p-6 border border-gray-200" id="specificFields">
-                <h2 class="text-xl font-semibold text-gray-900 mb-6">Detalles Específicos - <span id="typeTitle">Ganado</span></h2>
-
-                <!-- Ganado Fields -->
-                <div id="ganadoFields" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Raza</label>
-                        <input type="text" id="raza" value="Holstein" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent transition-all" readonly>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Edad Promedio</label>
-                        <input type="text" id="edad" value="2-3 años" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent transition-all" readonly>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Cantidad</label>
-                        <input type="number" id="cantidad" value="15" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent transition-all" readonly>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Peso Promedio (kg)</label>
-                        <input type="number" id="peso" value="450" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent transition-all" readonly>
-                    </div>
-                </div>
-
-                <!-- Finca Fields (Hidden by default) -->
-                <div id="fincaFields" class="grid grid-cols-1 md:grid-cols-2 gap-6 hidden">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Hectáreas</label>
-                        <input type="number" id="hectareas" value="15" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent transition-all" readonly>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de Cultivo</label>
-                        <input type="text" id="tipoCultivo" value="Café" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent transition-all" readonly>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Altitud (msnm)</label>
-                        <input type="number" id="altitud" value="1800" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent transition-all" readonly>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Acceso a Agua</label>
-                        <select id="accesoAgua" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent transition-all" disabled>
-                            <option value="si" selected>Sí</option>
-                            <option value="no">No</option>
-                            <option value="parcial">Parcial</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Terreno Fields (Hidden by default) -->
-                <div id="terrenoFields" class="grid grid-cols-1 md:grid-cols-2 gap-6 hidden">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Hectáreas</label>
-                        <input type="number" id="hectareasTerreno" value="50" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent transition-all" readonly>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Uso del Suelo</label>
-                        <select id="usoSuelo" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent transition-all" disabled>
-                            <option value="agricola" selected>Agrícola</option>
-                            <option value="ganadero">Ganadero</option>
-                            <option value="mixto">Mixto</option>
-                            <option value="forestal">Forestal</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Topografía</label>
-                        <select id="topografia" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent transition-all" disabled>
-                            <option value="plano" selected>Plano</option>
-                            <option value="ondulado">Ondulado</option>
-                            <option value="montañoso">Montañoso</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Servicios Públicos</label>
-                        <input type="text" id="servicios" value="Agua, Electricidad" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent transition-all" readonly>
-                    </div>
-                </div>
+                </form>
             </div>
 
             <!-- Images Section -->
             <div class="bg-white rounded-2xl p-6 border border-gray-200">
                 <div class="flex items-center justify-between mb-6">
                     <h2 class="text-xl font-semibold text-gray-900">Imágenes del Producto</h2>
-                    <button id="addImageBtn" class="bg-[#388e3c] text-white px-4 py-2 rounded-xl font-medium hover:bg-[#2e7d32] transition-colors hidden">
-                        Agregar Imagen
-                    </button>
                 </div>
 
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="imageGallery">
-                    <div class="relative group">
-                        <img src="/placeholder.svg?height=200&width=300" alt="Ganado Holstein 1" class="w-full h-48 object-cover rounded-xl">
-                        <button class="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hidden" onclick="removeImage(this)">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                            </svg>
-                        </button>
-                    </div>
-                    <div class="relative group">
-                        <img src="/placeholder.svg?height=200&width=300" alt="Ganado Holstein 2" class="w-full h-48 object-cover rounded-xl">
-                        <button class="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hidden" onclick="removeImage(this)">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                            </svg>
-                        </button>
-                    </div>
-                    <div class="relative group">
-                        <img src="/placeholder.svg?height=200&width=300" alt="Ganado Holstein 3" class="w-full h-48 object-cover rounded-xl">
-                        <button class="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hidden" onclick="removeImage(this)">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                            </svg>
+                    <div class="relative group" th:each="img : ${prod.imagenes}">
+                        <img th:src="${img.nombreArchivo}" alt="Imagen del producto" class="w-full h-48 object-cover rounded-xl">
+                        <button onclick="removeImage(this)" class="absolute bottom-2 right-2 bg-red-600 text-white px-3 py-2 rounded-full font-medium hover:bg-red-700 transition-colors hidden">
+                            Eliminar
                         </button>
                     </div>
                 </div>
+                <button id="addImageBtn" class="bg-[#388e3c] text-white px-6 py-2 rounded-xl font-medium hover:bg-[#2e7d32] transition-colors hidden">
+                    Agregar Imagen
+                </button>
             </div>
 
             <!-- Availability Schedule -->
@@ -258,21 +291,25 @@
                         <div class="space-y-4">
                             <div>
                                 <label class="block text-xs text-gray-500 mb-1">Hora de Inicio</label>
-                                <input type="time" id="horaInicio" value="08:00" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent transition-all" readonly>
+                                <!-- Cambié input por div para mostrar solo lectura -->
+                                <div class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 text-gray-700">08:00</div>
                             </div>
                             <div>
                                 <label class="block text-xs text-gray-500 mb-1">Hora de Fin</label>
-                                <input type="time" id="horaFin" value="17:00" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent transition-all" readonly>
+                                <!-- Cambié input por div para mostrar solo lectura -->
+                                <div class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 text-gray-700">17:00</div>
                             </div>
                             <div>
                                 <label class="block text-xs text-gray-500 mb-1">Duración por Visita (minutos)</label>
-                                <input type="number" id="duracionVisita" value="60" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent transition-all" readonly>
+                                <!-- Cambié input por div para mostrar solo lectura -->
+                                <div class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 text-gray-700">60</div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
 
         <!-- Sidebar -->
         <div class="space-y-8">
@@ -283,11 +320,11 @@
                 <div class="space-y-4">
                     <div class="flex justify-between items-center">
                         <span class="text-gray-600">Fecha de Publicación:</span>
-                        <span class="font-medium" id="fechaPublicacion">15 Mar 2024</span>
+                        <span class="font-medium" id="fechaPublicacion"  th:text="${#temporals.format(prod.fechaPublicacion, 'dd MMM yyyy')}"></span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-gray-600">Vendedor:</span>
-                        <span class="font-medium" id="vendedor">Carlos Martínez</span>
+                        <span class="font-medium" id="vendedor" th:text="${nombreMostrar}">Carlos Martínez</span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-gray-600">Vistas:</span>
@@ -320,49 +357,32 @@
                     </button>
                 </div>
             </div>
-
-            <!-- Product Type Selector -->
-            <div class="bg-white rounded-2xl p-6 border border-gray-200" id="typeSelector">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Tipo de Producto</h3>
-
-                <div class="space-y-3">
-                    <label class="flex items-center p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors">
-                        <input type="radio" name="productType" value="ganado" checked disabled class="text-[#388e3c] focus:ring-[#388e3c]">
-                        <div class="ml-3 flex items-center">
-                            <span class="text-2xl mr-2">🐄</span>
-                            <span class="font-medium">Ganado</span>
-                        </div>
-                    </label>
-                    <label class="flex items-center p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors">
-                        <input type="radio" name="productType" value="finca" disabled class="text-[#388e3c] focus:ring-[#388e3c]">
-                        <div class="ml-3 flex items-center">
-                            <span class="text-2xl mr-2">🏡</span>
-                            <span class="font-medium">Finca</span>
-                        </div>
-                    </label>
-                    <label class="flex items-center p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors">
-                        <input type="radio" name="productType" value="terreno" disabled class="text-[#388e3c] focus:ring-[#388e3c]">
-                        <div class="ml-3 flex items-center">
-                            <span class="text-2xl mr-2">🌾</span>
-                            <span class="font-medium">Terreno</span>
-                        </div>
-                    </label>
-                </div>
-            </div>
         </div>
     </div>
 
-    <!-- Save/Cancel Buttons (Hidden by default) -->
-    <div id="actionButtons" class="fixed bottom-6 right-6 space-x-3 hidden">
-        <button onclick="cancelEdit()" class="bg-gray-500 text-white px-6 py-3 rounded-xl font-medium hover:bg-gray-600 transition-colors">
-            Cancelar
-        </button>
-        <button onclick="saveChanges()" class="bg-[#388e3c] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#2e7d32] transition-colors">
-            Guardar Cambios
-        </button>
-    </div>
 </main>
 
+<!-- Simplifiqué el modal para que solo contenga los botones de acción -->
+<!-- Edit Actions Modal -->
+<div id="editModal" class="fixed inset-0 modal-backdrop hidden items-center justify-center z-50">
+    <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
+        <div class="text-center mb-6">
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Guardar Cambios</h3>
+            <p class="text-gray-600">¿Deseas guardar los cambios realizados al producto?</p>
+        </div>
+
+        <div class="flex justify-center space-x-4">
+            <button onclick="cancelEdit()" class="px-6 py-3 text-gray-600 hover:text-gray-800 font-medium transition-colors border border-gray-300 rounded-xl hover:bg-gray-50">
+                Cancelar
+            </button>
+            <button type="submit" form="productForm" class="bg-[#388e3c] text-white px-8 py-3 rounded-xl font-semibold hover:bg-[#2e7d32] transition-all">
+                Guardar Cambios
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Reescribí completamente el JavaScript para manejar la edición inline -->
 <script>
     let isEditMode = false;
 
@@ -384,7 +404,7 @@
     function toggleEditMode() {
         isEditMode = !isEditMode;
         const editButton = document.getElementById('editButton');
-        const actionButtons = document.getElementById('actionButtons');
+        const submitButton = document.getElementById('submitButton');
         const addImageBtn = document.getElementById('addImageBtn');
 
         // Get all form elements
@@ -397,12 +417,12 @@
             editButton.textContent = 'Cancelar Edición';
             editButton.classList.remove('bg-[#388e3c]', 'hover:bg-[#2e7d32]');
             editButton.classList.add('bg-gray-500', 'hover:bg-gray-600');
-            actionButtons.classList.remove('hidden');
-            addImageBtn.classList.remove('hidden');
+            submitButton.classList.remove('hidden');
+            if (addImageBtn) addImageBtn.classList.remove('hidden');
 
             // Enable form elements
             inputs.forEach(input => {
-                if (input.type !== 'radio') {
+                if (input.type !== 'radio' && input.type !== 'hidden') {
                     input.removeAttribute('readonly');
                     input.removeAttribute('disabled');
                 }
@@ -416,12 +436,12 @@
             editButton.textContent = 'Editar Producto';
             editButton.classList.add('bg-[#388e3c]', 'hover:bg-[#2e7d32]');
             editButton.classList.remove('bg-gray-500', 'hover:bg-gray-600');
-            actionButtons.classList.add('hidden');
-            addImageBtn.classList.add('hidden');
+            submitButton.classList.add('hidden');
+            if (addImageBtn) addImageBtn.classList.add('hidden');
 
             // Disable form elements
             inputs.forEach(input => {
-                if (input.type !== 'radio') {
+                if (input.type !== 'radio' && input.type !== 'hidden') {
                     input.setAttribute('readonly', 'true');
                     if (input.tagName === 'SELECT') {
                         input.setAttribute('disabled', 'true');
@@ -438,80 +458,12 @@
     function cancelEdit() {
         toggleEditMode();
         // Here you would reload the original data
-    }
-
-    function saveChanges() {
-        // Here you would save the changes to the backend
-        alert('Cambios guardados exitosamente');
-        toggleEditMode();
+        location.reload(); // Recargar página para restaurar datos originales
     }
 
     function removeImage(button) {
         if (confirm('¿Estás seguro de que quieres eliminar esta imagen?')) {
             button.parentElement.remove();
-        }
-    }
-
-    // Handle product type changes
-    document.addEventListener('change', function(e) {
-        if (e.target.name === 'productType') {
-            const productType = e.target.value;
-            const productIcon = document.getElementById('productIcon');
-            const productTitle = document.getElementById('productTitle');
-            const typeTitle = document.getElementById('typeTitle');
-
-            // Hide all specific fields
-            document.getElementById('ganadoFields').classList.add('hidden');
-            document.getElementById('fincaFields').classList.add('hidden');
-            document.getElementById('terrenoFields').classList.add('hidden');
-
-            // Show relevant fields and update UI
-            switch(productType) {
-                case 'ganado':
-                    document.getElementById('ganadoFields').classList.remove('hidden');
-                    productIcon.textContent = '🐄';
-                    productIcon.className = 'w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center text-3xl';
-                    typeTitle.textContent = 'Ganado';
-                    break;
-                case 'finca':
-                    document.getElementById('fincaFields').classList.remove('hidden');
-                    productIcon.textContent = '🏡';
-                    productIcon.className = 'w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center text-3xl';
-                    typeTitle.textContent = 'Finca';
-                    break;
-                case 'terreno':
-                    document.getElementById('terrenoFields').classList.remove('hidden');
-                    productIcon.textContent = '🌾';
-                    productIcon.className = 'w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center text-3xl';
-                    typeTitle.textContent = 'Terreno';
-                    break;
-            }
-        }
-    });
-
-    document.addEventListener('click', function(event) {
-        const dropdown = document.getElementById('userDropdown');
-        const userButton = event.target.closest('[onclick="toggleUserDropdown()"]');
-
-        if (!userButton && !dropdown.contains(event.target)) {
-            dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
-            dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
-            document.getElementById('dropdownArrow').style.transform = 'rotate(0deg)';
-        }
-    });
-
-    function toggleUserDropdown() {
-        const dropdown = document.getElementById('userDropdown');
-        const arrow = document.getElementById('dropdownArrow');
-
-        if (dropdown.classList.contains('opacity-0')) {
-            dropdown.classList.remove('opacity-0', 'invisible', 'scale-95');
-            dropdown.classList.add('opacity-100', 'visible', 'scale-100');
-            arrow.style.transform = 'rotate(180deg)';
-        } else {
-            dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
-            dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
-            arrow.style.transform = 'rotate(0deg)';
         }
     }
 
@@ -526,5 +478,6 @@
         }
     });
 </script>
+
 </body>
 </html>

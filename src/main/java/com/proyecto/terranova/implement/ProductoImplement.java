@@ -39,6 +39,7 @@ public class ProductoImplement implements ProductoService {
         String tipo = datosForm.get("tipoProducto");
         System.out.println("Datos recibidos: " + datosForm);
         if (tipo == null) throw new IllegalArgumentException("Tipo de producto No espesificado");
+
         switch (tipo.toLowerCase()){
             case "terreno":
                 producto = modelMapper.map(datosForm, Terreno.class);
@@ -70,68 +71,6 @@ public class ProductoImplement implements ProductoService {
         return productoRepository.save(producto);
     }
 
-    @Override
-    public ProductoDTO save(ProductoDTO dto) {
-        Producto entidadProducto = modelMapper.map(dto, Producto.class);
-        Usuario usuario = usuarioRepository.findById(dto.getCedulaVendedor())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
-        entidadProducto.setVendedor(usuario);
-        Producto entidadGuardada = repository.save(entidadProducto);
-        return modelMapper.map(entidadGuardada, ProductoDTO.class);
-    }
-
-/*
-    @Override
-    public Producto crearProductoBase(ProductoDTO productoDTO){
-        Producto producto = null;
-        
-        switch (productoDTO.getTipoProducto().toLowerCase()){
-            case "terreno":
-                Terreno terreno = new Terreno();
-                // Mapeas las propiedades del DTO base y del DTO específico
-                modelMapper.map(productoDTO, terreno);
-                modelMapper.map(productoDTO.getTerrenoDTO(), terreno);
-                producto = terreno;
-                break;
-            case "ganado":
-                Ganado ganado = new Ganado();
-                modelMapper.map(productoDTO, ganado);
-                modelMapper.map(productoDTO.getGanadoDTO(), ganado);
-                producto = ganado;
-                break;
-            case "finca":
-                Finca finca = new Finca();
-                modelMapper.map(productoDTO, finca);
-                modelMapper.map(productoDTO.getFincaDTO(), finca);
-                producto = finca;
-                break;
-            default:
-                throw new IllegalArgumentException("Tipo no válido");
-        }
-
-        producto.setEstado("Disponible");
-        producto.setFechaPublicacion(LocalDate.now());
-
-        Usuario usuario = usuarioRepository.findById(productoDTO.getCedulaVendedor())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
-        producto.setVendedor(usuario);
-
-        return repository.save(producto);
-
-    }*/
-
-    @Override
-    public ProductoDTO update(Long id, ProductoDTO dto) {
-        Producto entidadProducto = repository.findById(id)
-        .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
-
-    	modelMapper.map(dto, entidadProducto);
-
-    	Producto entidadActualizada = repository.save(entidadProducto);
-    	return modelMapper.map(entidadActualizada, ProductoDTO.class);
-    }
 
     @Override
     public Producto findById(Long id) {
@@ -165,5 +104,50 @@ public class ProductoImplement implements ProductoService {
     @Override
     public long count() {
         return repository.count();
+    }
+
+    @Override
+    public void actualizarProducto(Producto prodForm) {
+        Producto original = productoRepository.findById(prodForm.getIdProducto())
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+
+        original.setNombreProducto(prodForm.getNombreProducto());
+        original.setPrecioProducto(prodForm.getPrecioProducto());
+        original.setEstado(prodForm.getEstado());
+        original.setDescripcion(prodForm.getDescripcion());
+
+
+        if (prodForm.getCiudad() != null && prodForm.getCiudad().getIdCiudad() != null) {
+            Ciudad ciudad = ciudadRepository.findById(prodForm.getCiudad().getIdCiudad())
+                    .orElseThrow(() -> new RuntimeException("Ciudad no encontrada"));
+            original.setCiudad(ciudad);
+        }
+
+
+        if (original instanceof Terreno terrenoOriginal && prodForm instanceof Terreno terrenoNuevo) {
+            terrenoOriginal.setTamanoTerreno(terrenoNuevo.getTamanoTerreno());
+            terrenoOriginal.setUsoActual(terrenoNuevo.getUsoActual());
+            terrenoOriginal.setTopografiaTerreno(terrenoNuevo.getTopografiaTerreno());
+            terrenoOriginal.setServicios(terrenoNuevo.getServicios());
+            terrenoOriginal.setTipoTerreno(terrenoNuevo.getTipoTerreno());
+            terrenoOriginal.setAcceso(terrenoNuevo.getAcceso());
+
+        } else if (original instanceof Finca fincaOriginal && prodForm instanceof Finca fincaNueva) {
+            fincaOriginal.setEspacioTotal(fincaNueva.getEspacioTotal());
+            fincaOriginal.setEspacioConstruido(fincaNueva.getEspacioConstruido());
+            fincaOriginal.setEstratoFinca(fincaNueva.getEstratoFinca());
+            fincaOriginal.setNumeroHabitaciones(fincaNueva.getNumeroHabitaciones());
+            fincaOriginal.setNumeroBanos(fincaNueva.getNumeroBanos());
+
+        } else if (original instanceof Ganado ganadoOriginal && prodForm instanceof Ganado ganadoNuevo) {
+            ganadoOriginal.setRazaGanado(ganadoNuevo.getRazaGanado());
+            ganadoOriginal.setPesoGanado(ganadoNuevo.getPesoGanado());
+            ganadoOriginal.setEdadGanado(ganadoNuevo.getEdadGanado());
+            ganadoOriginal.setGeneroGanado(ganadoNuevo.getGeneroGanado());
+            ganadoOriginal.setTipoGanado(ganadoNuevo.getTipoGanado());
+            ganadoOriginal.setEstadoSanitario(ganadoNuevo.getEstadoSanitario());
+            ganadoOriginal.setCantidad(ganadoNuevo.getCantidad());
+        }
+        productoRepository.save(original);
     }
 }

@@ -43,11 +43,7 @@ public class ProductoControllerRest {
         return ResponseEntity.ok(dtoProducto);
     }
 
-    @PostMapping("/crearProducto")
-    public ResponseEntity<ProductoDTO> crearProducto(@RequestBody ProductoDTO dtoProducto){
-        serviceProducto.save(dtoProducto);
-        return ResponseEntity.ok(dtoProducto);
-    }
+
 
     @DeleteMapping("/eliminarProducto/{id}")
     public ResponseEntity<Long> eliminarProducto(@PathVariable Long id){

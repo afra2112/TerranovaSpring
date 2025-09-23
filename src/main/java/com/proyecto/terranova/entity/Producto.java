@@ -1,7 +1,9 @@
 package com.proyecto.terranova.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -10,6 +12,7 @@ import java.util.List;
 @Entity
 @Table(name = "productos")
 @Data
+@NoArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "tipo_producto", discriminatorType = DiscriminatorType.STRING)
 public abstract class Producto {

@@ -2,8 +2,9 @@
 package com.proyecto.terranova.controller;
 
 
-import com.proyecto.terranova.entity.Producto;
-import com.proyecto.terranova.entity.Usuario;
+import com.proyecto.terranova.entity.*;
+import com.proyecto.terranova.repository.CiudadRepository;
+import com.proyecto.terranova.repository.ProductoRepository;
 import com.proyecto.terranova.service.ProductoService;
 import com.proyecto.terranova.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Map;
 
@@ -25,9 +27,20 @@ public class ProductoController {
     @Autowired
     ProductoService productoService;
 
+    @Autowired
+    ProductoRepository productoRepository;
+
+    @Autowired
+    CiudadRepository ciudadRepository;
+
     @ModelAttribute("usuario")
     public Usuario usuario(Authentication authentication){
         return usuarioService.findByEmail(authentication.getName());
+    }
+    @ModelAttribute("nombreMostrar")
+    public String nombreMostrar(Authentication authentication){
+        Usuario usuario = usuarioService.findByEmail(authentication.getName());
+        return usuario.getNombres() + ". " + usuario.getApellidos().charAt(0);
     }
 
 
@@ -36,37 +49,54 @@ public class ProductoController {
         return "redirect:/vendedor/productos?idProducto=" + idProducto;
     }
 
-    @GetMapping("/Detalle")
-    public String mostrarModalDetalle(Model model, Authentication authentication){
-        model.addAttribute("productos", productoService.findAll());
+    @GetMapping("/Detalle/{idProducto}")
+    public String mostrarModalDetalle(@PathVariable Long idProducto, Model model, Authentication authentication){
+        Producto producto = productoRepository.findById(idProducto).orElseThrow();
+
+        String tipo = "";
+        if (producto instanceof Terreno) {
+            tipo = "terreno";
+        } else if (producto instanceof Finca) {
+            tipo = "finca";
+        } else if (producto instanceof Ganado) {
+            tipo = "ganado";
+        }
+        model.addAttribute("tipo", tipo);
+        model.addAttribute("prod", producto);
+        model.addAttribute("ciudades", ciudadRepository.findAll());
         model.addAttribute("usuario", usuario(authentication));
         return "vendedor/detalleProductoV";
     }
 
+    @PostMapping("/editar/terreno")
+    public String actualizarTerreno(@ModelAttribute Terreno terrenoForm, RedirectAttributes redirect) {
+        productoService.actualizarProducto(terrenoForm);
+        redirect.addFlashAttribute("mensaje", "Terreno actualizado correctamente");
+        return "redirect:/vendedor/productos";
+    }
+    @PostMapping("/editar/finca")
+    public String actualizarFinca(@ModelAttribute Finca fincaForm, RedirectAttributes redirect) {
+        productoService.actualizarProducto(fincaForm);
+        redirect.addFlashAttribute("mensaje", "Finca actualizada correctamente");
+        return "redirect:/vendedor/productos";
+    }
+    @PostMapping("/editar/ganado")
+    public String actualizarGanado(@ModelAttribute Ganado ganadoForm, RedirectAttributes redirect) {
+        productoService.actualizarProducto(ganadoForm);
+        redirect.addFlashAttribute("mensaje", "Ganado actualizado correctamente");
+        return "redirect:/vendedor/productos";
+    }
+
+
+
     @PostMapping("/guardarP")
     public String guardarProducto(@RequestParam Map<String,String> formdatos ,Authentication authentication,  @RequestParam(name = "idCiudad") Long idCiudad){
-        if (!formdatos.containsKey("cercado")) {
-            formdatos.put("cercado", "false");
-        }
+
         String correo = authentication.getName(); // ahora es claro que es el correo
         Producto producto = productoService.crearProductoBase(formdatos, correo, idCiudad);
 
         return "redirect:/vendedor/dashboard?productoId=" + producto.getIdProducto();
     }
 
-    /*
-    public ResponseEntity<Long> guardarProducto(@RequestParam Map<String , String> datosForm , Authentication authentication) {
-        String cedula = authentication.getName();
-        Producto producto = productoService.crearProductoBase(datosForm,cedula);
-        return ResponseEntity.ok(producto.getIdProducto());
-    }*/
 
-
-    /*@GetMapping("/imagenes")
-    public String mostrarFormularioImagenes(@RequestParam Long id, Model model) {
-        if (id != null) {
-            model.addAttribute("productoId", id);
-        }
-        return "vendedor/dashboard";
-    }*/
 }

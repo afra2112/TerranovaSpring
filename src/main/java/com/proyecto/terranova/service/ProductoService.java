@@ -9,12 +9,11 @@ import com.proyecto.terranova.entity.Usuario;
 
 public interface ProductoService {
     Producto crearProductoBase(Map<String,String> datosForm , String cedula,Long idCiudad);
-    ProductoDTO save(ProductoDTO dto);
-    ProductoDTO update(Long id, ProductoDTO dto); // Actualizar
     Producto findById(Long id);
     List<Producto> findAll();
     List<Producto> obtenerTodosPorVendedor(Usuario vendedor);
     boolean delete(Long id);
     boolean existsById(Long id); // ValidaciÃ³n
-    long count(); // Contar registros
+    long count();// Contar registros
+    void actualizarProducto(Producto prodForm);
 }

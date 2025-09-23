@@ -362,6 +362,7 @@
         </div>
     </div>
 </div>
+
 <div th:replace="fragments/vendedor/modalRegistro :: formProducto"></div>
 <!-- Modal para subir imágenes -->
 <div id="modalImagenes" class="fixed inset-0 hidden items-center justify-center z-50 bg-black bg-opacity-50">
@@ -449,17 +450,115 @@
 
             if (tipo === 'terreno') {
                 container.innerHTML = `
-          <input type="number" name="tamanoTerreno" placeholder="Tamaño (m²)" required class="input-field">
-          <input type="text" name="tipoTerreno" placeholder="Tipo Terreno" required class="input-field">
-          <input type="text" name="topografiaTerreno" placeholder="Topografía" required class="input-field">
-          <input type="text" name="acceso" placeholder="Acceso" required class="input-field">
-          <input type="text" name="servicios" placeholder="Servicios" required class="input-field">
-          <input type="text" name="usoActual" placeholder="Uso Actual" required class="input-field">
-          <label><input type="checkbox" name="cercado" value="true"> Cercado</label>
+
+            <div class="space-y-2">
+                 <label class="block text-sm font-semibold text-gray-700">Tamaño del Terreno</label>
+                 <div class="relative">
+                   <input type="number" name="tamanoTerreno" step="0.01" required
+                          class="w-full px-4 py-3 pr-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm hover:shadow-md"
+                          placeholder="0.00"/>
+                   <span class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">m²</span>
+                 </div>
+           </div>
+            <div class="bg-emerald-50 rounded-2xl p-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+           <div class="w-5 h-5 bg-emerald-500 rounded-full"></div>
+           Características del Terreno
+         </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+           <div class="space-y-2">
+             <label class="block text-sm font-semibold text-gray-700">Tipo de Terreno</label>
+             <select name="tipoTerreno" required
+                     class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm hover:shadow-md appearance-none cursor-pointer">
+               <option value="">Seleccione el tipo...</option>
+               <option value="ganadero">🐄 Ganadero</option>
+               <option value="urbano">🏙️ Urbano</option>
+               <option value="mixto">🌆 Mixto</option>
+               <option value="otro">📍 Otro</option>
+             </select>
+           </div>
+
+           <div class="space-y-2">
+             <label class="block text-sm font-semibold text-gray-700">Acceso</label>
+             <select name="acceso" required
+                     class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm hover:shadow-md appearance-none cursor-pointer">
+               <option value="">Seleccione el acceso...</option>
+               <option value="carretera">🛣️ Carretera</option>
+               <option value="trocha">🚗 Trocha</option>
+               <option value="camino">🚶 Camino</option>
+             </select>
+           </div>
+         </div>
+            <div class="space-y-2 mt-6">
+           <label class="block text-sm font-semibold text-gray-700">Topografía del Terreno</label>
+           <textarea name="topografiaTerreno" required rows="3"
+                     class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm hover:shadow-md resize-none"
+                     placeholder="Describa la topografía (plano, ondulado, montañoso, etc.)..."></textarea>
+         </div></div>
+            <div class="bg-amber-50 rounded-2xl p-6">
+         <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+           <div class="w-5 h-5 bg-amber-500 rounded-full"></div>
+           Servicios y Uso Actual
+         </h3>
+
+         <div class="space-y-6">
+           <div class="space-y-2">
+             <label class="block text-sm font-semibold text-gray-700">Servicios Disponibles</label>
+             <textarea name="servicios" required rows="3"
+                       class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm hover:shadow-md resize-none"
+                       placeholder="Agua, luz, internet, gas, etc..."></textarea>
+           </div>
+
+           <div class="space-y-2">
+             <label class="block text-sm font-semibold text-gray-700">Uso Actual</label>
+             <textarea name="usoActual" required rows="3"
+                       class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm hover:shadow-md resize-none"
+                       placeholder="Agricultura, ganadería, baldío, etc..."></textarea>
+           </div>
+         </div>
+       </div>
+        `;
+            }
+            if(tipo === 'finca'){
+                container.innerHTML = `
+            <!-- Espacio Total -->
+<div>
+    <label>Espacio Total (m²)</label>
+    <input type="text" name="espacioTotal" required />
+</div>
+
+<!-- Espacio Construido -->
+<div>
+    <label>Espacio Construido (m²)</label>
+    <input type="text" name="espacioConstruido" required />
+</div>
+
+<!-- Estrato -->
+<div>
+    <label>Estrato</label>
+    <input type="number" name="estratoFinca" min="1" max="6" required />
+</div>
+
+<!-- Número de Habitaciones -->
+<div>
+    <label>Habitaciones</label>
+    <input type="number" name="numeroHabitaciones" min="0" required />
+</div>
+
+<!-- Número de Baños -->
+<div>
+    <label>Baños</label>
+    <input type="number" name="numeroBanos" min="0" required />
+</div>
+
         `;
             }
 
-            // Puedes agregar más bloques para finca y ganado si lo deseas
+
+            if(tipo === 'ganado'){
+                container.innerHTML='';
+            }
 
             modal.classList.remove('hidden');
             modal.classList.add('flex');
