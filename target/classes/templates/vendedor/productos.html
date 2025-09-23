@@ -75,16 +75,15 @@
         </div>
 
         <!-- Stats Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <div class="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-all">
                 <div class="flex items-center justify-between mb-4">
                     <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
                         <i class='bx bx-package text-green-600 text-xl'></i>
                     </div>
-                    <span class="text-2xl font-bold text-gray-900">23</span>
+                    <span class="text-2xl font-bold text-gray-900" th:text="${productos.size()}"></span>
                 </div>
                 <h3 class="font-medium text-gray-600 mb-1">Total Productos</h3>
-                <p class="text-sm text-green-600 font-medium">+3 este mes</p>
             </div>
 
             <div class="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-all">
@@ -92,21 +91,9 @@
                     <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
                         <i class='bx bx-show text-blue-600 text-xl'></i>
                     </div>
-                    <span class="text-2xl font-bold text-gray-900">18</span>
+                    <span class="text-2xl font-bold text-gray-900" th:text="${productos.size()}"></span>
                 </div>
                 <h3 class="font-medium text-gray-600 mb-1">Productos Activos</h3>
-                <p class="text-sm text-blue-600 font-medium">78% del total</p>
-            </div>
-
-            <div class="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-all">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
-                        <i class='bx bx-time text-yellow-600 text-xl'></i>
-                    </div>
-                    <span class="text-2xl font-bold text-gray-900">3</span>
-                </div>
-                <h3 class="font-medium text-gray-600 mb-1">Pendientes</h3>
-                <p class="text-sm text-yellow-600 font-medium">En revisión</p>
             </div>
 
             <div class="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-all">
@@ -114,10 +101,9 @@
                     <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
                         <i class='bx bx-calendar text-purple-600 text-xl'></i>
                     </div>
-                    <span class="text-2xl font-bold text-gray-900">45</span>
+                    <span class="text-2xl font-bold text-gray-900" th:text="${disponibilidades}"></span>
                 </div>
                 <h3 class="font-medium text-gray-600 mb-1">Disponibilidades</h3>
-                <p class="text-sm text-purple-600 font-medium">Esta semana</p>
             </div>
         </div>
 
@@ -181,11 +167,9 @@
                     <div class="flex items-center justify-between mb-4">
                         <div class="flex items-center text-sm text-gray-600">
                             <i class='bx bx-calendar mr-1'></i>
-                            <span>12 disponibilidades</span>
                         </div>
                         <div class="flex items-center text-sm text-gray-600">
                             <i class='bx bx-show mr-1'></i>
-                            <span>234 vistas</span>
                         </div>
                     </div>
                     <div class="flex space-x-2">
@@ -200,9 +184,11 @@
                         <a th:href="@{'/vendedor/productos/Detalle/' + ${prod.idProducto}}" class="gradient-edit text-white py-2 px-4 rounded-xl text-sm font-medium hover:shadow-lg transition-all">
                             <i class='bx bx-edit'></i>
                         </a>
-                        <button onclick="confirmDelete('1')" class="gradient-delete text-white py-2 px-4 rounded-xl text-sm font-medium hover:shadow-lg transition-all">
-                            <i class='bx bx-trash'></i>
-                        </button>
+                        <form th:action="@{'/vendedor/productos/eliminar/' + ${prod.idProducto}}" method="post">
+                            <button type="submit" onclick="confirmDelete('1')" class="gradient-delete text-white py-2 px-4 rounded-xl text-sm font-medium hover:shadow-lg transition-all">
+                                <i class='bx bx-trash'></i>
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>

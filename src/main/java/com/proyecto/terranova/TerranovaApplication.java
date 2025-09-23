@@ -43,7 +43,7 @@ public class TerranovaApplication {
 
             if(usuarioRepository.findByEmail("afra65069@gmail.com") == null){
                 Usuario usuario = new Usuario();
-                usuario.setRoles(rolRepository.findAll());
+                usuario.setRoles(List.of(rolRepository.findBynombreRol(RolEnum.COMPRADOR)));
                 usuario.setNombres("Andres");
                 usuario.setApellidos("Ramirez");
                 usuario.setCedula("1234567890");
@@ -51,20 +51,6 @@ public class TerranovaApplication {
                 usuario.setEmail("afra65069@gmail.com");
                 usuario.setContrasena(passwordEncoder.encode("andres1234"));
                 usuario.setNacimiento(LocalDate.parse("2007-06-05"));
-                usuario.setFechaRegistro(LocalDate.now());
-                usuarioRepository.save(usuario);
-            }
-
-            if(usuarioRepository.findByEmail("luminicair@gmail.com") == null){
-                Usuario usuario = new Usuario();
-                usuario.setRoles(List.of(rolRepository.findBynombreRol(RolEnum.COMPRADOR)));
-                usuario.setNombres("Felipe");
-                usuario.setApellidos("Agudelo");
-                usuario.setCedula("9876543210");
-                usuario.setTelefono("3052702690");
-                usuario.setEmail("luminicair@gmail.com");
-                usuario.setContrasena(passwordEncoder.encode("felipe"));
-                usuario.setNacimiento(LocalDate.parse("2000-06-05"));
                 usuario.setFechaRegistro(LocalDate.now());
                 usuarioRepository.save(usuario);
             }

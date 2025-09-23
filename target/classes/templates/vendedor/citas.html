@@ -201,7 +201,7 @@
                             </div>
                             <div class="flex flex-col gap-3">
                                 <button class="gradient-bg text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2">
-                                    <i class='bx bx-show text-lg'></i> Ver Producto
+                                    <a th:href="@{/vendedor/productos/Detalle/{idProducto}(idProducto=${cita.producto.idProducto})}"><i class='bx bx-show text-lg'></i> Ver Producto</a>
                                 </button>
                                 <form th:action="@{/vendedor/citas/finalizar-cita}" method="post">
                                     <input type="hidden" name="idCita" th:value="${cita.idCita}">
@@ -319,7 +319,7 @@
                             </div>
                             <div class="flex flex-col gap-3">
                                 <button class="gradient-bg text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2">
-                                    <i class='bx bx-show text-lg'></i> Ver Producto
+                                    <a th:href="@{/vendedor/productos/Detalle/{idProducto}(idProducto=${cita.producto.idProducto})}"><i class='bx bx-show text-lg'></i> Ver Producto</a>
                                 </button>
                                 <div class="flex items-center justify-center gap-2 text-green-600 font-medium px-4 py-2 bg-green-50 rounded-lg">
                                     <i class='bx bx-check-circle text-xl'></i>
@@ -380,7 +380,7 @@
                             </div>
                             <div class="flex flex-col gap-3">
                                 <button class="gradient-bg text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2">
-                                    <i class='bx bx-show text-lg'></i> Ver Producto
+                                    <a th:href="@{/vendedor/productos/Detalle/{idProducto}(idProducto=${cita.producto.idProducto})}"><i class='bx bx-show text-lg'></i> Ver Producto</a>
                                 </button>
                                 <div class="flex items-center justify-center gap-2 text-red-500 font-medium px-4 py-2 bg-red-50 rounded-lg">
                                     <i class='bx bx-x-circle text-xl'></i>

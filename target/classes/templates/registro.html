@@ -5,91 +5,147 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Registro</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'primary': '#388e3c',
+            'secondary': '#ffcf00'
+          }
+        }
+      }
+    }
+  </script>
 </head>
-<body class="bg-gray-100 font-sans">
-<div class="max-w-md mx-auto mt-[100px] bg-white rounded-2xl shadow-lg p-6">
-  <h1 class="text-center text-2xl text-green-700 font-bold mb-6">Regístrate y prueba nuestros servicios</h1>
+<body class="bg-gradient-to-br from-green-50 to-emerald-50 min-h-screen font-sans">
+<div class="max-w-lg mx-auto pt-12 pb-8 px-4">
+  <div class="bg-white rounded-3xl shadow-2xl p-8 border border-gray-100">
+    <h1 class="text-center text-3xl text-[#388e3c] font-bold mb-2">Regístrate</h1>
+    <p class="text-center text-gray-600 mb-8">y prueba nuestros servicios</p>
 
-  <button class="w-5/6 mx-auto block bg-blue-600 text-white py-2 rounded-full font-semibold text-sm mb-4">Iniciar sesión con Google</button>
+    <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-2xl font-semibold text-sm mb-6 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+      <i class="fab fa-google mr-2"></i>Iniciar sesión con Google
+    </button>
 
-  <p class="text-center font-semibold text-lg mb-4">O</p>
-
-  <form id="registroForm" th:action="@{/registro}" th:object="${usuarioDTO}" th:method="post" class="space-y-4" novalidate>
-    <input type="hidden" name="accion" value="registrar">
-
-    <div class="flex gap-3">
-      <input th:field="*{nombres}"  id="nombres" type="text" placeholder="Nombre" required
-             pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ ]{2,}" title="Solo letras, mínimo 2 caracteres"
-             class="flex-1 p-2 border-b border-green-700 rounded-md focus:outline-none" />
-
-      <input th:field="*{apellidos}" id="apellidos" type="text" placeholder="Apellido" required
-             pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ ]{2,}" title="Solo letras, mínimo 2 caracteres"
-             class="flex-1 p-2 border-b border-green-700 rounded-md focus:outline-none" />
+    <div class="relative mb-6">
+      <div class="absolute inset-0 flex items-center">
+        <div class="w-full border-t border-gray-200"></div>
+      </div>
+      <div class="relative flex justify-center text-sm">
+        <span class="px-4 bg-white text-gray-500 font-medium">O</span>
+      </div>
     </div>
 
-    <input th:field="*{cedula}" id="numeroID" type="text" placeholder="Número de cedula" required
-           pattern="[0-9]{6,12}" title="Solo números entre 6 y 12 dígitos"
-           class="w-full p-2 border-b border-green-700 rounded-md focus:outline-none" />
+    <form id="registroForm" th:action="@{/registro}" th:object="${usuarioDTO}" th:method="post" class="space-y-5" novalidate>
+      <input type="hidden" name="accion" value="registrar">
 
-    <input th:field="*{telefono}" id="telefono" type="tel" placeholder="Teléfono" required
-           pattern="[0-9]{10}" title="Debe tener 10 dígitos"
-           class="w-full p-2 border-b border-green-700 rounded-md focus:outline-none" />
+      <div class="grid grid-cols-2 gap-4">
+        <div class="relative">
+          <input th:field="*{nombres}" id="nombres" type="text" placeholder="Nombre" required
+                 pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ ]{2,}" title="Solo letras, mínimo 2 caracteres"
+                 class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-[#388e3c] focus:ring-2 focus:ring-[#388e3c]/20 transition-all duration-300 placeholder-gray-400" />
+        </div>
 
-    <input th:field="*{email}" id="correo" type="email" placeholder="Correo Electrónico" required
-           class="w-full p-2 border-b border-green-700 rounded-md focus:outline-none" />
+        <div class="relative">
+          <input th:field="*{apellidos}" id="apellidos" type="text" placeholder="Apellido" required
+                 pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ ]{2,}" title="Solo letras, mínimo 2 caracteres"
+                 class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-[#388e3c] focus:ring-2 focus:ring-[#388e3c]/20 transition-all duration-300 placeholder-gray-400" />
+        </div>
+      </div>
 
-    <input th:field="*{contrasena}" id="contraseña" type="password" placeholder="Contraseña" required
-           minlength="6" title="Mínimo 6 caracteres"
-           class="w-full p-2 border-b border-green-700 rounded-md focus:outline-none" />
+      <div class="relative">
+        <input th:field="*{cedula}" id="numeroID" type="text" placeholder="Número de cédula" required
+               pattern="[0-9]{6,12}" title="Solo números entre 6 y 12 dígitos"
+               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-[#388e3c] focus:ring-2 focus:ring-[#388e3c]/20 transition-all duration-300 placeholder-gray-400" />
+      </div>
 
-    <input th:field="*{nacimiento}" id="fechaNacimiento" type="date" required
-           class="w-full p-2 border-b border-green-700 text-gray-500 rounded-md focus:outline-none" />
+      <div class="relative">
+        <input th:field="*{telefono}" id="telefono" type="tel" placeholder="Teléfono" required
+               pattern="[0-9]{10}" title="Debe tener 10 dígitos"
+               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-[#388e3c] focus:ring-2 focus:ring-[#388e3c]/20 transition-all duration-300 placeholder-gray-400" />
+      </div>
 
-    <div class="flex items-center space-x-2">
-      <input id="terms" type="checkbox" required class="w-4 h-4" />
-      <label for="terms" class="text-sm">Acepto los términos y condiciones</label>
+      <div class="relative">
+        <input th:field="*{email}" id="correo" type="email" placeholder="Correo Electrónico" required
+               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-[#388e3c] focus:ring-2 focus:ring-[#388e3c]/20 transition-all duration-300 placeholder-gray-400" />
+      </div>
+
+      <div class="relative">
+        <input th:field="*{contrasena}" id="contraseña" type="password" placeholder="Contraseña" required
+               minlength="6" title="Mínimo 6 caracteres"
+               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-[#388e3c] focus:ring-2 focus:ring-[#388e3c]/20 transition-all duration-300 placeholder-gray-400" />
+      </div>
+
+      <div class="relative">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Fecha de Nacimiento</label>
+        <input th:field="*{nacimiento}" id="fechaNacimiento" type="date" required
+               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-[#388e3c] focus:ring-2 focus:ring-[#388e3c]/20 transition-all duration-300 text-gray-700" />
+      </div>
+
+      <div class="flex items-start space-x-3 pt-2">
+        <input id="terms" type="checkbox" required
+               class="w-5 h-5 text-[#388e3c] border-2 border-gray-300 rounded focus:ring-[#388e3c] focus:ring-2 mt-0.5" />
+        <label for="terms" class="text-sm text-gray-600 leading-relaxed">
+          Acepto los <a href="#" class="text-[#388e3c] hover:underline font-medium">términos y condiciones</a> y la <a href="#" class="text-[#388e3c] hover:underline font-medium">política de privacidad</a>
+        </label>
+      </div>
+
+      <p th:if="${param.yaExiste}" class="text-red-500 text-sm bg-red-50 border border-red-200 rounded-lg p-3">
+        Ya existe un usuario registrado con ese correo o cédula
+      </p>
+
+      <div id="error" class="text-red-600 text-sm bg-red-50 border border-red-200 rounded-lg p-3 whitespace-pre-line hidden"></div>
+
+      <button type="submit" class="w-full bg-gradient-to-r from-[#388e3c] to-[#2e7d32] hover:from-[#2e7d32] hover:to-[#1b5e20] text-white py-4 rounded-2xl font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 mt-8">
+        Regístrate ahora
+      </button>
+    </form>
+
+    <div class="text-center mt-6">
+      <p class="text-gray-600">¿Ya tienes cuenta?
+        <a href="#" class="text-[#388e3c] hover:underline font-semibold">Inicia sesión</a>
+      </p>
     </div>
-
-    <p th:if="${param.yaExiste}" class="text-red-500 text-sm mb-4">Ya existe un usuario registrado con ese correo o cedula</p>
-
-    <div id="error" class="text-red-600 text-sm whitespace-pre-line"></div>
-
-    <button type="submit" class="w-full bg-green-700 text-white py-2 rounded-full font-semibold">Regístrate ahora</button>
-  </form>
+  </div>
 </div>
 
 <script>
   document.getElementById("registroForm").addEventListener("submit", function (e) {
-      const errorDiv = document.getElementById("error");
-      errorDiv.textContent = ""; // Limpia errores previos
+    const errorDiv = document.getElementById("error");
+    errorDiv.textContent = ""; // Limpia errores previos
+    errorDiv.classList.add("hidden");
 
-      const nacimiento = document.getElementById("fechaNacimiento").value;
-      const fechaNacimiento = new Date(nacimiento);
-      const hoy = new Date();
-      const edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
-      const diferenciaMes = hoy.getMonth() - fechaNacimiento.getMonth();
+    const nacimiento = document.getElementById("fechaNacimiento").value;
+    const fechaNacimiento = new Date(nacimiento);
+    const hoy = new Date();
+    const edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
+    const diferenciaMes = hoy.getMonth() - fechaNacimiento.getMonth();
 
-      if (edad < 18 || (edad === 18 && diferenciaMes < 0)) {
-          e.preventDefault();
-          errorDiv.textContent = "Debes tener al menos 18 años para registrarte.";
-          return;
-      }
+    if (edad < 18 || (edad === 18 && diferenciaMes < 0)) {
+      e.preventDefault();
+      errorDiv.textContent = "Debes tener al menos 18 años para registrarte.";
+      errorDiv.classList.remove("hidden");
+      return;
+    }
 
-      const rol = document.getElementById("rol").value;
-      if (rol === "" || rol === "Rol") {
-          e.preventDefault();
-          errorDiv.textContent = "Debes seleccionar un rol.";
-          return;
-      }
+    const rol = document.getElementById("rol");
+    if (rol && (rol.value === "" || rol.value === "Rol")) {
+      e.preventDefault();
+      errorDiv.textContent = "Debes seleccionar un rol.";
+      errorDiv.classList.remove("hidden");
+      return;
+    }
 
-      // Validación extra de nombre/apellido
-      const nombre = document.getElementById("nombres").value;
-      const apellido = document.getElementById("apellidos").value;
-      if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñ ]{2,}$/.test(nombre) || !/^[A-Za-zÁÉÍÓÚáéíóúÑñ ]{2,}$/.test(apellido)) {
-          e.preventDefault();
-          errorDiv.textContent = "Nombre y apellido deben tener solo letras y al menos 2 caracteres.";
-          return;
-      }
+    // Validación extra de nombre/apellido
+    const nombre = document.getElementById("nombres").value;
+    const apellido = document.getElementById("apellidos").value;
+    if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñ ]{2,}$/.test(nombre) || !/^[A-Za-zÁÉÍÓÚáéíóúÑñ ]{2,}$/.test(apellido)) {
+      e.preventDefault();
+      errorDiv.textContent = "Nombre y apellido deben tener solo letras y al menos 2 caracteres.";
+      errorDiv.classList.remove("hidden");
+      return;
+    }
   });
 </script>
 </body>

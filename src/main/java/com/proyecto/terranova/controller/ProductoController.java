@@ -87,15 +87,29 @@ public class ProductoController {
         return "redirect:/vendedor/productos";
     }
 
-
-
     @PostMapping("/guardarP")
     public String guardarProducto(@RequestParam Map<String,String> formdatos ,Authentication authentication,  @RequestParam(name = "idCiudad") Long idCiudad){
 
         String correo = authentication.getName(); // ahora es claro que es el correo
         Producto producto = productoService.crearProductoBase(formdatos, correo, idCiudad);
-
+        if(producto instanceof Ganado){
+            String cantidadGanado = formdatos.get("cantidad");
+            Long precioProducto = Long.parseLong(cantidadGanado) * producto.getPrecioProducto();
+            producto.setPrecioProducto(precioProducto);
+            productoRepository.save(producto);
+        }
         return "redirect:/vendedor/dashboard?productoId=" + producto.getIdProducto();
+    }
+
+    @PostMapping("/eliminar/{id}")
+    public String eliminarProducto(@PathVariable Long id, Authentication auth, RedirectAttributes redirect) {
+        try {
+            productoService.eliminarProducto(id, auth.getName());
+            redirect.addFlashAttribute("exito", "Producto eliminado correctamente.");
+        } catch (IllegalArgumentException e) {
+            redirect.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/vendedor/productos";
     }
 
 

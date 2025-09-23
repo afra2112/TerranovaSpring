@@ -3,512 +3,297 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pagina Principal</title>
+    <title>Terranova - Marketplace Agrícola</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-emerald': '#059669',
+                        'bright-emerald': '#10b981',
+                        'emerald-50': '#ecfdf5',
+                        'emerald-100': '#d1fae5',
+                        'emerald-900': '#064e3b',
+                    },
+                    fontFamily: {
+                        'dm-sans': ['DM Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        :root {
-            --primary-green: #388e3c;
-            --primary-yellow: #ffcf00;
-        }
-
-        /*NAVBAR*/
-        .navbar {
-            background-color: #f8f9fa;
-            box-shadow: 0 4px 15px rgba(70, 70, 70, 0.1);
-            padding: 25px 0;
-            padding-top: 20px;
-        }
-
-        .marca-sitio {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            color: var(--primary-green);
-            font-size: 40px;
-            font-weight: bold;
-            filter: drop-shadow(0 0 0.5px rgba(56, 142, 60, 2));
-            text-decoration: none;
-        }
-
-        .boton-nav {
-            background-color: var(--primary-yellow);
-            padding: 7px 25px 10px 25px;
-            color: black;
-            text-decoration: none;
-            border-radius: 15px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-
-        .boton-nav:hover {
-            background-color: #5D4037;
-            color: #e9e9e9;
-        }
-
-        /*SECCION PRINCIPAL*/
-
-        a {
-            color: #f5f5f5;
-            text-decoration: none;
-        }
-
-        a:hover {
-            color: #388e3c;
-        }
-
-        .seccion-principal {
-            background-image: url('${pageContext.request.contextPath}/imagenes/imagenFondo.jpg');
-            background-size: cover;
-            background-position: center;
-            position: relative;
-        }
-
-        .capa-principal {
-            background: linear-gradient(#55555599, transparent);
-            padding: 30px 0;
-        }
-
-        .titulo-principal {
-            color: white;
-            font-size: 30px;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 60px;
-            margin-top: 40px;
-        }
-
-        .boton-busqueda {
-            width: 200px;
-            padding: 15px 30px;
-            border-radius: 8px;
-            background-color: #00000099;
-            color: #f5f5f5;
-            text-align: center;
-            font-size: 20px;
-            border: none;
-            transition: all 0.3s ease;
-        }
-
-        .boton-busqueda:hover {
-            background-color: white;
-            color: var(--primary-green);
-            font-weight: bold;
-            a {
-                color: #388e3c;
-                font-weight: bold;
-            }
-        }
-
-        .contenedor-busqueda {
-            background-color: transparent;
-            padding: 30px 0;
-            padding-top: 0;
-        }
-
-        .form-select, .form-control {
-            padding: 16px 30px;
-            border-radius: 10px;
-            border: 1px solid rgba(70, 70, 70, 0.1);
-            box-shadow: 0 0 40px rgba(70, 70, 70, 0.2);
-        }
-
-        /*SECCION DE SERVICIOS*/
-
-        .titulo-servicio {
-            color: #444;
-            font-size: 35px;
-            text-align: center;
-            padding: 70px 0 30px;
-            margin-bottom: 50px;
-        }
-
-        .container-servicios {
-            margin-bottom: 50px;
-        }
-
         body {
-            background-color: #f8f9fa;
+            font-family: 'DM Sans', sans-serif;
         }
 
-        .tarjeta-servicio {
-            background-color: #f8f9fa;
-            border: 2px solid var(--primary-green);
-            border-radius: 20px;
-            padding: 40px 20px;
-            text-align: center;
-            height: 100%;
-            box-shadow: 0 0px 15px #388e3c33;
-        }
-
-        .icono-servicio {
-            font-size: 50px;
-            color: var(--primary-green);
-            margin-bottom: 15px;
-            filter: drop-shadow(0 0 20px #388e3c77);
-        }
-
-        .titulo-tarjeta {
-            color: #444;
-            font-size: 23px;
-            font-weight: bold;
-            margin: 20px 0;
-        }
-
-        .texto-servicio {
-            color: #444;
-            font-size: 16px;
-        }
-
-        /*SECCION DE PRODUCTOS DESTACADOS*/
-
-        .titulo-carrusel {
-            color: #444;
-            font-size: 35px;
-            text-align: center;
-            padding: 30px;
-            margin-bottom: 30px;
-        }
-
-        .carrusel-img {
-            height: 400px;
-            object-fit: cover;
-        }
-        .carrusel-contenedor {
-            background-color: transparent;
-        }
-
-        .carousel-inner {
-            border-radius: 15px;
-            box-shadow: 0 0 15px #00000011;
-        }
-
-        /*SECCION DEL FOOTER*/
-
-        .pie-de-pagina {
-            background-color: #f8f9fa;
-            border-top: 3px solid #4CAF50;
-            color: #333;
-        }
-
-        .pie-de-pagina h5 {
-            color: #4CAF50;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-
-        .pie-de-pagina ul li a {
-            color: #4CAF50;
-            text-decoration: none;
-        }
-
-        .pie-de-pagina ul li a:hover {
-            text-decoration: underline;
-        }
-
-        .redes-sociales .icono-red-social {
-            color: #4CAF50;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .redes-sociales .icono-red-social:hover {
-            color: #2e7d32;
-        }
-
-        .derechos {
-            color: #777;
-            font-size: 14px;
-        }
-
-        @media (max-width: 768px) {
-            .pie-de-pagina {
-                text-align: center;
+        /* Modern gradient animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
             }
-            .redes-sociales {
-                justify-content: center;
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
 
-        @media (max-width: 768px) {
-            .marca-sitio {
-                position: static;
-                transform: none;
-                text-align: center;
-                font-size: 28px;
-                margin: 10px 0;
-            }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
 
-            .boton-nav {
-                display: block;
-                margin: 5px 0;
-                text-align: center;
-                border: none;
-            }
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
 
-            .titulo-principal {
-                font-size: 24px;
-            }
+        .fade-in-up {
+            animation: fadeInUp 1s ease-out;
+        }
 
-            .boton-busqueda {
-                width: 100%;
-                margin: 10px 0;
-            }
+        .fade-in-up-delay {
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
 
-            .tarjeta-servicio {
-                margin-bottom: 20px;
-            }
+        .fade-in-up-delay-2 {
+            animation: fadeInUp 1s ease-out 0.4s both;
         }
     </style>
 </head>
-<body>
-<nav class="navbar navbar-expand-lg">
-    <div class="container">
-        <a class="marca-sitio" href="#">Terranova</a>
-        <div class="ms-auto">
-            <button class="boton-nav me-2" onclick="abrirModalInicio()">Iniciar Sesión</button>
+<body class="bg-gray-50">
+
+<!-- Modern navbar with Tailwind -->
+<nav class="fixed top-0 w-full bg-gradient-to-r from-primary-emerald to-bright-emerald backdrop-blur-md shadow-lg z-50">
+    <div class="container mx-auto px-4">
+        <div class="flex items-center justify-between py-4">
+            <a class="text-white text-2xl font-bold flex items-center" href="#">
+                <i class="fas fa-leaf mr-2"></i>Terranova
+            </a>
+            <div class="hidden md:flex items-center space-x-6">
+                <a class="text-white/90 hover:text-white font-medium transition-all duration-300 hover:-translate-y-0.5" href="#inicio">Inicio</a>
+                <a class="text-white/90 hover:text-white font-medium transition-all duration-300 hover:-translate-y-0.5" href="#servicios">Servicios</a>
+                <a class="text-white/90 hover:text-white font-medium transition-all duration-300 hover:-translate-y-0.5" href="#contacto">Contacto</a>
+            </div>
+            <button onclick="abrirModalInicio()" class="bg-white/20 border-2 border-white/30 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 hover:bg-white hover:text-primary-emerald hover:-translate-y-0.5 backdrop-blur-md">
+                <i class="fas fa-user mr-2"></i>Iniciar Sesión
+            </button>
         </div>
     </div>
 </nav>
 
+<!-- Modal with Tailwind styles and Thymeleaf functionality -->
 <div id="successModal"
      th:class="'fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 '
                + (${param.error} or ${param.logout} or ${param.creado} ? '' : 'hidden')">
     <div id="modalContent"
-         th:class="'bg-white rounded-2xl shadow-xl p-10 text-center transform transition duration-300 ease-out '
+         th:class="'bg-white rounded-2xl shadow-2xl p-8 text-center transform transition-all duration-300 ease-out max-w-md w-full mx-4 '
                    + (${param.error} or ${param.logout} or ${param.creado} ? 'scale-100 opacity-100' : 'scale-75 opacity-0')">
 
-        <h1 class="text-2xl font-bold text-green-700 mb-8">Terranova</h1>
-
-        <form th:action="@{/login}" method="post">
-            <div class="mb-4">
-                <input type="email" id="email" name="username" placeholder="Correo Electronico" required
-                       class="w-full px-4 py-2 border border-green-500 rounded-md outline-none ring-1 ring-green-700" />
+        <div class="mb-6">
+            <div class="w-16 h-16 bg-gradient-to-r from-primary-emerald to-bright-emerald rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-leaf text-white text-2xl"></i>
             </div>
-            <div class="mb-4">
+            <h1 class="text-2xl font-bold text-gray-900">Terranova</h1>
+        </div>
+
+        <form th:action="@{/login}" method="post" class="space-y-4">
+            <div>
+                <input type="email" id="email" name="username" placeholder="Correo Electrónico" required
+                       class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl outline-none focus:border-primary-emerald focus:ring-2 focus:ring-primary-emerald/20 transition-all duration-300" />
+            </div>
+            <div>
                 <input type="password" id="contrasena" name="password" placeholder="Contraseña" required
-                       class="w-full px-4 py-2 border border-green-500 rounded-md outline-none ring-1 ring-green-700" />
+                       class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl outline-none focus:border-primary-emerald focus:ring-2 focus:ring-primary-emerald/20 transition-all duration-300" />
             </div>
             <button type="submit"
-                    class="w-full mb-4 bg-yellow-400 text-brown-500 hover:bg-[#5A3825] hover:text-white font-semibold py-2 rounded-xl transition duration-200 mb-2">
-                Inicia Sesión
+                    class="w-full bg-gradient-to-r from-primary-emerald to-bright-emerald text-white font-semibold py-3 rounded-xl transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
+                Iniciar Sesión
             </button>
         </form>
 
-        <p th:if="${param.error}" class="text-red-500 text-sm mb-4">Correo o Contraseña Incorrecta</p>
-        <p th:if="${param.logout}" class="text-green-500 text-sm mb-4">Saliste de tu sesión correctamente</p>
-        <p th:if="${param.creado}" class="text-green-500 text-sm mb-4">Se creo el usuario correctamente</p>
+        <!-- Modern status messages -->
+        <div th:if="${param.error}" class="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+            <p class="text-red-600 text-sm font-medium">Correo o Contraseña Incorrecta</p>
+        </div>
+        <div th:if="${param.logout}" class="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+            <p class="text-green-600 text-sm font-medium">Saliste de tu sesión correctamente</p>
+        </div>
+        <div th:if="${param.creado}" class="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+            <p class="text-green-600 text-sm font-medium">Se creó el usuario correctamente</p>
+        </div>
 
-        <div class="flex flex-col items-center gap-2 mt-4">
+        <div class="flex flex-col gap-3 mt-6">
             <a th:href="@{/registro}"
-               class="block w-full bg-yellow-400 text-brown-500 hover:bg-[#5A3825] hover:text-white font-semibold py-2 rounded-xl transition duration-200 mb-2">
+               class="block w-full bg-gray-100 text-gray-700 hover:bg-gray-200 font-semibold py-3 rounded-xl transition-all duration-300">
                 Regístrate
             </a>
             <button onclick="cerrarModalInicio()"
-                    class="w-full border border-green-700 text-red-700 hover:bg-red-700 hover:text-white font-semibold py-2 rounded-xl transition duration-200">
+                    class="w-full border-2 border-red-200 text-red-600 hover:bg-red-50 font-semibold py-3 rounded-xl transition-all duration-300">
                 Cancelar
             </button>
         </div>
     </div>
 </div>
 
-<div id="registroExitosoModal"
-     class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 hidden">
-    <div id="modalContentRegistroExitoso"
-         class="bg-white rounded-2xl shadow-xl p-10 text-center transform scale-75 opacity-0 transition duration-300 ease-out">
-
-        <h1 class="text-2xl font-bold text-green-700 mb-8">Registro Exitoso</h1>
-
-        <div class="text-green-500 mb-4">
-            <svg class="w-12 h-12 mx-auto" fill="none" stroke="currentColor" stroke-width="2"
-                 viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-            </svg>
-        </div>
-
-        <p class="mb-6">Inicia sesion para continuar.</p>
-
-        <button onclick="abrirModalInicio(); cerrarModalRegistroExitoso();"
-                class="mb-6 w-full bg-yellow-400 text-brown-500 hover:bg-[#5A3825] hover:text-white font-semibold py-2 rounded-xl transition duration-200">
-            Iniciar Sesion
-        </button>
-
-        <button onclick="cerrarModalRegistroExitoso()"
-                class="w-full border border-red-700 text-red-700 hover:bg-red-700 hover:text-white font-semibold py-2 rounded-xl transition duration-200">
-            Cerrar
-        </button>
-    </div>
-</div>
-<!-- SECCION PRINCIPAL -->
-<section class="seccion-principal">
-    <div class="capa-principal">
-        <div class="container">
-            <h2 class="titulo-principal">Puedes buscar por</h2>
-            <div class="row justify-content-center mb-4">
-                <div class="col-md-4 text-center">
-                    <button class="boton-busqueda w-100 mb-3"><a href="../PaginaPProductos/PaginaPProductos.html">Venta</a></button>
-                    <button class="boton-busqueda w-100"><a href="../PaginaPProductos/PaginaPProductos.html">Arriendo</a></button>
+<!-- Modern hero section with Tailwind -->
+<section id="inicio" class="min-h-screen bg-gradient-to-br from-primary-emerald via-bright-emerald to-emerald-900 flex items-center relative overflow-hidden pt-20">
+    <div class="absolute inset-0 bg-black/10"></div>
+    <div class="container mx-auto px-4 relative z-10">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+            <div class="text-white">
+                <h1 class="text-5xl lg:text-6xl font-bold mb-6 fade-in-up">
+                    Descubre el Futuro del Campo
+                </h1>
+                <p class="text-xl mb-8 text-white/90 fade-in-up-delay">
+                    Conectamos productores, compradores y arrendatarios en el marketplace agrícola más innovador de Colombia
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 fade-in-up-delay-2">
+                    <button class="bg-white text-primary-emerald px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                        <a href="../PaginaPProductos/PaginaPProductos.html" class="text-primary-emerald">Explorar Venta</a>
+                    </button>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="contenedor-busqueda">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-md-4 mb-3">
-                    <select class="form-select">
-                        <option selected disabled>Tipo de producto</option>
-                        <option class="opciones" value="Finca">Finca</option>
-                        <option class="opciones" value="Ganado">Ganado</option>
-                        <option class="opciones" value="Terreno">Terreno</option>
-                    </select>
-                </div>
-                <div class="col-md-4 mb-3">
-                    <input type="search" class="form-control" placeholder="Búsqueda por palabra clave">
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- SECCION DE SERVICIOS -->
-<section class="container container-servicios">
-    <h2 class="titulo-servicio">Mira cómo Terranova te puede ayudar</h2>
-    <div class="row g-4">
-        <div class="col-md-4 col-lg-2-4">
-            <div class="tarjeta-servicio">
-                <i class="fa fa-home icono-servicio"></i>
-                <h3 class="titulo-tarjeta">Compra Propiedades y Ganado</h3>
-                <p class="texto-servicio">Encuentra y adquiere propiedades y ganado fácilmente.</p>
-            </div>
-        </div>
-        <div class="col-md-4 col-lg-2-4">
-            <div class="tarjeta-servicio">
-                <i class="fa fa-tractor icono-servicio"></i>
-                <h3 class="titulo-tarjeta">Renta Terrenos y Fincas</h3>
-                <p class="texto-servicio">Alquila terrenos y fincas con opciones ajustadas a tus necesidades.</p>
-            </div>
-        </div>
-        <div class="col-md-4 col-lg-2-4">
-            <div class="tarjeta-servicio">
-                <i class="fa fa-search icono-servicio"></i>
-                <h3 class="titulo-tarjeta">Búsqueda Personalizada</h3>
-                <p class="texto-servicio">Filtra propiedades y ganado para hallar justo lo que buscas.</p>
-            </div>
-        </div>
-        <div class="col-md-4 col-lg-2-4">
-            <div class="tarjeta-servicio"tarjeta-servicio>
-                <i class="fa fa-bullhorn icono-servicio"></i>
-                <h3 class="titulo-tarjeta">Vende Propiedades y Ganado</h3>
-                <p class="texto-servicio">Publica y gestiona la venta de tus propiedades y ganado.</p>
-            </div>
-        </div>
-        <div class="col-md-4 col-lg-2-4">
-            <div class="tarjeta-servicio">
-                <i class="fa fa-calendar-check icono-servicio"></i>
-                <h3 class="titulo-tarjeta">Agenda Citas Presenciales</h3>
-                <p class="texto-servicio">Puedes seleccionar un día y una hora de un calendario, así como reprogramar las citas.</p>
-            </div>
-        </div>
-        <div class="col-md-4 col-lg-2-4">
-            <div class="tarjeta-servicio">
-                <i class="fa fa-credit-card icono-servicio"></i>
-                <h3 class="titulo-tarjeta">Haz Tus Pagos Online</h3>
-                <p class="texto-servicio">Realiza pagos seguros de manera instantánea con múltiples opciones de pago.</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- SECCION DE PRODUCTOS DESTACADOS -->
-<section class="container container-carrusel">
-    <h2 class="titulo-carrusel">Productos Destacados</h2>
-    <div id="carruselEjemplo" class="carousel slide carrusel-contenedor" data-bs-ride="carousel">
-        <div class="carousel-indicators">
-            <button type="button" data-bs-target="#carruselEjemplo" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-            <button type="button" data-bs-target="#carruselEjemplo" data-bs-slide-to="1" aria-label="Slide 2"></button>
-            <button type="button" data-bs-target="#carruselEjemplo" data-bs-slide-to="2" aria-label="Slide 3"></button>
-        </div>
-        <div class="carousel-inner">
-            <div class="carousel-item active">
-                <img th:src="@{/imagenes/imagenFondoLogin.jpg}" class="d-block w-100 carrusel-img" alt="Imagen 1">
-                <div class="carousel-caption d-none d-md-block">
-                    <h5>Finca Los Alamos</h5>
-                    <p>Hermosa finca en las afueras de medellin</p>
-                </div>
-            </div>
-            <div class="carousel-item">
-                <img class="d-block w-100 carrusel-img" alt="Imagen 2">
-                <div class="carousel-caption d-none d-md-block">
-                    <h5>Segunda diapositiva</h5>
-                    <p>Descripción de la segunda diapositiva.</p>
-                </div>
-            </div>
-            <div class="carousel-item">
-                <img class="d-block w-100 carrusel-img" alt="Imagen 3">
-                <div class="carousel-caption d-none d-md-block">
-                    <h5>Tercera diapositiva</h5>
-                    <p>Descripción de la tercera diapositiva.</p>
-                </div>
-            </div>
-        </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carruselEjemplo" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Anterior</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carruselEjemplo" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Siguiente</span>
-        </button>
-    </div>
-</section>
-
-<!-- SECCION DEL FOOTER -->
-<section class="container-footer">
-    <footer class="pie-de-pagina mt-5 pt-4">
-        <div class="container">
-            <div class="row">
-                <!-- Sección Enlaces -->
-                <div class="col-md-4 enlaces">
-                    <h5>Enlaces rápidos</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="#">Inicio</a></li>
-                        <li><a href="#">Propiedades</a></li>
-                        <li><a href="#">Fincas</a></li>
-                        <li><a href="#">Ganado</a></li>
-                    </ul>
-                </div>
-
-                <!-- Sección Contacto -->
-                <div class="col-md-4 contacto">
-                    <h5>Contáctanos</h5>
-                    <p>Teléfono: +57 123 456 7890</p>
-                    <p>Correo: soporte@terranova.com</p>
-                </div>
-
-                <!-- Sección Redes Sociales -->
-                <div class="col-md-4 redes-sociales">
-                    <h5>Síguenos</h5>
-                    <div class="d-flex gap-3">
-                        <a href="#" class="icono-red-social">Facebook</a>
-                        <a href="#" class="icono-red-social">Instagram</a>
-                        <a href="#" class="icono-red-social">Twitter</a>
+            <div class="floating">
+                <div class="bg-white/95 backdrop-blur-lg rounded-2xl p-8 shadow-2xl">
+                    <div class="flex mb-6 bg-gray-100 rounded-xl p-1">
+                        <button class="flex-1 bg-primary-emerald text-white py-3 px-4 rounded-lg font-semibold transition-all duration-300">
+                            <i class="fas fa-shopping-cart mr-2"></i>Venta
+                        </button>
+                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-2">¿Qué buscas?</label>
+                            <select class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-emerald focus:ring-2 focus:ring-primary-emerald/20 outline-none transition-all duration-300">
+                                <option>Terrenos</option>
+                                <option>Ganado</option>
+                                <option>Fincas</option>
+                                <option>Maquinaria</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-2">Ubicación</label>
+                            <input type="text" placeholder="Ciudad o región" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-emerald focus:ring-2 focus:ring-primary-emerald/20 outline-none transition-all duration-300">
+                        </div>
+                        <button class="w-full bg-gradient-to-r from-primary-emerald to-bright-emerald text-white py-3 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
+                            <i class="fas fa-search mr-2"></i>Buscar
+                        </button>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</section>
 
-            <!-- Línea divisora -->
-            <hr class="mt-4">
-
-            <!-- Copyright -->
-            <div class="text-center mt-3 derechos">
-                <p>© 2024 Terranova. Todos los derechos reservados.</p>
+<!-- Modern services section -->
+<section id="servicios" class="py-20 bg-white">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-bold text-gray-900 mb-4">¿En qué te puede ayudar Terranova?</h2>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">Ofrecemos soluciones integrales para todas tus necesidades agrícolas</p>
+        </div>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="bg-white rounded-2xl p-8 text-center shadow-lg border border-gray-100 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
+                <div class="w-20 h-20 bg-gradient-to-r from-primary-emerald to-bright-emerald rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-map-marked-alt text-white text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-4">Compra y Venta de Terrenos</h3>
+                <p class="text-gray-600">Encuentra el terreno perfecto para tu proyecto agrícola o vende tu propiedad al mejor precio.</p>
+            </div>
+            <div class="bg-white rounded-2xl p-8 text-center shadow-lg border border-gray-100 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
+                <div class="w-20 h-20 bg-gradient-to-r from-primary-emerald to-bright-emerald rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-cow text-white text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-4">Ganado y Animales</h3>
+                <p class="text-gray-600">Comercializa ganado bovino, porcino, avícola y más. Conectamos ganaderos con compradores serios.</p>
+            </div>
+            <div class="bg-white rounded-2xl p-8 text-center shadow-lg border border-gray-100 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
+                <div class="w-20 h-20 bg-gradient-to-r from-primary-emerald to-bright-emerald rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-tractor text-white text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-4">Maquinaria Agrícola</h3>
+                <p class="text-gray-600">Compra, vende o arrienda maquinaria agrícola. Desde tractores hasta equipos especializados.</p>
+            </div>
+            <div class="bg-white rounded-2xl p-8 text-center shadow-lg border border-gray-100 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
+                <div class="w-20 h-20 bg-gradient-to-r from-primary-emerald to-bright-emerald rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-seedling text-white text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-4">Cultivos y Semillas</h3>
+                <p class="text-gray-600">Marketplace de productos agrícolas frescos, semillas certificadas y insumos de calidad.</p>
+            </div>
+            <div class="bg-white rounded-2xl p-8 text-center shadow-lg border border-gray-100 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
+                <div class="w-20 h-20 bg-gradient-to-r from-primary-emerald to-bright-emerald rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-handshake text-white text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-4">Arriendo de Tierras</h3>
+                <p class="text-gray-600">Arrienda tierras para tus cultivos o genera ingresos adicionales arrendando tu propiedad.</p>
+            </div>
+            <div class="bg-white rounded-2xl p-8 text-center shadow-lg border border-gray-100 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
+                <div class="w-20 h-20 bg-gradient-to-r from-primary-emerald to-bright-emerald rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-credit-card text-white text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-4">Pagos Online Seguros</h3>
+                <p class="text-gray-600">Realiza pagos seguros de manera instantánea con múltiples opciones de pago.</p>
             </div>
         </div>
-    </footer>
+    </div>
 </section>
+
+<!-- Modern footer -->
+<footer id="contacto" class="bg-gray-900 text-white py-16">
+    <div class="container mx-auto px-4">
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div>
+                <h3 class="text-2xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-leaf mr-2 text-bright-emerald"></i>Terranova
+                </h3>
+                <p class="text-gray-300 mb-6">El marketplace agrícola más completo de Colombia. Conectamos el campo con oportunidades reales.</p>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-bright-emerald transition-colors duration-300">
+                        <i class="fab fa-facebook-f text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-bright-emerald transition-colors duration-300">
+                        <i class="fab fa-instagram text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-bright-emerald transition-colors duration-300">
+                        <i class="fab fa-twitter text-xl"></i>
+                    </a>
+                </div>
+            </div>
+            <div>
+                <h4 class="text-lg font-semibold mb-4 text-bright-emerald">Enlaces rápidos</h4>
+                <ul class="space-y-2">
+                    <li><a href="#" class="text-gray-300 hover:text-white transition-colors duration-300">Inicio</a></li>
+                    <li><a href="#" class="text-gray-300 hover:text-white transition-colors duration-300">Propiedades</a></li>
+                    <li><a href="#" class="text-gray-300 hover:text-white transition-colors duration-300">Fincas</a></li>
+                    <li><a href="#" class="text-gray-300 hover:text-white transition-colors duration-300">Ganado</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-lg font-semibold mb-4 text-bright-emerald">Contáctanos</h4>
+                <p class="text-gray-300 mb-2">Teléfono: +57 123 456 7890</p>
+                <p class="text-gray-300">Correo: soporte@terranova.com</p>
+            </div>
+            <div>
+                <h4 class="text-lg font-semibold mb-4 text-bright-emerald">Síguenos</h4>
+                <div class="space-y-2">
+                    <a href="#" class="block text-gray-300 hover:text-white transition-colors duration-300">Facebook</a>
+                    <a href="#" class="block text-gray-300 hover:text-white transition-colors duration-300">Instagram</a>
+                    <a href="#" class="block text-gray-300 hover:text-white transition-colors duration-300">Twitter</a>
+                </div>
+            </div>
+        </div>
+        <div class="border-t border-gray-800 mt-12 pt-8 text-center">
+            <p class="text-gray-400">© 2024 Terranova. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</footer>
+
+<!-- Updated JavaScript with modern functionality -->
 <script>
     function abrirModalInicio() {
         const modal = document.getElementById('successModal');
@@ -518,6 +303,7 @@
             modalContent.classList.remove('scale-75', 'opacity-0');
             modalContent.classList.add('scale-100', 'opacity-100');
         });
+        document.body.style.overflow = 'hidden';
     }
 
     function cerrarModalInicio() {
@@ -527,38 +313,47 @@
         modalContent.classList.add('scale-75', 'opacity-0');
         setTimeout(() => {
             modal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
         }, 300);
     }
 
+    // Auto-open modal based on URL parameters
     window.addEventListener("DOMContentLoaded", () => {
         const params = new URLSearchParams(window.location.search);
-        if (params.get("error") === "true" || params.get("logout") === "true" || params.get("creado") === true) {
+        if (params.get("error") === "true" || params.get("logout") === "true" || params.get("creado") === "true") {
             abrirModalInicio();
         }
     });
 
-        function cerrarModalRegistroExitoso() {
-        const modal = document.getElementById('registroExitosoModal');
-        const modalContent = document.getElementById('modalContentRegistroExitoso');
-        modalContent.classList.remove('scale-100', 'opacity-100');
-        modalContent.classList.add('scale-75', 'opacity-0');
-        setTimeout(() => {
-            modal.classList.add('hidden');
-        }, 300);
-    }
-
-    window.addEventListener("DOMContentLoaded", () => {
-        const params = new URLSearchParams(window.location.search);
-        if (params.get("registro") === "exitoso") {
-            const modal = document.getElementById('registroExitosoModal');
-            const modalContent = document.getElementById('modalContentRegistroExitoso');
-            modal.classList.remove('hidden');
-            requestAnimationFrame(() => {
-                modalContent.classList.remove('scale-75', 'opacity-0');
-                modalContent.classList.add('scale-100', 'opacity-100');
-            });
+    // Close modal with Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            cerrarModalInicio();
         }
-    })
+    });
+
+    // Close modal when clicking outside
+    document.getElementById('successModal')?.addEventListener('click', (e) => {
+        if (e.target.id === 'successModal') {
+            cerrarModalInicio();
+        }
+    });
+
+    // Smooth scrolling for navigation
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

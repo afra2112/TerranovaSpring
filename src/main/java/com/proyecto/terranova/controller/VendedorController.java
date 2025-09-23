@@ -177,8 +177,20 @@ public class VendedorController {
 
     @GetMapping("/productos")
     public String productos(@RequestParam(required = false, name = "idProducto") Long idProducto,Model model, Authentication authentication){
+        List<Producto> productos = productoService.findAll();
+
         model.addAttribute("posicionProductos", true);
-        model.addAttribute("productos", productoService.findAll());
+        model.addAttribute("productos", productos);
+
+        long numDisponibilidades = 0;
+
+        for(Producto producto : productos){
+            long disponibilidades = producto.getDisponibilidades().stream().count();
+            numDisponibilidades += disponibilidades;
+        }
+
+        model.addAttribute("disponibilidades", numDisponibilidades);
+
         if(idProducto != null){
             model.addAttribute("producto", productoService.findById(idProducto));
             model.addAttribute("mostrarModalDisponibilidades", true);

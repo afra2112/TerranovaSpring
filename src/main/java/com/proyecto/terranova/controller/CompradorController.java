@@ -8,6 +8,9 @@ import com.proyecto.terranova.entity.Usuario;
 import com.proyecto.terranova.entity.Venta;
 import com.proyecto.terranova.service.*;
 import jakarta.mail.MessagingException;
+import com.proyecto.terranova.service.CompradorService;
+import com.proyecto.terranova.service.ProductoService;
+import com.proyecto.terranova.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -97,7 +100,7 @@ public class CompradorController {
     }
 
     @PostMapping("/compras/actualizar-compra")
-    public String actualizarCompra(RedirectAttributes redirectAttributes, @RequestParam(name = "idVenta") Long idVenta, @RequestParam(name = "accion") String accion, @RequestParam(name = "razon", required = false) String razon) throws MessagingException, IOException {
+    public String actualizarCompra(RedirectAttributes redirectAttributes, @RequestParam(name = "idVenta") Long idVenta, @RequestParam(name = "accion") String accion, @RequestParam(name = "razon", required = false) String razon) throws MessagingException, IOException, IOException {
         Venta venta = ventaService.findById(idVenta);
 
         switch (accion){
@@ -179,6 +182,8 @@ public class CompradorController {
 
         return "redirect:/comprador/citas";
     }
+
+
 
     @PostMapping("/mi-perfil/ser-vendedor")
     public String serVendedor(Authentication authentication, RedirectAttributes redirectAttributes) {

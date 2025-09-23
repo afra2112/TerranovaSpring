@@ -421,41 +421,161 @@
             if(tipo === 'finca'){
                 container.innerHTML = `
             <!-- Espacio Total -->
-<div>
-    <label>Espacio Total (m²)</label>
-    <input type="text" name="espacioTotal" required />
-</div>
+                 <div class="bg-green-50 rounded-2xl p-6">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+            <div class="w-5 h-5 bg-green-500 rounded-full"></div>
+            Características de la Finca
+          </h3>
 
-<!-- Espacio Construido -->
-<div>
-    <label>Espacio Construido (m²)</label>
-    <input type="text" name="espacioConstruido" required />
-</div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-<!-- Estrato -->
-<div>
-    <label>Estrato</label>
-    <input type="number" name="estratoFinca" min="1" max="6" required />
-</div>
+            <!-- Espacio Total -->
+            <div class="space-y-2">
+              <label class="block text-sm font-semibold text-gray-700">Espacio Total</label>
+              <div class="relative">
+                <input type="text" name="espacioTotal" maxlength="30" required
+                       class="w-full px-4 py-3 pr-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm hover:shadow-md"
+                       placeholder="Ej. 5000" />
+                <span class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">m²</span>
+              </div>
+            </div>
 
-<!-- Número de Habitaciones -->
-<div>
-    <label>Habitaciones</label>
-    <input type="number" name="numeroHabitaciones" min="0" required />
-</div>
+            <!-- Espacio Construido -->
+            <div class="space-y-2">
+              <label class="block text-sm font-semibold text-gray-700">Espacio Construido</label>
+              <div class="relative">
+                <input type="text" name="espacioConstruido" maxlength="30" required
+                       class="w-full px-4 py-3 pr-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm hover:shadow-md"
+                       placeholder="Ej. 120" />
+                <span class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">m²</span>
+              </div>
+            </div>
 
-<!-- Número de Baños -->
-<div>
-    <label>Baños</label>
-    <input type="number" name="numeroBanos" min="0" required />
-</div>
+            <!-- Estrato -->
+            <div class="space-y-2">
+              <label class="block text-sm font-semibold text-gray-700">Estrato</label>
+              <select name="estratoFinca" required
+                      class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm hover:shadow-md appearance-none cursor-pointer">
+                <option value="">Seleccione el estrato...</option>
+                <option value="1">🌱 Estrato 1</option>
+                <option value="2">🌿 Estrato 2</option>
+                <option value="3">🏡 Estrato 3</option>
+                <option value="4">🏘️ Estrato 4</option>
+                <option value="5">🏙️ Estrato 5</option>
+                <option value="6">🌆 Estrato 6</option>
+              </select>
+            </div>
 
+            <!-- Número de Habitaciones -->
+            <div class="space-y-2">
+              <label class="block text-sm font-semibold text-gray-700">Habitaciones</label>
+              <input type="number" name="numeroHabitaciones" min="0" required
+                     class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm hover:shadow-md"
+                     placeholder="Ej. 4" />
+            </div>
+
+            <!-- Número de Baños -->
+            <div class="space-y-2">
+              <label class="block text-sm font-semibold text-gray-700">Baños</label>
+              <input type="number" name="numeroBanos" min="0" required
+                     class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm hover:shadow-md"
+                     placeholder="Ej. 2" />
+            </div>
+
+          </div>
+        </div>
         `;
             }
 
 
             if(tipo === 'ganado'){
-                container.innerHTML='';
+                container.innerHTML=`
+    <div class="bg-yellow-50 rounded-2xl p-6">
+  <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+    <div class="w-5 h-5 bg-yellow-500 rounded-full"></div>
+    Características del Ganado
+  </h3>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+    <!-- Raza del Ganado -->
+    <div class="space-y-2">
+      <label class="block text-sm font-semibold text-gray-700">Raza</label>
+      <input type="text" name="razaGanado" maxlength="30" required
+             class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm hover:shadow-md"
+             placeholder="Ej. Brahman, Holstein..." />
+    </div>
+
+    <!-- Peso Promedio -->
+    <div class="space-y-2">
+      <label class="block text-sm font-semibold text-gray-700">Peso Promedio</label>
+      <div class="relative">
+        <input type="number" name="pesoGanado" min="1" required
+               class="w-full px-4 py-3 pr-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm hover:shadow-md"
+               placeholder="Ej. 450" />
+        <span class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">kg</span>
+      </div>
+    </div>
+
+    <!-- Edad Promedio -->
+    <div class="space-y-2">
+      <label class="block text-sm font-semibold text-gray-700">Edad Promedio</label>
+      <div class="relative">
+        <input type="number" name="edadGanado" min="0" required
+               class="w-full px-4 py-3 pr-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm hover:shadow-md"
+               placeholder="Ej. 24" />
+        <span class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">Años</span>
+      </div>
+    </div>
+
+    <!-- Género -->
+    <div class="space-y-2">
+      <label class="block text-sm font-semibold text-gray-700">Género</label>
+      <select name="generoGanado" required
+              class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm hover:shadow-md appearance-none cursor-pointer">
+        <option value="">Seleccione el género...</option>
+        <option value="Macho">🐂 Macho</option>
+        <option value="Hembra">🐄 Hembra</option>
+      </select>
+    </div>
+
+    <!-- Tipo de Ganado -->
+    <div class="space-y-2">
+      <label class="block text-sm font-semibold text-gray-700">Tipo de Ganado</label>
+      <select name="tipoGanado" required
+              class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm hover:shadow-md appearance-none cursor-pointer">
+        <option value="">Seleccione el tipo...</option>
+        <option value="leche">🥛 Leche</option>
+        <option value="carne">🍖 Carne</option>
+        <option value="mixto">🔀 Mixto</option>
+        <option value="reproductor">🐃 Reproductor</option>
+      </select>
+    </div>
+
+    <!-- Estado Sanitario -->
+    <div class="space-y-2">
+      <label class="block text-sm font-semibold text-gray-700">Estado Sanitario</label>
+      <select name="estadoSanitario" required
+              class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm hover:shadow-md appearance-none cursor-pointer">
+        <option value="">Seleccione el estado...</option>
+        <option value="saludable">✅ Saludable</option>
+        <option value="en tratamiento">💊 En tratamiento</option>
+        <option value="en observación">🔍 En observación</option>
+        <option value="enfermo">⚠️ Enfermo</option>
+      </select>
+    </div>
+
+    <!-- Cantidad -->
+    <div class="space-y-2">
+      <label class="block text-sm font-semibold text-gray-700">Cantidad</label>
+      <input type="number" name="cantidad" min="1" required
+             class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm hover:shadow-md"
+             placeholder="Ej. 15" />
+    </div>
+
+  </div>
+</div>
+`;
             }
 
             modal.classList.remove('hidden');

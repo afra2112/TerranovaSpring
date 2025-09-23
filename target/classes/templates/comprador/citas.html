@@ -441,7 +441,7 @@
 
 <script>
     function cerrarModal() {
-         const modal = document.getElementById("modalEsperar");
+        const modal = document.getElementById("modalEsperar");
         if (modal) {
             modal.classList.add("hidden");
         }
@@ -458,7 +458,7 @@
         modal.classList.add('hidden');
     }
 
-function openCancelModal(idCita) {
+    function openCancelModal(idCita) {
         document.getElementById('cancelModal').classList.remove('hidden');
         document.getElementById('cancelModal').classList.add('flex');
         document.getElementById('valueIdCita').value = idCita;
@@ -469,71 +469,71 @@ function openCancelModal(idCita) {
         document.getElementById('cancelModal').classList.remove('flex');
     }
 
-document.addEventListener('DOMContentLoaded', function() {
-    const tabButtons = document.querySelectorAll('.tab-button');
-    const citaCards = document.querySelectorAll('.cita-card');
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const citaCards = document.querySelectorAll('.cita-card');
 
-    tabButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const tab = this.getAttribute('data-tab');
+        tabButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const tab = this.getAttribute('data-tab');
 
-            // Update active tab
-            tabButtons.forEach(btn => {
-                btn.classList.remove('active', 'border-green-500', 'text-green-600');
-                btn.classList.add('border-transparent', 'text-gray-500');
-            });
+                // Update active tab
+                tabButtons.forEach(btn => {
+                    btn.classList.remove('active', 'border-green-500', 'text-green-600');
+                    btn.classList.add('border-transparent', 'text-gray-500');
+                });
 
-            this.classList.add('active', 'border-green-500', 'text-green-600');
-            this.classList.remove('border-transparent', 'text-gray-500');
+                this.classList.add('active', 'border-green-500', 'text-green-600');
+                this.classList.remove('border-transparent', 'text-gray-500');
 
-            // Show/hide cards based on tab
-            citaCards.forEach(card => {
-                if (tab === 'todas') {
-                    card.style.display = 'block';
-                } else if (tab === 'finalizadas' && card.classList.contains('finalizada')) {
-                    card.style.display = 'block';
-                } else if (tab === 'canceladas' && card.classList.contains('cancelada')) {
-                    card.style.display = 'block';
-                } else if (tab === 'reservadas' && card.classList.contains('reservada')) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
+                // Show/hide cards based on tab
+                citaCards.forEach(card => {
+                    if (tab === 'todas') {
+                        card.style.display = 'block';
+                    } else if (tab === 'finalizadas' && card.classList.contains('finalizada')) {
+                        card.style.display = 'block';
+                    } else if (tab === 'canceladas' && card.classList.contains('cancelada')) {
+                        card.style.display = 'block';
+                    } else if (tab === 'reservadas' && card.classList.contains('reservada')) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
             });
         });
+
+        // Set initial active tab
+        document.querySelector('.tab-button[data-tab="todas"]').click();
     });
 
-    // Set initial active tab
-    document.querySelector('.tab-button[data-tab="todas"]').click();
-});
+    function toggleUserDropdown() {
+        const dropdown = document.getElementById('userDropdown');
+        const arrow = document.getElementById('dropdownArrow');
 
-function toggleUserDropdown() {
-    const dropdown = document.getElementById('userDropdown');
-    const arrow = document.getElementById('dropdownArrow');
-
-    if (dropdown.classList.contains('opacity-0')) {
-        // Mostrar dropdown
-        dropdown.classList.remove('opacity-0', 'invisible', 'scale-95');
-        dropdown.classList.add('opacity-100', 'visible', 'scale-100');
-        arrow.style.transform = 'rotate(180deg)';
-    } else {
-        // Ocultar dropdown
-        dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
-        dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
-        arrow.style.transform = 'rotate(0deg)';
+        if (dropdown.classList.contains('opacity-0')) {
+            // Mostrar dropdown
+            dropdown.classList.remove('opacity-0', 'invisible', 'scale-95');
+            dropdown.classList.add('opacity-100', 'visible', 'scale-100');
+            arrow.style.transform = 'rotate(180deg)';
+        } else {
+            // Ocultar dropdown
+            dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
+            dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
+            arrow.style.transform = 'rotate(0deg)';
+        }
     }
-}
 
-document.addEventListener('click', function(event) {
-    const dropdown = document.getElementById('userDropdown');
-    const userButton = event.target.closest('[onclick="toggleUserDropdown()"]');
+    document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('userDropdown');
+        const userButton = event.target.closest('[onclick="toggleUserDropdown()"]');
 
-    if (!userButton && !dropdown.contains(event.target)) {
-        dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
-        dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
-        document.getElementById('dropdownArrow').style.transform = 'rotate(0deg)';
-    }
-});
+        if (!userButton && !dropdown.contains(event.target)) {
+            dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
+            dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
+            document.getElementById('dropdownArrow').style.transform = 'rotate(0deg)';
+        }
+    });
 </script>
 </body>
 </html>
