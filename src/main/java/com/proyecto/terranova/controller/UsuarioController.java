@@ -86,9 +86,7 @@ public class UsuarioController {
         usuario.setFoto(nombreArchivo);
         serviceUsuario.update(usuario);
 
-        String titulo = "Actualización de foto de perfil";
-        String mensaje = "Tu foto de perfil se actualizó correctamente.";
-        notificacionService.crearNotificacionAutomatica(titulo, mensaje, "Sistema", usuario, 0L, "/usuarios/mi-perfil");
+        notificacionService.notificacionFotoPerfilCambiada(usuario);
 
         if(esVendedor(authentication)){
             return "redirect:/usuarios/mi-perfil?id=2";
@@ -105,9 +103,7 @@ public class UsuarioController {
         usuario.setNacimiento(usuarioNuevo.getNacimiento());
         serviceUsuario.update(usuario);
 
-        String titulo = "Actualización de información personal";
-        String mensaje = "Has actualizado tu información personal exitosamente.";
-        notificacionService.crearNotificacionAutomatica(titulo, mensaje, "Sistema", usuario, 0L, "/usuarios/mi-perfil");
+        notificacionService.notificacionDatosPersonalesActualizados(usuario);
 
         if(esVendedor(authentication)){
             return "redirect:/usuarios/mi-perfil?id=2";

@@ -7,6 +7,7 @@ import com.proyecto.terranova.entity.Disponibilidad;
 import com.proyecto.terranova.entity.Usuario;
 import com.proyecto.terranova.entity.Venta;
 import com.proyecto.terranova.service.*;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,6 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +43,9 @@ public class CompradorController {
 
     @Autowired
     NotificacionService notificacionService;
+
+    @Autowired
+    EmailService emailService;
 
     @Autowired
     VentaService ventaService;
@@ -91,31 +96,33 @@ public class CompradorController {
     }
 
     @PostMapping("/compras/actualizar-compra")
-    public String actualizarCompra(RedirectAttributes redirectAttributes, @RequestParam(name = "idVenta") Long idVenta, @RequestParam(name = "accion") String accion){
+    public String actualizarCompra(RedirectAttributes redirectAttributes, @RequestParam(name = "idVenta") Long idVenta, @RequestParam(name = "accion") String accion, @RequestParam(name = "razon", required = false) String razon) throws MessagingException, IOException {
+        Venta venta = ventaService.findById(idVenta);
+
         switch (accion){
             case "cancelar":
-                Venta venta = ventaService.findById(idVenta);
                 venta.setGananciaNeta(0L);
                 ventaService.actualizarEstado(venta, "Cancelada");
                 redirectAttributes.addFlashAttribute("modalCancelar", true);
                 break;
             case "finalizar":
-                ventaService.actualizarEstado(ventaService.findById(idVenta), "Finalizada");
+                ventaService.actualizarEstado(venta, "Finalizada");
                 redirectAttributes.addFlashAttribute("modalFinalizar", true);
                 break;
 
             case "modificar":
-                ventaService.actualizarEstado(ventaService.findById(idVenta), "En Proceso");
+                ventaService.actualizarEstado(venta, "En Proceso");
                 redirectAttributes.addFlashAttribute("modalModificar", true);
 
-                //ENVIAR NOTIFICACIONES Y RAZON O PETICION EN LA NOTIFICACION e EMAIL
+                notificacionService.notificacionPedirModificarVenta(venta, razon);
+
                 break;
         }
         return "redirect:/comprador/compras";
     }
 
     @PostMapping("/citas/cancelar-cita")
-    public String cancelarCita(@RequestParam(name = "idCita") Long idCita, Authentication authentication){
+    public String cancelarCita(@RequestParam(name = "idCita") Long idCita, Authentication authentication) throws MessagingException, IOException {
         Usuario usuario = usuario(authentication);
         Cita cita = citaService.findById(idCita);
         cita.setEstadoCita(EstadoCitaEnum.CANCELADA);
@@ -125,15 +132,13 @@ public class CompradorController {
         String mensajeVendedor = "Tu cita para el producto: " + cita.getProducto().getNombreProducto() + ". Ha sido cancelada por el comprador: " + usuario.getNombres() + ".";
         String mensaje = "Has cancelado tu cita para el producto: " + cita.getProducto().getNombreProducto() + ".";
 
-        notificacionService.crearNotificacionAutomatica(titulo, mensajeVendedor, "Citas", usuario(authentication), idCita, "/vendedor/citas");
-        notificacionService.crearNotificacionAutomatica(titulo, mensaje, "Citas", cita.getComprador(), idCita, "/comprador/citas");
-
+        notificacionService.notificacionCitaCancelada(cita, usuario);
 
         return "redirect:/comprador/citas";
     }
 
     @PostMapping("/citas/reprogramar-cita")
-    public String reprogramarCita(@RequestParam(name = "idCita") Long idCita, @RequestParam(name = "idDisponibilidad") Long idDisponibilidad, Authentication authentication, RedirectAttributes redirectAttributes){
+    public String reprogramarCita(@RequestParam(name = "idCita") Long idCita, @RequestParam(name = "idDisponibilidad") Long idDisponibilidad, Authentication authentication, RedirectAttributes redirectAttributes) throws MessagingException, IOException {
         Cita cita = citaService.findById(idCita);
         if(disponibilidadService.validarSiPuedeReprogramar(cita)){
             Usuario usuario = usuario(authentication);
@@ -143,12 +148,7 @@ public class CompradorController {
             cita.setUltimaReprogramacion(LocalDateTime.now());
             citaService.save(cita);
 
-            String titulo = "Actualizacion en tu cita. Reprogramacion.";
-            String mensajeVendedor = "Tu cita para el producto: " + cita.getProducto().getNombreProducto() + ". Ha sido reprogramada por el comprador: "+ cita.getProducto().getVendedor().getNombres() + ". para la nueva fecha: " + cita.getDisponibilidad().getFecha() + ". Y hora: " + cita.getDisponibilidad().getHora() + ".";
-            String mensaje = "Has reprogramado tu cita para el producto: " + cita.getProducto().getNombreProducto() + ". Para la nueva fecha: " + cita.getDisponibilidad().getFecha() + ". Y hora: " + cita.getDisponibilidad().getHora() + ". Recuerda que solo puedes reprogramar 2 veces por cita, despues de esto tendras que esperar 24 horas para poder volver a reprogramar.";
-
-            notificacionService.crearNotificacionAutomatica(titulo, mensajeVendedor, "Citas", cita.getProducto().getVendedor(), idCita, "/vendedor/citas");
-            notificacionService.crearNotificacionAutomatica(titulo, mensaje, "Citas", cita.getComprador(), idCita, "/comprador/citas");
+            notificacionService.notificacionCitaReprogramada(cita,usuario);
         } else {
             if(cita.getUltimaReprogramacionBloqueada() == null){
                 cita.setUltimaReprogramacionBloqueada(LocalDateTime.now());
@@ -177,20 +177,15 @@ public class CompradorController {
     }
 
     @PostMapping("/generar-venta")
-    public String generarVenta(@RequestParam(name = "idCita") Long idCita, Authentication authentication, RedirectAttributes redirectAttributes) {
+    public String generarVenta(@RequestParam(name = "idCita") Long idCita, Authentication authentication, RedirectAttributes redirectAttributes) throws MessagingException, IOException {
         Usuario usuario = usuario(authentication);
 
         Cita cita = citaService.findById(idCita);
 
-        ventaService.generarVenta(cita.getProducto().getIdProducto(), cita.getComprador());
-        citaService.cambiarEstado(cita, EstadoCitaEnum.FINALIZADA);
+        Venta venta = ventaService.generarVenta(cita.getProducto().getIdProducto(), cita.getComprador());
+        citaService.cambiarEstado(cita, EstadoCitaEnum.VENTAGENERADA);
 
-        String titulo = "Creacion de compra";
-        String mensaje = "Se ha creado una nueva compra para el producto: " + cita.getProducto().getNombreProducto() + ". Ve al panel de compras para mas detalles. Recuerda que tu debes confirmar los datos obligatorios de la venta para finalizarla.";
-        String mensajeVendedor = "El comprador: " + cita.getComprador().getNombres() + ". Ha generado una venta para tu producto: " + cita.getProducto().getNombreProducto() + ". Recuerda que debes actualizar los datos obligatorios para finalziar la venta.";
-
-        notificacionService.crearNotificacionAutomatica(titulo, mensaje, "Ventas", usuario, cita.getIdCita(), "/comprador/compras");
-        notificacionService.crearNotificacionAutomatica(titulo, mensajeVendedor, "Ventas", cita.getProducto().getVendedor(), cita.getIdCita(), "/vendedor/ventas");
+        notificacionService.notificacionVentaGenerada(venta);
 
         redirectAttributes.addFlashAttribute("ventaGenerada", true);
         return "redirect:/comprador/compras";

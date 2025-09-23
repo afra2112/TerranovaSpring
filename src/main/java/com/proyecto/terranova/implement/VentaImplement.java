@@ -34,7 +34,7 @@ public class VentaImplement implements VentaService {
     private ProductoRepository productoRepository;
 
     @Override
-    public boolean actualizarDatosVenta(Venta venta, List<Long> idsComprobantesEliminados, List<Long> idsGastosEliminados, List<MultipartFile> comprobantes) throws IOException {
+    public Venta actualizarDatosVenta(Venta venta, List<Long> idsComprobantesEliminados, List<Long> idsGastosEliminados, List<MultipartFile> comprobantes) throws IOException {
         Venta ventaAcual = repository.findById(venta.getIdVenta()).orElseThrow();
         ventaAcual.setFechaVenta(venta.getFechaVenta());
         ventaAcual.setMetodoPago(venta.getMetodoPago());
@@ -74,15 +74,15 @@ public class VentaImplement implements VentaService {
 
         repository.save(ventaAcual);
 
-        return true;
+        return ventaAcual;
     }
 
     @Override
-    public boolean actualizarEstado(Venta venta, String estado) {
+    public Venta actualizarEstado(Venta venta, String estado) {
         Venta ventaActualizada = repository.findById(venta.getIdVenta()).orElseThrow();
         ventaActualizada.setEstado(estado);
         repository.save(ventaActualizada);
-        return false;
+        return ventaActualizada;
     }
 
     @Override

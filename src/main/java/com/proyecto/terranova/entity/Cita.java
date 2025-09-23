@@ -45,4 +45,13 @@ public class Cita {
     @ManyToOne
     @JoinColumn(name = "id_disponibilidad")
     private Disponibilidad disponibilidad;
+
+    public boolean isFechaDisponibleParaFinalizar() {
+        LocalDateTime ahora = LocalDateTime.now();
+        LocalDateTime fechaCita = LocalDateTime.of(
+                this.disponibilidad.getFecha(),
+                this.disponibilidad.getHora()
+        );
+        return !fechaCita.isAfter(ahora);
+    }
 }

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Terranova - Venta Generada</title>
+    <style th:utext="${css}"></style>
+</head>
+<body>
+<div class="email-container">
+    <div class="header">Terranova</div>
+    <div class="content">
+        <p>¡Hola <strong th:text="${nombreUsuario}"></strong>!</p>
+        <p th:utext="'Le haz pedido al vendedor que cambie los datos de la compra para:  <b>' + ${nombreTipoNotificacion} + '</b> con el vendedor <b>' + ${nombreUsuarioContrario} + '</b>.'"></p>
+    </div>
+    <div class="button-container">
+        <a th:href="${linkAccion}" class="btn">Ir a Compras</a>
+    </div>
+    <div class="footer">Este es un mensaje automático, no es necesario responder.</div>
+</div>
+</body>
+</html>

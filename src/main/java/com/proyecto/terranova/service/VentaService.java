@@ -8,8 +8,8 @@ import com.proyecto.terranova.entity.Venta;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface VentaService {
-    boolean actualizarDatosVenta(Venta venta, List<Long> idsComprobantesEliminados, List<Long> idsGastosEliminados, List<MultipartFile> comprobantes) throws IOException;
-    boolean actualizarEstado(Venta venta, String estado);
+    Venta actualizarDatosVenta(Venta venta, List<Long> idsComprobantesEliminados, List<Long> idsGastosEliminados, List<MultipartFile> comprobantes) throws IOException;
+    Venta actualizarEstado(Venta venta, String estado);
     Venta save(Venta venta);
     VentaDTO update(Long id, VentaDTO dto); // Actualizar
     Venta findById(Long id);

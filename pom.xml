@@ -30,7 +30,7 @@
 		<java.version>21</java.version>
     </properties>
 	<dependencies>
-        <!-- JFreeChart ESTE ES PARA LOS EMAIS Y ENVIO DE CORREOS -->
+        <!-- ESTE ES PARA LOS EMAIS Y ENVIO DE CORREOS -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>

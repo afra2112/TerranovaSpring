@@ -34,7 +34,7 @@ public class Venta {
     @JoinColumn(name = "idProducto")
     private Producto producto;
 
-    private Long gananciaNeta;
+    private Long gananciaNeta = 0L;
 
     @ManyToOne
     @JoinColumn(name = "cedula_comprador")

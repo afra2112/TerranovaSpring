@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Terranova - Correo</title>
+    <style th:utext="${css}"></style>
+</head>
+<body>
+<div class="email-container">
+    <div class="header">
+        Terranova
+    </div>
+
+    <div class="content">
+        <p>¡Hola <strong th:text="${nombreUsuario}"></strong>!</p>
+        <p th:utext="'Tu cita para el producto <b>' + ${nombreTipoNotificacion} + '</b> con el vendedor <b>' + ${nombreUsuarioContrario} + '</b>. ha sido reprogramada con exito, recuerda que tienes dos reprogramaciones por cita, despues de eso tendras que esperar 24 horas para reprogramar.'"></p>
+        <p>Haz clic en el botón de abajo para gestionar tu cita:</p>
+    </div>
+
+    <div class="button-container">
+        <a th:href="${linkAccion}" class="btn" >Ir a Mis Citas</a>
+    </div>
+
+    <div class="footer">
+        <span>Este es un mensaje automático, no es necesario que respondas a este correo.</span>
+    </div>
+</div>
+</body>
+</html>

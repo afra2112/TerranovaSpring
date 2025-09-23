@@ -203,6 +203,16 @@
                                 <button class="gradient-bg text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2">
                                     <i class='bx bx-show text-lg'></i> Ver Producto
                                 </button>
+                                <form th:action="@{/vendedor/citas/finalizar-cita}" method="post">
+                                    <input type="hidden" name="idCita" th:value="${cita.idCita}">
+                                    <button
+                                            th:classappend="${cita.fechaDisponibleParaFinalizar} ? 'bg-green-600 hover:bg-green-700 text-white font-semibold shadow-md' : 'bg-gray-400 text-gray-200 cursor-not-allowed opacity-70'"
+                                            th:attr="disabled=${!cita.fechaDisponibleParaFinalizar}"
+                                            class="px-5 py-2 rounded-xl transition duration-200 ease-in-out"
+                                    >
+                                        Finalizar cita
+                                    </button>
+                                </form>
                                 <div class="flex gap-3">
                                     <button class="gradient-btn-secondary text-white px-4 py-2 rounded-lg font-medium hover:shadow-lg transition-all flex items-center justify-center gap-2 flex-1" onclick="openAvailabilityModal()">
                                         <i class='bx bx-calendar-edit'></i>

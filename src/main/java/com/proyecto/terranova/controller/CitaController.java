@@ -10,11 +10,13 @@ import com.proyecto.terranova.service.CitaService;
 import com.proyecto.terranova.service.DisponibilidadService;
 import com.proyecto.terranova.service.NotificacionService;
 import com.proyecto.terranova.service.UsuarioService;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -39,18 +41,25 @@ public class CitaController {
     }
 
     @PostMapping("/cancelar-cita")
-    public String cancelarCita(@RequestParam(name = "idCita") Long idCita, Authentication authentication){
+    public String cancelarCita(@RequestParam(name = "idCita") Long idCita, Authentication authentication) throws MessagingException, IOException {
         Usuario usuario = usuario(authentication);
         Cita cita = citaService.findById(idCita);
         cita.setEstadoCita(EstadoCitaEnum.CANCELADA);
         citaService.save(cita);
 
-        String titulo = "Actualizacion en tu cita. Cancelacion.";
-        String mensaje = "Tu cita para el producto: " + cita.getProducto().getNombreProducto() + ". Ha sido cancelada por el vendedor: " + usuario.getNombres() + ".";
-        String mensajeVendedor = "Has cancelado tu cita para el producto: " + cita.getProducto().getNombreProducto() + ".";
+        notificacionService.notificacionCitaCancelada(cita, usuario);
 
-        notificacionService.crearNotificacionAutomatica(titulo, mensajeVendedor, "Citas", cita.getProducto().getVendedor(), idCita, "/vendedor/citas");
-        notificacionService.crearNotificacionAutomatica(titulo, mensaje, "Citas", cita.getComprador(), idCita, "/comprador/citas");
+        return "redirect:/vendedor/citas";
+    }
+
+    @PostMapping("/finalizar-cita")
+    public String finalizarCita(@RequestParam(name = "idCita") Long idCita, Authentication authentication) throws MessagingException, IOException {
+        Usuario usuario = usuario(authentication);
+        Cita cita = citaService.findById(idCita);
+        cita.setEstadoCita(EstadoCitaEnum.FINALIZADA);
+        citaService.save(cita);
+
+        notificacionService.notificacionCitaFinalizada(cita);
 
         return "redirect:/vendedor/citas";
     }
@@ -64,18 +73,13 @@ public class CitaController {
     }
 
     @PostMapping("/reprogramar-cita")
-    public String reprogramarCita(@RequestParam(name = "idCita") Long idCita, @RequestParam(name = "idDisponibilidad") Long idDisponibilidad, Authentication authentication){
+    public String reprogramarCita(@RequestParam(name = "idCita") Long idCita, @RequestParam(name = "idDisponibilidad") Long idDisponibilidad, Authentication authentication) throws MessagingException, IOException {
         Cita cita = citaService.findById(idCita);
         Disponibilidad disponibilidad = disponibilidadService.findById(idDisponibilidad);
         cita.setDisponibilidad(disponibilidad);
         citaService.save(cita);
 
-        String titulo = "Actualizacion en tu cita. Reprogramacion.";
-        String mensaje = "Tu cita para el producto: " + cita.getProducto().getNombreProducto() + ". Ha sido reprogramada por el vendedor para la nueva fecha: " + cita.getDisponibilidad().getFecha() + ". Y hora: " + cita.getDisponibilidad().getHora() + ".";
-        String mensajeVendedor = "Has reprogramado tu cita para el producto: " + cita.getProducto().getNombreProducto() + ". Para la nueva fecha: " + cita.getDisponibilidad().getFecha() + ". Y hora: " + cita.getDisponibilidad().getHora() + ".";
-
-        notificacionService.crearNotificacionAutomatica(titulo, mensajeVendedor, "Citas", usuario(authentication), idCita, "/vendedor/citas");
-        notificacionService.crearNotificacionAutomatica(titulo, mensaje, "Citas", cita.getComprador(), idCita, "/comprador/citas");
+        notificacionService.notificacionCitaReprogramada(cita, usuario(authentication));
 
         return "redirect:/vendedor/citas";
     }

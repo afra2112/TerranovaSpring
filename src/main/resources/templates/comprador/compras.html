@@ -411,12 +411,12 @@
 </div>
 
 <!-- Modal Modificar -->
-<div th:if="${modalModificar}" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+<div th:if="${modalModificar}" id="modalModificar" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-2xl p-6 max-w-sm w-full mx-4 shadow-lg transform transition-transform duration-300">
         <h3 class="text-xl font-bold text-gray-800 mb-4">Petición de Modificación Enviada</h3>
         <p class="text-gray-600 mb-6">Tu solicitud de modificación se ha enviado correctamente. El vendedor la revisará pronto.</p>
         <div class="flex justify-end">
-            <button onclick="closeConfirmModal(this.closest('div[th\\:if]'))" class="px-4 py-2 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50">Cerrar</button>
+            <button onclick="closeConfirmModal()" class="px-4 py-2 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50">Cerrar</button>
         </div>
     </div>
 </div>
@@ -522,9 +522,12 @@
    }
 
    // Cerrar modales de confirmación que vienen de Thymeleaf
-   function closeConfirmModal(modal) {
-       modal.classList.add('hidden');
-   }
+    function closeConfirmModal() {
+        const modal = document.getElementById("modalModificar");
+        if (modal) {
+            modal.style.display = "none";
+        }
+    }
 
    function openModificarModal(idVenta) {
        document.getElementById('modificarIdVenta').value = idVenta;
@@ -541,11 +544,6 @@
        modal.classList.remove('opacity-100', 'visible');
        modal.querySelector('.transform').classList.add('scale-95');
        modal.querySelector('.transform').classList.remove('scale-100');
-   }
-
-   function closeConfirmModal() {
-       const modal = document.querySelector('[th\\:if="${modalModificar}"]');
-       if(modal) modal.classList.add('hidden');
    }
 
     document.querySelectorAll('[id^="modal"]').forEach(modal => {

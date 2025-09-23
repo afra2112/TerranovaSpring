@@ -4,6 +4,7 @@ import com.proyecto.terranova.config.enums.EstadoCitaEnum;
 import com.proyecto.terranova.config.enums.RolEnum;
 import com.proyecto.terranova.entity.*;
 import com.proyecto.terranova.service.*;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.Local;
 import org.springframework.security.core.Authentication;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -135,14 +137,9 @@ public class VendedorController {
             Authentication authentication
     ) {
         try {
-            ventaService.actualizarDatosVenta(venta, idsComprobantesEliminados, idsGastosEliminados, comprobantes);
+            Venta ventaActualizada = ventaService.actualizarDatosVenta(venta, idsComprobantesEliminados, idsGastosEliminados, comprobantes);
 
-            String titulo = "Actualizacion de datos en una venta.";
-            String mensaje = "Haz actualizado los datos de tu venta para el producto: " + venta.getProducto().getNombreProducto() + ". Con el comprador: " + venta.getComprador().getNombres();
-            String mensajeComprador = "El vendedor ha actualizado los datos de tu compra para el producto: " + venta.getProducto().getNombreProducto() + ". Revisa en el panel de compras para mas detalles";
-
-            notificacionService.crearNotificacionAutomatica(titulo, mensaje, "Ventas", usuario(authentication), venta.getIdVenta(), "/vendedor/ventas");
-            notificacionService.crearNotificacionAutomatica(titulo, mensajeComprador, "Ventas", venta.getComprador(), venta.getIdVenta(), "/comprador/compras");
+            notificacionService.notificacionVentaModificada(ventaActualizada);
 
             return "ok";
         } catch (Exception e) {
@@ -151,20 +148,15 @@ public class VendedorController {
     }
 
     @PostMapping("/venta/enviar-peticion-venta")
-    public String enviarPeticionVenta(@ModelAttribute Venta venta, @RequestParam(name = "comprobantes") int comprobantes, RedirectAttributes redirectAttributes, Authentication authentication) {
+    public String enviarPeticionVenta(@ModelAttribute Venta venta, @RequestParam(name = "comprobantes") int comprobantes, RedirectAttributes redirectAttributes, Authentication authentication) throws MessagingException, IOException {
         if(venta.getFechaVenta() == null || (venta.getMetodoPago() == null || venta.getMetodoPago().isBlank()) || comprobantes == 0){
             redirectAttributes.addFlashAttribute("ventaIncompleta", true);
             return "redirect:/vendedor/ventas";
         }
+        Venta ventaActual = ventaService.actualizarEstado(venta, "Pendiente Confirmacion");
 
-        String titulo = "Peticion de finalizacion de venta.";
-        String mensaje = "Haz enviado un peticion para finalizar la venta para el producto: " + venta.getProducto().getNombreProducto() + ". Con el comprador: " + venta.getComprador().getNombres();
-        String mensajeComprador = "El vendedor: " + venta.getVendedor().getNombres() + ". Ha realizado una peticion de finalizacion de tu compra para el producto: " + venta.getProducto().getNombreProducto();
+        notificacionService.notificacionPeticionFinalizacionVenta(ventaActual);
 
-        notificacionService.crearNotificacionAutomatica(titulo, mensaje, "Ventas", usuario(authentication), venta.getIdVenta(), "/vendedor/ventas");
-        notificacionService.crearNotificacionAutomatica(titulo, mensajeComprador, "Ventas", venta.getComprador(), venta.getIdVenta(), "/compras/comprador");
-
-        ventaService.actualizarEstado(venta, "Pendiente Confirmacion");
         redirectAttributes.addFlashAttribute("peticionHecha", true);
         return "redirect:/vendedor/ventas";
     }
