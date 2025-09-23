@@ -122,30 +122,39 @@
         </div>
 
         <!-- Filters -->
-        <div class="bg-white rounded-2xl p-6 border border-gray-200 mb-8">
-            <div class="flex flex-wrap items-center gap-4">
-                <div class="flex items-center space-x-2">
-                    <label class="text-sm font-medium text-gray-700">Filtrar por:</label>
-                </div>
-                <select class="px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent">
-                    <option>Todos los tipos</option>
-                    <option>Ganado</option>
-                    <option>Finca</option>
-                    <option>Terreno</option>
-                </select>
-                <select class="px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent">
-                    <option>Todos los estados</option>
-                    <option>Activo</option>
-                    <option>Pendiente</option>
-                    <option>Inactivo</option>
-                </select>
-                <div class="flex-1"></div>
-                <div class="relative">
-                    <i class='bx bx-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400'></i>
-                    <input type="text" placeholder="Buscar productos..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent w-64">
-                </div>
-            </div>
+        <form method="get" action="/vendedor/productos/filtrar">
+
+        <input type="text" name="nombre" placeholder="Nombre producto">
+
+            <select name="tipo">
+                <option value="">Todos</option>
+                <option value="ganado">Ganado</option>
+                <option value="finca">Finca</option>
+                <option value="terreno">Terreno</option>
+            </select>
+
+            <select name="ciudadId">
+                <option value="">Todas las ciudades</option>
+                <th:block th:each="ciudad : ${ciudades}">
+                    <option th:value="${ciudad.idCiudad}" th:text="${ciudad.nombreCiudad}"></option>
+                </th:block>
+            </select>
+
+            <input type="number" name="precioMax" placeholder="Precio máximo">
+
+            <button type="submit">Filtrar</button>
+            <button type="button" onclick="window.location.href='/vendedor/productos'">Limpiar</button>
+        </form>
+
+        <!-- Mostrar productos -->
+        <div>
+            <th:block th:each="producto : ${productos}">
+                <p th:text="${producto.nombreProducto}"></p>
+            </th:block>
         </div>
+
+
+
 
         <!-- Products Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

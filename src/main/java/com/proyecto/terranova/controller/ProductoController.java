@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -106,6 +107,31 @@ public class ProductoController {
         }
         return "redirect:/vendedor/productos";
     }
+
+    @GetMapping("/filtrar")
+    public String listarProductos(
+            @RequestParam(required = false) String tipo,
+            @RequestParam(required = false) String nombre,
+            @RequestParam(required = false) Long ciudadId,
+            @RequestParam(required = false) Long precioMax,
+            Model model) {
+
+        Class<? extends Producto> tipoClase = null;
+        if ("ganado".equalsIgnoreCase(tipo)) {
+            tipoClase = Ganado.class;
+        } else if ("finca".equalsIgnoreCase(tipo)) {
+            tipoClase = Finca.class;
+        } else if ("terreno".equalsIgnoreCase(tipo)) {
+            tipoClase = Terreno.class;
+        }
+
+        List<Producto> productos = productoService.filtrarProductos(tipoClase, nombre, ciudadId, precioMax);
+        model.addAttribute("productos", productos);
+        model.addAttribute("ciudades", ciudadRepository.findAll());
+        return "vendedor/productos";  // misma vista que ya tienes
+    }
+
+
 
 
 }

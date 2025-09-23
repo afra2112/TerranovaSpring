@@ -1,5 +1,6 @@
 package com.proyecto.terranova.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -18,4 +19,9 @@ public interface ProductoService {
     void actualizarProducto(Producto prodForm);
     List<Producto> obtenerTodasMenosVendedor(Usuario vendedor);
     void eliminarProducto(Long idProducto, String correo);
+
+    List<Producto> filtrarProductos(Class<? extends Producto> tipo, String nombre, Long ciudadId, Long precioMax);
+
+
+
 }

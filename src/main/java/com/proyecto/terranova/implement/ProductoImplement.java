@@ -185,4 +185,13 @@ public class ProductoImplement implements ProductoService {
         }
     }
 
+    @Override
+    public List<Producto> filtrarProductos(Class<? extends Producto> tipo, String nombre, Long ciudadId, Long precioMax) {
+        return productoRepository.filtrarProductos(tipo, nombre, ciudadId, precioMax);
+    }
+
+
+
+
+
 }

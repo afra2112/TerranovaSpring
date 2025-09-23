@@ -1,6 +1,10 @@
 package com.proyecto.terranova.controller;
 
 import com.proyecto.terranova.dto.UsuarioDTO;
+import com.proyecto.terranova.entity.Finca;
+import com.proyecto.terranova.entity.Ganado;
+import com.proyecto.terranova.entity.Producto;
+import com.proyecto.terranova.service.ProductoService;
 import com.proyecto.terranova.service.UsuarioService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +14,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class PublicController {
+
     @Autowired
     UsuarioService usuarioService;
 
@@ -41,6 +47,7 @@ public class PublicController {
         redirectAttributes.addAttribute("creado", true);
         return "redirect:/login";
     }
+
 
 
     @GetMapping("/403")
