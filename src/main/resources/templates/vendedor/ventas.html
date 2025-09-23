@@ -739,6 +739,17 @@
                             });
                         </script>
                     </div>
+                    <div th:if="${#lists.isEmpty(ventas)}" class="text-center py-12 fade-in">
+                        <div class="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-calendar-times text-gray-400 text-3xl"></i>
+                        </div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-2">No tienes ventas registradas</h3>
+                        <p class="text-gray-600 mb-6">Puedes publicar productos para que los compradores agenden citas y asi puedas generar una venta.</p>
+                        <a th:href="@{/vendedor/dashboard}" class="inline-flex items-center px-6 py-3 gradient-bg text-white rounded-xl hover:opacity-90 btn-animate">
+                            <i class="fas fa-home mr-2"></i>
+                            Ir a Inicio
+                        </a>
+                    </div>
                 </div>
         </main>
     </div>

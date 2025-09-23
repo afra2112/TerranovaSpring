@@ -39,7 +39,6 @@
                 <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
                     <div>
                         <h1 class="text-3xl font-bold text-gray-800 mb-2" th:text="'¡Buen día, ' + ${usuario.nombres} + '!'"></h1>
-                        <p class="text-gray-600">Tienes 3 nuevas propiedades que coinciden con tus búsquedas guardadas</p>
                     </div>
 
                     <div class="flex flex-wrap gap-3">
@@ -76,7 +75,6 @@
                                 <div class="text-sm text-gray-500 font-medium">Favoritos</div>
                             </div>
                         </div>
-                        <div class="text-xs text-gray-400">+3 esta semana</div>
                     </div>
 
                     <div class="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-lg hover:border-gray-300 transition-all duration-300 group">
@@ -91,7 +89,6 @@
                                 <div class="text-sm text-gray-500 font-medium">Citas</div>
                             </div>
                         </div>
-                        <div class="text-xs text-gray-400">2 activas</div>
                     </div>
 
                     <div class="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-lg hover:border-gray-300 transition-all duration-300 group">
@@ -106,7 +103,6 @@
                                 <div class="text-sm text-gray-500 font-medium">Notificaciones</div>
                             </div>
                         </div>
-                        <div class="text-xs text-gray-400">5 nuevas</div>
                     </div>
 
                     <div class="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-lg hover:border-gray-300 transition-all duration-300 group">
@@ -122,7 +118,6 @@
                                 <div class="text-sm text-gray-500 font-medium">Visitadas</div>
                             </div>
                         </div>
-                        <div class="text-xs text-gray-400">Hoy</div>
                     </div>
                 </div>
             </div>
@@ -138,114 +133,97 @@
                     <button class="text-[#388e3c] font-medium hover:underline">Ver todas</button>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                        <div class="relative">
-                            <div class="h-48 bg-gradient-to-r from-green-400 to-[#388e3c] flex items-center justify-center">
-                                <span class="text-6xl">🐄</span>
-                            </div>
-                            <div class="absolute top-4 left-4 bg-[#ffcf00] text-[#388e3c] px-3 py-1 rounded-full text-sm font-semibold">
-                                95% Match
-                            </div>
-                            <div class="absolute top-4 right-4 bg-white bg-opacity-90 backdrop-blur-sm p-2 rounded-full cursor-pointer">
-                                <svg class="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="p-6">
-                            <div class="flex justify-between items-start mb-2">
-                                <h3 class="text-lg font-bold text-gray-800">Ganado Holstein A1</h3>
-                                <span class="text-xl font-bold text-[#388e3c]">$2,800</span>
-                            </div>
-                            <p class="text-gray-600 mb-3">📍 Cundinamarca • 2.5 km de ti</p>
-                            <div class="flex items-center gap-3 text-sm text-gray-500 mb-4">
-                                <span>🐄 30 cabezas</span>
-                                <span>📅 2-4 años</span>
-                                <span>⭐ 4.9</span>
-                            </div>
-                            <div class="flex gap-2">
-                                <button class="flex-1 bg-[#388e3c] text-white py-2 rounded-lg hover:bg-green-700 transition-colors text-sm">
-                                    Ver detalles
-                                </button>
-                                <button class="px-3 py-2 border border-[#388e3c] text-[#388e3c] rounded-lg hover:bg-[#388e3c] hover:text-white transition-colors">
-                                    💬
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                <div class="flex items-center gap-3 text-sm text-gray-500 mb-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div th:each="producto : ${productos}" class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
 
-                    <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                        <div class="relative">
-                            <div class="h-48 bg-gradient-to-r from-[#ffcf00] to-yellow-500 flex items-center justify-center">
-                                <span class="text-6xl">🌾</span>
-                            </div>
-                            <div class="absolute top-4 left-4 bg-[#388e3c] text-white px-3 py-1 rounded-full text-sm font-semibold">
-                                Nuevo
-                            </div>
-                            <div class="absolute top-4 right-4 bg-white bg-opacity-90 backdrop-blur-sm p-2 rounded-full cursor-pointer">
-                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="p-6">
-                            <div class="flex justify-between items-start mb-2">
-                                <h3 class="text-lg font-bold text-gray-800">Terreno Productivo</h3>
-                                <span class="text-xl font-bold text-[#388e3c]">$920M</span>
-                            </div>
-                            <p class="text-gray-600 mb-3">📍 Valle del Cauca • En tu zona</p>
-                            <div class="flex items-center gap-3 text-sm text-gray-500 mb-4">
-                                <span>📏 45 hectáreas</span>
-                                <span>💧 Riego</span>
-                                <span>⭐ 4.8</span>
-                            </div>
-                            <div class="flex gap-2">
-                                <button class="flex-1 bg-[#388e3c] text-white py-2 rounded-lg hover:bg-green-700 transition-colors text-sm">
-                                    Ver detalles
-                                </button>
-                                <button class="px-3 py-2 border border-[#388e3c] text-[#388e3c] rounded-lg hover:bg-[#388e3c] hover:text-white transition-colors">
-                                    💬
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                            <div class="relative">
 
-                    <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                        <div class="relative">
-                            <div class="h-48 bg-gradient-to-r from-green-600 to-green-800 flex items-center justify-center">
-                                <span class="text-6xl">🏡</span>
+                                <!-- Match badge -->
+                                <div class="absolute top-4 left-4 bg-[#ffcf00] text-[#388e3c] px-3 py-1 rounded-full text-sm font-semibold">
+                                    95% Match
+                                </div>
+
+                                <!-- Favorito -->
+                                    <img th:src="${#lists.isEmpty(producto.imagenes) ? '/placeholder.svg?height=200&width=400' : producto.imagenes.get(0).nombreArchivo}"
+                                         alt="Imagen del producto"
+                                         class="w-full h-48 object-cover rounded">
+
                             </div>
-                            <div class="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
-                                Precio Bajo
-                            </div>
-                            <div class="absolute top-4 right-4 bg-white bg-opacity-90 backdrop-blur-sm p-2 rounded-full cursor-pointer">
-                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                                </svg>
+
+                            <div class="p-6">
+                                <!-- Nombre y precio -->
+                                <div class="flex justify-between items-start mb-2">
+                                    <h3 class="text-lg font-bold text-gray-800" th:text="${producto.nombreProducto}">Nombre Producto</h3>
+                                    <span class="text-xl font-bold text-[#388e3c]" th:text="'$' + ${#numbers.formatDecimal(producto.precioProducto, 0, 'POINT', 0, 'COMMA')}"></span>
+                                </div>
+
+                                <!-- Ubicación -->
+                                <p class="text-gray-600 mb-3" th:text="'📍 ' + ${producto.ciudad.nombreCiudad}">
+                                    Ubicación
+                                </p>
+
+                                <!-- Información según tipo -->
+                                <div class="flex items-center gap-3 text-sm text-gray-500 mb-4">
+                                    <!-- Ganado -->
+                                    <span th:if="${producto instanceof T(com.proyecto.terranova.entity.Ganado)}" th:text="'🐄 ' + producto.cantidad + ' cabezas'">🐄 0 cabezas</span>
+                                    <span th:if="${producto instanceof T(com.proyecto.terranova.entity.Ganado)}" th:text="'📅 ' + producto.edadGanado + ' años'">📅 0 años</span>
+
+                                    <!-- Terreno -->
+                                    <span th:if="${producto instanceof T(com.proyecto.terranova.entity.Terreno)}" th:text="'📐 ' + ${producto.tamanoTerreno} + ' m²'"></span>
+                                    <span th:if="${producto instanceof T(com.proyecto.terranova.entity.Terreno)}" th:text="'🌄 ' + ${producto.topografiaTerreno}"></span>
+
+                                    <!-- Finca -->
+                                    <span th:if="${producto instanceof T(com.proyecto.terranova.entity.Finca)}" th:text="'🏠 Estrato ' + producto.estratoFinca">🏠 Estrato 0</span>
+                                    <span th:if="${producto instanceof T(com.proyecto.terranova.entity.Finca)}" th:text="'🛏 ' + producto.numeroHabitaciones + ' hab.'">🛏 0 hab.</span>
+                                </div>
+
+                                <!-- Botones -->
+                                <div class="flex gap-2">
+                                    <a th:href="@{'/producto/' + ${producto.idProducto}}"
+                                       class="flex-1 bg-[#388e3c] text-white py-2 rounded-lg hover:bg-green-700 transition-colors text-sm text-center">
+                                        Ver detalles
+                                    </a>
+                                    <button th:onclick="'document.getElementById(\'modalDisponibilidades_' + ${producto.idProducto} + '\').classList.remove(\'hidden\')'"
+                                       class="flex-1 bg-yellow-400 text-[#388e3c] py-2 rounded-lg hover:bg-yellow-500 transition-colors text-sm text-center">
+                                        Pedir cita
+                                    </button>
+                                </div>
+                                <!-- Modal mejorado -->
+                                <div th:id="'modalDisponibilidades_' + ${producto.idProducto}"
+                                     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+                                    <div class="bg-white rounded-2xl p-6 w-96 relative shadow-lg">
+                                        <!-- Botón cerrar -->
+                                        <button th:onclick="'document.getElementById(\'modalDisponibilidades_' + ${producto.idProducto} + '\').classList.add(\'hidden\')'"
+                                                class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-xl font-bold">
+                                            &times;
+                                        </button>
+
+                                        <h2 class="text-xl font-bold mb-4 text-gray-800">Disponibilidades</h2>
+
+                                        <ul class="space-y-3 max-h-64 overflow-y-auto">
+                                            <li th:each="disp : ${producto.disponibilidades}"
+                                                class="flex justify-between items-center p-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+                                                <!-- Fecha y hora -->
+                                                <span th:text="${disp.fecha} + ' - ' + ${disp.hora}" class="text-gray-700 font-medium">Fecha - Hora</span>
+
+                                                <!-- Formulario pedir cita -->
+                                                <form th:action="@{/comprador/citas/reservar-cita}" method="post">
+                                                    <input type="hidden" th:name="idDisponibilidad" th:value="${disp.idDisponibilidad}">
+                                                    <button type="submit"
+                                                            class="bg-yellow-400 text-[#388e3c] py-1 px-3 rounded-lg hover:bg-yellow-500 transition-colors text-sm font-semibold">
+                                                        Pedir cita
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            <li th:if="${#lists.isEmpty(producto.disponibilidades)}"
+                                                class="text-gray-500 text-center p-3 bg-gray-50 rounded-lg">No hay disponibilidades</li>
+                                        </ul>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
-                        <div class="p-6">
-                            <div class="flex justify-between items-start mb-2">
-                                <h3 class="text-lg font-bold text-gray-800">Finca Completa</h3>
-                                <span class="text-xl font-bold text-[#388e3c]">$1.1B</span>
-                            </div>
-                            <p class="text-gray-600 mb-3">📍 Antioquia • Precio reducido</p>
-                            <div class="flex items-center gap-3 text-sm text-gray-500 mb-4">
-                                <span>🏠 Casa + establo</span>
-                                <span>📏 100 ha</span>
-                                <span>⭐ 4.7</span>
-                            </div>
-                            <div class="flex gap-2">
-                                <button class="flex-1 bg-[#388e3c] text-white py-2 rounded-lg hover:bg-green-700 transition-colors text-sm">
-                                    Ver detalles
-                                </button>
-                                <button class="px-3 py-2 border border-[#388e3c] text-[#388e3c] rounded-lg hover:bg-[#388e3c] hover:text-white transition-colors">
-                                    💬
-                                </button>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </section>
@@ -311,39 +289,18 @@
             </div>
         </section>
 
-        <section class="py-8">
-            <div class="container mx-auto px-4">
-                <div class="bg-gradient-to-r from-[#2d5a2f] to-[#388e3c] rounded-2xl p-6 text-white">
-                    <div class="flex justify-between items-start mb-4">
-                        <div>
-                            <h2 class="text-2xl font-bold mb-2 text-white">🔔 Alertas Activas</h2>
-                            <p class="text-gray-100">Te notificaremos cuando aparezcan nuevas oportunidades</p>
-                        </div>
-                        <button class="bg-white bg-opacity-25 backdrop-blur-sm px-4 py-2 rounded-lg hover:bg-opacity-35 transition-colors text-white font-medium">
-                            Gestionar
-                        </button>
-                    </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="bg-black bg-opacity-20 backdrop-blur-sm rounded-xl p-4 border border-white border-opacity-20">
-                            <div class="text-lg font-semibold mb-1 text-white">Ganado Holstein</div>
-                            <div class="text-sm text-gray-200">Cundinamarca • $2,000-$3,500</div>
-                        </div>
-                        <div class="bg-black bg-opacity-20 backdrop-blur-sm rounded-xl p-4 border border-white border-opacity-20">
-                            <div class="text-lg font-semibold mb-1 text-white">Terrenos 20-50 ha</div>
-                            <div class="text-sm text-gray-200">Valle • Hasta $1B</div>
-                        </div>
-                        <div class="bg-black bg-opacity-20 backdrop-blur-sm rounded-xl p-4 border border-white border-opacity-20">
-                            <div class="text-lg font-semibold mb-1 text-white">Fincas Cafeteras</div>
-                            <div class="text-sm text-gray-200">Eje Cafetero • Cualquier precio</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
     </main>
 </div>
 <script>
+    function openDisponibilidadesModal(idProducto) {
+    document.getElementById('modalDisponibilidades_' + idProducto).classList.remove('hidden');
+}
+
+function closeDisponibilidadesModal(idProducto) {
+    document.getElementById('modalDisponibilidades_' + idProducto).classList.add('hidden');
+}
+
     function toggleUserDropdown() {
         const dropdown = document.getElementById('userDropdown');
         const arrow = document.getElementById('dropdownArrow');

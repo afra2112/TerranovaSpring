@@ -117,12 +117,9 @@
                         <div class="flex items-start justify-between mb-4">
                             <div class="flex items-center space-x-4">
                                 <div class="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center">
-                                    <img th:if="${cita.producto.imagenes != null and !cita.producto.imagenes.isEmpty()}"
-                                         th:src="${cita.producto.imagenes[0].urlImagen}"
-                                         alt="Producto"
-                                         class="w-full h-full object-cover rounded-xl">
-                                    <i th:unless="${cita.producto.imagenes != null and !cita.producto.imagenes.isEmpty()}"
-                                       class="fas fa-box text-gray-500 text-2xl"></i>
+                                    <img th:src="${#lists.isEmpty(cita.producto.imagenes) ? '/placeholder.svg?height=200&width=400' : cita.producto.imagenes.get(0).nombreArchivo}"
+                                         alt="Imagen del producto"
+                                         class="w-full h-48 object-cover rounded">
                                 </div>
                                 <div>
                                     <h3 class="text-xl font-bold text-gray-900 mb-1" th:text="${cita.producto.nombreProducto}">Producto Ejemplo</h3>
@@ -200,12 +197,9 @@
                         <div class="flex items-start justify-between mb-4">
                             <div class="flex items-center space-x-4">
                                 <div class="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center">
-                                    <img th:if="${cita.producto.imagenes != null and !cita.producto.imagenes.isEmpty()}"
-                                         th:src="${cita.producto.imagenes[0].urlImagen}"
-                                         alt="Producto"
-                                         class="w-full h-full object-cover rounded-xl opacity-60">
-                                    <i th:unless="${cita.producto.imagenes != null and !cita.producto.imagenes.isEmpty()}"
-                                       class="fas fa-box text-gray-500 text-2xl"></i>
+                                    <img th:src="${#lists.isEmpty(cita.producto.imagenes) ? '/placeholder.svg?height=200&width=400' : cita.producto.imagenes.get(0).nombreArchivo}"
+                                         alt="Imagen del producto"
+                                         class="w-full h-48 object-cover rounded">
                                 </div>
                                 <div>
                                     <h3 class="text-xl font-bold text-gray-700 mb-1" th:text="${cita.producto.nombreProducto}">Producto Ejemplo</h3>
@@ -273,12 +267,9 @@
                         <div class="flex items-start justify-between mb-4">
                             <div class="flex items-center space-x-4">
                                 <div class="w-20 h-20 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center">
-                                    <img th:if="${cita.producto.imagenes != null and !cita.producto.imagenes.isEmpty()}"
-                                         th:src="${cita.producto.imagenes[0].urlImagen}"
-                                         alt="Producto"
-                                         class="w-full h-full object-cover rounded-xl">
-                                    <i th:unless="${cita.producto.imagenes != null and !cita.producto.imagenes.isEmpty()}"
-                                       class="fas fa-box text-blue-500 text-2xl"></i>
+                                    <img th:src="${#lists.isEmpty(cita.producto.imagenes) ? '/placeholder.svg?height=200&width=400' : cita.producto.imagenes.get(0).nombreArchivo}"
+                                         alt="Imagen del producto"
+                                         class="w-full h-48 object-cover rounded">
                                 </div>
                                 <div>
                                     <h3 class="text-xl font-bold text-gray-900 mb-1" th:text="${cita.producto.nombreProducto}">Producto Ejemplo</h3>

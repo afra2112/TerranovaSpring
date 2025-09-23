@@ -2,10 +2,12 @@ package com.proyecto.terranova.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "fincas")
 @Data
+@NoArgsConstructor
 @DiscriminatorValue("FINCA")
 public class Finca extends Producto {
 

@@ -32,8 +32,8 @@
             background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(5px);
         }.floating-animation {
-            animation: float 6s ease-in-out infinite;
-        }
+             animation: float 6s ease-in-out infinite;
+         }
         .product-option {
             transition: all 0.3s ease;
             background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.02) 100%);
@@ -45,6 +45,9 @@
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(16, 185, 129, 0.15);
         }
+        .gradient-hero {
+            background: linear-gradient(135deg, #064e3b 0%, #059669 50%, #10b981 100%);
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -55,7 +58,7 @@
 
     <main class="lg:px-10 py-10">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <button onclick="openProductModal()" class="gradient-bg text-white p-6 rounded-2xl hover-lift shadow-lg hover:shadow-emerald-200 transition-all duration-300 flex items-center justify-between w-full">
+            <button onclick="openProductModal()" class="gradient-hero text-white p-6 rounded-2xl hover-lift shadow-lg hover:shadow-emerald-200 transition-all duration-300 flex items-center justify-between w-full">
                 <div>
                     <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center mb-4">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -301,6 +304,9 @@
                 </div>
             </div>
         </div>
+
+
+
     </main>
 </div>
 
@@ -360,7 +366,216 @@
     </div>
 </div>
 
+<div th:replace="fragments/vendedor/modalRegistro :: formProducto"></div>
+<!-- Modal para subir imágenes -->
+<div id="modalImagenes" class="fixed inset-0 hidden items-center justify-center z-50 bg-black bg-opacity-50">
+    <div class="bg-white p-6 rounded shadow-lg w-full max-w-md">
+        <h2 class="text-xl font-bold mb-4">Subir imágenes del producto</h2>
+
+        <form th:action="@{/imagenes/SubirImgs}" id="formImagenes" method="post" enctype="multipart/form-data">
+            <input type="file" name="imagen" multiple accept="image/*" required class="mb-4 w-full">
+
+            <input type="hidden" name="idProducto" th:value="${productoId}" id="idProductoInput">
+
+            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                Subir imágenes
+            </button>
+        </form>
+    </div>
+</div>
+
+
 <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Dropdown de usuario
+        function toggleUserDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            const arrow = document.getElementById('dropdownArrow');
+
+            if (dropdown.classList.contains('opacity-0')) {
+                dropdown.classList.remove('opacity-0', 'invisible', 'scale-95');
+                dropdown.classList.add('opacity-100', 'visible', 'scale-100');
+                arrow.style.transform = 'rotate(180deg)';
+            } else {
+                dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
+                dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        document.addEventListener('click', function (event) {
+            const dropdown = document.getElementById('userDropdown');
+            const userButton = event.target.closest('[onclick="toggleUserDropdown()"]');
+
+            if (!userButton && !dropdown.contains(event.target)) {
+                dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
+                dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
+                document.getElementById('dropdownArrow').style.transform = 'rotate(0deg)';
+            }
+        });
+
+        // Modal de selección de tipo
+        window.openProductModal = function () {
+            document.getElementById('productModal').classList.remove('hidden');
+            document.getElementById('productModal').classList.add('flex');
+        };
+
+
+        function closeProductModal() {
+            document.getElementById('productModal').classList.add('hidden');
+            document.getElementById('productModal').classList.remove('flex');
+        }
+
+        document.getElementById('productModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeProductModal();
+            }
+        });
+
+        // Selección de tipo y apertura de formulario
+        window.selectProductType = function (tipo) {
+            closeProductModal();
+            abrirModalRegistro(tipo);
+        };
+
+        window.abrirModalRegistro = function (tipo) {
+            const modal = document.getElementById('registerModal');
+            const tipoInput = document.getElementById('tipoProducto');
+            const container = document.getElementById('camposTipoProducto');
+
+            if (!modal || !tipoInput || !container) {
+                console.error('No se encontró el modal o los campos necesarios');
+                return;
+            }
+
+            tipoInput.value = tipo;
+            container.innerHTML = '';
+
+            if (tipo === 'terreno') {
+                container.innerHTML = `
+
+            <div class="space-y-2">
+                 <label class="block text-sm font-semibold text-gray-700">Tamaño del Terreno</label>
+                 <div class="relative">
+                   <input type="number" name="tamanoTerreno" step="0.01" required
+                          class="w-full px-4 py-3 pr-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm hover:shadow-md"
+                          placeholder="0.00"/>
+                   <span class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">m²</span>
+                 </div>
+           </div>
+            <div class="bg-emerald-50 rounded-2xl p-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+           <div class="w-5 h-5 bg-emerald-500 rounded-full"></div>
+           Características del Terreno
+         </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+           <div class="space-y-2">
+             <label class="block text-sm font-semibold text-gray-700">Tipo de Terreno</label>
+             <select name="tipoTerreno" required
+                     class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm hover:shadow-md appearance-none cursor-pointer">
+               <option value="">Seleccione el tipo...</option>
+               <option value="ganadero">🐄 Ganadero</option>
+               <option value="urbano">🏙️ Urbano</option>
+               <option value="mixto">🌆 Mixto</option>
+               <option value="otro">📍 Otro</option>
+             </select>
+           </div>
+
+           <div class="space-y-2">
+             <label class="block text-sm font-semibold text-gray-700">Acceso</label>
+             <select name="acceso" required
+                     class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm hover:shadow-md appearance-none cursor-pointer">
+               <option value="">Seleccione el acceso...</option>
+               <option value="carretera">🛣️ Carretera</option>
+               <option value="trocha">🚗 Trocha</option>
+               <option value="camino">🚶 Camino</option>
+             </select>
+           </div>
+         </div>
+            <div class="space-y-2 mt-6">
+           <label class="block text-sm font-semibold text-gray-700">Topografía del Terreno</label>
+           <textarea name="topografiaTerreno" required rows="3"
+                     class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm hover:shadow-md resize-none"
+                     placeholder="Describa la topografía (plano, ondulado, montañoso, etc.)..."></textarea>
+         </div></div>
+            <div class="bg-amber-50 rounded-2xl p-6">
+         <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+           <div class="w-5 h-5 bg-amber-500 rounded-full"></div>
+           Servicios y Uso Actual
+         </h3>
+
+         <div class="space-y-6">
+           <div class="space-y-2">
+             <label class="block text-sm font-semibold text-gray-700">Servicios Disponibles</label>
+             <textarea name="servicios" required rows="3"
+                       class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm hover:shadow-md resize-none"
+                       placeholder="Agua, luz, internet, gas, etc..."></textarea>
+           </div>
+
+           <div class="space-y-2">
+             <label class="block text-sm font-semibold text-gray-700">Uso Actual</label>
+             <textarea name="usoActual" required rows="3"
+                       class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm hover:shadow-md resize-none"
+                       placeholder="Agricultura, ganadería, baldío, etc..."></textarea>
+           </div>
+         </div>
+       </div>
+        `;
+            }
+            if(tipo === 'finca'){
+                container.innerHTML = `
+            <!-- Espacio Total -->
+<div>
+    <label>Espacio Total (m²)</label>
+    <input type="text" name="espacioTotal" required />
+</div>
+
+<!-- Espacio Construido -->
+<div>
+    <label>Espacio Construido (m²)</label>
+    <input type="text" name="espacioConstruido" required />
+</div>
+
+<!-- Estrato -->
+<div>
+    <label>Estrato</label>
+    <input type="number" name="estratoFinca" min="1" max="6" required />
+</div>
+
+<!-- Número de Habitaciones -->
+<div>
+    <label>Habitaciones</label>
+    <input type="number" name="numeroHabitaciones" min="0" required />
+</div>
+
+<!-- Número de Baños -->
+<div>
+    <label>Baños</label>
+    <input type="number" name="numeroBanos" min="0" required />
+</div>
+
+        `;
+            }
+
+
+            if(tipo === 'ganado'){
+                container.innerHTML='';
+            }
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        };
+
+        window.cerrarModalRegistro = function () {
+            const modal = document.getElementById('registerModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        };
+    });
+
     function toggleUserDropdown() {
         const dropdown = document.getElementById('userDropdown');
         const arrow = document.getElementById('dropdownArrow');
@@ -386,22 +601,21 @@
             document.getElementById('dropdownArrow').style.transform = 'rotate(0deg)';
         }
     });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const params = new URLSearchParams(window.location.search);
+        const productoId = params.get("productoId");
 
-    function openProductModal() {
-        document.getElementById('productModal').classList.remove('hidden');
-        document.getElementById('productModal').classList.add('flex');
-    }
-
-    function closeProductModal() {
-        document.getElementById('productModal').classList.add('hidden');
-        document.getElementById('productModal').classList.remove('flex');
-    }
-
-    document.getElementById('productModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            closeProductModal();
+        if (productoId) {
+            const modal = document.getElementById("modalImagenes");
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
         }
     });
 </script>
+
+
+
 </body>
 </html>

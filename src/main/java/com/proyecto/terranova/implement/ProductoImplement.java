@@ -1,17 +1,21 @@
 package com.proyecto.terranova.implement;
 
-import com.proyecto.terranova.entity.Usuario;
+import com.proyecto.terranova.entity.*;
+import com.proyecto.terranova.repository.CiudadRepository;
 import com.proyecto.terranova.repository.UsuarioRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.proyecto.terranova.service.ProductoService;
 import com.proyecto.terranova.repository.ProductoRepository;
 import com.proyecto.terranova.dto.ProductoDTO;
-import com.proyecto.terranova.entity.Producto;
 
 @Service
 public class ProductoImplement implements ProductoService {
@@ -24,28 +28,49 @@ public class ProductoImplement implements ProductoService {
 
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private ProductoRepository productoRepository;
+    @Autowired
+    private CiudadRepository ciudadRepository;
 
     @Override
-    public ProductoDTO save(ProductoDTO dto) {
-        Producto entidadProducto = modelMapper.map(dto, Producto.class);
-        Usuario usuario = usuarioRepository.findById(dto.getCedulaVendedor())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    public Producto crearProductoBase(Map<String, String> datosForm, String correo , Long idciudad) {
+        Producto producto;
+        String tipo = datosForm.get("tipoProducto");
+        System.out.println("Datos recibidos: " + datosForm);
+        if (tipo == null) throw new IllegalArgumentException("Tipo de producto No espesificado");
 
-        entidadProducto.setVendedor(usuario);
-        Producto entidadGuardada = repository.save(entidadProducto);
-        return modelMapper.map(entidadGuardada, ProductoDTO.class);
+        switch (tipo.toLowerCase()){
+            case "terreno":
+                producto = modelMapper.map(datosForm, Terreno.class);
+                break;
+            case "finca":
+                producto = modelMapper.map(datosForm, Finca.class);
+                break;
+            case "ganado" :
+                producto = modelMapper.map(datosForm, Ganado.class);
+                break;
+            default:
+                throw new IllegalArgumentException("Tipo de Producto No valido");
+        }
+
+        Ciudad ciudad = ciudadRepository.findById(idciudad).orElseThrow();
+        producto.setCiudad(ciudad);
+        producto.setFechaPublicacion(LocalDate.now());
+        producto.setEstado("Disponible");
+
+        Usuario vendedor = usuarioRepository.findByEmail(correo);
+        if (vendedor == null) {
+            throw new IllegalArgumentException("Usuario no encontrado");
+        }
+        System.out.println("Cédula del vendedor: " + vendedor.getCedula());
+        producto.setVendedor(vendedor);
+
+        System.out.println("Producto mapeado: " + producto);
+
+        return productoRepository.save(producto);
     }
 
-    @Override
-    public ProductoDTO update(Long id, ProductoDTO dto) {
-        Producto entidadProducto = repository.findById(id)
-        .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
-
-    	modelMapper.map(dto, entidadProducto);
-
-    	Producto entidadActualizada = repository.save(entidadProducto);
-    	return modelMapper.map(entidadActualizada, ProductoDTO.class);
-    }
 
     @Override
     public Producto findById(Long id) {
@@ -53,10 +78,8 @@ public class ProductoImplement implements ProductoService {
     }
 
     @Override
-    public List<ProductoDTO> findAll() {
-        return repository.findAll().stream()
-            .map(entity -> modelMapper.map(entity, ProductoDTO.class))
-            .collect(Collectors.toList());
+    public List<Producto> findAll() {
+        return repository.findAll();
     }
 
     @Override
@@ -81,5 +104,55 @@ public class ProductoImplement implements ProductoService {
     @Override
     public long count() {
         return repository.count();
+    }
+
+    @Override
+    public void actualizarProducto(Producto prodForm) {
+        Producto original = productoRepository.findById(prodForm.getIdProducto())
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+
+        original.setNombreProducto(prodForm.getNombreProducto());
+        original.setPrecioProducto(prodForm.getPrecioProducto());
+        original.setEstado(prodForm.getEstado());
+        original.setDescripcion(prodForm.getDescripcion());
+
+
+        if (prodForm.getCiudad() != null && prodForm.getCiudad().getIdCiudad() != null) {
+            Ciudad ciudad = ciudadRepository.findById(prodForm.getCiudad().getIdCiudad())
+                    .orElseThrow(() -> new RuntimeException("Ciudad no encontrada"));
+            original.setCiudad(ciudad);
+        }
+
+
+        if (original instanceof Terreno terrenoOriginal && prodForm instanceof Terreno terrenoNuevo) {
+            terrenoOriginal.setTamanoTerreno(terrenoNuevo.getTamanoTerreno());
+            terrenoOriginal.setUsoActual(terrenoNuevo.getUsoActual());
+            terrenoOriginal.setTopografiaTerreno(terrenoNuevo.getTopografiaTerreno());
+            terrenoOriginal.setServicios(terrenoNuevo.getServicios());
+            terrenoOriginal.setTipoTerreno(terrenoNuevo.getTipoTerreno());
+            terrenoOriginal.setAcceso(terrenoNuevo.getAcceso());
+
+        } else if (original instanceof Finca fincaOriginal && prodForm instanceof Finca fincaNueva) {
+            fincaOriginal.setEspacioTotal(fincaNueva.getEspacioTotal());
+            fincaOriginal.setEspacioConstruido(fincaNueva.getEspacioConstruido());
+            fincaOriginal.setEstratoFinca(fincaNueva.getEstratoFinca());
+            fincaOriginal.setNumeroHabitaciones(fincaNueva.getNumeroHabitaciones());
+            fincaOriginal.setNumeroBanos(fincaNueva.getNumeroBanos());
+
+        } else if (original instanceof Ganado ganadoOriginal && prodForm instanceof Ganado ganadoNuevo) {
+            ganadoOriginal.setRazaGanado(ganadoNuevo.getRazaGanado());
+            ganadoOriginal.setPesoGanado(ganadoNuevo.getPesoGanado());
+            ganadoOriginal.setEdadGanado(ganadoNuevo.getEdadGanado());
+            ganadoOriginal.setGeneroGanado(ganadoNuevo.getGeneroGanado());
+            ganadoOriginal.setTipoGanado(ganadoNuevo.getTipoGanado());
+            ganadoOriginal.setEstadoSanitario(ganadoNuevo.getEstadoSanitario());
+            ganadoOriginal.setCantidad(ganadoNuevo.getCantidad());
+        }
+        productoRepository.save(original);
+    }
+
+    @Override
+    public List<Producto> obtenerTodasMenosVendedor(Usuario vendedor) {
+        return repository.findByVendedorNot(vendedor);
     }
 }

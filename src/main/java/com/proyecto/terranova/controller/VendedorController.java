@@ -3,6 +3,7 @@ package com.proyecto.terranova.controller;
 import com.proyecto.terranova.config.enums.EstadoCitaEnum;
 import com.proyecto.terranova.config.enums.RolEnum;
 import com.proyecto.terranova.entity.*;
+import com.proyecto.terranova.repository.CiudadRepository;
 import com.proyecto.terranova.service.*;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,9 @@ public class VendedorController {
     ComprobanteService comprobanteService;
 
     @Autowired
+    CiudadRepository ciudadRepository;
+
+    @Autowired
     NotificacionService notificacionService;
 
     @ModelAttribute("esVendedor")
@@ -75,7 +79,11 @@ public class VendedorController {
     }
 
     @GetMapping("/dashboard")
-    public String indexVendedor(Model model) {
+    public String indexVendedor(@RequestParam(required = false) Long productoId,Model model) {
+        if (productoId != null) {
+            model.addAttribute("productoId", productoId);
+        }
+        model.addAttribute("ciudades", ciudadRepository.findAll());
         model.addAttribute("dashboard", true);
         return "vendedor/dashboard";
     }

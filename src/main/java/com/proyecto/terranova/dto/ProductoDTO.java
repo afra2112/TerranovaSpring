@@ -3,6 +3,7 @@ package com.proyecto.terranova.dto;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 public class ProductoDTO {
@@ -24,4 +25,13 @@ public class ProductoDTO {
     private String cedulaVendedor;
 
     private Long idUbicacion;
+
+    private TerrenoDTO terrenoDTO;
+
+    private FincaDTO  fincaDTO;
+
+    private GanadoDTO ganadoDTO;
+
+    private List<ImagenDTO> imagenes;
+
 }

@@ -45,7 +45,7 @@ public class CompradorController {
     NotificacionService notificacionService;
 
     @Autowired
-    EmailService emailService;
+    ProductoService productoService;
 
     @Autowired
     VentaService ventaService;
@@ -78,6 +78,7 @@ public class CompradorController {
 
         Map<String, Integer> estadisticas = compradorService.prepararIndex(usuario(authentication).getCedula());
         model.addAllAttributes(estadisticas);
+        model.addAttribute("productos", productoService.obtenerTodasMenosVendedor(usuario(authentication)));
         return "comprador/principalComprador";
     }
 

@@ -1,11 +1,15 @@
 package com.proyecto.terranova.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "ganados")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @DiscriminatorValue("GANADO")
 public class Ganado extends Producto {
 
@@ -23,9 +27,6 @@ public class Ganado extends Producto {
 
     @Column(nullable = false, length = 30)
     private String tipoGanado;
-
-    @Column(nullable = false)
-    private boolean prenez;
 
     @Column(nullable = false)
     private String estadoSanitario;

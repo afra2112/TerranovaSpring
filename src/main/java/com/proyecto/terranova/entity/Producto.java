@@ -1,7 +1,9 @@
 package com.proyecto.terranova.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -10,6 +12,7 @@ import java.util.List;
 @Entity
 @Table(name = "productos")
 @Data
+@NoArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "tipo_producto", discriminatorType = DiscriminatorType.STRING)
 public abstract class Producto {
@@ -20,6 +23,7 @@ public abstract class Producto {
 
     @Column(length = 30, nullable = false)
     private String nombreProducto;
+
 
     @Column(length = 20, nullable = false)
     private Long precioProducto;
@@ -41,8 +45,8 @@ public abstract class Producto {
     @JoinColumn(name = "idCiudad")
     private Ciudad ciudad;
 
-    @OneToMany(mappedBy = "producto")
-    private List<Imagen> imagenes;
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Imagen> imagenes = new ArrayList<>();
 
     @OneToMany(mappedBy = "producto",  cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Disponibilidad> disponibilidades = new ArrayList<>();

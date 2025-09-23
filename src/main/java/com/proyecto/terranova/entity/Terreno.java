@@ -27,7 +27,4 @@ public class Terreno extends Producto {
     @Column(nullable = false)
     private String usoActual;
 
-    @OneToOne
-    @JoinColumn(name = "idProducto")
-    private Producto producto;
 }

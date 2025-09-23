@@ -21,8 +21,8 @@ public class ProductoControllerRest {
 
 
     @GetMapping("/listarTodo")
-    public ResponseEntity<List<ProductoDTO>> obtenerTodosLosProductos(){
-        List<ProductoDTO> entidadesProducto = serviceProducto.findAll();
+    public ResponseEntity<List<Producto>> obtenerTodosLosProductos(){
+        List<Producto> entidadesProducto = serviceProducto.findAll();
         return ResponseEntity.ok(entidadesProducto);
     }
 
@@ -32,11 +32,7 @@ public class ProductoControllerRest {
         return ResponseEntity.ok(dtoProducto);
     }
 
-    @PostMapping("/crearProducto")
-    public ResponseEntity<ProductoDTO> crearProducto(@RequestBody ProductoDTO dtoProducto){
-        serviceProducto.save(dtoProducto);
-        return ResponseEntity.ok(dtoProducto);
-    }
+
 
     @DeleteMapping("/eliminarProducto/{id}")
     public ResponseEntity<Long> eliminarProducto(@PathVariable Long id){
