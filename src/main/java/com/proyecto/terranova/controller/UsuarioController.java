@@ -6,6 +6,7 @@ import com.proyecto.terranova.entity.Usuario;
 import com.proyecto.terranova.service.NotificacionService;
 import com.proyecto.terranova.service.RolService;
 import com.proyecto.terranova.service.UsuarioService;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -77,7 +78,7 @@ public class UsuarioController {
     }
 
     @PostMapping("/mi-perfil/cambiar-foto")
-    public String cambiarFoto(@RequestParam(name = "foto") MultipartFile foto, Authentication authentication) throws IOException {
+    public String cambiarFoto(@RequestParam(name = "foto") MultipartFile foto, Authentication authentication) throws IOException, MessagingException {
         String nombreArchivo = UUID.randomUUID().toString() + "_" + foto.getOriginalFilename();
         Path rutaImagen = Paths.get("imagenes").resolve(nombreArchivo);
 
@@ -95,7 +96,7 @@ public class UsuarioController {
     }
 
     @PostMapping("/mi-perfil/editar")
-    public String editar(@ModelAttribute Usuario usuarioNuevo, Authentication authentication) {
+    public String editar(@ModelAttribute Usuario usuarioNuevo, Authentication authentication) throws MessagingException, IOException {
         Usuario usuario = usuario(authentication);
         usuario.setNombres(usuarioNuevo.getNombres());
         usuario.setApellidos(usuarioNuevo.getApellidos());

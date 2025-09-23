@@ -1,6 +1,8 @@
 package com.proyecto.terranova.service;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import com.proyecto.terranova.dto.NotificacionDTO;
 import com.proyecto.terranova.dto.NotificacionPeticion;
@@ -35,10 +37,9 @@ public interface NotificacionService {
     void notificacionVentaGenerada(Venta venta) throws MessagingException, IOException;
     void notificacionVentaModificada(Venta venta) throws MessagingException, IOException;
     void notificacionPeticionFinalizacionVenta(Venta venta) throws MessagingException, IOException;
-    void notificacionDisponibilidadRegistrada(Disponibilidad disponibilidad);
-    void notificacionDisponibilidadEliminada(Disponibilidad disponibilidad);
-    void notificacionFotoPerfilCambiada(Usuario usuario);
-    void notificacionDatosPersonalesActualizados(Usuario usuario);
+    void notificacionDisponibilidadRegistrada(Disponibilidad disponibilidad, String fecha, String hora) throws MessagingException, IOException;
+    void notificacionFotoPerfilCambiada(Usuario usuario) throws MessagingException, IOException;
+    void notificacionDatosPersonalesActualizados(Usuario usuario) throws MessagingException, IOException;
     void notificacionPedirModificarVenta(Venta venta, String razon) throws MessagingException, IOException;
     void notificacionCitaFinalizada(Cita cita) throws MessagingException, IOException ;
 }

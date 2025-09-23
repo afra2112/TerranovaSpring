@@ -503,23 +503,63 @@ public class NotificacionImplement implements NotificacionService {
     }
 
     @Override
-    public void notificacionDisponibilidadRegistrada(Disponibilidad disponibilidad) {
+    public void notificacionDisponibilidadRegistrada(Disponibilidad disponibilidad, String fecha, String hora) throws MessagingException, IOException {
+        NotificacionPeticion notificacionPeticion = buildNotificacion(
+                disponibilidad.getIdDisponibilidad(),
+                "Has registrado una disponibilidad para el dia "+fecha+". A las "+hora,
+                "Disponibilidades",
+                "Agregaste una disponibilidad",
+                disponibilidad.getProducto().getVendedor(),
+                "/vendedor/mi-calendario",
+                "Agregaste una disponibilidad",
+                "http://localhost:8080/vendedor/mi-calendario",
+                "disponibilidadCreada",
+                disponibilidad.getProducto().getNombreProducto(),
+                "ninguno",
+                disponibilidad.getProducto().getVendedor().getNombres()
+        );
 
+        crearNotificacionAutomatica(notificacionPeticion);
     }
 
     @Override
-    public void notificacionDisponibilidadEliminada(Disponibilidad disponibilidad) {
+    public void notificacionFotoPerfilCambiada(Usuario usuario) throws MessagingException, IOException {
+        NotificacionPeticion notificacionPeticion = buildNotificacion(
+                0L,
+                "Cambiaste tu foto de perfil exitosamente.",
+                "Sistema",
+                "Cambio de foto de datos personales",
+                usuario,
+                "/usuarios/mi-perfil?id=1",
+                "Cambiaste tu foto.",
+                "http://localhost:8080/usuarios/mi-perfil?id=1",
+                "fotoCambiada",
+                "ninguno",
+                "ninguno",
+                usuario.getNombres()
+        );
 
+        crearNotificacionAutomatica(notificacionPeticion);
     }
 
     @Override
-    public void notificacionFotoPerfilCambiada(Usuario usuario) {
+    public void notificacionDatosPersonalesActualizados(Usuario usuario) throws MessagingException, IOException {
+        NotificacionPeticion notificacionPeticion = buildNotificacion(
+                0L,
+                "Cambiaste datos de tu informacion personal, puedes ir a Mi Perfil para verlos reflejados.",
+                "Sistema",
+                "Cambio de datos personales",
+                usuario,
+                "/usuarios/mi-perfil?id=1",
+                "Cambiaste tu info personal.",
+                "http://localhost:8080/usuarios/mi-perfil?id=1",
+                "infoCambiada",
+                "ninguno",
+                "ninguno",
+                usuario.getNombres()
+        );
 
-    }
-
-    @Override
-    public void notificacionDatosPersonalesActualizados(Usuario usuario) {
-
+        crearNotificacionAutomatica(notificacionPeticion);
     }
 
     @Override

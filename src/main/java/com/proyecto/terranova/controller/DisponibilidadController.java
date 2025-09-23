@@ -7,11 +7,13 @@ import com.proyecto.terranova.service.DisponibilidadService;
 import com.proyecto.terranova.service.NotificacionService;
 import com.proyecto.terranova.service.ProductoService;
 import com.proyecto.terranova.service.UsuarioService;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -46,7 +48,7 @@ public class DisponibilidadController {
             @RequestParam(name = "idProducto") Long idProducto,
             @RequestParam(name = "vieneDe", required = false) String vieneDe,
             Authentication authentication
-    ){
+    ) throws MessagingException, IOException {
         Disponibilidad disponibilidad = new Disponibilidad();
         disponibilidad.setFecha(fecha);
         disponibilidad.setHora(hora);
@@ -57,7 +59,7 @@ public class DisponibilidadController {
         DateTimeFormatter fechaFormatter = DateTimeFormatter.ofPattern("EEEE d MMMM", new Locale("es", "ES"));
         DateTimeFormatter horaFormatter = DateTimeFormatter.ofPattern("h:mm a", new Locale("es", "ES"));
 
-        notificacionService.notificacionDisponibilidadRegistrada(disponibilidad);
+        notificacionService.notificacionDisponibilidadRegistrada(disponibilidad, fechaFormatter.format(disponibilidad.getFecha()), horaFormatter.format(disponibilidad.getHora()));
 
         if(vieneDe != null && vieneDe.equals("calendario")){
             return "redirect:/vendedor/mi-calendario";
@@ -72,13 +74,6 @@ public class DisponibilidadController {
             @RequestParam(name = "vieneDe", required = false) String vieneDe,
             Authentication authentication
     ){
-        Disponibilidad disponibilidad = disponibilidadService.findById(idDisponibilidad);
-
-        DateTimeFormatter fechaFormatter = DateTimeFormatter.ofPattern("EEEE d MMMM", new Locale("es", "ES"));
-        DateTimeFormatter horaFormatter = DateTimeFormatter.ofPattern("h:mm a", new Locale("es", "ES"));
-
-        notificacionService.notificacionDisponibilidadEliminada(disponibilidad);
-
         disponibilidadService.delete(idDisponibilidad);
 
         if(vieneDe != null && vieneDe.equals("calendario")){
