@@ -79,12 +79,18 @@ public class VendedorController {
     }
 
     @GetMapping("/dashboard")
-    public String indexVendedor(@RequestParam(required = false) Long productoId,Model model) {
+    public String indexVendedor(@RequestParam(required = false) Long productoId,Model model, Authentication authentication) {
+        Usuario usuario = usuario(authentication);
+
         if (productoId != null) {
             model.addAttribute("productoId", productoId);
         }
         model.addAttribute("ciudades", ciudadRepository.findAll());
         model.addAttribute("dashboard", true);
+        model.addAttribute("totalVentas", ventaService.encontrarPorVendedor(usuario).size());
+        model.addAttribute("productos", productoService.obtenerTodosPorVendedor(usuario));
+        model.addAttribute("totalCitas", citaService.encontrarPorVendedor(usuario, true).size());
+        model.addAttribute("notificaciones", notificacionService.obtenerPorUsuarioYLeido(usuario,true));
         return "vendedor/dashboard";
     }
 

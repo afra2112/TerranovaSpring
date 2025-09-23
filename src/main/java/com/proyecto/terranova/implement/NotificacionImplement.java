@@ -128,6 +128,11 @@ public class NotificacionImplement implements NotificacionService {
     }
 
     @Override
+    public List<Notificacion> obtenerPorUsuarioYLeido(Usuario usuario, boolean leido) {
+        return repository.findByUsuarioAndLeidoFalseAndActivoOrderByFechaNotificacionDesc(usuario, true);
+    }
+
+    @Override
     public int contarPorUsuarioYTipo(Usuario usuario, String tipo) {
         return repository.countByUsuarioAndTipoAndActivo(usuario, tipo, true);
     }

@@ -23,6 +23,7 @@ public interface NotificacionService {
     void marcarComoLeida(Long idNotificacion);
     void marcarTodasComoLeidas(Usuario usuario);
     List<Notificacion> obtenerPorUsuarioYActivo(Usuario usuario, boolean activo);
+    List<Notificacion> obtenerPorUsuarioYLeido(Usuario usuario, boolean leido);
     int contarPorUsuarioYTipo(Usuario usuario, String tipo);
     List<Notificacion> obtenerPorUsuarioYTipo(Usuario usuario, String tipo);
     int contarNoLeidasPorUsuario(Usuario usuario, boolean leido);
