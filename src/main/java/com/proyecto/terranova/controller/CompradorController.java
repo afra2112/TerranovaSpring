@@ -3,6 +3,7 @@ package com.proyecto.terranova.controller;
 import com.proyecto.terranova.config.enums.RolEnum;
 import com.proyecto.terranova.entity.Usuario;
 import com.proyecto.terranova.service.CompradorService;
+import com.proyecto.terranova.service.ProductoService;
 import com.proyecto.terranova.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,6 +29,9 @@ public class CompradorController {
 
     @Autowired
     UsuarioService usuarioService;
+
+    @Autowired
+    ProductoService productoService;
 
     @ModelAttribute("usuario")
     public Usuario usuario(Authentication authentication){
@@ -57,8 +61,11 @@ public class CompradorController {
 
         Map<String, Integer> estadisticas = compradorService.prepararIndex(usuario(authentication).getCedula());
         model.addAllAttributes(estadisticas);
+        model.addAttribute("productos", productoService.obtenerTodasMenosVendedor(usuario(authentication)));
         return "comprador/principalComprador";
     }
+
+
 
     @PostMapping("/mi-perfil/ser-vendedor")
     public String serVendedor(Authentication authentication, RedirectAttributes redirectAttributes) {

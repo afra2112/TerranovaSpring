@@ -1,8 +1,8 @@
 package com.proyecto.terranova.implement;
 
 import com.proyecto.terranova.entity.*;
-import com.proyecto.terranova.repository.CiudadRepository;
-import com.proyecto.terranova.repository.UsuarioRepository;
+import com.proyecto.terranova.repository.*;
+import com.proyecto.terranova.service.UsuarioService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.proyecto.terranova.service.ProductoService;
-import com.proyecto.terranova.repository.ProductoRepository;
 import com.proyecto.terranova.dto.ProductoDTO;
 
 @Service
@@ -22,16 +21,22 @@ public class ProductoImplement implements ProductoService {
 
     @Autowired
     private ProductoRepository repository;
-
     @Autowired
     private UsuarioRepository usuarioRepository;
-
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
     private ProductoRepository productoRepository;
     @Autowired
     private CiudadRepository ciudadRepository;
+    @Autowired
+    private ImagenRepository imagenRepository;
+    @Autowired
+    private TerrenoRepository terrenoRepository;
+    @Autowired
+    private GanadoRepository ganadoRepository;
+    @Autowired
+    private FincaRepository fincaRepository;
 
     @Override
     public Producto crearProductoBase(Map<String, String> datosForm, String correo , Long idciudad) {
@@ -70,7 +75,6 @@ public class ProductoImplement implements ProductoService {
 
         return productoRepository.save(producto);
     }
-
 
     @Override
     public Producto findById(Long id) {
@@ -150,4 +154,35 @@ public class ProductoImplement implements ProductoService {
         }
         productoRepository.save(original);
     }
+    @Override
+    public List<Producto> obtenerTodasMenosVendedor(Usuario vendedor) {
+        return repository.findByVendedorNot(vendedor);
+    }
+
+    @Override
+    public void eliminarProducto(Long idProducto, String correo) {
+        Producto producto = productoRepository.findById(idProducto)
+                .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
+
+        Usuario vendedor = usuarioRepository.findByEmail(correo);
+        if (vendedor == null || !producto.getVendedor().getCedula().equals(vendedor.getCedula())) {
+            throw new IllegalArgumentException("No tienes permiso para eliminar este producto.");
+        }
+
+        // Eliminar imágenes asociadas
+        List<Imagen> imagenes = imagenRepository.findByProducto(producto);
+        imagenRepository.deleteAll(imagenes);
+
+        // Eliminar entidad específica si aplica
+        if (producto instanceof Terreno) {
+            terrenoRepository.delete((Terreno) producto);
+        } else if (producto instanceof Ganado) {
+            ganadoRepository.delete((Ganado) producto);
+        } else if (producto instanceof Finca) {
+            fincaRepository.delete((Finca) producto);
+        } else {
+            productoRepository.delete(producto); // fallback
+        }
+    }
+
 }

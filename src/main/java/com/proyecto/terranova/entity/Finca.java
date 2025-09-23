@@ -26,7 +26,4 @@ public class Finca extends Producto {
     @Column(nullable = false)
     private int numeroBanos;
 
-    @OneToOne
-    @JoinColumn(name = "idProducto")
-    private Producto producto;
 }

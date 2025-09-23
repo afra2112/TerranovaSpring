@@ -87,8 +87,6 @@ public class ProductoController {
         return "redirect:/vendedor/productos";
     }
 
-
-
     @PostMapping("/guardarP")
     public String guardarProducto(@RequestParam Map<String,String> formdatos ,Authentication authentication,  @RequestParam(name = "idCiudad") Long idCiudad){
 
@@ -96,6 +94,17 @@ public class ProductoController {
         Producto producto = productoService.crearProductoBase(formdatos, correo, idCiudad);
 
         return "redirect:/vendedor/dashboard?productoId=" + producto.getIdProducto();
+    }
+
+    @PostMapping("/eliminar/{id}")
+    public String eliminarProducto(@PathVariable Long id, Authentication auth, RedirectAttributes redirect) {
+        try {
+            productoService.eliminarProducto(id, auth.getName());
+            redirect.addFlashAttribute("exito", "Producto eliminado correctamente.");
+        } catch (IllegalArgumentException e) {
+            redirect.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/vendedor/productos";
     }
 
 

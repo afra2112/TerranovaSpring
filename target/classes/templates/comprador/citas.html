@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Citas - Comprador</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+        }
+        .gradient-hero {
+            background: linear-gradient(135deg, #064e3b 0%, #059669 50%, #10b981 100%);
+        }
+        .modal-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .modal-backdrop {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card {
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .tab-button {
+            transition: all 0.3s ease;
+        }
+
+        .tab-button:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-animate {
+            transition: all 0.3s ease;
+        }
+
+        .btn-animate:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+<!-- Reemplazando header con fragment de navbar comprador -->
+<div th:replace="fragments/comprador/navbarComprador :: navbarComprador"></div>
+
+<div class="ml-64 flex flex-col min-h-screen">
+    <!-- Main Content -->
+    <main class="w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="gradient-hero rounded-3xl p-8 mb-8 text-white relative overflow-hidden">
+            <div class="absolute inset-0 bg-black/10"></div>
+            <div class="relative z-10">
+                <h1 class="text-4xl font-bold mb-3">Mis Citas</h1>
+                <p class="text-emerald-100 text-lg">Gestiona tus citas programadas con compradores de manera eficiente</p>
+            </div>
+            <div class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full"></div>
+            <div class="absolute -bottom-5 -left-5 w-32 h-32 bg-white/5 rounded-full"></div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 mb-8 ">
+            <div class="flex flex-wrap items-center gap-4">
+                <h3 class="font-semibold text-gray-900 flex items-center gap-2">
+                    <i class='bx bx-filter-alt text-emerald-600'></i>
+                    Filtrar por estado:
+                </h3>
+                <button class="px-6 py-2.5 border-2 border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-all tab-button active" data-tab="todas">
+                    Todas
+                </button>
+                <button class="px-6 py-2.5 border-2 border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-all tab-button" data-tab="reservadas">
+                    Reservadas
+                </button>
+                <button class="px-6 py-2.5 border-2 border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-all tab-button" data-tab="finalizadas">
+                    Finalizadas
+                </button>
+                <button class="px-6 py-2.5 border-2 border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-all tab-button" data-tab="canceladas">
+                    Canceladas
+                </button>
+            </div>
+        </div>
+
+        <!-- Agregando animaciones hover y mejorando diseño de cards -->
+        <div class="space-y-6">
+
+            <!-- Citas Finalizadas -->
+            <div th:each="cita : ${citas}" th:if="${cita.estadoCita.name() == 'FINALIZADA'}" class="cita-card finalizada fade-in">
+                <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden card-hover">
+                    <div class="p-6">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center">
+                                    <img th:src="${#lists.isEmpty(cita.producto.imagenes) ? '/placeholder.svg?height=200&width=400' : cita.producto.imagenes.get(0).nombreArchivo}"
+                                         alt="Imagen del producto"
+                                         class="w-full h-48 object-cover rounded">
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-900 mb-1" th:text="${cita.producto.nombreProducto}">Producto Ejemplo</h3>
+                                    <p class="text-sm text-gray-600 mb-1">
+                                        <i class="fas fa-user mr-1"></i>
+                                        Vendedor: <span class="font-medium" th:text="${cita.producto.vendedor.nombres}">Carlos López</span>
+                                    </p>
+                                    <p class="text-sm text-gray-600 mb-1">
+                                        <i class="fas fa-map-marker-alt mr-1"></i>
+                                        <span th:text="${cita.producto.ciudad.nombreCiudad}">Cali</span>
+                                    </p>
+                                    <p class="text-sm text-gray-500 line-clamp-2" th:text="${cita.producto.descripcion}">Descripción del producto...</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 mb-2">
+                                    <i class="fas fa-check-double mr-1"></i>
+                                    Finalizada
+                                </span>
+                                <p class="text-2xl font-bold text-green-600" th:text="'$' + ${#numbers.formatDecimal(cita.producto.precioProducto, 0, 'COMMA', 0, 'POINT')}">$300.000</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-gradient-to-r from-green-50 to-green-100 rounded-xl p-4 mb-4">
+                            <div class="flex items-center justify-center py-2 mb-3">
+                                <i class="fas fa-check-circle text-green-600 text-2xl mr-3"></i>
+                                <p class="text-green-800 font-bold text-lg">¡Cita completada exitosamente!</p>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-700">
+                                        <i class="fas fa-calendar mr-1"></i>
+                                        Fecha
+                                    </p>
+                                    <p class="text-sm font-bold text-gray-900" th:text="${#strings.capitalize(#temporals.format(cita.disponibilidad.fecha, 'EEEE d MMMM', T(java.util.Locale).forLanguageTag('es-ES')))}"></p>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-700">
+                                        <i class="fas fa-clock mr-1"></i>
+                                        Hora
+                                    </p>
+                                    <p class="text-sm font-bold text-gray-900" th:text="${#temporals.format(cita.disponibilidad.hora, 'HH:mm')}">09:00</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex space-x-3">
+                            <form th:action="@{/comprador/generar-venta}" method="post" class="flex-1 gradient-bg text-white px-4 py-3 rounded-xl hover:opacity-90 btn-animate font-medium">
+                                <input type="hidden" name="idCita" th:value="${cita.idCita}">
+                                <button type="submit">
+                                    <i class="fas fa-shopping-cart mr-2"></i>
+                                    Me Interesa Comprar
+                                </button>
+                            </form>
+                            <button class="flex-1 bg-yellow-600 text-white px-4 py-3 rounded-xl hover:bg-yellow-700 btn-animate font-medium">
+                                <i class="fas fa-star mr-2"></i>
+                                Calificar Vendedor
+                            </button>
+                            <button class="flex-1 bg-gray-600 text-white px-4 py-3 rounded-xl hover:bg-gray-700 btn-animate font-medium">
+                                <i class="fas fa-trash mr-2"></i>
+                                Eliminar
+                            </button>
+                            <button class="px-4 py-3 border-2 border-gray-300 rounded-xl hover:bg-gray-50 btn-animate">
+                                <i class="fas fa-eye text-gray-600"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Citas Canceladas -->
+            <div th:each="cita : ${citas}" th:if="${cita.estadoCita.name() == 'CANCELADA'}" class="cita-card cancelada fade-in">
+                <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden opacity-75 card-hover">
+                    <div class="p-6">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center">
+                                    <img th:src="${#lists.isEmpty(cita.producto.imagenes) ? '/placeholder.svg?height=200&width=400' : cita.producto.imagenes.get(0).nombreArchivo}"
+                                         alt="Imagen del producto"
+                                         class="w-full h-48 object-cover rounded">
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-700 mb-1" th:text="${cita.producto.nombreProducto}">Producto Ejemplo</h3>
+                                    <p class="text-sm text-gray-500 mb-1">
+                                        <i class="fas fa-user mr-1"></i>
+                                        Vendedor: <span class="font-medium" th:text="${cita.producto.vendedor.nombres}">Ana Martínez</span>
+                                    </p>
+                                    <p class="text-sm text-gray-500 mb-1">
+                                        <i class="fas fa-map-marker-alt mr-1"></i>
+                                        <span th:text="${cita.producto.ciudad.nombreCiudad}">Barranquilla</span>
+                                    </p>
+                                    <p class="text-sm text-gray-400 line-clamp-2" th:text="${cita.producto.descripcion}">Descripción del producto...</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 mb-2">
+                                    <i class="fas fa-times-circle mr-1"></i>
+                                    Cancelada
+                                </span>
+                                <p class="text-2xl font-bold text-gray-500" th:text="'$' + ${#numbers.formatDecimal(cita.producto.precioProducto, 0, 'COMMA', 0, 'POINT')}">$120.000</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-gradient-to-r from-red-50 to-red-100 rounded-xl p-4 mb-4">
+                            <div class="flex items-center justify-center py-2 mb-3">
+                                <i class="fas fa-times-circle text-red-600 text-2xl mr-3"></i>
+                                <p class="text-red-800 font-bold text-lg">Cita cancelada</p>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-700">
+                                        <i class="fas fa-calendar mr-1"></i>
+                                        Fecha
+                                    </p>
+                                    <p class="text-sm font-bold text-gray-900" th:text="${#strings.capitalize(#temporals.format(cita.disponibilidad.fecha, 'EEEE d MMMM', T(java.util.Locale).forLanguageTag('es-ES')))}"></p>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-700">
+                                        <i class="fas fa-clock mr-1"></i>
+                                        Hora
+                                    </p>
+                                    <p class="text-sm font-bold text-gray-900" th:text="${#temporals.format(cita.disponibilidad.hora, 'HH:mm')}">16:00</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex space-x-3">
+                            <button class="flex-1 gradient-bg text-white px-4 py-3 rounded-xl hover:opacity-90 btn-animate font-medium">
+                                <i class="fas fa-eye mr-2"></i>
+                                Ver Producto
+                            </button>
+                            <button class="flex-1 bg-gray-600 text-white px-4 py-3 rounded-xl hover:bg-gray-700 btn-animate font-medium">
+                                <i class="fas fa-trash mr-2"></i>
+                                Eliminar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Citas Reservadas -->
+            <div th:each="cita : ${citas}" th:if="${cita.estadoCita.name() == 'RESERVADA'}" class="cita-card reservada fade-in">
+                <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden card-hover">
+                    <div class="p-6">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-20 h-20 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center">
+                                    <img th:src="${#lists.isEmpty(cita.producto.imagenes) ? '/placeholder.svg?height=200&width=400' : cita.producto.imagenes.get(0).nombreArchivo}"
+                                         alt="Imagen del producto"
+                                         class="w-full h-48 object-cover rounded">
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-900 mb-1" th:text="${cita.producto.nombreProducto}">Producto Ejemplo</h3>
+                                    <p class="text-sm text-gray-600 mb-1">
+                                        <i class="fas fa-user mr-1"></i>
+                                        Vendedor: <span class="font-medium" th:text="${cita.producto.vendedor.nombres}">Juan Pérez</span>
+                                    </p>
+                                    <p class="text-sm text-gray-600 mb-1">
+                                        <i class="fas fa-map-marker-alt mr-1"></i>
+                                        <span th:text="${cita.producto.ciudad.nombreCiudad}">Bogotá</span>
+                                    </p>
+                                    <p class="text-sm text-gray-500 line-clamp-2" th:text="${cita.producto.descripcion}">Descripción del producto...</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 mb-2">
+                                    <i class="fas fa-clock mr-1"></i>
+                                    Reservada
+                                </span>
+                                <p class="text-2xl font-bold text-green-600" th:text="'$' + ${#numbers.formatDecimal(cita.producto.precioProducto, 0, 'COMMA', 0, 'POINT')}">$150.000</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-4 mb-4">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-700">
+                                        <i class="fas fa-calendar mr-1"></i>
+                                        Fecha
+                                    </p>
+                                    <p class="text-sm font-bold text-gray-900" th:text="${#strings.capitalize(#temporals.format(cita.disponibilidad.fecha, 'EEEE d MMMM', T(java.util.Locale).forLanguageTag('es-ES')))}"></p>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-700">
+                                        <i class="fas fa-clock mr-1"></i>
+                                        Hora
+                                    </p>
+                                    <p class="text-sm font-bold text-gray-900" th:text="${#temporals.format(cita.disponibilidad.hora, 'HH:mm')}">10:00</p>
+                                </div>
+                            </div>
+                            <div class="mt-3" th:if="${cita.disponibilidad.descripcion}">
+                                <p class="text-sm font-medium text-gray-700">
+                                    <i class="fas fa-info-circle mr-1"></i>
+                                    Descripción
+                                </p>
+                                <p class="text-sm text-gray-900" th:text="${cita.disponibilidad.descripcion}">Reunión para revisar el producto</p>
+                            </div>
+                        </div>
+
+                        <div class="flex space-x-3">
+                            <button onclick="openAvailabilityModal()" class="flex-1 gradient-bg text-white px-4 py-3 rounded-xl hover:opacity-90 btn-animate font-medium">
+                                <i class="fas fa-calendar-alt mr-2"></i>
+                                Reprogramar
+                            </button>
+                            <button th:onclick="'openCancelModal(' + ${cita.idCita} + ')'" class="flex-1 bg-red-500 text-white px-4 py-3 rounded-xl hover:bg-red-600 btn-animate font-medium">
+                                <i class="fas fa-times mr-2"></i>
+                                Cancelar
+                            </button>
+                            <button class="px-4 py-3 border-2 border-gray-300 rounded-xl hover:bg-gray-50 btn-animate">
+                                <i class="fas fa-eye text-gray-600"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div id="availabilityModal" class="fixed hidden inset-0 modal-backdrop flex items-center justify-center z-50">
+                    <div class="modal-content rounded-3xl p-8 max-w-2xl w-full mx-4 shadow-2xl max-h-[90vh] overflow-y-auto">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-2xl font-bold text-gray-800" th:text="${cita.producto.nombreProducto}"></h3>
+                            <button onclick="closeAvailabilityModal()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors"> <i class='bx bx-x text-gray-600'></i> </button>
+                        </div>
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <h4 class="text-lg font-semibold text-gray-800">Disponibilidades</h4>
+                            </div>
+                            <div class="space-y-3">
+                                <div th:each="disponibilidad : ${cita.disponibilidad.producto.disponibilidades}" th:if="${disponibilidad.idDisponibilidad != cita.disponibilidad.idDisponibilidad}" class="availability-slot bg-gray-50 rounded-xl p-4 border border-gray-200 cursor-pointer">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <div class="flex items-center space-x-2 mb-1"> <i class='bx bx-calendar text-green-600'></i>
+                                                <span class="font-medium text-gray-800" th:text="${#strings.capitalize(#temporals.format(disponibilidad.fecha, 'EEEE d MMMM', T(java.util.Locale).forLanguageTag('es-ES')))}"></span>
+                                            </div>
+                                            <div class="flex items-center space-x-2 text-sm text-gray-600"> <i class='bx bx-time'></i> <span th:text="${disponibilidad.hora}"></span>
+                                            </div>
+                                        </div>
+                                        <form th:action="@{/comprador/citas/reprogramar-cita}" method="post">
+                                            <input type="hidden" name="idCita" th:value="${cita.idCita}">
+                                            <input type="hidden" name="idDisponibilidad" th:value="${disponibilidad.idDisponibilidad}">
+                                            <button type="submit" class="gradient-bg text-white px-4 py-2 rounded-xl text-sm font-medium hover:shadow-lg transition-all">Reprogramar</button>
+                                        </form>
+                                    </div>
+                                </div>
+                                <button onclick="closeAvailabilityModal()" class="w-full bg-red-600 text-white mt-4 px-6 py-3 rounded-xl font-medium hover:bg-red-700 transition-colors"> Cancelar </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div th:if="${#lists.isEmpty(citas)}" class="text-center py-12 fade-in">
+            <div class="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-calendar-times text-gray-400 text-3xl"></i>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No tienes citas agendadas</h3>
+            <p class="text-gray-600 mb-6">Explora productos y agenda tu primera cita con un vendedor</p>
+            <a href="/productos" class="inline-flex items-center px-6 py-3 gradient-bg text-white rounded-xl hover:opacity-90 btn-animate">
+                <i class="fas fa-search mr-2"></i>
+                Explorar Productos
+            </a>
+        </div>
+    </main>
+</div>
+
+<div id="cancelModal" class="fixed inset-0 modal-backdrop hidden items-center justify-center z-50">
+    <div class="modal-content rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl">
+        <div class="text-center mb-6">
+            <div class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-800 mb-2">Cancelar Cita</h3>
+            <p class="text-gray-600">¿Estás seguro de que deseas cancelar esta cita?</p>
+        </div>
+
+        <div class="flex gap-3">
+            <button onclick="closeCancelModal()" class="flex-1 px-6 py-3 text-gray-600 hover:text-gray-800 font-medium transition-colors">
+                No, mantener
+            </button>
+            <form th:action="@{/comprador/citas/cancelar-cita}" method="post">
+                <input type="hidden" name="idCita" id="valueIdCita">
+                <button type="submit" class="flex-1 bg-red-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-red-700 transition-colors">
+                    Sí, cancelar
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="modalEsperar"
+     th:classappend="${esperar24Horas != true} ? 'hidden' : ''"
+     class="fixed inset-0 modal-backdrop flex items-center justify-center z-50 bg-black bg-opacity-50">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 transform transition-all">
+        <div class="flex items-center mb-4">
+            <svg class="w-8 h-8 text-amber-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M13 16h-1v-4h-1m1-4h.01M12 20c4.418 0 8-3.582 8-8s-3.582-8-8-8-8 3.582-8 8 3.582 8 8 8z"/>
+            </svg>
+            <h3 class="text-lg font-semibold text-gray-900">
+                Límite de reprogramaciones alcanzado
+            </h3>
+        </div>
+
+        <p class="text-gray-600 leading-relaxed">
+            Ya has reprogramado tu cita <b>2 veces</b>.
+            Por favor espera <span class="font-semibold text-emerald-700">24 horas</span>
+            para poder volver a reprogramar.
+        </p>
+
+        <div class="mt-6 flex justify-end">
+            <button onclick="cerrarModal()"
+                    class="px-4 py-2 bg-emerald-600 text-white rounded-lg shadow hover:bg-emerald-700 transition-colors">
+                Entendido
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function cerrarModal() {
+        const modal = document.getElementById("modalEsperar");
+        if (modal) {
+            modal.classList.add("hidden");
+        }
+    }
+
+
+    function openAvailabilityModal() {
+        const modal = document.getElementById('availabilityModal');
+        modal.classList.remove('hidden');
+    }
+
+    function closeAvailabilityModal() {
+        const modal = document.getElementById('availabilityModal');
+        modal.classList.add('hidden');
+    }
+
+    function openCancelModal(idCita) {
+        document.getElementById('cancelModal').classList.remove('hidden');
+        document.getElementById('cancelModal').classList.add('flex');
+        document.getElementById('valueIdCita').value = idCita;
+    }
+
+    function closeCancelModal() {
+        document.getElementById('cancelModal').classList.add('hidden');
+        document.getElementById('cancelModal').classList.remove('flex');
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const citaCards = document.querySelectorAll('.cita-card');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const tab = this.getAttribute('data-tab');
+
+                // Update active tab
+                tabButtons.forEach(btn => {
+                    btn.classList.remove('active', 'border-green-500', 'text-green-600');
+                    btn.classList.add('border-transparent', 'text-gray-500');
+                });
+
+                this.classList.add('active', 'border-green-500', 'text-green-600');
+                this.classList.remove('border-transparent', 'text-gray-500');
+
+                // Show/hide cards based on tab
+                citaCards.forEach(card => {
+                    if (tab === 'todas') {
+                        card.style.display = 'block';
+                    } else if (tab === 'finalizadas' && card.classList.contains('finalizada')) {
+                        card.style.display = 'block';
+                    } else if (tab === 'canceladas' && card.classList.contains('cancelada')) {
+                        card.style.display = 'block';
+                    } else if (tab === 'reservadas' && card.classList.contains('reservada')) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Set initial active tab
+        document.querySelector('.tab-button[data-tab="todas"]').click();
+    });
+
+    function toggleUserDropdown() {
+        const dropdown = document.getElementById('userDropdown');
+        const arrow = document.getElementById('dropdownArrow');
+
+        if (dropdown.classList.contains('opacity-0')) {
+            // Mostrar dropdown
+            dropdown.classList.remove('opacity-0', 'invisible', 'scale-95');
+            dropdown.classList.add('opacity-100', 'visible', 'scale-100');
+            arrow.style.transform = 'rotate(180deg)';
+        } else {
+            // Ocultar dropdown
+            dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
+            dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
+            arrow.style.transform = 'rotate(0deg)';
+        }
+    }
+
+    document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('userDropdown');
+        const userButton = event.target.closest('[onclick="toggleUserDropdown()"]');
+
+        if (!userButton && !dropdown.contains(event.target)) {
+            dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
+            dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
+            document.getElementById('dropdownArrow').style.transform = 'rotate(0deg)';
+        }
+    });
+</script>
+</body>
+</html>

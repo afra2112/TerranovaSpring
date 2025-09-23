@@ -1,7 +1,6 @@
 package com.proyecto.terranova.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,7 +8,6 @@ import lombok.NoArgsConstructor;
 @Table(name = "ganados")
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @DiscriminatorValue("GANADO")
 public class Ganado extends Producto {
 
@@ -34,7 +32,4 @@ public class Ganado extends Producto {
     @Column(nullable = false)
     private int cantidad;
 
-    @OneToOne
-    @JoinColumn(name = "idProducto")
-    private Producto producto;
 }
