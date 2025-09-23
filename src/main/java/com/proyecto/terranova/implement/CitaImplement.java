@@ -5,6 +5,7 @@ import com.proyecto.terranova.dto.DisponibilidadDTO;
 import com.proyecto.terranova.entity.Disponibilidad;
 import com.proyecto.terranova.entity.Producto;
 import com.proyecto.terranova.entity.Usuario;
+import com.proyecto.terranova.repository.DisponibilidadRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,9 @@ public class CitaImplement implements CitaService {
 
     @Autowired
     private CitaRepository repository;
+
+    @Autowired
+    private DisponibilidadRepository disponibilidadRepository;
 
     @Autowired
     private ModelMapper modelMapper;

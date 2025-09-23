@@ -306,8 +306,44 @@ public class NotificacionImplement implements NotificacionService {
     }
 
     @Override
-    public void notificacionCitaReservada(Cita cita) {
+    public void notificacionCitaReservada(Cita cita) throws MessagingException, IOException {
+        Usuario comprador = cita.getComprador();
+        Usuario vendedor = cita.getProducto().getVendedor();
+        String producto = cita.getProducto().getNombreProducto();
 
+        NotificacionPeticion notifComprador = buildNotificacion(
+                cita.getIdCita(),
+                "Haz reservado una cita para el producto: " + producto + ". Con el vendedor: "+vendedor.getNombres()+". Puedes ir a Mis Citas para mas detalles.",
+                "Citas",
+                "Cita Reservada",
+                cita.getComprador(),
+                "/comprador/citas",
+                "Tu cita para el producto " + producto + " ha sido reservada.",
+                "http://localhost:8080/comprador/citas",
+                "citaReservada",
+                cita.getProducto().getNombreProducto(),
+                vendedor.getNombres(),
+                comprador.getNombres()
+        );
+
+        NotificacionPeticion notifVendedor = buildNotificacion(
+                cita.getIdCita(),
+                "El comprador " + comprador.getNombres() + ". Ha reservado una cita para tu producto " + producto + ".",
+                "Citas",
+                "Cita Reservada",
+                vendedor,
+                "/vendedor/citas",
+                "Han reservado una cita para tu producto: " + producto + ".",
+                "http://localhost:8080/vendedor/citas",
+                "citaReservadaVendedor",
+                cita.getProducto().getNombreProducto(),
+                comprador.getNombres(),
+                vendedor.getNombres()
+        );
+
+
+        crearNotificacionAutomatica(notifComprador);
+        crearNotificacionAutomatica(notifVendedor);
     }
 
     @Override

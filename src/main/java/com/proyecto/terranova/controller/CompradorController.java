@@ -121,6 +121,24 @@ public class CompradorController {
         return "redirect:/comprador/compras";
     }
 
+    @PostMapping("/citas/reservar-cita")
+    public String reservar(@RequestParam(name = "idDisponibilidad") Long idDisponibilidad, Authentication authentication) throws MessagingException, IOException {
+        Usuario usuario = usuario(authentication);
+
+        Disponibilidad disponibilidad = disponibilidadService.findById(idDisponibilidad);
+        Cita cita = new Cita();
+        cita.setEstadoCita(EstadoCitaEnum.RESERVADA);
+        cita.setDisponibilidad(disponibilidad);
+        cita.setNumReprogramaciones(0);
+        cita.setComprador(usuario);
+        cita.setProducto(disponibilidad.getProducto());
+        citaService.save(cita);
+
+        notificacionService.notificacionCitaReservada(cita);
+
+        return "redirect:/comprador/citas";
+    }
+
     @PostMapping("/citas/cancelar-cita")
     public String cancelarCita(@RequestParam(name = "idCita") Long idCita, Authentication authentication) throws MessagingException, IOException {
         Usuario usuario = usuario(authentication);
