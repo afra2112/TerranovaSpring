@@ -98,6 +98,7 @@ public class VendedorController {
     public String calendario(Model model, Authentication authentication){
         model.addAttribute("calendario", true);
         model.addAttribute("productos", productoService.findAll());
+        model.addAttribute("cedula", usuario(authentication).getCedula());
         return "vendedor/calendario";
     }
 

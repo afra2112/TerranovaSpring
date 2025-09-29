@@ -12,7 +12,7 @@
             theme: {
                 extend: {
                     colors: {
-                        'primary': '#388e3c',
+                        'primary': '#059669',
                         'secondary': '#ffcf00'
                     }
                 }
@@ -151,7 +151,7 @@
             <div class="bg-white rounded-2xl p-6 border border-gray-200">
                 <div class="flex items-center justify-between mb-6">
                     <h3 class="text-xl font-semibold text-gray-900">Productos Recientes</h3>
-                    <a th:href="@{/vendedor/productos}"><button class="text-[#388e3c] font-medium hover:text-[#2e7d32] transition-colors">Ver todos</button></a>
+                    <a th:href="@{/vendedor/productos}"><button class="text-[#059669] font-medium hover:text-[#10b981] transition-colors">Ver todos</button></a>
                 </div>
 
                 <div th:each="producto : ${productos}" class="space-y-4">
@@ -172,7 +172,7 @@
                                th:text="'$' + ${#numbers.formatDecimal(producto.precioProducto, 0, 'POINT', 0, 'COMMA')}"></p>
                         </div>
 
-                        <span class="px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full">Activo</span>
+                        <span class="px-3 py-1 bg-green-100 text-[#059669] text-sm font-medium rounded-full">Activo</span>
                     </div>
                 </div>
 
@@ -183,7 +183,7 @@
                 <div class="flex items-center justify-between mb-6">
                     <h3 class="text-xl font-semibold text-gray-900">Notificaciones</h3>
                     <form th:action="@{/usuarios/notificaciones/marcar-todas-leidas}" method="post" class="relative z-10">
-                    <button class="text-[#388e3c] font-medium hover:text-[#2e7d32] transition-colors">Marcar como leídas</button>
+                    <button class="text-[#059669] font-medium hover:text-[#10b981] transition-colors">Marcar como leídas</button>
                     </form>
                 </div>
 

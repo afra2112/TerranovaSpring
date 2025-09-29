@@ -185,7 +185,7 @@
     </div>
 </div>
 
-<script>
+<script th:inline="javascript">
     function openDetalleDisponibilidadModal(cita) {
         document.getElementById('nombreProducto').textContent = cita.nombreProducto;
         document.getElementById('ubicacion').textContent = cita.ubicacion;
@@ -228,6 +228,10 @@
         modal.querySelector('.transform').classList.remove('scale-100');
     }
 
+    const cedula = /*[[${cedula}]]*/;
+
+    console.log(cedula);
+
     document.addEventListener('DOMContentLoaded', function() {
         const calendarEl = document.getElementById('calendar');
         const calendar = new FullCalendar.Calendar(calendarEl, {
@@ -245,7 +249,7 @@
                 day: 'Día'
             },
             events: function(fetchInfo, successCallback, failureCallback) {
-                fetch('/api/Disponibilidades/vendedor/1234567890')
+                fetch('/api/Disponibilidades/vendedor/cedula')
                     .then(res => res.json())
                     .then(disponibilidades => {
                     console.log(disponibilidades);
@@ -257,7 +261,7 @@
                         extendedProps: { ...d }
                     }));
 
-                    fetch('/api/Citas/vendedor/1234567890')
+                    fetch('/api/Citas/vendedor/cedula')
                         .then(res => res.json())
                         .then(citas => {
                             console.log(citas);
