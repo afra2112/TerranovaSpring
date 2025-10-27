@@ -29,6 +29,7 @@ public class DisponibilidadControllerRest {
 
     @GetMapping("/vendedor/{cedula}")
     public List<DisponibilidadDTO> obtenerPorVendedorYDisponibleParaMostrar(@PathVariable(name = "cedula") String cedula){
+        System.out.println("-------------------------------cedula llegada EN API:"+cedula);
         return serviceDisponibilidad.encontrarTodasPorVendedorYDisponible(usuarioService.findById(cedula), true);
     }
 

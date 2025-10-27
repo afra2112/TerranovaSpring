@@ -249,7 +249,7 @@
                 day: 'Día'
             },
             events: function(fetchInfo, successCallback, failureCallback) {
-                fetch('/api/Disponibilidades/vendedor/cedula')
+                fetch(`/api/Disponibilidades/vendedor/${cedula}`)
                     .then(res => res.json())
                     .then(disponibilidades => {
                     console.log(disponibilidades);
@@ -261,7 +261,7 @@
                         extendedProps: { ...d }
                     }));
 
-                    fetch('/api/Citas/vendedor/cedula')
+                    fetch(`/api/Citas/vendedor/${cedula}`)
                         .then(res => res.json())
                         .then(citas => {
                             console.log(citas);
