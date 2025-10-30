@@ -311,6 +311,26 @@ public class NotificacionImplement implements NotificacionService {
     }
 
     @Override
+    public void notificacionRecuperarContrasena(String email) throws MessagingException, IOException {
+        NotificacionPeticion notificacionPeticion = buildNotificacion(
+                null,
+                "Haz click en el siguente boton para restablecer tu contrasena, luego inicia sesion normalmente. ",
+                "Sistema",
+                "Recuperacion de contrasena",
+                null,
+                "/login/recuperar-password",
+                "Recuperacion de contrasena",
+                "http://localhost:8080/login/recuperar-password",
+                "recuperarContrasena",
+                null,
+                "ninguno",
+                null
+        );
+
+        crearNotificacionAutomatica(notificacionPeticion);
+    }
+
+    @Override
     public void notificacionCitaReservada(Cita cita) throws MessagingException, IOException {
         Usuario comprador = cita.getComprador();
         Usuario vendedor = cita.getProducto().getVendedor();

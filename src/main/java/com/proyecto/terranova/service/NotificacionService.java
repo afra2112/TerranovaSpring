@@ -1,14 +1,11 @@
 package com.proyecto.terranova.service;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 import com.proyecto.terranova.dto.NotificacionDTO;
 import com.proyecto.terranova.dto.NotificacionPeticion;
 import com.proyecto.terranova.entity.*;
 import jakarta.mail.MessagingException;
-import org.aspectj.weaver.ast.Not;
 
 public interface NotificacionService {
     NotificacionDTO save(NotificacionDTO dto);
@@ -43,4 +40,5 @@ public interface NotificacionService {
     void notificacionDatosPersonalesActualizados(Usuario usuario) throws MessagingException, IOException;
     void notificacionPedirModificarVenta(Venta venta, String razon) throws MessagingException, IOException;
     void notificacionCitaFinalizada(Cita cita) throws MessagingException, IOException ;
+    void notificacionRecuperarContrasena(String email) throws MessagingException, IOException;
 }

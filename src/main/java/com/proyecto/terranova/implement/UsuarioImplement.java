@@ -3,15 +3,20 @@ package com.proyecto.terranova.implement;
 import com.proyecto.terranova.config.enums.RolEnum;
 import com.proyecto.terranova.entity.Rol;
 import com.proyecto.terranova.repository.RolRepository;
+import com.proyecto.terranova.service.EmailService;
 import com.proyecto.terranova.service.NotificacionService;
+import jakarta.mail.MessagingException;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.proyecto.terranova.service.UsuarioService;
@@ -33,6 +38,9 @@ public class UsuarioImplement implements UsuarioService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private NotificacionService notificacionService;
 
     @Override
     public boolean save(UsuarioDTO dto) {
@@ -142,6 +150,34 @@ public class UsuarioImplement implements UsuarioService {
             nombresRoles.add(rol.getNombreRol());
         });
         return nombresRoles;
+    }
+
+    @Override
+    public void generarTokenYEnviarCorreoRecuperarContrasena(String email) throws MessagingException, IOException {
+        Usuario usuario = repository.findByEmail(email);
+
+        String token = UUID.randomUUID().toString();
+
+        usuario.setResetToken(token);
+        usuario.setResetTokenExpiracion(LocalDateTime.now().plusMinutes(30));
+        repository.save(usuario);
+
+        notificacionService.notificacionRecuperarContrasena(email);
+    }
+
+    @Override
+    public String validarTokenYActualizarContrasena(String token, String nuevaContrasena) {
+        Usuario usuario = repository.findByResetToken(token);
+        if (usuario.getResetTokenExpiracion().isBefore(LocalDateTime.now())) {
+            return "El enlace expiró.";
+        }
+
+        usuario.setContrasena(passwordEncoder.encode(nuevaContrasena));
+        usuario.setResetToken(null);
+        usuario.setResetTokenExpiracion(null);
+        repository.save(usuario);
+
+        return "Contraseña actualizada correctamente.";
     }
 
     public void actualizarPerfil(String cedula, String nuevoNombre, String nuevoCorreo, String nuevaFoto ){
