@@ -19,5 +19,5 @@ public interface UsuarioRepository extends JpaRepository<Usuario, String> {
 
     Usuario findByProviderAndProviderId(String provider, String providerId);
 
-    Usuario findByResetToken(String resetToken);
+    Optional<Usuario> findByResetToken(String resetToken);
 }

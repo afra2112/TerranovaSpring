@@ -52,7 +52,7 @@ public class PublicController {
         return "redirect:/login";
     }
 
-    @GetMapping("/recuperar-password")
+    @GetMapping("/password-olvidada")
     public String mostrarFormulario() {
         return "passwordOlvidada";
     }

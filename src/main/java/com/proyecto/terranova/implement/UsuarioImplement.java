@@ -1,6 +1,7 @@
 package com.proyecto.terranova.implement;
 
 import com.proyecto.terranova.config.enums.RolEnum;
+import com.proyecto.terranova.dto.NotificacionPeticion;
 import com.proyecto.terranova.entity.Rol;
 import com.proyecto.terranova.repository.RolRepository;
 import com.proyecto.terranova.service.EmailService;
@@ -41,6 +42,9 @@ public class UsuarioImplement implements UsuarioService {
 
     @Autowired
     private NotificacionService notificacionService;
+
+    @Autowired
+    private EmailService emailService;
 
     @Override
     public boolean save(UsuarioDTO dto) {
@@ -162,12 +166,13 @@ public class UsuarioImplement implements UsuarioService {
         usuario.setResetTokenExpiracion(LocalDateTime.now().plusMinutes(30));
         repository.save(usuario);
 
-        notificacionService.notificacionRecuperarContrasena(email);
+        String html = emailService.generarHtmlParaCorreo(usuario.getNombres(), "Sistema", "http://localhost:8080/recuperar-password?token="+token, null, "recuperarContrasena");
+        emailService.enviarEmailConHtml(true, email, "Recuperacion de Contrasena", html);
     }
 
     @Override
     public String validarTokenYActualizarContrasena(String token, String nuevaContrasena) {
-        Usuario usuario = repository.findByResetToken(token);
+        Usuario usuario = repository.findByResetToken(token).orElseThrow(() -> new RuntimeException("El token es invalido o esta expirador"));
         if (usuario.getResetTokenExpiracion().isBefore(LocalDateTime.now())) {
             return "El enlace expiró.";
         }
