@@ -1,7 +1,10 @@
 package com.proyecto.terranova.controller;
 
 import com.proyecto.terranova.dto.UsuarioDTO;
+import com.proyecto.terranova.entity.Producto;
 import com.proyecto.terranova.entity.Usuario;
+import com.proyecto.terranova.repository.ProductoRepository;
+import com.proyecto.terranova.service.ProductoService;
 import com.proyecto.terranova.service.UsuarioService;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
@@ -18,6 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Controller
 public class PublicController {
@@ -27,12 +31,20 @@ public class PublicController {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    @Autowired
+    ProductoRepository productoRepository;
+
     @GetMapping("/login")
-    public String login(){
+    public String login(Model model){
+        List<Producto> productos = productoRepository.findAll();
+        for (Producto producto : productos) {
+            producto.setTipoP(producto.getClass().getSimpleName());
+        }
+        model.addAttribute("productos", productos);
         return "login";
     }
 
-    @GetMapping("/registro")
+        @GetMapping("/registro")
     public String registroForm(Model model){
         model.addAttribute("usuarioDTO", new UsuarioDTO());
         return "registro";

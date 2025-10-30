@@ -35,7 +35,6 @@
             background: linear-gradient(135deg, #059669 0%, #10b981 100%);
         }
 
-        /* Modern gradient animations */
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -80,7 +79,6 @@
 </head>
 <body class="bg-gray-50">
 
-<!-- Modern navbar with Tailwind -->
 <nav class="fixed top-0 w-full gradient-bg backdrop-blur-md shadow-lg z-50">
     <div class="container mx-auto px-4">
         <div class="flex items-center justify-between py-4">
@@ -100,7 +98,6 @@
     </div>
 </nav>
 
-<!-- Modal with Tailwind styles and Thymeleaf functionality -->
 <div id="successModal"
      th:class="'fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 '
                + (${param.error} or ${param.logout} or ${param.creado} ? '' : 'hidden')">
@@ -135,7 +132,6 @@
             </button>
         </form>
 
-        <!-- Modern status messages -->
         <div th:if="${param.error}" class="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
             <p class="text-red-600 text-sm font-medium">Correo o Contraseña Incorrecta</p>
         </div>
@@ -159,7 +155,6 @@
     </div>
 </div>
 
-<!-- Modern hero section with Tailwind -->
 <section id="inicio" class="min-h-screen bg-gradient-to-br from-primary-emerald via-bright-emerald to-emerald-900 flex items-center relative overflow-hidden pt-20">
     <div class="absolute inset-0 bg-black/10"></div>
     <div class="container mx-auto px-4 relative z-10">
@@ -208,7 +203,6 @@
     </div>
 </section>
 
-<!-- Products Section -->
 <section id="productos" class="py-20 bg-white">
     <div class="container mx-auto px-4">
         <div class="text-center mb-16">
@@ -216,7 +210,6 @@
             <p class="text-xl text-gray-600 max-w-2xl mx-auto">Explora nuestra selección de productos agrícolas disponibles</p>
         </div>
 
-        <!-- Filter Tabs -->
         <div class="flex flex-wrap justify-center gap-3 mb-12">
             <button onclick="filtrarProductos('todos')" class="filter-btn active px-6 py-3 rounded-xl font-semibold transition-all duration-300 gradient-bg text-white">
                 <i class="fas fa-th mr-2"></i>Todos
@@ -232,16 +225,14 @@
             </button>
         </div>
 
-        <!-- Products Grid -->
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="productosGrid">
             <div th:each="producto : ${productos}"
-                 th:attr="data-tipo=${producto.class.simpleName}"
+                 th:attr="data-tipo=${producto.tipoP}"
                  class="product-card bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
 
-                <!-- Product Image -->
                 <div class="relative h-64 overflow-hidden">
                     <img th:if="${!#lists.isEmpty(producto.imagenes)}"
-                         th:src="${producto.imagenes[0].urlImagen}"
+                         th:src="${#lists.isEmpty(producto.imagenes) ? '/placeholder.svg?height=100&width=150' : producto.imagenes.get(0).nombreArchivo}"
                          th:alt="${producto.nombreProducto}"
                          class="w-full h-full object-cover">
                     <img th:if="${#lists.isEmpty(producto.imagenes)}"
@@ -249,23 +240,21 @@
                          alt="Sin imagen"
                          class="w-full h-full object-cover">
 
-                    <!-- Type Badge -->
                     <div class="absolute top-4 left-4">
-                        <span th:if="${producto.class.simpleName == 'TERRENO'}"
+                        <span th:if="${producto.tipoP == 'TERRENO'}"
                               class="px-3 py-1 bg-blue-500 text-white text-xs font-semibold rounded-full">
                             <i class="fas fa-map-marked-alt mr-1"></i>Terreno
                         </span>
-                        <span th:if="${producto.class.simpleName == 'GANADO'}"
+                        <span th:if="${producto.tipoP == 'GANADO'}"
                               class="px-3 py-1 bg-amber-500 text-white text-xs font-semibold rounded-full">
                             <i class="fas fa-cow mr-1"></i>Ganado
                         </span>
-                        <span th:if="${producto.class.simpleName == 'FINCA'}"
+                        <span th:if="${producto.tipoP == 'FINCA'}"
                               class="px-3 py-1 bg-green-500 text-white text-xs font-semibold rounded-full">
                             <i class="fas fa-home mr-1"></i>Finca
                         </span>
                     </div>
 
-                    <!-- Status Badge -->
                     <div class="absolute top-4 right-4">
                         <span class="px-3 py-1 bg-white/90 backdrop-blur-sm text-primary-emerald text-xs font-semibold rounded-full">
                             <i class="fas fa-check-circle mr-1"></i>
@@ -274,7 +263,6 @@
                     </div>
                 </div>
 
-                <!-- Product Info -->
                 <div class="p-6">
                     <h3 class="text-xl font-bold text-gray-900 mb-2 line-clamp-1" th:text="${producto.nombreProducto}">
                         Nombre del Producto
@@ -302,7 +290,6 @@
                         </div>
                     </div>
 
-                    <!-- Action Button -->
                     <a th:href="@{/producto/{id}(id=${producto.idProducto})}"
                        class="block w-full text-center gradient-bg text-white font-semibold py-3 rounded-xl transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
                         <i class="fas fa-eye mr-2"></i>Ver Detalles
@@ -311,22 +298,13 @@
             </div>
         </div>
 
-        <!-- Empty State -->
         <div id="emptyState" class="hidden text-center py-16">
             <i class="fas fa-box-open text-gray-300 text-6xl mb-4"></i>
             <p class="text-gray-500 text-lg">No se encontraron productos en esta categoría</p>
         </div>
-
-        <!-- Load More Button -->
-        <div class="text-center mt-12">
-            <button class="gradient-bg text-white px-8 py-3 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
-                <i class="fas fa-plus-circle mr-2"></i>Cargar Más Productos
-            </button>
-        </div>
     </div>
 </section>
 
-<!-- Modern services section -->
 <section id="servicios" class="py-20 bg-white">
     <div class="container mx-auto px-4">
         <div class="text-center mb-16">
@@ -380,7 +358,6 @@
     </div>
 </section>
 
-<!-- Modern footer -->
 <footer id="contacto" class="bg-gray-900 text-white py-16">
     <div class="container mx-auto px-4">
         <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -430,7 +407,6 @@
     </div>
 </footer>
 
-<!-- Updated JavaScript with modern functionality -->
 <script>
     function abrirModalInicio() {
         const modal = document.getElementById('successModal');
@@ -460,7 +436,6 @@
         const filterBtns = document.querySelectorAll('.filter-btn');
         let visibleCount = 0;
 
-        // Update active button
         filterBtns.forEach(btn => {
             btn.classList.remove('gradient-bg', 'text-white');
             btn.classList.add('bg-gray-100', 'text-gray-700');
@@ -468,7 +443,6 @@
         event.target.classList.remove('bg-gray-100', 'text-gray-700');
         event.target.classList.add('gradient-bg', 'text-white');
 
-        // Filter products
         productos.forEach(producto => {
             const productoTipo = producto.getAttribute('data-tipo');
             if (tipo === 'todos' || productoTipo === tipo) {
@@ -479,7 +453,6 @@
             }
         });
 
-        // Show/hide empty state
         if (visibleCount === 0) {
             emptyState.classList.remove('hidden');
         } else {
@@ -487,7 +460,6 @@
         }
     }
 
-    // Auto-open modal based on URL parameters
     window.addEventListener("DOMContentLoaded", () => {
         const params = new URLSearchParams(window.location.search);
         if (params.get("error") === "true" || params.get("logout") === "true" || params.get("creado") === "true") {
@@ -495,21 +467,18 @@
         }
     });
 
-    // Close modal with Escape key
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
             cerrarModalInicio();
         }
     });
 
-    // Close modal when clicking outside
     document.getElementById('successModal')?.addEventListener('click', (e) => {
         if (e.target.id === 'successModal') {
             cerrarModalInicio();
         }
     });
 
-    // Smooth scrolling for navigation
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();

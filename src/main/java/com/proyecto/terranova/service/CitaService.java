@@ -17,7 +17,8 @@ public interface CitaService {
     List<Cita> encontrarPorComprador(Usuario comprador, boolean activo);
     List<Cita> encontrarPorEstado(Usuario vendedor,EstadoCitaEnum estado, boolean activo);
     boolean delete(Long id);
-    boolean existsById(Long id); // ValidaciÃ³n
+    boolean existsById(Long id);
+    boolean yaTieneCita(Usuario comprador, Long idProducto);
     long count(); // Contar registros
     void cambiarEstado(Cita cita, EstadoCitaEnum estado);
     void borrarCita(Long idCita);

@@ -6,6 +6,7 @@ import com.proyecto.terranova.entity.Disponibilidad;
 import com.proyecto.terranova.entity.Producto;
 import com.proyecto.terranova.entity.Usuario;
 import com.proyecto.terranova.repository.DisponibilidadRepository;
+import com.proyecto.terranova.repository.ProductoRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +27,10 @@ public class CitaImplement implements CitaService {
     private CitaRepository repository;
 
     @Autowired
-    private DisponibilidadRepository disponibilidadRepository;
+    private ModelMapper modelMapper;
 
     @Autowired
-    private ModelMapper modelMapper;
+    private ProductoRepository productoRepository;
 
     @Override
     public Cita save(Cita cita) {
@@ -107,6 +108,11 @@ public class CitaImplement implements CitaService {
     @Override
     public boolean existsById(Long id) {
         return repository.existsById(id);
+    }
+
+    @Override
+    public boolean yaTieneCita(Usuario comprador, Long idProducto) {
+        return repository.existsByProductoAndComprador(productoRepository.findById(idProducto).orElseThrow(), comprador);
     }
 
     @Override

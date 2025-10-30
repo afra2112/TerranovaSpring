@@ -2,10 +2,8 @@ package com.proyecto.terranova.controller;
 
 import com.proyecto.terranova.config.enums.EstadoCitaEnum;
 import com.proyecto.terranova.config.enums.RolEnum;
-import com.proyecto.terranova.entity.Cita;
-import com.proyecto.terranova.entity.Disponibilidad;
-import com.proyecto.terranova.entity.Usuario;
-import com.proyecto.terranova.entity.Venta;
+import com.proyecto.terranova.entity.*;
+import com.proyecto.terranova.repository.ProductoRepository;
 import com.proyecto.terranova.service.*;
 import jakarta.mail.MessagingException;
 import com.proyecto.terranova.service.CompradorService;
@@ -53,6 +51,9 @@ public class CompradorController {
     @Autowired
     VentaService ventaService;
 
+    @Autowired
+    ProductoRepository productoRepository;
+
     @ModelAttribute("usuario")
     public Usuario usuario(Authentication authentication){
         return usuarioService.findByEmail(authentication.getName());
@@ -83,6 +84,21 @@ public class CompradorController {
         model.addAllAttributes(estadisticas);
         model.addAttribute("productos", productoService.obtenerTodasMenosVendedor(usuario(authentication)));
         return "comprador/principalComprador";
+    }
+
+    @GetMapping("/detalle-producto/{id}")
+    public String detalleProducto(@PathVariable Long id, Model model, Authentication authentication){
+        Usuario usuario = usuario(authentication);
+
+
+        Producto producto = productoRepository.findById(id).orElseThrow(() -> new RuntimeException("producto no encontrado"));
+        producto.setTipoP(producto.getClass().getSimpleName());
+        boolean yaTieneCita = citaService.yaTieneCita(usuario, id);
+
+        model.addAttribute("yaTieneCita", yaTieneCita);
+        model.addAttribute("usuario", usuario);
+        model.addAttribute("producto", producto);
+        return "comprador/detalleProducto";
     }
 
     @GetMapping("/citas")

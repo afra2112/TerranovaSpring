@@ -67,7 +67,7 @@
             <li><i class="fas fa-chevron-right text-gray-400 text-xs"></i></li>
             <li><a href="/productos" class="text-primary-emerald hover:text-bright-emerald transition-colors">Productos</a></li>
             <li><i class="fas fa-chevron-right text-gray-400 text-xs"></i></li>
-            <li class="text-gray-600" th:text="${producto.nombreProducto}">Producto</li>
+            <li class="text-gray-600" th:text="${prod.nombreProducto}">Producto</li>
         </ol>
     </nav>
 
@@ -80,7 +80,7 @@
             <div class="bg-white rounded-2xl shadow-lg overflow-hidden slide-in">
                 <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
                     <div class="carousel-indicators">
-                        <button th:each="imagen, iterStat : ${producto.imagenes}"
+                        <button th:each="imagen, iterStat : ${prod.imagenes}"
                                 type="button"
                                 data-bs-target="#productCarousel"
                                 th:attr="data-bs-slide-to=${iterStat.index}"
@@ -90,12 +90,12 @@
                         </button>
                     </div>
                     <div class="carousel-inner">
-                        <div th:each="imagen, iterStat : ${producto.imagenes}"
+                        <div th:each="imagen, iterStat : ${prod.imagenes}"
                              class="carousel-item"
                              th:classappend="${iterStat.index == 0} ? 'active' : ''">
-                            <img th:src="${imagen.urlImagen}"
+                            <img th:src="${imagen.nombreArchivo}"
                                  class="d-block w-100 carousel-image"
-                                 th:alt="${producto.nombreProducto}">
+                                 th:alt="${prod.nombreProducto}">
                         </div>
                     </div>
                     <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
@@ -111,15 +111,15 @@
 
             <!-- Product Details -->
             <div class="bg-white rounded-2xl shadow-lg p-6 slide-in">
-                <h1 class="text-3xl font-bold text-gray-900 mb-4" th:text="${producto.nombreProducto}">Nombre del Producto</h1>
+                <h1 class="text-3xl font-bold text-gray-900 mb-4" th:text="${prod.nombreProducto}">Nombre del Producto</h1>
 
                 <div class="flex items-center gap-4 mb-6">
                     <span class="text-4xl font-bold text-primary-emerald">
-                        $<span th:text="${#numbers.formatDecimal(producto.precioProducto, 0, 'COMMA', 0, 'POINT')}">0</span>
+                        $<span th:text="${#numbers.formatDecimal(prod.precioProducto, 0, 'COMMA', 0, 'POINT')}">0</span>
                     </span>
                     <span class="px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-semibold">
                         <i class="fas fa-check-circle mr-1"></i>
-                        <span th:text="${producto.estado}">Disponible</span>
+                        <span th:text="${prod.estado}">Disponible</span>
                     </span>
                 </div>
 
@@ -127,7 +127,7 @@
                     <h3 class="text-lg font-semibold text-gray-900 mb-3">
                         <i class="fas fa-info-circle text-primary-emerald mr-2"></i>Descripción
                     </h3>
-                    <p class="text-gray-600 leading-relaxed" th:text="${producto.descripcion}">Descripción del producto</p>
+                    <p class="text-gray-600 leading-relaxed" th:text="${prod.descripcion}">Descripción del producto</p>
                 </div>
 
                 <!-- Specific Product Details -->
@@ -137,139 +137,139 @@
                     </h3>
 
                     <!-- Terreno Details -->
-                    <div th:if="${producto.class.simpleName == 'Terreno'}" class="grid md:grid-cols-2 gap-4">
+                    <div th:if="${prod.tipoP == 'Terreno'}" class="grid md:grid-cols-2 gap-4">
                         <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                             <i class="fas fa-ruler-combined text-primary-emerald text-xl"></i>
                             <div>
                                 <p class="text-xs text-gray-500">Tamaño</p>
-                                <p class="font-semibold text-gray-900" th:text="${producto.tamanoTerreno} + ' m²'">0 m²</p>
+                                <p class="font-semibold text-gray-900" th:text="${prod.tamanoTerreno} + ' m²'">0 m²</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                             <i class="fas fa-mountain text-primary-emerald text-xl"></i>
                             <div>
                                 <p class="text-xs text-gray-500">Topografía</p>
-                                <p class="font-semibold text-gray-900" th:text="${producto.topografiaTerreno}">-</p>
+                                <p class="font-semibold text-gray-900" th:text="${prod.topografiaTerreno}">-</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                             <i class="fas fa-road text-primary-emerald text-xl"></i>
                             <div>
                                 <p class="text-xs text-gray-500">Acceso</p>
-                                <p class="font-semibold text-gray-900" th:text="${producto.acceso}">-</p>
+                                <p class="font-semibold text-gray-900" th:text="${prod.acceso}">-</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                             <i class="fas fa-tools text-primary-emerald text-xl"></i>
                             <div>
                                 <p class="text-xs text-gray-500">Servicios</p>
-                                <p class="font-semibold text-gray-900" th:text="${producto.servicios}">-</p>
+                                <p class="font-semibold text-gray-900" th:text="${prod.servicios}">-</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                             <i class="fas fa-seedling text-primary-emerald text-xl"></i>
                             <div>
                                 <p class="text-xs text-gray-500">Uso Actual</p>
-                                <p class="font-semibold text-gray-900" th:text="${producto.usoActual}">-</p>
+                                <p class="font-semibold text-gray-900" th:text="${prod.usoActual}">-</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                             <i class="fas fa-layer-group text-primary-emerald text-xl"></i>
                             <div>
                                 <p class="text-xs text-gray-500">Tipo de Terreno</p>
-                                <p class="font-semibold text-gray-900" th:text="${producto.tipoTerreno}">-</p>
+                                <p class="font-semibold text-gray-900" th:text="${prod.tipoTerreno}">-</p>
                             </div>
                         </div>
                     </div>
 
                     <!-- Ganado Details -->
-                    <div th:if="${producto.class.simpleName == 'Ganado'}" class="grid md:grid-cols-2 gap-4">
+                    <div th:if="${prod.tipoP == 'Ganado'}" class="grid md:grid-cols-2 gap-4">
                         <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                             <i class="fas fa-dna text-primary-emerald text-xl"></i>
                             <div>
                                 <p class="text-xs text-gray-500">Raza</p>
-                                <p class="font-semibold text-gray-900" th:text="${producto.razaGanado}">-</p>
+                                <p class="font-semibold text-gray-900" th:text="${prod.razaGanado}">-</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                             <i class="fas fa-weight text-primary-emerald text-xl"></i>
                             <div>
                                 <p class="text-xs text-gray-500">Peso</p>
-                                <p class="font-semibold text-gray-900" th:text="${producto.pesoGanado} + ' kg'">0 kg</p>
+                                <p class="font-semibold text-gray-900" th:text="${prod.pesoGanado} + ' kg'">0 kg</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                             <i class="fas fa-calendar text-primary-emerald text-xl"></i>
                             <div>
                                 <p class="text-xs text-gray-500">Edad</p>
-                                <p class="font-semibold text-gray-900" th:text="${producto.edadGanado} + ' años'">0 años</p>
+                                <p class="font-semibold text-gray-900" th:text="${prod.edadGanado} + ' años'">0 años</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                             <i class="fas fa-venus-mars text-primary-emerald text-xl"></i>
                             <div>
                                 <p class="text-xs text-gray-500">Género</p>
-                                <p class="font-semibold text-gray-900" th:text="${producto.generoGanado}">-</p>
+                                <p class="font-semibold text-gray-900" th:text="${prod.generoGanado}">-</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                             <i class="fas fa-cow text-primary-emerald text-xl"></i>
                             <div>
                                 <p class="text-xs text-gray-500">Tipo</p>
-                                <p class="font-semibold text-gray-900" th:text="${producto.tipoGanado}">-</p>
+                                <p class="font-semibold text-gray-900" th:text="${prod.tipoGanado}">-</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                             <i class="fas fa-heartbeat text-primary-emerald text-xl"></i>
                             <div>
                                 <p class="text-xs text-gray-500">Estado Sanitario</p>
-                                <p class="font-semibold text-gray-900" th:text="${producto.estadoSanitario}">-</p>
+                                <p class="font-semibold text-gray-900" th:text="${prod.estadoSanitario}">-</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                             <i class="fas fa-sort-numeric-up text-primary-emerald text-xl"></i>
                             <div>
                                 <p class="text-xs text-gray-500">Cantidad</p>
-                                <p class="font-semibold text-gray-900" th:text="${producto.cantidad}">0</p>
+                                <p class="font-semibold text-gray-900" th:text="${prod.cantidad}">0</p>
                             </div>
                         </div>
                     </div>
 
                     <!-- Finca Details -->
-                    <div th:if="${producto.class.simpleName == 'Finca'}" class="grid md:grid-cols-2 gap-4">
+                    <div th:if="${prod.tipoP == 'Finca'}" class="grid md:grid-cols-2 gap-4">
                         <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                             <i class="fas fa-expand-arrows-alt text-primary-emerald text-xl"></i>
                             <div>
                                 <p class="text-xs text-gray-500">Espacio Total</p>
-                                <p class="font-semibold text-gray-900" th:text="${producto.espacioTotal}">-</p>
+                                <p class="font-semibold text-gray-900" th:text="${prod.espacioTotal}">-</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                             <i class="fas fa-home text-primary-emerald text-xl"></i>
                             <div>
                                 <p class="text-xs text-gray-500">Espacio Construido</p>
-                                <p class="font-semibold text-gray-900" th:text="${producto.espacioConstruido}">-</p>
+                                <p class="font-semibold text-gray-900" th:text="${prod.espacioConstruido}">-</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                             <i class="fas fa-layer-group text-primary-emerald text-xl"></i>
                             <div>
                                 <p class="text-xs text-gray-500">Estrato</p>
-                                <p class="font-semibold text-gray-900" th:text="${producto.estratoFinca}">0</p>
+                                <p class="font-semibold text-gray-900" th:text="${prod.estratoFinca}">0</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                             <i class="fas fa-bed text-primary-emerald text-xl"></i>
                             <div>
                                 <p class="text-xs text-gray-500">Habitaciones</p>
-                                <p class="font-semibold text-gray-900" th:text="${producto.numeroHabitaciones}">0</p>
+                                <p class="font-semibold text-gray-900" th:text="${prod.numeroHabitaciones}">0</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                             <i class="fas fa-bath text-primary-emerald text-xl"></i>
                             <div>
                                 <p class="text-xs text-gray-500">Baños</p>
-                                <p class="font-semibold text-gray-900" th:text="${producto.numeroBanos}">0</p>
+                                <p class="font-semibold text-gray-900" th:text="${prod.numeroBanos}">0</p>
                             </div>
                         </div>
                     </div>
@@ -284,7 +284,7 @@
                 <div id="map"></div>
                 <p class="text-gray-600 mt-3">
                     <i class="fas fa-location-dot text-primary-emerald mr-2"></i>
-                    <span th:text="${producto.ciudad.nombreCiudad}">Ciudad</span>
+                    <span th:text="${prod.ciudad.nombreCiudad}">Ciudad</span>
                 </p>
             </div>
         </div>
@@ -300,10 +300,10 @@
 
                 <div class="flex items-center gap-4 mb-6">
                     <div class="w-16 h-16 gradient-bg rounded-full flex items-center justify-center text-white text-2xl font-bold">
-                        <span th:text="${#strings.substring(producto.vendedor.nombre, 0, 1)}">V</span>
+                        <span th:text="${#strings.substring(prod.vendedor.nombres, 0, 1)}">V</span>
                     </div>
                     <div>
-                        <h4 class="font-semibold text-gray-900" th:text="${producto.vendedor.nombre}">Nombre Vendedor</h4>
+                        <h4 class="font-semibold text-gray-900" th:text="${prod.vendedor.nombres}">Nombre Vendedor</h4>
                         <p class="text-sm text-gray-500">
                             <i class="fas fa-star text-yellow-400 mr-1"></i>
                             Vendedor verificado
@@ -314,16 +314,16 @@
                 <div class="space-y-3 mb-6">
                     <div class="flex items-center gap-3 text-gray-600">
                         <i class="fas fa-envelope text-primary-emerald w-5"></i>
-                        <span class="text-sm" th:text="${producto.vendedor.email}">email@example.com</span>
+                        <span class="text-sm" th:text="${prod.vendedor.email}">email@example.com</span>
                     </div>
                     <div class="flex items-center gap-3 text-gray-600">
                         <i class="fas fa-phone text-primary-emerald w-5"></i>
-                        <span class="text-sm" th:text="${producto.vendedor.telefono}">+57 123 456 7890</span>
+                        <span class="text-sm" th:text="${prod.vendedor.telefono}">+57 123 456 7890</span>
                     </div>
                     <div class="flex items-center gap-3 text-gray-600">
                         <i class="fas fa-calendar text-primary-emerald w-5"></i>
                         <span class="text-sm">
-                            Publicado: <span th:text="${#temporals.format(producto.fechaPublicacion, 'dd/MM/yyyy')}">01/01/2024</span>
+                            Publicado: <span th:text="${#temporals.format(prod.fechaPublicacion, 'dd/MM/yyyy')}">01/01/2024</span>
                         </span>
                     </div>
                 </div>
@@ -376,13 +376,13 @@
                     <i class="fas fa-clock text-primary-emerald mr-2"></i>Disponibilidad para Visitas
                 </h3>
 
-                <div th:if="${#lists.isEmpty(producto.disponibilidades)}" class="text-center py-8">
+                <div th:if="${#lists.isEmpty(prod.disponibilidades)}" class="text-center py-8">
                     <i class="fas fa-calendar-times text-gray-300 text-4xl mb-3"></i>
                     <p class="text-gray-500">No hay disponibilidades programadas</p>
                 </div>
 
-                <div th:if="${!#lists.isEmpty(producto.disponibilidades)}" class="space-y-3 max-h-96 overflow-y-auto">
-                    <div th:each="disponibilidad : ${producto.disponibilidades}"
+                <div th:if="${!#lists.isEmpty(prod.disponibilidades)}" class="space-y-3 max-h-96 overflow-y-auto">
+                    <div th:each="disponibilidad : ${prod.disponibilidades}"
                          th:if="${disponibilidad.disponible}"
                          class="p-4 border-2 border-gray-200 rounded-xl hover:border-primary-emerald transition-all duration-300 cursor-pointer">
                         <div class="flex items-center justify-between">

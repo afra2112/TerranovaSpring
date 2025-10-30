@@ -46,4 +46,7 @@ public abstract class Producto {
 
     @OneToMany(mappedBy = "producto",  cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Disponibilidad> disponibilidades = new ArrayList<>();
+
+    @Transient
+    private String tipoP;
 }

@@ -328,9 +328,11 @@
                                 <i class="fas fa-times mr-2"></i>
                                 Cancelar
                             </button>
-                            <button class="px-4 py-3 border-2 border-gray-300 rounded-xl hover:bg-gray-50 btn-animate">
-                                <i class="fas fa-eye text-gray-600"></i>
-                            </button>
+                            <form th:action="@{/comprador/detalle-producto/{idProducto}(idProducto=${cita.producto.idProducto})}" method="get">
+                                <button type="submit" class="px-4 py-3 border-2 border-gray-300 rounded-xl hover:bg-gray-50 btn-animate">
+                                    <i class="fas fa-eye text-gray-600"></i>
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
