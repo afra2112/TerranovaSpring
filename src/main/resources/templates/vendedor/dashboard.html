@@ -7,6 +7,12 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
     <script>
         tailwind.config = {
             theme: {
@@ -31,9 +37,10 @@
         .modal-backdrop {
             background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(5px);
-        }.floating-animation {
-             animation: float 6s ease-in-out infinite;
-         }
+        }
+        .floating-animation {
+            animation: float 6s ease-in-out infinite;
+        }
         .product-option {
             transition: all 0.3s ease;
             background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.02) 100%);
@@ -47,6 +54,11 @@
         }
         .gradient-hero {
             background: linear-gradient(135deg, #064e3b 0%, #059669 50%, #10b981 100%);
+        }
+        /* Removed fixed width from map, now responsive */
+        #map {
+            height: 400px;
+            width: 100%;
         }
     </style>
 </head>
@@ -94,6 +106,7 @@
             </a>
 
         </div>
+
 
         <!-- Stats Cards -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
@@ -183,7 +196,7 @@
                 <div class="flex items-center justify-between mb-6">
                     <h3 class="text-xl font-semibold text-gray-900">Notificaciones</h3>
                     <form th:action="@{/usuarios/notificaciones/marcar-todas-leidas}" method="post" class="relative z-10">
-                    <button class="text-[#059669] font-medium hover:text-[#10b981] transition-colors">Marcar como leídas</button>
+                        <button class="text-[#059669] font-medium hover:text-[#10b981] transition-colors">Marcar como leídas</button>
                     </form>
                 </div>
 
@@ -206,16 +219,18 @@
 </div>
 
 <div id="productModal" class="fixed inset-0 modal-backdrop hidden items-center justify-center z-50">
-    <div class="modal-content rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl">
+    <div class="modal-content rounded-3xl p-8 max-w-lg w-full mx-4 shadow-2xl bg-white">
         <div class="text-center mb-6">
             <div class="w-16 h-16 gradient-bg rounded-2xl flex items-center justify-center mx-auto mb-4 floating-animation">
                 <i class='bx bx-plus text-white text-2xl'></i>
             </div>
             <h3 class="text-2xl font-bold text-gray-800 mb-2">Agregar Producto</h3>
-            <p class="text-gray-600">Selecciona el tipo de producto que deseas agregar</p>
+            <p class="text-gray-600">Selecciona el tipo de producto y su ubicación</p>
         </div>
 
-        <div class="space-y-4">
+
+        <!-- Opciones de producto -->
+        <div class="space-y-4 mb-6">
             <div class="product-option rounded-2xl p-6 cursor-pointer" onclick="selectProductType('ganado')">
                 <div class="flex items-center space-x-4">
                     <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
@@ -262,7 +277,7 @@
 </div>
 
 <div th:replace="fragments/vendedor/modalRegistro :: formProducto"></div>
-<!-- Modal para subir imágenes -->
+
 <div id="modalImagenes" class="fixed inset-0 hidden items-center justify-center z-50 bg-black bg-opacity-50">
     <div class="bg-white p-6 rounded shadow-lg w-full max-w-md">
         <h2 class="text-xl font-bold mb-4">Subir imágenes del producto</h2>
@@ -309,7 +324,6 @@
             }
         });
 
-        // Modal de selección de tipo
         window.openProductModal = function () {
             document.getElementById('productModal').classList.remove('hidden');
             document.getElementById('productModal').classList.add('flex');
@@ -327,7 +341,6 @@
             }
         });
 
-        // Selección de tipo y apertura de formulario
         window.selectProductType = function (tipo) {
             closeProductModal();
             abrirModalRegistro(tipo);
@@ -580,6 +593,10 @@
 
             modal.classList.remove('hidden');
             modal.classList.add('flex');
+
+            setTimeout(() => {
+                initializeMap();
+            }, 200);
         };
 
         window.cerrarModalRegistro = function () {
@@ -587,6 +604,15 @@
             if (modal) {
                 modal.classList.add('hidden');
                 modal.classList.remove('flex');
+
+                document.getElementById('latitud').value = '';
+                document.getElementById('longitud').value = '';
+                document.getElementById('coordenadas-display').classList.add('hidden');
+
+                if (currentMarker !== null && map !== null) {
+                    map.removeLayer(currentMarker);
+                    currentMarker = null;
+                }
             }
         };
     });
@@ -618,7 +644,57 @@
     });
 </script>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    let map = null;
+    let currentMarker = null;
+
+    function initializeMap() {
+        if (map !== null) {
+            map.invalidateSize();
+            return;
+        }
+
+        map = L.map('map').setView([4.5709, -74.2973], 6);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        setTimeout(() => {
+            map.invalidateSize();
+        }, 100);
+
+        map.on('click', function(e) {
+            const lat = e.latlng.lat;
+            const lng = e.latlng.lng;
+
+            if (currentMarker !== null) {
+                map.removeLayer(currentMarker);
+            }
+
+            currentMarker = L.marker([lat, lng]).addTo(map);
+
+            document.getElementById('latitud').value = lat.toFixed(6);
+            document.getElementById('longitud').value = lng.toFixed(6);
+
+            // Mostrar las coordenadas seleccionadas
+            const coordDisplay = document.getElementById('coordenadas-display');
+            if (coordDisplay) {
+                coordDisplay.classList.remove('hidden');
+                coordDisplay.innerHTML = `
+                    <div class="flex items-center gap-2 text-sm text-green-700">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        <span><strong>Ubicación seleccionada:</strong> ${lat.toFixed(6)}, ${lng.toFixed(6)}</span>
+                    </div>
+                `;
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
         const params = new URLSearchParams(window.location.search);
         const productoId = params.get("productoId");
 
@@ -629,8 +705,5 @@
         }
     });
 </script>
-
-
-
 </body>
 </html>

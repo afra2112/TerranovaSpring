@@ -64,6 +64,10 @@ public class ProductoImplement implements ProductoService {
         producto.setFechaPublicacion(LocalDate.now());
         producto.setEstado("Disponible");
 
+
+        producto.setLatitud(datosForm.get("latitud"));
+        producto.setLongitud(datosForm.get("longitud"));
+
         Usuario vendedor = usuarioRepository.findByEmail(correo);
         if (vendedor == null) {
             throw new IllegalArgumentException("Usuario no encontrado");

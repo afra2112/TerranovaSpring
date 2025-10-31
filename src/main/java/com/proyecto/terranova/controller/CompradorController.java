@@ -98,6 +98,8 @@ public class CompradorController {
         model.addAttribute("yaTieneCita", yaTieneCita);
         model.addAttribute("usuario", usuario);
         model.addAttribute("producto", producto);
+
+        System.out.println("-----------MAPAAAA-----------: "+producto.getLatitud() + producto.getLongitud());
         return "comprador/detalleProducto";
     }
 
@@ -144,17 +146,20 @@ public class CompradorController {
     @PostMapping("/citas/reservar-cita")
     public String reservar(@RequestParam(name = "idDisponibilidad") Long idDisponibilidad, Authentication authentication) throws MessagingException, IOException {
         Usuario usuario = usuario(authentication);
-
         Disponibilidad disponibilidad = disponibilidadService.findById(idDisponibilidad);
-        Cita cita = new Cita();
-        cita.setEstadoCita(EstadoCitaEnum.RESERVADA);
-        cita.setDisponibilidad(disponibilidad);
-        cita.setNumReprogramaciones(0);
-        cita.setComprador(usuario);
-        cita.setProducto(disponibilidad.getProducto());
-        citaService.save(cita);
 
-        notificacionService.notificacionCitaReservada(cita);
+        if (!citaService.yaTieneCita(usuario, disponibilidad.getProducto().getIdProducto())){
+
+            Cita cita = new Cita();
+            cita.setEstadoCita(EstadoCitaEnum.RESERVADA);
+            cita.setDisponibilidad(disponibilidad);
+            cita.setNumReprogramaciones(0);
+            cita.setComprador(usuario);
+            cita.setProducto(disponibilidad.getProducto());
+            citaService.save(cita);
+
+            notificacionService.notificacionCitaReservada(cita);
+        }
 
         return "redirect:/comprador/citas";
     }
