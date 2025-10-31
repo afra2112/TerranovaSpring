@@ -60,13 +60,12 @@
         }
     </style>
 </head>
-<body class="min-h-screen ">
+<body class="min-h-screen">
 
 <div th:replace="fragments/comprador/navbarComprador :: navbarComprador"></div>
 
 <div class="ml-64 flex flex-col min-h-screen">
     <main class="lg:px-10 py-10">
-        <!-- Header rediseñado sin emojis, usando iconos SVG -->
         <section class="gradient-header rounded-3xl shadow-sm mb-8 animate-fade-in-up">
             <div class="container mx-auto px-8 py-8">
                 <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
@@ -89,7 +88,6 @@
             </div>
         </section>
 
-        <!-- Tarjetas de estadísticas mejoradas con más información -->
         <section class="mb-8 animate-fade-in-up" style="animation-delay: 0.1s;">
             <div class="container mx-auto">
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -278,7 +276,6 @@
             </div>
         </section>
 
-        <!-- Nueva sección de categorías populares -->
         <section class="mb-8 animate-fade-in-up" style="animation-delay: 0.4s;">
             <div class="container mx-auto">
                 <div class="mb-6">
@@ -287,24 +284,26 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <a href="/comprador/productos?tipo=ganado" class="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl p-8 text-white hover:shadow-2xl transition-all duration-300 hover-lift cursor-pointer">
+                    <a href="/comprador/productos?tipo=ganado"
+                       class="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl p-8 text-white hover:shadow-2xl transition-all duration-300 hover-lift cursor-pointer">
                         <div class="flex items-center gap-4 mb-4">
-                            <i class='bx bxs-cow text-5xl'></i>
+                            <i class='bx bxs-purchase-tag-alt text-5xl'></i>
                             <h3 class="text-2xl font-bold">Ganado</h3>
                         </div>
-                        <p class="text-green-100 mb-4">Encuentra el mejor ganado para tu finca</p>
+                        <p class="text-green-100 mb-4">Encuentra el mejor ganado para tu finca, seleccionado para cría, producción de leche o engorde.</p>
                         <div class="flex items-center text-sm font-semibold">
                             <span>Ver más</span>
                             <i class='bx bx-right-arrow-alt text-xl ml-2'></i>
                         </div>
                     </a>
 
-                    <a href="/comprador/productos?tipo=terreno" class="bg-gradient-to-br from-amber-500 to-amber-600 rounded-2xl p-8 text-white hover:shadow-2xl transition-all duration-300 hover-lift cursor-pointer">
+                    <a href="/comprador/productos?tipo=terreno"
+                       class="bg-gradient-to-br from-amber-500 to-amber-600 rounded-2xl p-8 text-white hover:shadow-2xl transition-all duration-300 hover-lift cursor-pointer">
                         <div class="flex items-center gap-4 mb-4">
-                            <i class='bx bx-landscape text-5xl'></i>
+                            <i class='bx bxs-map-alt text-5xl'></i>
                             <h3 class="text-2xl font-bold">Terrenos</h3>
                         </div>
-                        <p class="text-amber-100 mb-4">Terrenos productivos y listos para cultivar</p>
+                        <p class="text-amber-100 mb-4">Terrenos fértiles y listos para desarrollar proyectos agrícolas, ganaderos o de inversión rural.</p>
                         <div class="flex items-center text-sm font-semibold">
                             <span>Ver más</span>
                             <i class='bx bx-right-arrow-alt text-xl ml-2'></i>
@@ -316,7 +315,7 @@
                             <i class='bx bxs-home text-5xl'></i>
                             <h3 class="text-2xl font-bold">Fincas</h3>
                         </div>
-                        <p class="text-emerald-100 mb-4">Fincas completas con todas las comodidades</p>
+                        <p class="text-emerald-100 mb-4">Fincas equipadas con todas las comodidades, listas para vivir, vacacionar o invertir.</p>
                         <div class="flex items-center text-sm font-semibold">
                             <span>Ver más</span>
                             <i class='bx bx-right-arrow-alt text-xl ml-2'></i>
