@@ -11,7 +11,7 @@ import java.util.List;
 
 @Repository
 public interface CitaRepository extends JpaRepository<Cita, Long> {
-    List<Cita> findByCompradorAndActivo(Usuario usuario, boolean activo);
+    List<Cita> findByCompradorAndActivoOrderByDisponibilidad_FechaAscDisponibilidad_HoraAsc(Usuario usuario, boolean activo);
 
     List<Cita> findByDisponibilidad_Producto_VendedorAndEstadoCitaAndActivo(Usuario vendedor, EstadoCitaEnum estadoCitaEnum, boolean activo);
 

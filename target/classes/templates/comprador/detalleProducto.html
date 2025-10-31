@@ -135,7 +135,6 @@
             right: 20px;
         }
 
-        /* Smooth scroll */
         html {
             scroll-behavior: smooth;
         }
@@ -143,12 +142,10 @@
 </head>
 <body class="bg-gray-50">
 
-<!-- Navbar Fragment -->
 <div th:replace="fragments/comprador/navbarComprador :: navbarComprador"></div>
 
 <div class="container mx-auto px-4 py-8 max-w-7xl">
 
-    <!-- Breadcrumb -->
     <nav class="mb-6 fade-in-up">
         <ol class="flex items-center space-x-2 text-sm">
             <li><a th:href="@{/comprador/explorar}" class="text-primary hover:text-green-700 transition-colors font-medium">Productos</a></li>
@@ -159,10 +156,8 @@
 
     <div class="grid lg:grid-cols-3 gap-8">
 
-        <!-- Left Column - Images & Details -->
         <div class="lg:col-span-2 space-y-6">
 
-            <!-- Image Carousel -->
             <div class="bg-white rounded-2xl shadow-lg overflow-hidden fade-in-up carousel-container">
                 <div class="relative">
                     <div id="carousel" class="relative">
@@ -174,7 +169,6 @@
                         </div>
                     </div>
 
-                    <!-- Navigation Arrows -->
                     <div class="carousel-nav prev" onclick="changeSlide(-1)">
                         <i class='bx bx-chevron-left text-2xl text-gray-700'></i>
                     </div>
@@ -182,7 +176,6 @@
                         <i class='bx bx-chevron-right text-2xl text-gray-700'></i>
                     </div>
 
-                    <!-- Indicators -->
                     <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 z-10">
                         <span th:each="imagen, iterStat : ${producto.imagenes}"
                               th:onclick="'goToSlide(' + ${iterStat.index} + ')'"
@@ -193,7 +186,6 @@
                 </div>
             </div>
 
-            <!-- Product Header -->
             <div class="bg-white rounded-2xl shadow-lg p-8 fade-in-up card-hover">
                 <div class="flex items-start justify-between mb-6">
                     <div class="flex-1">
@@ -231,14 +223,12 @@
                 </div>
             </div>
 
-            <!-- Specific Product Details -->
             <div class="bg-white rounded-2xl shadow-lg p-8 fade-in-up card-hover">
                 <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
                     <i class='bx bx-list-ul text-primary text-2xl'></i>
                     Características Detalladas
                 </h3>
 
-                <!-- Terreno Details -->
                 <div th:if="${producto.tipoP == 'Terreno'}" class="grid md:grid-cols-2 gap-4">
                     <div class="feature-card flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
                         <div class="w-14 h-14 gradient-bg rounded-xl flex items-center justify-center flex-shrink-0">
@@ -296,7 +286,6 @@
                     </div>
                 </div>
 
-                <!-- Ganado Details -->
                 <div th:if="${producto.tipoP == 'Ganado'}" class="grid md:grid-cols-2 gap-4">
                     <div class="feature-card flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
                         <div class="w-14 h-14 gradient-bg rounded-xl flex items-center justify-center flex-shrink-0">
@@ -363,7 +352,6 @@
                     </div>
                 </div>
 
-                <!-- Finca Details -->
                 <div th:if="${producto.tipoP == 'Finca'}" class="grid md:grid-cols-2 gap-4">
                     <div class="feature-card flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
                         <div class="w-14 h-14 gradient-bg rounded-xl flex items-center justify-center flex-shrink-0">
@@ -413,7 +401,6 @@
                 </div>
             </div>
 
-            <!-- Map -->
             <div class="bg-white rounded-2xl shadow-lg p-8 fade-in-up card-hover">
                 <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
                     <i class='bx bx-map text-primary text-2xl'></i>
@@ -470,10 +457,6 @@
                         console.error('[v0] Error al inicializar el mapa:', error);
                     }
                 });
-
-                let currentSlide = 0;
-                const slides = document.querySelectorAll('.carousel-slide');
-                const indicators = document.querySelectorAll('.carousel-indicator');
 
             </script>
         </div>
@@ -675,11 +658,6 @@
         changeSlide(1);
     }, 5000);
 
-    function agregarFavorito() {
-        // TODO: Implement favorite logic with backend
-        alert('Producto agregado a favoritos');
-    }
-
     function compartir() {
         if (navigator.share) {
             navigator.share({
@@ -697,7 +675,7 @@
         const arrow = document.getElementById('dropdownArrow');
 
         if (dropdown.classList.contains('opacity-0')) {
-            // Mostrar dropdown
+
             dropdown.classList.remove('opacity-0', 'invisible', 'scale-95');
             dropdown.classList.add('opacity-100', 'visible', 'scale-100');
             arrow.style.transform = 'rotate(180deg)';
@@ -720,6 +698,5 @@
         }
     });
 </script>
-
 </body>
 </html>

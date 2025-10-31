@@ -5,11 +5,14 @@ import com.proyecto.terranova.config.enums.RolEnum;
 import com.proyecto.terranova.entity.*;
 import com.proyecto.terranova.repository.ProductoRepository;
 import com.proyecto.terranova.service.*;
+import com.proyecto.terranova.specification.ProductoSpecification;
 import jakarta.mail.MessagingException;
 import com.proyecto.terranova.service.CompradorService;
 import com.proyecto.terranova.service.ProductoService;
 import com.proyecto.terranova.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -81,9 +84,20 @@ public class CompradorController {
         model.addAttribute("explorar", true);
 
         Map<String, Integer> estadisticas = compradorService.prepararIndex(usuario(authentication).getCedula());
+        List<Cita> citas = citaService.encontrarPorComprador(usuario(authentication), true);
+
         model.addAllAttributes(estadisticas);
+        model.addAttribute("citasCant", citas.size());
+        model.addAttribute("citas", citas.stream().limit(2).toList());
         model.addAttribute("productos", productoService.obtenerTodasMenosVendedor(usuario(authentication)));
         return "comprador/principalComprador";
+    }
+
+    @GetMapping("/citas")
+    public String citas(Model model, Authentication authentication){
+        model.addAttribute("posicionCitas", true);
+        model.addAttribute("citas", citaService.encontrarPorComprador(usuarioService.findByEmail(authentication.getName()), true));
+        return "comprador/citas";
     }
 
     @GetMapping("/detalle-producto/{id}")
@@ -103,11 +117,37 @@ public class CompradorController {
         return "comprador/detalleProducto";
     }
 
-    @GetMapping("/citas")
-    public String citas(Model model, Authentication authentication){
-        model.addAttribute("posicionCitas", true);
-        model.addAttribute("citas", citaService.encontrarPorComprador(usuarioService.findByEmail(authentication.getName()), true));
-        return "comprador/citas";
+    @GetMapping("/productos")
+    public String productos(
+            Model model,
+            @RequestParam(required = false) String busquedaTexto,
+            @RequestParam(required = false) String tipo,
+            @RequestParam(required = false) String orden){
+
+        Specification<Producto> spec = (root, query, cb) -> cb.conjunction();
+
+        if (busquedaTexto != null && !busquedaTexto.isEmpty()) {
+            spec = spec.and(ProductoSpecification.buscarPorTexto(busquedaTexto));
+        }
+        if (tipo != null && !tipo.isEmpty()) {
+            spec = spec.and(ProductoSpecification.filtrarPorTipo(tipo));
+        }
+
+        if (orden == null) {
+            orden = "recientes";
+        }
+
+        Sort sort = switch (orden) {
+            case "precio_asc" -> Sort.by("precioProducto").ascending();
+            case "precio_desc" -> Sort.by("precioProducto").descending();
+            case "recientes" -> Sort.by("fechaPublicacion").descending();
+            case "antiguos" -> Sort.by("fechaPublicacion").ascending();
+            default -> Sort.by("idProducto").descending();
+        };
+
+        List<Producto> productos = productoRepository.findAll(spec, sort);
+        model.addAttribute("productos", productos);
+        return "productos";
     }
 
     @GetMapping("/compras")
