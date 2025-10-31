@@ -419,8 +419,8 @@
                     <i class='bx bx-map text-primary text-2xl'></i>
                     Ubicación del Producto
                 </h3>
-                <div id="map" class="mb-4"></div>
-                <div class="flex items-center gap-3 text-gray-600 bg-gray-50 p-4 rounded-xl">
+                <div id="map" class="w-full h-96 rounded-xl shadow-lg"></div>
+                <div class="flex items-center gap-3 text-gray-600 bg-gray-50 p-4 rounded-xl mt-4">
                     <i class='bx bx-current-location text-primary text-2xl'></i>
                     <div>
                         <p class="text-sm text-gray-500">Ubicado en</p>
@@ -428,6 +428,54 @@
                     </div>
                 </div>
             </div>
+
+
+            <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+            <script th:inline="javascript">
+                document.addEventListener('DOMContentLoaded', function() {
+                    const latitud = /*[[${producto.latitud}]]*/ 0;
+                    const longitud = /*[[${producto.longitud}]]*/ 0;
+
+                    if (!latitud || !longitud || latitud === 0 || longitud === 0) {
+                        console.error('[v0] Coordenadas inválidas o no disponibles');
+                        document.getElementById('map').innerHTML =
+                            '<div class="flex items-center justify-center h-full bg-gray-100 rounded-xl">' +
+                            '<div class="text-center">' +
+                            '<i class="bx bx-map-pin text-gray-400 text-6xl mb-4"></i>' +
+                            '<p class="text-gray-500 font-medium">Ubicación no disponible</p>' +
+                            '</div></div>';
+                        return;
+                    }
+
+                    try {
+                        const map = L.map('map').setView([latitud, longitud], 15);
+
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            attribution: '© OpenStreetMap contributors',
+                            maxZoom: 19
+                        }).addTo(map);
+
+                        const marker = L.marker([latitud, longitud]).addTo(map);
+                        marker.bindPopup('<b>Ubicación del producto</b><br>' +
+                            'Lat: ' + latitud.toFixed(6) + '<br>' +
+                            'Lng: ' + longitud.toFixed(6))
+                            .openPopup();
+
+                        setTimeout(function() {
+                            map.invalidateSize();
+                            console.log('[v0] Mapa inicializado correctamente');
+                        }, 100);
+
+                    } catch (error) {
+                        console.error('[v0] Error al inicializar el mapa:', error);
+                    }
+                });
+
+                let currentSlide = 0;
+                const slides = document.querySelectorAll('.carousel-slide');
+                const indicators = document.querySelectorAll('.carousel-indicator');
+
+            </script>
         </div>
 
         <!-- Right Column - Seller Info & Actions -->
@@ -626,24 +674,6 @@
     setInterval(() => {
         changeSlide(1);
     }, 5000);
-
-    const map = L.map('map').setView([4.570868, -74.297333], 13);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors',
-        maxZoom: 19
-    }).addTo(map);
-
-    L.marker([4.570868, -74.297333]).addTo(map)
-        .bindPopup('<b>Ubicación del producto</b>')
-        .openPopup();
-
-    function scrollToAvailability() {
-        document.getElementById('availabilitySection').scrollIntoView({
-            behavior: 'smooth',
-            block: 'center'
-        });
-    }
 
     function agregarFavorito() {
         // TODO: Implement favorite logic with backend
