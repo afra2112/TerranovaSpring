@@ -178,7 +178,7 @@ public class VendedorController {
 
     @GetMapping("/productos")
     public String productos(@RequestParam(required = false, name = "idProducto") Long idProducto,Model model, Authentication authentication){
-        List<Producto> productos = productoService.findAll();
+        List<Producto> productos = productoService.obtenerTodosPorVendedor(usuario(authentication));
 
         model.addAttribute("posicionProductos", true);
         model.addAttribute("productos", productos);

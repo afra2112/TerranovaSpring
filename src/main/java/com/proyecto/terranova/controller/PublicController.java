@@ -1,8 +1,10 @@
 package com.proyecto.terranova.controller;
 
 import com.proyecto.terranova.dto.UsuarioDTO;
+import com.proyecto.terranova.entity.Ciudad;
 import com.proyecto.terranova.entity.Producto;
 import com.proyecto.terranova.entity.Usuario;
+import com.proyecto.terranova.repository.CiudadRepository;
 import com.proyecto.terranova.repository.ProductoRepository;
 import com.proyecto.terranova.service.ProductoService;
 import com.proyecto.terranova.service.UsuarioService;
@@ -22,6 +24,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class PublicController {
@@ -34,12 +37,17 @@ public class PublicController {
     @Autowired
     ProductoRepository productoRepository;
 
+    @Autowired
+    CiudadRepository ciudadRepository;
+
     @GetMapping("/login")
     public String login(Model model){
         List<Producto> productos = productoRepository.findAll();
+        List<String> ciudades = ciudadRepository.findAll().stream().map(Ciudad::getNombreCiudad).toList();
         for (Producto producto : productos) {
             producto.setTipoP(producto.getClass().getSimpleName());
         }
+        model.addAttribute("ciudades", ciudades);
         model.addAttribute("productos", productos);
         return "login";
     }

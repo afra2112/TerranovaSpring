@@ -8,12 +8,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @Configuration
 public class DataSeeder {
@@ -26,12 +23,14 @@ public class DataSeeder {
             CiudadRepository ciudadRepository,
             TerrenoRepository terrenoRepository,
             FincaRepository fincaRepository,
+            GanadoRepository ganadoRepository,
             DisponibilidadRepository disponibilidadRepository,
             ProductoRepository productoRepository) {
 
         return args -> {
             Random random = new Random();
 
+            //ROLES
             if (!rolRepository.existsByNombreRol(RolEnum.COMPRADOR)) {
                 Rol rol = new Rol();
                 rol.setNombreRol(RolEnum.COMPRADOR);
@@ -43,14 +42,15 @@ public class DataSeeder {
                 rolRepository.save(rol);
             }
 
+            //CIUDADES
             if (ciudadRepository.count() == 0) {
                 List<String> ciudades = Arrays.asList(
                         "Bogota", "Medellin", "Cali", "Barranquilla", "Cartagena",
                         "Cucuta", "Bucaramanga", "Pereira", "Santa Marta", "Ibague",
                         "Manizales", "Pasto", "Monteria", "Neiva", "Villavicencio",
                         "Armenia", "Sincelejo", "Valledupar", "Popayan", "Riohacha",
-                        "Tunja", "Florencia", "Quibdó", "Mocoa", "San Jose del Guaviare",
-                        "Mitu", "Puerto Carreño", "Yopal", "Inirida", "Leticia"
+                        "Tunja", "Florencia", "Quibdo", "Mocoa", "San Jose del Guaviare",
+                        "Mitu", "Puerto Carreno", "Yopal", "Inirida", "Leticia"
                 );
 
                 ciudades.forEach(nombre -> {
@@ -60,152 +60,179 @@ public class DataSeeder {
                 });
             }
 
+            //USUARIOS
             if (usuarioRepository.findByEmail("afra65069@gmail.com") == null) {
                 Usuario usuario = new Usuario();
                 usuario.setRoles(List.of(
                         rolRepository.findBynombreRol(RolEnum.COMPRADOR),
                         rolRepository.findBynombreRol(RolEnum.VENDEDOR)
                 ));
-                usuario.setNombres("Alejandro");
-                usuario.setApellidos("García Martínez");
+                usuario.setNombres("Andres");
+                usuario.setApellidos("Ramirez");
                 usuario.setCedula("1234567890");
                 usuario.setTelefono("3001234567");
                 usuario.setEmail("afra65069@gmail.com");
-                usuario.setContrasena(passwordEncoder.encode("password123"));
+                usuario.setContrasena(passwordEncoder.encode("andres1234"));
                 usuario.setNacimiento(LocalDate.parse("1990-05-15"));
                 usuario.setFechaRegistro(LocalDate.now());
                 usuarioRepository.save(usuario);
             }
+            crearUsuarioSiNoExiste(usuarioRepository, passwordEncoder, rolRepository,
+                    "maria.rodriguez", "Maria", "Rodriguez Lopez", "9876543210", "3109876543", "maria1234", true);
+            crearUsuarioSiNoExiste(usuarioRepository, passwordEncoder, rolRepository,
+                    "carlos.mendez", "Carlos", "Mendez Silva", "5551234567", "3201234567", "carlos1234", false);
+            crearUsuarioSiNoExiste(usuarioRepository, passwordEncoder, rolRepository,
+                    "laura.torres", "Laura", "Torres Ramirez", "7778889990", "3157654321", "laura1234", false);
 
-            String emailUsuario2 = "maria.rodriguez" + random.nextInt(1000) + "@example.com";
-            if (usuarioRepository.findByEmail(emailUsuario2) == null) {
-                Usuario usuario = new Usuario();
-                usuario.setRoles(List.of(
-                        rolRepository.findBynombreRol(RolEnum.COMPRADOR),
-                        rolRepository.findBynombreRol(RolEnum.VENDEDOR)
-                ));
-                usuario.setNombres("María");
-                usuario.setApellidos("Rodríguez López");
-                usuario.setCedula("9876543210");
-                usuario.setTelefono("3109876543");
-                usuario.setEmail(emailUsuario2);
-                usuario.setContrasena(passwordEncoder.encode("password456"));
-                usuario.setNacimiento(LocalDate.parse("1988-08-22"));
-                usuario.setFechaRegistro(LocalDate.now());
-                usuarioRepository.save(usuario);
-            }
+            //PRODUCTOS
+            if (terrenoRepository.count() == 0 && fincaRepository.count() == 0 && ganadoRepository.count() == 0) {
 
-            String emailUsuario3 = "carlos.mendez" + random.nextInt(1000) + "@example.com";
-            if (usuarioRepository.findByEmail(emailUsuario3) == null) {
-                Usuario usuario = new Usuario();
-                usuario.setRoles(List.of(rolRepository.findBynombreRol(RolEnum.COMPRADOR)));
-                usuario.setNombres("Carlos");
-                usuario.setApellidos("Méndez Silva");
-                usuario.setCedula("5551234567");
-                usuario.setTelefono("3201234567");
-                usuario.setEmail(emailUsuario3);
-                usuario.setContrasena(passwordEncoder.encode("password789"));
-                usuario.setNacimiento(LocalDate.parse("1995-03-10"));
-                usuario.setFechaRegistro(LocalDate.now());
-                usuarioRepository.save(usuario);
-            }
-
-            String emailUsuario4 = "laura.torres" + random.nextInt(1000) + "@example.com";
-            if (usuarioRepository.findByEmail(emailUsuario4) == null) {
-                Usuario usuario = new Usuario();
-                usuario.setRoles(List.of(rolRepository.findBynombreRol(RolEnum.COMPRADOR)));
-                usuario.setNombres("Laura");
-                usuario.setApellidos("Torres Ramírez");
-                usuario.setCedula("7778889990");
-                usuario.setTelefono("3157654321");
-                usuario.setEmail(emailUsuario4);
-                usuario.setContrasena(passwordEncoder.encode("password321"));
-                usuario.setNacimiento(LocalDate.parse("1992-11-28"));
-                usuario.setFechaRegistro(LocalDate.now());
-                usuarioRepository.save(usuario);
-            }
-
-            if (terrenoRepository.count() == 0 && fincaRepository.count() == 0) {
-                // Obtener vendedores (usuarios con rol VENDEDOR)
                 List<Usuario> vendedores = usuarioRepository.findAll().stream()
-                        .filter(u -> u.getRoles().stream()
-                                .anyMatch(r -> r.getNombreRol() == RolEnum.VENDEDOR))
+                        .filter(u -> u.getRoles().stream().anyMatch(r -> r.getNombreRol() == RolEnum.VENDEDOR))
                         .toList();
 
                 List<Ciudad> todasCiudades = ciudadRepository.findAll();
-                String[] tiposTerreno = {"Residencial", "Comercial", "Industrial", "Agrícola"};
-                String[] tiposFinca = {"Ganadera", "Agrícola", "Recreativa", "Mixta"};
+                String[] tiposTerreno = {"Residencial", "Agricola"};
+                String[] tiposFinca = {"Ganadera", "Recreativa"};
+                String[] razasGanado = {"Brahman", "Holstein"};
+                String[] tiposGanado = {"Lechero", "De carne"};
+                String[] estadosSanitarios = {"Excelente", "Vacunado y controlado"};
 
                 for (Usuario vendedor : vendedores) {
-                    // Crear 2 terrenos por cada tipo (8 terrenos por vendedor)
+
+                    //2 TERRENOS
                     for (String tipo : tiposTerreno) {
-                        for (int i = 1; i <= 2; i++) {
-                            Terreno terreno = new Terreno();
-                            terreno.setNombreProducto("Terreno " + tipo + " " + vendedor.getNombres() + " #" + i);
-                            terreno.setDescripcion("Terreno " + tipo + " #" + i + " en excelente ubicación con todos los servicios");
-                            terreno.setEstado("DISPONIBLE");
-                            terreno.setFechaPublicacion(LocalDate.now().minusDays(random.nextInt(30)));
-                            terreno.setLatitud(String.valueOf(4.0 + random.nextDouble() * 6.0));
-                            terreno.setLongitud(String.valueOf(-77.0 + random.nextDouble() * 5.0));
-                            terreno.setPrecioProducto(new BigDecimal(50000000 + random.nextInt(200000000)).toBigInteger().longValue());
-                            terreno.setVendedor(vendedor);
-                            terreno.setCiudad(todasCiudades.get(random.nextInt(todasCiudades.size())));
-                            terreno.setServicios("Agua, Gas");
-                            terreno.setTopografiaTerreno("Plano");
+                        Terreno terreno = new Terreno();
+                        terreno.setNombreProducto("Terreno " + tipo + " " + vendedor.getNombres());
+                        terreno.setDescripcion("Terreno " + tipo.toLowerCase() + " con excelente ubicación, ideal para proyectos.");
+                        terreno.setEstado("DISPONIBLE");
+                        terreno.setFechaPublicacion(LocalDate.now().minusDays(random.nextInt(15)));
+                        terreno.setLatitud(String.valueOf(4.0 + random.nextDouble() * 6.0));
+                        terreno.setLongitud(String.valueOf(-77.0 + random.nextDouble() * 5.0));
+                        terreno.setPrecioProducto(80_000_000L + random.nextInt(120_000_000));
+                        terreno.setVendedor(vendedor);
+                        terreno.setCiudad(todasCiudades.get(random.nextInt(todasCiudades.size())));
+                        terreno.setServicios("Agua, Luz");
+                        terreno.setTopografiaTerreno("Plano");
+                        terreno.setAcceso("Pavimentado");
+                        terreno.setTipoTerreno(tipo);
+                        terreno.setUsoActual("Desarrollo");
+                        terreno.setTamanoTerreno(5000);
 
-                            // Campos específicos de terreno
-                            terreno.setAcceso("Pavimentado");
-                            terreno.setNombreProducto("Terreno " + tipo + " Premium");
-                            terreno.setTipoTerreno(tipo);
-                            terreno.setUsoActual("Disponible para desarrollo");
-
-                            terreno = terrenoRepository.save(terreno);
-
-                            crearDisponibilidades(terreno.getIdProducto(), disponibilidadRepository, productoRepository);
-                        }
+                        terreno = terrenoRepository.save(terreno);
+                        agregarImagenesProducto(terreno, "terreno", productoRepository);
+                        crearDisponibilidades(terreno.getIdProducto(), disponibilidadRepository, productoRepository);
                     }
 
-                    // Crear 2 fincas por cada tipo (8 fincas por vendedor)
+                    //2 FINCAS
                     for (String tipo : tiposFinca) {
-                        for (int i = 1; i <= 2; i++) {
-                            Finca finca = new Finca();
-                            finca.setNombreProducto("Finca " + tipo + " " + vendedor.getNombres() + " #" + i);
-                            finca.setDescripcion("Finca " + tipo + " #" + i + " con todas las comodidades y servicios");
-                            finca.setEstado("DISPONIBLE");
-                            finca.setFechaPublicacion(LocalDate.now().minusDays(random.nextInt(30)));
-                            finca.setLatitud(String.valueOf(4.0 + random.nextDouble() * 6.0));
-                            finca.setLongitud(String.valueOf(-77.0 + random.nextDouble() * 5.0));
-                            finca.setPrecioProducto(new BigDecimal(100000000 + random.nextInt(400000000)).toBigInteger().longValue());
-                            finca.setVendedor(vendedor);
-                            finca.setCiudad(todasCiudades.get(random.nextInt(todasCiudades.size())));
+                        Finca finca = new Finca();
+                        finca.setNombreProducto("Finca " + tipo + " " + vendedor.getNombres());
+                        finca.setDescripcion("Finca " + tipo.toLowerCase() + " completamente equipada y lista para uso inmediato.");
+                        finca.setEstado("DISPONIBLE");
+                        finca.setFechaPublicacion(LocalDate.now().minusDays(random.nextInt(15)));
+                        finca.setLatitud(String.valueOf(4.0 + random.nextDouble() * 6.0));
+                        finca.setLongitud(String.valueOf(-77.0 + random.nextDouble() * 5.0));
+                        finca.setPrecioProducto(150_000_000L + random.nextInt(250_000_000));
+                        finca.setVendedor(vendedor);
+                        finca.setCiudad(todasCiudades.get(random.nextInt(todasCiudades.size())));
+                        finca.setEspacioConstruido(String.valueOf(200 + random.nextInt(300)));
+                        finca.setEspacioTotal(String.valueOf(6000 + random.nextInt(20000)));
+                        finca.setEstratoFinca(random.nextInt(3) + 3);
+                        finca.setNumeroHabitaciones(random.nextInt(3) + 2);
+                        finca.setNumeroBanos(random.nextInt(2) + 1);
 
-                            // Campos específicos de finca
-                            finca.setEspacioConstruido(new BigDecimal(150 + random.nextInt(350)).toString());
-                            finca.setEspacioTotal(new BigDecimal(5000 + random.nextInt(45000)).toString());
-                            finca.setEstratoFinca(random.nextInt(3) + 3);
-                            finca.setNumeroHabitaciones(random.nextInt(4) + 2);
-                            finca.setNumeroBanos(random.nextInt(3) + 1);
+                        finca = fincaRepository.save(finca);
+                        agregarImagenesProducto(finca, "finca", productoRepository);
+                        crearDisponibilidades(finca.getIdProducto(), disponibilidadRepository, productoRepository);
+                    }
 
-                            finca = fincaRepository.save(finca);
+                    //2 GANADOS
+                    for (int i = 0; i < 2; i++) {
+                        String raza = razasGanado[random.nextInt(razasGanado.length)];
+                        Ganado ganado = new Ganado();
+                        ganado.setNombreProducto("Ganado " + raza + " " + vendedor.getNombres() + " #" + (i + 1));
+                        ganado.setDescripcion("Ejemplar de raza " + raza + " en excelente estado sanitario.");
+                        ganado.setEstado("DISPONIBLE");
+                        ganado.setFechaPublicacion(LocalDate.now().minusDays(random.nextInt(15)));
+                        ganado.setLatitud(String.valueOf(4.0 + random.nextDouble() * 6.0));
+                        ganado.setLongitud(String.valueOf(-77.0 + random.nextDouble() * 5.0));
+                        ganado.setPrecioProducto(6_000_000L + random.nextInt(10_000_000));
+                        ganado.setVendedor(vendedor);
+                        ganado.setCiudad(todasCiudades.get(random.nextInt(todasCiudades.size())));
 
-                            crearDisponibilidades(finca.getIdProducto(), disponibilidadRepository, productoRepository);
-                        }
+                        ganado.setCantidad(1 + random.nextInt(5));
+                        ganado.setEdadGanado(12 + random.nextInt(24));
+                        ganado.setEstadoSanitario(estadosSanitarios[random.nextInt(estadosSanitarios.length)]);
+                        ganado.setGeneroGanado(random.nextBoolean() ? "Macho" : "Hembra");
+                        ganado.setPesoGanado(300 + random.nextInt(200));
+                        ganado.setRazaGanado(raza);
+                        ganado.setTipoGanado(tiposGanado[random.nextInt(tiposGanado.length)]);
+
+                        ganado = ganadoRepository.save(ganado);
+                        agregarImagenesProducto(ganado, "ganado", productoRepository);
+                        crearDisponibilidades(ganado.getIdProducto(), disponibilidadRepository, productoRepository);
                     }
                 }
 
-                System.out.println("✓ Database seeded successfully!");
-                System.out.println("  - 30 ciudades");
-                System.out.println("  - 2 roles");
-                System.out.println("  - 4 usuarios (2 vendedores, 4 compradores)");
-                System.out.println("  - " + (vendedores.size() * 16) + " productos (terrenos y fincas)");
-                System.out.println("  - " + (vendedores.size() * 16 * 7) + " disponibilidades");
+                System.out.println("Base de datos inicializada correctamente (6 productos por vendedor).");
             }
         };
     }
 
+    private void crearUsuarioSiNoExiste(UsuarioRepository usuarioRepository,
+                                        PasswordEncoder passwordEncoder,
+                                        RolRepository rolRepository,
+                                        String baseEmail, String nombres, String apellidos,
+                                        String cedula, String telefono, String contrasena, boolean vendedor) {
+        Random random = new Random();
+        String email = baseEmail + random.nextInt(1000) + "@example.com";
+
+        if (usuarioRepository.findByEmail(email) == null) {
+            Usuario usuario = new Usuario();
+            if (vendedor) {
+                usuario.setRoles(List.of(
+                        rolRepository.findBynombreRol(RolEnum.COMPRADOR),
+                        rolRepository.findBynombreRol(RolEnum.VENDEDOR)
+                ));
+            } else {
+                usuario.setRoles(List.of(rolRepository.findBynombreRol(RolEnum.COMPRADOR)));
+            }
+            usuario.setNombres(nombres);
+            usuario.setApellidos(apellidos);
+            usuario.setCedula(cedula);
+            usuario.setTelefono(telefono);
+            usuario.setEmail(email);
+            usuario.setContrasena(passwordEncoder.encode(contrasena));
+            usuario.setNacimiento(LocalDate.now().minusYears(25 + random.nextInt(15)));
+            usuario.setFechaRegistro(LocalDate.now());
+            usuarioRepository.save(usuario);
+        }
+    }
+
+    private void agregarImagenesProducto(Producto producto, String tipo, ProductoRepository productoRepository) {
+        Random random = new Random();
+        int cantidadImagenes = 2 + random.nextInt(2);
+        List<Imagen> imagenes = new ArrayList<>();
+
+        Long idProducto = producto.getIdProducto();
+        String nombreVendedor = producto.getVendedor().getNombres().replaceAll("\\s+", "").toLowerCase();
+
+        for (int i = 1; i <= cantidadImagenes; i++) {
+            Imagen imagen = new Imagen();
+            imagen.setProducto(producto);
+            imagen.setNombreArchivo(
+                    "/imagenes/"+"imagen" + i + "_" + tipo + "_id" + idProducto + "_" + nombreVendedor + ".jpg"
+            );
+            imagenes.add(imagen);
+        }
+
+        producto.setImagenes(imagenes);
+        productoRepository.save(producto);
+    }
+
     private void crearDisponibilidades(Long idProducto, DisponibilidadRepository disponibilidadRepository, ProductoRepository productoRepository) {
         LocalDate hoy = LocalDate.now();
-
         for (int i = 0; i < 7; i++) {
             Disponibilidad disponibilidad = new Disponibilidad();
             disponibilidad.setProducto(productoRepository.findById(idProducto).orElseThrow());
@@ -213,7 +240,6 @@ public class DataSeeder {
             disponibilidad.setHora(LocalTime.of(9, 0));
             disponibilidad.setDisponible(true);
             disponibilidad.setDescripcion("Disponible para visita");
-
             disponibilidadRepository.save(disponibilidad);
         }
     }

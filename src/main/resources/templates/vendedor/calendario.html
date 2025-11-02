@@ -192,7 +192,7 @@
         document.getElementById('detalleDisponibilidadFecha').textContent = cita.fecha;
         document.getElementById('detalleDisponibilidadHora').textContent = cita.hora;
         document.getElementById('detalleDisponibilidadDescripcion').textContent = cita.descripcion || 'No hay descripción';
-        document.getElementById('detalleDisponibilidadProductoLink').href = '/vendedor/productos/detalle/' + cita.idProducto;
+        document.getElementById('detalleDisponibilidadProductoLink').href = '/vendedor/productos/Detalle/' + cita.idProducto;
         document.getElementById('detalleDisponibilidadEliminarLink').href = '/vendedor/eliminar-disponibilidad?idDisponibilidad='+cita.idDisponibilidad+'&idProducto=' + cita.idProducto + '&vieneDe=calendario';
         const modal = document.getElementById('detalleDisponibilidadModal'); modal.classList.remove('opacity-0', 'invisible');
         modal.classList.add('opacity-100', 'visible');
