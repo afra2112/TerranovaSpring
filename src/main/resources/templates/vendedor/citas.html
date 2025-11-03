@@ -7,25 +7,38 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        'primary': '#388e3c',
-                        'secondary': '#ffcf00'
+                        'primary': '#059669',
+                        'secondary': '#10b981'
                     }
                 }
             }
         }
     </script>
     <style>
+        /* Enhanced gradient styles with emerald theme */
         .gradient-bg {
             background: linear-gradient(135deg, #059669 0%, #10b981 100%);
         }
-        /* Added gradient button styles */
-        .gradient-btn-primary {
-            background: linear-gradient(135deg, #388e3c 0%, #4caf50 100%);
+        .gradient-bg-red {
+            background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+        }
+        .gradient-hero {
+            background: linear-gradient(135deg, #064e3b 0%, #059669 50%, #10b981 100%);
+        }
+        .gradient-hero-red {
+            background: linear-gradient(135deg, #7f1d1d 0%, #dc2626 50%, #ef4444 100%);
+        }
+        .gradient-card {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+        }
+        .gradient-card-red {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
         }
         .gradient-btn-secondary {
             background: linear-gradient(135deg, #6b7280 0%, #9ca3af 100%);
@@ -33,414 +46,409 @@
         .gradient-btn-danger {
             background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
         }
+        .gradient-btn-neutral {
+            background: linear-gradient(135deg, #6b7280 0%, #9ca3af 100%);
+        }
         .modal-content {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            box-shadow: 0 25px 50px -12px rgba(5, 150, 105, 0.25);
         }
         .modal-backdrop {
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(5px);
+            background: rgba(17, 24, 39, 0.35);
+            backdrop-filter: blur(8px);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(5, 150, 105, 0.1), 0 10px 10px -5px rgba(5, 150, 105, 0.04);
         }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 min-h-screen">
 
 <div th:replace="fragments/vendedor/navbarVendedor :: navbarVendedor"></div>
 
 <div class="ml-64 flex flex-col min-h-screen">
     <main class="lg:px-10 py-10">
-        <!-- Header -->
-        <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-900 mb-2">Mis Citas</h1>
-            <p class="text-gray-600">Gestiona tus citas programadas con compradores</p>
+        <!-- Enhanced hero section with emerald gradient -->
+        <div class="gradient-hero rounded-3xl p-8 mb-8 text-white relative overflow-hidden">
+            <div class="absolute inset-0 bg-black/10"></div>
+            <div class="relative z-10">
+                <h1 class="text-4xl font-bold mb-3">Mis Citas</h1>
+                <p class="text-emerald-100 text-lg">Gestiona tus citas programadas con compradores de manera eficiente</p>
+            </div>
+            <div class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full"></div>
+            <div class="absolute -bottom-5 -left-5 w-32 h-32 bg-white/5 rounded-full"></div>
         </div>
 
-        <!-- Stats Cards -->
+        <!-- Enhanced stats cards with emerald theme -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-all">
+            <div class="bg-white rounded-2xl p-6 border card-hover ">
                 <div class="flex items-center justify-between mb-4">
-                    <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
-                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-14 h-14 gradient-bg rounded-2xl flex items-center justify-center">
+                        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
                     </div>
-                    <span class="text-2xl font-bold text-gray-900" th:text="${numReservadas}"></span>
+                    <span class="text-3xl font-bold text-gray-900" th:text="${numReservadas}"></span>
                 </div>
-                <h3 class="font-medium text-gray-600 mb-1">Citas Reservadas</h3>
-                <p class="text-sm text-green-600 font-medium">3 para esta semana</p>
-            </div>
+                <h3 class="font-semibold text-gray-800 mb-2">Citas Reservadas</h3></div>
 
-            <div class="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-all">
+            <div class="bg-white rounded-2xl p-6 border card-hover ">
                 <div class="flex items-center justify-between mb-4">
-                    <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
-                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-14 h-14 gradient-bg rounded-2xl flex items-center justify-center">
+                        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                     </div>
-                    <span class="text-2xl font-bold text-gray-900" th:text="${numFinalizadas}"></span>
+                    <span class="text-3xl font-bold text-gray-900" th:text="${numFinalizadas}"></span>
                 </div>
-                <h3 class="font-medium text-gray-600 mb-1">Citas Finalizadas</h3>
-                <p class="text-sm text-green-600 font-medium">Este mes</p>
+                <h3 class="font-semibold text-gray-800 mb-2">Citas Finalizadas</h3>
             </div>
 
-            <div class="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-all">
+            <div class="bg-white rounded-2xl p-6 border border-gray-100 card-hover">
                 <div class="flex items-center justify-between mb-4">
-                    <div class="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center">
-                        <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center">
+                        <svg class="w-7 h-7 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                         </svg>
                     </div>
-                    <span class="text-2xl font-bold text-gray-900" th:text="${numCanceladas}"></span>
+                    <span class="text-3xl font-bold text-gray-900" th:text="${numCanceladas}"></span>
                 </div>
-                <h3 class="font-medium text-gray-600 mb-1">Citas Canceladas</h3>
-                <p class="text-sm text-gray-600 font-medium">Este mes</p>
+                <h3 class="font-semibold text-gray-800 mb-2">Citas Canceladas</h3>
             </div>
         </div>
 
-        <!-- Filters -->
-        <div class="bg-white rounded-2xl p-6 border border-gray-200 mb-8">
+        <!-- Enhanced filters section -->
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 mb-8 ">
             <div class="flex flex-wrap items-center gap-4">
-                <h3 class="font-semibold text-gray-900">Filtrar por estado:</h3>
-                <button class="px-4 py-2 bg-[#388e3c] text-white rounded-xl font-medium hover:bg-[#2e7d32] transition-colors">
+                <h3 class="font-semibold text-gray-900 flex items-center gap-2">
+                    <i class='bx bx-filter-alt text-emerald-600'></i>
+                    Filtrar por estado:
+                </h3>
+                <button class="px-6 py-2.5 border-2 border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-all tab-button active" data-tab="todas">
                     Todas
                 </button>
-                <button class="px-4 py-2 border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors">
+                <button class="px-6 py-2.5 border-2 border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-all tab-button" data-tab="reservadas">
                     Reservadas
                 </button>
-                <button class="px-4 py-2 border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors">
+                <button class="px-6 py-2.5 border-2 border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-all tab-button" data-tab="finalizadas">
                     Finalizadas
                 </button>
-                <button class="px-4 py-2 border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors">
+                <button class="px-6 py-2.5 border-2 border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-all tab-button" data-tab="canceladas">
                     Canceladas
                 </button>
             </div>
         </div>
 
-        <!-- Appointments List -->
-        <div class="bg-white rounded-2xl p-6 border border-gray-200">
-            <div class="flex items-center justify-between mb-6">
-                <h3 class="text-xl font-semibold text-gray-900">Lista de Citas</h3>
+        <div class="bg-white rounded-2xl p-8 border border-gray-100">
+            <div class="flex items-center justify-between mb-8">
+                <h3 class="text-2xl font-bold text-gray-900 flex items-center gap-3">
+                    <i class='bx bx-calendar-check text-emerald-600 text-3xl'></i>
+                    Lista de Citas
+                </h3>
             </div>
-
-            <!-- Restructured appointments cards with new compact layout -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Cita Reservada -->
-                <div th:each="cita : ${citas}" class="bg-white rounded-xl shadow border border-gray-200 overflow-hidden max-w-xl">
-                    <!-- Header con foto + nombre + estado -->
-                    <div class="flex items-center gap-4 p-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-green-50">
-                        <img th:src="@{'/' + ${cita.comprador.foto}}"
-                             class="w-14 h-14 rounded-full object-cover border border-gray-200 shadow-sm">
-
-                        <div class="flex-1">
-                            <div class="flex items-center justify-between">
-                                <h4 class="font-bold text-gray-900 text-lg" th:text="${cita.comprador.nombres}"></h4>
-                                <span class="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded-full" th:text="${cita.estadoCita}"></span>
+            <div class="flex flex-wrap gap-8">
+                <div th:each="cita : ${citas}" th:switch="${cita.estadoCita.toString()}">
+                    <!-- Enhanced cards for RESERVADAS appointments -->
+                    <div th:case="'RESERVADA'" class="bg-white rounded-2xl shadow-lg border-2 border-gray-200 overflow-hidden flex-1 min-w-[320px] max-w-xl card-hover cita-card reservada">
+                        <div class="flex items-center gap-4 p-6 border-b border-gray-100 gradient-hero">
+                            <img th:if="${cita.comprador.foto != null}" th:src="@{'/imagenes/' + ${cita.comprador.foto}}" class="w-16 h-16 rounded-2xl object-cover border-2 border-gray-200 shadow-md" th:alt="${cita.comprador.nombres}">
+                            <div th:if="${cita.comprador.foto == null}" class="w-16 h-16 gradient-bg rounded-2xl flex items-center justify-center">
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                </svg>
                             </div>
-                            <p class="text-xs text-gray-500 mt-1" th:text="'📅' + ${cita.fecha} + ' - ' + ${cita.hora}"></p>
-                        </div>
-                    </div>
-
-                    <!-- Body -->
-                    <div class="p-4 space-y-4">
-                        <!-- Contacto -->
-                        <div class="flex flex-col gap-1 text-sm text-gray-600">
-                            <div class="flex items-center gap-2">
-                                <i class='bx bx-envelope text-gray-400'></i>
-                                <span th:text="${cita.comprador.email}"></span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <i class='bx bx-phone text-gray-400'></i>
-                                <span th:text="'+57 ' + ${cita.comprador.telefono}"></span>
-                            </div>
-                        </div>
-
-                        <!-- Producto -->
-                        <div class="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-4">
-                            <div class="flex items-start gap-3">
-                                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                    <i class='bx bx-home text-green-600 text-xl'></i>
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between">
+                                    <h4 class="font-bold text-xl text-white"
+                                        th:text="${cita.comprador.nombres}"></h4>
                                 </div>
-                                <div>
-                                    <p class="font-semibold text-gray-900 mb-1">Informacion del Producto</p>
-                                    <p class="text-gray-800 font-medium" th:text="${cita.producto.nombreProducto}"></p>
-                                    <p class="text-green-700 font-bold text-lg" th:text="${cita.producto.precioProducto}"></p>
+                                <div class="flex items-center gap-3 mt-2">
+                                    <span class="px-3 py-1 text-sm font-semibold rounded-full bg-amber-100 border border-amber-300 text-amber-800" th:text="${cita.estadoCita}"></span>
+                                    <p class="text-sm font-medium text-gray-100"
+                                       th:text="'📅 ' + ${#strings.capitalize(#temporals.format(cita.disponibilidad.fecha, 'EEEE d MMMM', T(java.util.Locale).forLanguageTag('es-ES')))} + ' - ' + ${cita.disponibilidad.hora}">
+                                    </p>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Botones -->
-                        <div class="flex flex-col gap-2">
-                            <button class="gradient-btn-primary text-white px-4 py-2 rounded-lg font-medium hover:shadow-lg transition-all flex items-center justify-center gap-2">
-                                <i class='bx bx-show'></i>
-                                Ver Producto
-                            </button>
-                            <div class="flex gap-2">
-                                <button class="gradient-btn-secondary text-white px-4 py-2 rounded-lg font-medium hover:shadow-lg transition-all flex items-center justify-center gap-2 flex-1" onclick="openRescheduleModal()">
-                                    <i class='bx bx-calendar-edit'></i>
-                                    Reprogramar
-                                </button>
-                                <button class="gradient-btn-danger text-white px-4 py-2 rounded-lg font-medium hover:shadow-lg transition-all flex items-center justify-center gap-2 flex-1" onclick="openCancelModal()">
-                                    <i class='bx bx-x'></i>
-                                    Cancelar
-                                </button>
+                        <div class="p-6 space-y-6">
+                            <div class="flex flex-col gap-3 text-sm text-gray-700">
+                                <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                                    <i class='bx bx-envelope text-gray-600 text-lg'></i>
+                                    <span th:text="${cita.comprador.email}"></span>
+                                </div>
+                                <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                                    <i class='bx bx-phone text-gray-600 text-lg'></i>
+                                    <span th:text="'+57 ' + ${cita.comprador.telefono}"></span>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-
-                <!-- Cita Reservada 2 -->
-                <div class="bg-white rounded-xl shadow border border-gray-200 overflow-hidden max-w-xl">
-                    <div class="flex items-center gap-4 bg-gray-50 p-4 border-b border-gray-200">
-                        <img src="/placeholder.svg?height=64&width=64"
-                             alt="Roberto Silva"
-                             class="w-16 h-16 rounded-lg object-cover border border-gray-300 shadow-sm">
-
-                        <div class="flex-1">
-                            <h4 class="font-bold text-gray-900 text-lg">Roberto Silva</h4>
-                            <div class="flex items-center gap-2 mt-1">
-                                <span class="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
-                                    Reservada
-                                </span>
-                                <span class="text-xs text-gray-500">📅 Mañana - 10:00 AM</span>
+                            <div class="border-2 rounded-2xl p-5 gradient-card border-emerald-200">
+                                <div class="flex items-start gap-4">
+                                    <div class="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 gradient-bg">
+                                        <i class="bx bx-home text-2xl text-white"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-gray-900 mb-2">Información del Producto</p>
+                                        <p class="text-gray-800 font-medium text-lg" th:text="${cita.producto.nombreProducto}"></p>
+                                        <p class="font-bold text-2xl text-emerald-700" th:text="'$' + ${#numbers.formatInteger(cita.producto.precioProducto, 0, 'COMMA')}"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex flex-col gap-3">
+                                <button class="gradient-bg text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2">
+                                    <a th:href="@{/vendedor/productos/Detalle/{idProducto}(idProducto=${cita.producto.idProducto})}"><i class='bx bx-show text-lg'></i> Ver Producto</a>
+                                </button>
+                                <form th:action="@{/vendedor/citas/finalizar-cita}" method="post">
+                                    <input type="hidden" name="idCita" th:value="${cita.idCita}">
+                                    <button
+                                            th:classappend="${cita.fechaDisponibleParaFinalizar} ? 'bg-green-600 hover:bg-green-700 text-white font-semibold shadow-md' : 'bg-gray-400 text-gray-200 cursor-not-allowed opacity-70'"
+                                            th:attr="disabled=${!cita.fechaDisponibleParaFinalizar}"
+                                            class="px-5 py-2 rounded-xl transition duration-200 ease-in-out"
+                                    >
+                                        Finalizar cita
+                                    </button>
+                                </form>
+                                <div class="flex gap-3">
+                                    <button class="gradient-btn-secondary text-white px-4 py-2 rounded-lg font-medium hover:shadow-lg transition-all flex items-center justify-center gap-2 flex-1" onclick="openAvailabilityModal()">
+                                        <i class='bx bx-calendar-edit'></i>
+                                        Reprogramar
+                                    </button>
+                                    <button class="gradient-btn-danger text-white px-4 py-3 rounded-xl font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2 flex-1" th:onclick="'openCancelModal(' + ${cita.idCita} + ')'">
+                                        <i class='bx bx-x'></i> Cancelar
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <div id="availabilityModal" class="fixed hidden inset-0 modal-backdrop flex items-center justify-center z-50">
+                        <div class="modal-content rounded-3xl p-8 max-w-2xl w-full mx-4 shadow-2xl max-h-[90vh] overflow-y-auto">
 
-                    <div class="p-4 space-y-4">
-                        <div class="flex flex-col gap-1 text-sm text-gray-600">
-                            <div class="flex items-center gap-2">
-                                <i class='bx bx-envelope text-gray-400'></i>
-                                <span>roberto.silva@email.com</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <i class='bx bx-phone text-gray-400'></i>
-                                <span>+57 301 987 6543</span>
-                            </div>
-                        </div>
-
-                        <div class="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-4">
-                            <div class="flex items-start gap-3">
-                                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                    <i class='bx bx-leaf text-green-600 text-xl'></i>
-                                </div>
-                                <div>
-                                    <p class="font-semibold text-gray-900 mb-1">Producto de interés</p>
-                                    <p class="text-gray-800 font-medium">Ganado Holstein Premium</p>
-                                    <p class="text-green-700 font-bold text-lg">$850,000</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="flex flex-col gap-2">
-                            <button class="gradient-btn-primary text-white px-4 py-2 rounded-lg font-medium hover:shadow-lg transition-all flex items-center justify-center gap-2">
-                                <i class='bx bx-show'></i>
-                                Ver Producto
-                            </button>
-                            <div class="flex gap-2">
-                                <button class="gradient-btn-secondary text-white px-4 py-2 rounded-lg font-medium hover:shadow-lg transition-all flex items-center justify-center gap-2 flex-1" onclick="openRescheduleModal()">
-                                    <i class='bx bx-calendar-edit'></i>
-                                    Reprogramar
-                                </button>
-                                <button class="gradient-btn-danger text-white px-4 py-2 rounded-lg font-medium hover:shadow-lg transition-all flex items-center justify-center gap-2 flex-1" onclick="openCancelModal()">
-                                    <i class='bx bx-x'></i>
-                                    Cancelar
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-2xl font-bold text-gray-800" th:text="${cita.producto.nombreProducto}"></h3>
+                                <button onclick="closeAvailabilityModal()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors">
+                                    <i class='bx bx-x text-gray-600'></i>
                                 </button>
                             </div>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Cita Finalizada -->
-                <div class="bg-white rounded-xl shadow border border-gray-200 overflow-hidden max-w-xl opacity-90">
-                    <div class="flex items-center gap-4 bg-gray-50 p-4 border-b border-gray-200">
-                        <img src="/placeholder.svg?height=64&width=64"
-                             alt="Ana Martínez"
-                             class="w-16 h-16 rounded-lg object-cover border border-gray-300 shadow-sm">
-
-                        <div class="flex-1">
-                            <h4 class="font-bold text-gray-900 text-lg">Ana Martínez</h4>
-                            <div class="flex items-center gap-2 mt-1">
-                                <span class="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
-                                    Finalizada
-                                </span>
-                                <span class="text-xs text-gray-500">📅 Ayer - 3:00 PM</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="p-4 space-y-4">
-                        <div class="flex flex-col gap-1 text-sm text-gray-600">
-                            <div class="flex items-center gap-2">
-                                <i class='bx bx-envelope text-gray-400'></i>
-                                <span>ana.martinez@email.com</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <i class='bx bx-phone text-gray-400'></i>
-                                <span>+57 302 456 7890</span>
-                            </div>
-                        </div>
-
-                        <div class="bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 rounded-lg p-4">
-                            <div class="flex items-start gap-3">
-                                <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                    <i class='bx bx-map text-gray-600 text-xl'></i>
+                            <div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="text-lg font-semibold text-gray-800">Disponibilidades</h4>
                                 </div>
-                                <div>
-                                    <p class="font-semibold text-gray-900 mb-1">Producto de interés</p>
-                                    <p class="text-gray-800 font-medium">Terreno Agrícola 50 Ha</p>
-                                    <p class="text-gray-700 font-bold text-lg">$2,500,000</p>
+
+                                <div class="space-y-3">
+                                    <div th:each="disponibilidad : ${cita.disponibilidad.producto.disponibilidades}" th:if="${disponibilidad.idDisponibilidad != cita.disponibilidad.idDisponibilidad}" class="availability-slot bg-gray-50 rounded-xl p-4 border border-gray-200 cursor-pointer">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <div class="flex items-center space-x-2 mb-1">
+                                                    <i class='bx bx-calendar text-green-600'></i>
+                                                    <span class="font-medium text-gray-800" th:text="${#strings.capitalize(#temporals.format(disponibilidad.fecha, 'EEEE d MMMM', T(java.util.Locale).forLanguageTag('es-ES')))}"></span>
+                                                </div>
+                                                <div class="flex items-center space-x-2 text-sm text-gray-600">
+                                                    <i class='bx bx-time'></i>
+                                                    <span th:text="${disponibilidad.hora}"></span>
+                                                </div>
+                                            </div>
+                                            <form th:action="@{/vendedor/citas/reprogramar-cita}" method="post">
+                                                <input type="hidden" name="idCita" th:value="${cita.idCita}">
+                                                <input type="hidden" name="idDisponibilidad" th:value="${disponibilidad.idDisponibilidad}">
+                                                <button type="submit" class="gradient-bg text-white px-4 py-2 rounded-xl text-sm font-medium hover:shadow-lg transition-all">Reprogramar</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <button onclick="closeAvailabilityModal()" class="w-full bg-red-600 text-white mt-4 px-6 py-3 rounded-xl font-medium hover:bg-red-700 transition-colors">
+                                        Cancelar
+                                    </button>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="flex flex-col gap-2">
-                            <button class="gradient-btn-primary text-white px-4 py-2 rounded-lg font-medium hover:shadow-lg transition-all flex items-center justify-center gap-2">
-                                <i class='bx bx-show'></i>
-                                Ver Producto
-                            </button>
-                            <div class="flex items-center justify-center gap-2 text-green-600 font-medium px-4 py-2 bg-green-50 rounded-lg">
-                                <i class='bx bx-check-circle text-xl'></i>
-                                <span>Cita completada</span>
-                            </div>
-                        </div>
                     </div>
-                </div>
-
-                <!-- Cita Cancelada -->
-                <div class="bg-white rounded-xl shadow border border-gray-200 overflow-hidden max-w-xl opacity-75">
-                    <div class="flex items-center gap-4 bg-gray-50 p-4 border-b border-gray-200">
-                        <img src="/placeholder.svg?height=64&width=64"
-                             alt="Carlos Ruiz"
-                             class="w-16 h-16 rounded-lg object-cover border border-gray-300 shadow-sm opacity-75">
-
-                        <div class="flex-1">
-                            <h4 class="font-bold text-gray-900 text-lg">Carlos Ruiz</h4>
-                            <div class="flex items-center gap-2 mt-1">
-                                <span class="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs font-semibold rounded-full">
-                                    Cancelada
-                                </span>
-                                <span class="text-xs text-gray-500">📅 15 Mar - 4:00 PM</span>
+                    <div th:case="'FINALIZADA'" class="bg-white rounded-2xl shadow-lg border-2 border-gray-200 overflow-hidden flex-1 min-w-[320px] max-w-xl card-hover cita-card finalizada">
+                        <div class="flex items-center gap-4 p-6 border-b border-gray-200 gradient-hero">
+                            <img th:if="${cita.comprador.foto != null}" th:src="@{'/imagenes/' + ${cita.comprador.foto}}" class="w-16 h-16 rounded-2xl object-cover border-2 border-gray-200 shadow-md" th:alt="${cita.comprador.nombres}">
+                            <div th:if="${cita.comprador.foto == null}" class="w-16 h-16 gradient-bg rounded-2xl flex items-center justify-center">
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                </svg>
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="p-4 space-y-4">
-                        <div class="flex flex-col gap-1 text-sm text-gray-600">
-                            <div class="flex items-center gap-2">
-                                <i class='bx bx-envelope text-gray-400'></i>
-                                <span>carlos.ruiz@email.com</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <i class='bx bx-phone text-gray-400'></i>
-                                <span>+57 303 789 0123</span>
-                            </div>
-                        </div>
-
-                        <div class="bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 rounded-lg p-4">
-                            <div class="flex items-start gap-3">
-                                <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                    <i class='bx bx-home text-gray-600 text-xl'></i>
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between">
+                                    <h4 class="font-bold text-xl text-white"
+                                        th:text="${cita.comprador.nombres}"></h4>
+                                    <form th:action="@{/vendedor/citas/borrar-cita}" method="post">
+                                        <input type="hidden" name="idCita" th:value="${cita.idCita}">
+                                        <button class="w-9 h-9 flex items-center justify-center rounded-full bg-white text-red-600 hover:bg-red-600 hover:text-white transition-colors shadow-md">
+                                            <i class='bx bx-trash text-lg'></i>
+                                        </button>
+                                    </form>
                                 </div>
-                                <div>
-                                    <p class="font-semibold text-gray-900 mb-1">Producto de interés</p>
-                                    <p class="text-gray-800 font-medium">Finca Ganadera 25 Ha</p>
-                                    <p class="text-gray-700 font-bold text-lg">$1,800,000</p>
+                                <div class="flex items-center gap-3 mt-2">
+                                    <span class="px-3 py-1 text-sm font-semibold rounded-full bg-green-100 border border-green-300 text-green-800" th:text="${cita.estadoCita}"></span>
+                                    <p class="text-sm font-medium text-gray-100"
+                                       th:text="'📅 ' + ${#strings.capitalize(#temporals.format(cita.disponibilidad.fecha, 'EEEE d MMMM', T(java.util.Locale).forLanguageTag('es-ES')))} + ' - ' + ${cita.disponibilidad.hora}">
+                                    </p>
                                 </div>
                             </div>
                         </div>
+                        <div class="p-6 space-y-6">
+                            <div class="flex flex-col gap-3 text-sm text-gray-700">
+                                <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                                    <i class='bx bx-envelope text-gray-600 text-lg'></i>
+                                    <span th:text="${cita.comprador.email}"></span>
+                                </div>
+                                <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                                    <i class='bx bx-phone text-gray-600 text-lg'></i>
+                                    <span th:text="'+57 ' + ${cita.comprador.telefono}"></span>
+                                </div>
+                            </div>
+                            <div class="border-2 rounded-2xl p-5 gradient-card border-emerald-200">
+                                <div class="flex items-start gap-4">
+                                    <div class="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 gradient-bg">
+                                        <i class="bx bx-home text-2xl text-white"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-gray-900 mb-2">Información del Producto</p>
+                                        <p class="text-gray-800 font-medium text-lg" th:text="${cita.producto.nombreProducto}"></p>
+                                        <p class="font-bold text-2xl text-emerald-700" th:text="'$' + ${#numbers.formatInteger(cita.producto.precioProducto, 0, 'COMMA')}"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex flex-col gap-3">
+                                <button class="gradient-bg text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2">
+                                    <a th:href="@{/vendedor/productos/Detalle/{idProducto}(idProducto=${cita.producto.idProducto})}"><i class='bx bx-show text-lg'></i> Ver Producto</a>
+                                </button>
+                                <div class="flex items-center justify-center gap-2 text-green-600 font-medium px-4 py-2 bg-green-50 rounded-lg">
+                                    <i class='bx bx-check-circle text-xl'></i>
+                                    <span>Cita completada</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                        <div class="flex flex-col gap-2">
-                            <button class="gradient-btn-primary text-white px-4 py-2 rounded-lg font-medium hover:shadow-lg transition-all flex items-center justify-center gap-2">
-                                <i class='bx bx-show'></i>
-                                Ver Producto
-                            </button>
-                            <div class="flex items-center justify-center gap-2 text-gray-500 font-medium px-4 py-2 bg-gray-50 rounded-lg">
-                                <i class='bx bx-x-circle text-xl'></i>
-                                <span>Cita cancelada</span>
+                    <div th:case="'CANCELADA'" class="bg-white rounded-2xl shadow-lg border-2 border-gray-200 overflow-hidden flex-1 min-w-[320px] max-w-xl card-hover cita-card cancelada opacity-85">
+                        <div class="flex items-center gap-4 p-6 border-b border-gray-200 gradient-hero-red">
+                            <img th:if="${cita.comprador.foto != null}" th:src="@{'/imagenes/' + ${cita.comprador.foto}}" class="w-16 h-16 rounded-2xl object-cover border-2 border-gray-200 shadow-md" th:alt="${cita.comprador.nombres}">
+                            <div th:if="${cita.comprador.foto == null}" class="w-16 h-16 gradient-bg rounded-2xl flex items-center justify-center">
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between">
+                                    <h4 class="font-bold text-xl text-white" th:text="${cita.comprador.nombres}"></h4>
+                                    <form th:action="@{/vendedor/citas/borrar-cita}" method="post">
+                                        <input type="hidden" name="idCita" th:value="${cita.idCita}">
+                                        <button class="w-9 h-9 flex items-center justify-center rounded-full bg-white text-red-600 hover:bg-red-600 hover:text-white transition-colors shadow-md">
+                                            <i class='bx bx-trash text-lg'></i>
+                                        </button>
+                                    </form>
+                                </div>
+                                <div class="flex items-center gap-3 mt-2">
+                                    <span class="px-3 py-1 text-sm font-semibold rounded-full bg-red-100 border border-red-300 text-red-800" th:text="${cita.estadoCita}"></span>
+                                    <p class="text-sm font-medium text-gray-100"
+                                       th:text="'📅 ' + ${#strings.capitalize(#temporals.format(cita.disponibilidad.fecha, 'EEEE d MMMM', T(java.util.Locale).forLanguageTag('es-ES')))} + ' - ' + ${cita.disponibilidad.hora}">
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6 space-y-6">
+                            <div class="flex flex-col gap-3 text-sm text-gray-700">
+                                <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                                    <i class='bx bx-envelope text-gray-600 text-lg'></i>
+                                    <span th:text="${cita.comprador.email}"></span>
+                                </div>
+                                <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                                    <i class='bx bx-phone text-gray-600 text-lg'></i>
+                                    <span th:text="'+57 ' + ${cita.comprador.telefono}"></span>
+                                </div>
+                            </div>
+                            <div class="border-2 rounded-2xl p-5 gradient-card-red border-red-200">
+                                <div class="flex items-start gap-4">
+                                    <div class="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 gradient-bg-red">
+                                        <i class="bx bx-home text-2xl text-white"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-gray-900 mb-2">Información del Producto</p>
+                                        <p class="text-gray-800 font-medium text-lg" th:text="${cita.producto.nombreProducto}"></p>
+                                        <p class="font-bold text-2xl text-red-700" th:text="'$' + ${#numbers.formatInteger(cita.producto.precioProducto, 0, 'COMMA')}"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex flex-col gap-3">
+                                <button class="gradient-bg text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2">
+                                    <a th:href="@{/vendedor/productos/Detalle/{idProducto}(idProducto=${cita.producto.idProducto})}"><i class='bx bx-show text-lg'></i> Ver Producto</a>
+                                </button>
+                                <div class="flex items-center justify-center gap-2 text-red-500 font-medium px-4 py-2 bg-red-50 rounded-lg">
+                                    <i class='bx bx-x-circle text-xl'></i>
+                                    <span>Cita cancelada</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div th:if="${#lists.isEmpty(citas)}" class="text-center py-12 fade-in">
+            <div class="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-calendar-times text-gray-400 text-3xl"></i>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No tienes citas agendadas</h3>
+            <p class="text-gray-600 mb-6">Puedes publicar productos para que los compradores agenden citas y asi puedas generar una venta.</p>
+            <a th:href="@{/vendedor/dashboard}" class="inline-flex items-center px-6 py-3 gradient-bg text-white rounded-xl hover:opacity-90 btn-animate">
+                <i class="fas fa-home mr-2"></i>
+                Ir a Inicio
+            </a>
         </div>
     </main>
 </div>
 
-<!-- Modal Reprogramar -->
-<div id="rescheduleModal" class="fixed inset-0 modal-backdrop hidden items-center justify-center z-50">
-    <div class="modal-content rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl">
-        <div class="text-center mb-6">
-            <div class="w-16 h-16 bg-[#388e3c] rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-            </div>
-            <h3 class="text-2xl font-bold text-gray-800 mb-2">Reprogramar Cita</h3>
-            <p class="text-gray-600">Selecciona una nueva fecha y hora</p>
-        </div>
-
-        <div class="space-y-4 mb-6">
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Nueva fecha</label>
-                <input type="date" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent">
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Nueva hora</label>
-                <input type="time" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#388e3c] focus:border-transparent">
-            </div>
-        </div>
-
-        <div class="flex gap-3">
-            <button onclick="closeRescheduleModal()" class="flex-1 px-6 py-3 text-gray-600 hover:text-gray-800 font-medium transition-colors">
-                Cancelar
-            </button>
-            <button class="flex-1 bg-[#388e3c] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#2e7d32] transition-colors">
-                Confirmar
-            </button>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Cancelar -->
+<!-- Enhanced cancel modal -->
 <div id="cancelModal" class="fixed inset-0 modal-backdrop hidden items-center justify-center z-50">
-    <div class="modal-content rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl">
-        <div class="text-center mb-6">
-            <div class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="modal-content rounded-3xl p-10 max-w-md w-full mx-4 shadow-2xl">
+        <div class="text-center mb-8">
+            <div class="w-20 h-20 bg-red-100 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                <svg class="w-10 h-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                 </svg>
             </div>
-            <h3 class="text-2xl font-bold text-gray-800 mb-2">Cancelar Cita</h3>
-            <p class="text-gray-600">¿Estás seguro de que deseas cancelar esta cita?</p>
+            <h3 class="text-2xl font-bold text-gray-800 mb-3">Cancelar Cita</h3>
+            <p class="text-gray-600 text-lg">¿Estás seguro de que deseas cancelar esta cita?</p>
         </div>
 
-        <div class="flex gap-3">
-            <button onclick="closeCancelModal()" class="flex-1 px-6 py-3 text-gray-600 hover:text-gray-800 font-medium transition-colors">
+        <div class="flex gap-4">
+            <button onclick="closeCancelModal()" class="flex-1 px-6 py-4 text-gray-600 hover:text-gray-800 font-semibold transition-colors rounded-xl hover:bg-gray-50">
                 No, mantener
             </button>
-            <button class="flex-1 bg-red-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-red-700 transition-colors">
-                Sí, cancelar
-            </button>
+            <form th:action="@{/vendedor/citas/cancelar-cita}" method="post">
+                <input type="hidden" name="idCita" id="valueIdCita">
+                <button type="submit" class="flex-1 gradient-btn-danger text-white px-6 py-4 rounded-xl font-semibold hover:shadow-lg transition-all">
+                    Sí, cancelar
+                </button>
+            </form>
         </div>
     </div>
 </div>
 
 <script>
-    function openRescheduleModal() {
-        document.getElementById('rescheduleModal').classList.remove('hidden');
-        document.getElementById('rescheduleModal').classList.add('flex');
+    function openAvailabilityModal() {
+        const modal = document.getElementById('availabilityModal');
+        modal.classList.remove('hidden');
     }
 
-    function closeRescheduleModal() {
-        document.getElementById('rescheduleModal').classList.add('hidden');
-        document.getElementById('rescheduleModal').classList.remove('flex');
+    function closeAvailabilityModal() {
+        const modal = document.getElementById('availabilityModal');
+        modal.classList.add('hidden');
     }
 
-    function openCancelModal() {
+    function openCancelModal(idCita) {
         document.getElementById('cancelModal').classList.remove('hidden');
         document.getElementById('cancelModal').classList.add('flex');
+        document.getElementById('valueIdCita').value = idCita;
     }
 
     function closeCancelModal() {
@@ -449,9 +457,9 @@
     }
 
     // Cerrar modales al hacer clic fuera
-    document.getElementById('rescheduleModal').addEventListener('click', function(e) {
+    document.getElementById('availabilityModal').addEventListener('click', function(e) {
         if (e.target === this) {
-            closeRescheduleModal();
+            closeAvailabilityModal();
         }
     });
 
@@ -460,6 +468,44 @@
             closeCancelModal();
         }
     });
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const citaCards = document.querySelectorAll('.cita-card');
+
+    tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const tab = this.getAttribute('data-tab');
+
+            // Update active tab
+            tabButtons.forEach(btn => {
+                btn.classList.remove('active', 'border-green-500', 'text-green-600');
+                btn.classList.add('border-transparent', 'text-gray-500');
+            });
+
+            this.classList.add('active', 'border-green-500', 'text-green-600');
+            this.classList.remove('border-transparent', 'text-gray-500');
+
+            // Show/hide cards based on tab
+            citaCards.forEach(card => {
+    if (tab === 'todas') {
+        card.classList.remove('hidden');
+    } else if (tab === 'finalizadas' && card.classList.contains('finalizada')) {
+        card.classList.remove('hidden');
+    } else if (tab === 'canceladas' && card.classList.contains('cancelada')) {
+        card.classList.remove('hidden');
+    } else if (tab === 'reservadas' && card.classList.contains('reservada')) {
+        card.classList.remove('hidden');
+    } else {
+        card.classList.add('hidden');
+    }
+});
+        });
+    });
+
+    // Set initial active tab
+    document.querySelector('.tab-button[data-tab="todas"]').click();
+});
 
     // User dropdown
     function toggleUserDropdown() {

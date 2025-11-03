@@ -5,6 +5,8 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "ventas")
@@ -15,24 +17,24 @@ public class Venta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idVenta;
 
+    private LocalDate fechaVenta;
+
     @Column(nullable = false)
-    private LocalDateTime fechaVenta;
+    private LocalDateTime fechaInicioVenta;
 
     @Column(nullable = false)
     private String estado; //ENUM ('En Proceso', 'Finalizada', 'Cancelada', 'Pendiente Confirmacion')
 
-    @Column(length = 255, nullable = false)
     private String nota;
 
-    @Column(length = 30, nullable = false)
+    @Column(length = 30, nullable = true)
     private String metodoPago;
-
-    @Column(nullable = false)
-    private Long gananciaNeta;
 
     @OneToOne
     @JoinColumn(name = "idProducto")
     private Producto producto;
+
+    private Long gananciaNeta = 0L;
 
     @ManyToOne
     @JoinColumn(name = "cedula_comprador")
@@ -41,4 +43,18 @@ public class Venta {
     @ManyToOne
     @JoinColumn(name = "cedula_vendedor")
     private Usuario vendedor;
+
+    @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<GastoVenta> listaGastos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comprobante> listaComprobantes = new ArrayList<>();
+
+    @Transient
+    public Long getTotalGastos() {
+        if (listaGastos == null) return 0L;
+        return listaGastos.stream()
+                .mapToLong(GastoVenta::getValorGasto)
+                .sum();
+    }
 }

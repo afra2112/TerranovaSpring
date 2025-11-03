@@ -92,7 +92,12 @@ public class ProductoController {
 
         String correo = authentication.getName(); // ahora es claro que es el correo
         Producto producto = productoService.crearProductoBase(formdatos, correo, idCiudad);
-
+        if(producto instanceof Ganado){
+            String cantidadGanado = formdatos.get("cantidad");
+            Long precioProducto = Long.parseLong(cantidadGanado) * producto.getPrecioProducto();
+            producto.setPrecioProducto(precioProducto);
+            productoRepository.save(producto);
+        }
         return "redirect:/vendedor/dashboard?productoId=" + producto.getIdProducto();
     }
 

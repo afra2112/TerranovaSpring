@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html xmlns:th="www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notificaciones - Panel Usuario</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+        }
+
+        .gradient-hero {
+            background: linear-gradient(135deg, #064e3b 0%, #059669 50%, #10b981 100%);
+        }
+
+        .notification-producto {
+            border-left: 4px solid #3b82f6;
+            background: linear-gradient(90deg, #eff6ff 0%, #ffffff 100%);
+        }
+        .notification-venta {
+            border-left: 4px solid #10b981;
+            background: linear-gradient(90deg, #ecfdf5 0%, #ffffff 100%);
+        }
+        .notification-cita {
+            border-left: 4px solid #f59e0b;
+            background: linear-gradient(90deg, #fffbeb 0%, #ffffff 100%);
+        }
+        .notification-sistema {
+            border-left: 4px solid #8b5cf6;
+            background: linear-gradient(90deg, #f3f4f6 0%, #ffffff 100%);
+        }
+
+        /* Estilos mejorados para notificaciones leídas y no leídas */
+        .notification-unread {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border: 2px solid #3b82f6;
+            background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%);
+            position: relative;
+        }
+
+        .notification-unread::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+        }
+
+        .notification-read {
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+            background: #fafafa;
+            opacity: 0.8;
+        }
+
+        .notification-borrada {
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+            background: #fee2e2;
+            opacity: 0.8;
+        }
+
+        .notification-card {
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            margin-bottom: 8px;
+        }
+
+        .notification-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .modal-backdrop {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .badge-new {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .filter-active {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            color: white;
+        }
+
+        /* Estilos para el botón de historial borradas */
+        .historial-btn {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+        }
+
+        .historial-btn:hover {
+            background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(220, 38, 38, 0.4);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+<div th:if="${lugar.equals('comprador')}">
+    <div th:replace="fragments/comprador/navbarComprador :: navbarComprador"></div>
+</div>
+<div th:if="${lugar.equals('vendedor')}">
+    <div th:replace="fragments/vendedor/navbarVendedor :: navbarVendedor"></div>
+</div>
+
+<div class="ml-64 flex flex-col min-h-screen">
+    <main class="py-10 px-8">
+
+        <!-- HEADER -->
+        <div class="gradient-hero rounded-3xl p-8 mb-8 text-white flex justify-between items-center relative overflow-hidden">
+            <!-- Fondo decorativo -->
+            <div class="absolute inset-0 bg-black/10"></div>
+            <div class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full"></div>
+            <div class="absolute -bottom-5 -left-5 w-32 h-32 bg-white/5 rounded-full"></div>
+
+            <div class="relative z-10 text-left max-w-xl">
+                <h1 class="text-4xl font-bold mb-2">Notificaciones</h1>
+                <p class="text-emerald-100 text-lg">Mantente al día con tus interacciones</p>
+            </div>
+
+            <form th:action="@{/usuarios/notificaciones/marcar-todas-leidas}" method="post" class="relative z-10">
+                <button
+                        class="bg-white/25 text-white border border-white px-6 py-3 rounded-lg font-semibold shadow-md hover:bg-emerald-800 hover:border-emerald-600 transition transform duration-200 flex items-center gap-2">
+                    <i class="bx bx-check-double"></i>
+                    Marcar Todas Leidas
+                </button>
+            </form>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-semibold text-gray-800">Filtrar por tipo</h3>
+                <a th:if="${borrada != true}" th:href="@{/usuarios/notificaciones(id=${lugar == 'comprador' ? 1 : 2}, filtro='borradas')}" class="historial-btn px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center gap-2">
+                    <i class="bx bx-trash"></i>
+                    Historial Borradas
+                </a>
+                <form th:unless="${borrada != true}" th:action="@{/usuarios/notificaciones/eliminar-historial}" method="post">
+                    <button type="submit"  class="historial-btn px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center gap-2">
+                        <i class="bx bx-trash"></i>Eliminar Historial
+                    </button>
+                </form>
+            </div>
+            <div class="flex gap-3 flex-wrap">
+                <a th:href="@{/usuarios/notificaciones(id=${lugar == 'comprador' ? 1 : 2}, filtro='todas')}"
+                   th:classappend="${filtro=='todas'} ? 'filter-active' : 'border border-gray-300 text-gray-700'"
+                   class="filter-btn border border-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-50 transition-all duration-200 px-4 py-2 rounded-lg font-medium">Todas (<span th:text="${totalTodas}"></span>)</a>
+
+                <a th:if="${esVendedor}" th:href="@{/usuarios/notificaciones(id=${lugar == 'comprador' ? 1 : 2}, filtro='producto')}"
+                   th:classappend="${filtro=='producto'} ? 'filter-active' : 'border border-gray-300 text-gray-700'"
+                   class="filter-btn border border-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-50 transition-all duration-200 px-4 py-2 rounded-lg font-medium">
+                    <i class="bx bx-package text-blue-500"></i> Productos (<span th:text="${totalProducto}"></span>)
+                </a>
+
+                <a th:href="@{/usuarios/notificaciones(id=${lugar == 'comprador' ? 1 : 2}, filtro='venta')}"
+                   th:classappend="${filtro=='venta'} ? 'filter-active' : 'border border-gray-300 text-gray-700'"
+                   class="filter-btn border border-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-50 transition-all duration-200 px-4 py-2 rounded-lg font-medium">
+                    <i class="bx bx-dollar text-green-500"></i> Compras/Ventas (<span th:text="${totalVenta}"></span>)
+                </a>
+
+                <a th:href="@{/usuarios/notificaciones(id=${lugar == 'comprador' ? 1 : 2}, filtro='cita')}"
+                   th:classappend="${filtro=='cita'} ? 'filter-active' : 'border border-gray-300 text-gray-700'"
+                   class="filter-btn border border-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-50 transition-all duration-200 px-4 py-2 rounded-lg font-medium">
+                    <i class="bx bx-calendar text-amber-500"></i> Citas (<span th:text="${totalCita}"></span>)
+                </a>
+
+                <a th:if="${esVendedor}" th:href="@{/usuarios/notificaciones(id=${lugar == 'comprador' ? 1 : 2}, filtro='disponibilidad')}"
+                   th:classappend="${filtro=='cita'} ? 'filter-active' : 'border border-gray-300 text-gray-700'"
+                   class="filter-btn border border-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-50 transition-all duration-200 px-4 py-2 rounded-lg font-medium">
+                    <i class="bx bx-calendar text-blue-500"></i> Disponibilidades (<span th:text="${totalDisponibilidades}"></span>)
+                </a>
+
+                <a th:href="@{/usuarios/notificaciones(id=${lugar == 'comprador' ? 1 : 2}, filtro='sistema')}"
+                   th:classappend="${filtro=='sistema'} ? 'filter-active' : 'border border-gray-300 text-gray-700'"
+                   class="filter-btn border border-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-50 transition-all duration-200 px-4 py-2 rounded-lg font-medium">
+                    <i class="bx bx-cog text-purple-500"></i> Sistema (<span th:text="${totalSistema}"></span>)
+                </a>
+            </div>
+        </div>
+
+        <!-- LISTA -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+            <div class="p-6 border-b border-gray-200 flex justify-between">
+                <h3 class="text-lg font-semibold">Mis Notificaciones</h3>
+                <span th:if="${totalNoLeidas > 0 or borrada != true}"
+                      class="bg-red-100 text-red-800 text-sm font-medium px-3 py-1 rounded-full">
+                    <span th:text="${totalNoLeidas}"></span> sin leer
+                </span>
+            </div>
+
+            <div th:if="${notificaciones.size() > 0}" class="p-4">
+                <div th:each="notif : ${notificaciones}"
+                     th:classappend="${borrada} ? 'notification-borrada' : 'cursor-pointer'"
+                     th:class="'notification-card p-6 transition-all duration-300 ' + (${notif.leido} ? 'notification-read' : 'notification-unread')">
+
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 rounded-full flex items-center justify-center" th:switch="${notif.tipo}">
+                                <div th:case="'Productos'" class="bg-blue-100">
+                                    <i class="text-xl bx bx-package text-blue-600"></i>
+                                </div>
+                                <div th:case="'Ventas'" class="bg-green-100">
+                                    <i class="text-xl bx bx-dollar text-green-600"></i>
+                                </div>
+                                <div th:case="'Citas'" class="bg-amber-100">
+                                    <i class="text-xl bx bx-calendar text-amber-600"></i>
+                                </div>
+                                <div th:case="'Sistema'" class="bg-purple-100">
+                                    <i class="text-xl bx bx-cog text-purple-600"></i>
+                                </div>
+                                <div th:case="*"class="bg-gray-100">
+                                    <i class="text-xl bx bx-bell text-gray-600"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contenido principal -->
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-start justify-between mb-2">
+                                <div class="flex-1">
+                                    <!-- Agregado campo título -->
+                                    <h4 class="text-lg font-bold text-gray-900 mb-1" th:text="${notif.titulo ?: 'Notificación de ' + notif.tipo}"></h4>
+                                    <p class="text-sm text-gray-600 leading-relaxed" th:text="${notif.mensajeNotificacion}"></p>
+                                </div>
+
+                                <!-- Badge de estado y fecha -->
+                                <div class="flex flex-col items-end space-y-2 ml-4">
+                                    <span th:if="${!notif.leido}" class="badge-new text-xs font-medium px-2 py-1 rounded-full text-white">
+                                        Nuevo
+                                    </span>
+                                    <span class="text-xs text-gray-500 whitespace-nowrap"
+                                          th:text="${#temporals.format(notif.fechaNotificacion, 'dd/MM/yyyy HH:mm')}"></span>
+                                </div>
+                            </div>
+
+                            <div th:if="not ${borrada}" class="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+                                <!-- Botones de acción principales -->
+                                <div class="flex space-x-3" th:switch="${notif.tipo}">
+                                    <a th:case="'Citas'"
+                                       th:href="${notif.urlAccion}"
+                                       class="inline-flex items-center px-4 py-2 rounded-lg text-white font-medium gradient-bg hover:opacity-90 transition-all duration-200 text-sm">
+                                        <i class="bx bx-calendar mr-2"></i>
+                                        Ver en mis Citas
+                                    </a>
+
+                                    <a th:case="'Ventas'"
+                                       th:href="${esVendedor} ? '/vendedor/ventas/' : '/comprador/compras'"
+                                       class="inline-flex items-center px-4 py-2 rounded-lg text-white font-medium gradient-bg hover:opacity-90 transition-all duration-200 text-sm">
+                                        <i class="bx bx-dollar mr-2"></i>
+                                        <span th:text="${esVendedor} ? 'Ver en mis Ventas' : 'Ver en mis Compras'"></span>
+                                    </a>
+
+                                    <a th:case="'Sistema'"
+                                       th:href="${notif.urlAccion}"
+                                       class="inline-flex items-center px-4 py-2 rounded-lg text-white font-medium gradient-bg hover:opacity-90 transition-all duration-200 text-sm">
+                                        <i class="bx bx-user mr-2"></i>
+                                        Ir a mi Perfil
+                                    </a>
+
+                                    <a th:case="'Productos'"
+                                       th:href="${notif.urlAccion}"
+                                       class="inline-flex items-center px-4 py-2 rounded-lg text-white font-medium gradient-bg hover:opacity-90 transition-all duration-200 text-sm">
+                                        <i class="bx bx-package mr-2"></i>
+                                        Ir a Productos
+                                    </a>
+
+                                    <a th:case="'Disponibilidad'"
+                                       th:href="${notif.urlAccion}"
+                                       class="inline-flex items-center px-4 py-2 rounded-lg text-white font-medium gradient-bg hover:opacity-90 transition-all duration-200 text-sm">
+                                        <i class="bx bx-calendar mr-2"></i>
+                                        Ir a Mi calendario
+                                    </a>
+                                </div>
+
+                                <div th:if="not ${borrada}" class="flex items-center space-x-2">
+                                    <form th:action="@{/usuarios/notificaciones/marcar-leida}" method="post" class="inline">
+                                        <input type="hidden" name="idNotificacion" th:value="${notif.idNotificacion}">
+                                        <button type="submit"
+                                                class="p-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all duration-200"
+                                                th:title="${notif.leido} ? 'Marcar como no leída' : 'Marcar como leída'">
+                                            <i th:class="'text-lg ' + (${notif.leido} ? 'bx bx-envelope-open' : 'bx bx-envelope')"></i>
+                                        </button>
+                                    </form>
+
+                                    <form th:action="@{/usuarios/notificaciones/borrar}" method="post" class="inline">
+                                        <input type="hidden" name="idNotificacion" th:value="${notif.idNotificacion}">
+                                        <button type="submit"
+                                                class="p-2 rounded-lg text-red-400 hover:text-red-600 hover:bg-red-50 transition-all duration-200"
+                                                title="Borrar notificación">
+                                            <i class="bx bx-trash text-lg"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${notificaciones.size() == 0}" class="p-12 text-center">
+                <i class="bx bx-bell-off text-6xl text-gray-300 mb-4"></i>
+                <h3 class="text-lg font-medium text-gray-500">No hay notificaciones</h3>
+                <p class="text-gray-400">Cuando tengas nuevas notificaciones aparecerán aquí</p>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- MODAL -->
+<div id="notificationModal" class="fixed inset-0 flex items-center justify-center z-50 opacity-0 invisible transition-opacity duration-300">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content w-1/2 max-w-3xl transform scale-95 transition-transform duration-300">
+        <div class="p-6">
+            <button onclick="closeNotificationModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <i class="bx bx-x"></i>
+            </button>
+            <h2 id="modalTitle" class="text-2xl font-bold mb-4"></h2>
+            <p id="modalTipo" class="text-sm text-gray-600 mb-6"></p>
+            <p id="modalMensaje" class="text-gray-800 mb-8"></p>
+            <p id="modalFecha" class="text-sm text-gray-500 mb-6"></p>
+            <div id="modalAcciones" class="flex space-x-4">
+                <button id="modalAccionPrimaria" class="inline-flex items-center px-4 py-2 rounded-lg text-white font-medium gradient-bg hover:opacity-90 transition-all duration-200 text-sm"></button>
+                <button id="modalAccionSecundaria" class="inline-flex items-center px-4 py-2 rounded-lg text-white font-medium gradient-bg hover:opacity-90 transition-all duration-200 text-sm hidden"></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function toggleUserDropdown() {
+        const dropdown = document.getElementById('userDropdown');
+        const arrow = document.getElementById('dropdownArrow');
+
+        if (dropdown.classList.contains('opacity-0')) {
+            // Mostrar dropdown
+            dropdown.classList.remove('opacity-0', 'invisible', 'scale-95');
+            dropdown.classList.add('opacity-100', 'visible', 'scale-100');
+            arrow.style.transform = 'rotate(180deg)';
+        } else {
+            // Ocultar dropdown
+            dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
+            dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
+            arrow.style.transform = 'rotate(0deg)';
+        }
+    }
+
+    document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('userDropdown');
+        const userButton = event.target.closest('[onclick="toggleUserDropdown()"]');
+
+        if (!userButton && !dropdown.contains(event.target)) {
+            dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
+            dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
+            document.getElementById('dropdownArrow').style.transform = 'rotate(0deg)';
+        }
+    });
+</script>
+
+</body>
+</html>

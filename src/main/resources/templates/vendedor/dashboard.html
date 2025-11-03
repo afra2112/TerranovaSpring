@@ -7,12 +7,18 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        'primary': '#388e3c',
+                        'primary': '#059669',
                         'secondary': '#ffcf00'
                     }
                 }
@@ -31,9 +37,10 @@
         .modal-backdrop {
             background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(5px);
-        }.floating-animation {
-             animation: float 6s ease-in-out infinite;
-         }
+        }
+        .floating-animation {
+            animation: float 6s ease-in-out infinite;
+        }
         .product-option {
             transition: all 0.3s ease;
             background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.02) 100%);
@@ -45,6 +52,14 @@
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(16, 185, 129, 0.15);
         }
+        .gradient-hero {
+            background: linear-gradient(135deg, #064e3b 0%, #059669 50%, #10b981 100%);
+        }
+        /* Removed fixed width from map, now responsive */
+        #map {
+            height: 400px;
+            width: 100%;
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -55,7 +70,7 @@
 
     <main class="lg:px-10 py-10">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <button onclick="openProductModal()" class="gradient-bg text-white p-6 rounded-2xl hover-lift shadow-lg hover:shadow-emerald-200 transition-all duration-300 flex items-center justify-between w-full">
+            <button onclick="openProductModal()" class="gradient-hero text-white p-6 rounded-2xl hover-lift shadow-lg hover:shadow-emerald-200 transition-all duration-300 flex items-center justify-between w-full">
                 <div>
                     <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center mb-4">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -92,6 +107,7 @@
 
         </div>
 
+
         <!-- Stats Cards -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             <div class="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-all">
@@ -101,10 +117,9 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
                         </svg>
                     </div>
-                    <span class="text-2xl font-bold text-gray-900">$2.4M</span>
+                    <span class="text-2xl font-bold text-gray-900" th:text="${totalVentas}"></span>
                 </div>
-                <h3 class="font-medium text-gray-600 mb-1">Ventas del Mes</h3>
-                <p class="text-sm text-green-600 font-medium">+12% vs mes anterior</p>
+                <h3 class="font-medium text-gray-600 mb-1">Ventas Totales</h3>
             </div>
 
             <div class="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-all">
@@ -114,10 +129,9 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                         </svg>
                     </div>
-                    <span class="text-2xl font-bold text-gray-900">23</span>
+                    <span class="text-2xl font-bold text-gray-900" th:text="${productos.size()}"></span>
                 </div>
                 <h3 class="font-medium text-gray-600 mb-1">Productos Activos</h3>
-                <p class="text-sm text-blue-600 font-medium">3 nuevos esta semana</p>
             </div>
 
             <div class="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-all">
@@ -127,10 +141,9 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
                     </div>
-                    <span class="text-2xl font-bold text-gray-900">8</span>
+                    <span class="text-2xl font-bold text-gray-900" th:text="${totalCitas}"></span>
                 </div>
                 <h3 class="font-medium text-gray-600 mb-1">Citas Pendientes</h3>
-                <p class="text-sm text-purple-600 font-medium">2 para hoy</p>
             </div>
 
             <div class="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-all">
@@ -140,63 +153,54 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"/>
                         </svg>
                     </div>
-                    <span class="text-2xl font-bold text-gray-900">12</span>
+                    <span class="text-2xl font-bold text-gray-900" th:text="${notificaciones.size()}"></span>
                 </div>
                 <h3 class="font-medium text-gray-600 mb-1">Mensajes Nuevos</h3>
-                <p class="text-sm text-orange-600 font-medium">5 sin leer</p>
             </div>
         </div>
 
-        <!-- Recent Activity & Notifications -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
             <!-- Recent Products -->
             <div class="bg-white rounded-2xl p-6 border border-gray-200">
                 <div class="flex items-center justify-between mb-6">
                     <h3 class="text-xl font-semibold text-gray-900">Productos Recientes</h3>
-                    <button class="text-[#388e3c] font-medium hover:text-[#2e7d32] transition-colors">Ver todos</button>
+                    <a th:href="@{/vendedor/productos}"><button class="text-[#059669] font-medium hover:text-[#10b981] transition-colors">Ver todos</button></a>
                 </div>
 
-                <div class="space-y-4">
+                <div th:each="producto : ${productos}" class="space-y-4">
                     <div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-xl">
-                        <div class="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center text-2xl">🐄</div>
-                        <div class="flex-1">
-                            <h4 class="font-semibold text-gray-900">Ganado Holstein Premium</h4>
-                            <p class="text-gray-600 text-sm">Publicado hace 2 días</p>
-                            <p class="text-[#388e3c] font-semibold">$850,000</p>
-                        </div>
-                        <span class="px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full">Activo</span>
-                    </div>
 
-                    <div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-xl">
-                        <div class="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center text-2xl">🌾</div>
-                        <div class="flex-1">
-                            <h4 class="font-semibold text-gray-900">Terreno Agrícola 50 Ha</h4>
-                            <p class="text-gray-600 text-sm">Publicado hace 5 días</p>
-                            <p class="text-[#388e3c] font-semibold">$2,500,000</p>
-                        </div>
-                        <span class="px-3 py-1 bg-blue-100 text-blue-700 text-sm font-medium rounded-full">Destacado</span>
-                    </div>
+                        <!-- Imagen más pequeña -->
+                        <img th:src="${#lists.isEmpty(producto.imagenes) ? '/placeholder.svg?height=100&width=150' : producto.imagenes.get(0).nombreArchivo}"
+                             alt="Imagen del producto"
+                             class="w-32 h-32 object-cover rounded">
 
-                    <div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-xl">
-                        <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center text-2xl">🏡</div>
                         <div class="flex-1">
-                            <h4 class="font-semibold text-gray-900">Finca Cafetera 15 Ha</h4>
-                            <p class="text-gray-600 text-sm">Publicado hace 1 semana</p>
-                            <p class="text-[#388e3c] font-semibold">$1,200,000</p>
+                            <!-- Nombre del producto -->
+                            <h4 class="font-semibold text-gray-900 text-lg" th:text="${producto.nombreProducto}">Ganado Holstein Premium</h4>
+
+                            <p class="text-gray-600 text-sm" th:text="${#strings.capitalize(#temporals.format(producto.fechaPublicacion, 'EEEE d MMMM', T(java.util.Locale).forLanguageTag('es-ES')))}"></p>
+
+                            <p class="text-[#388e3c] font-semibold text-lg"
+                               th:text="'$' + ${#numbers.formatDecimal(producto.precioProducto, 0, 'POINT', 0, 'COMMA')}"></p>
                         </div>
-                        <span class="px-3 py-1 bg-yellow-100 text-yellow-700 text-sm font-medium rounded-full">Pendiente</span>
+
+                        <span class="px-3 py-1 bg-green-100 text-[#059669] text-sm font-medium rounded-full">Activo</span>
                     </div>
                 </div>
+
             </div>
 
             <!-- Notifications & Messages -->
             <div class="bg-white rounded-2xl p-6 border border-gray-200">
                 <div class="flex items-center justify-between mb-6">
                     <h3 class="text-xl font-semibold text-gray-900">Notificaciones</h3>
-                    <button class="text-[#388e3c] font-medium hover:text-[#2e7d32] transition-colors">Marcar como leídas</button>
+                    <form th:action="@{/usuarios/notificaciones/marcar-todas-leidas}" method="post" class="relative z-10">
+                        <button class="text-[#059669] font-medium hover:text-[#10b981] transition-colors">Marcar como leídas</button>
+                    </form>
                 </div>
 
-                <div class="space-y-4">
+                <div th:each="notificacion : ${notificaciones}" class="space-y-4 mb-4">
                     <div class="flex items-start space-x-4 p-4 bg-blue-50 rounded-xl border-l-4 border-blue-400">
                         <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
                             <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -204,120 +208,29 @@
                             </svg>
                         </div>
                         <div class="flex-1">
-                            <h4 class="font-semibold text-gray-900">Nueva cita programada</h4>
-                            <p class="text-gray-600 text-sm">María González quiere visitar tu finca el viernes a las 2:00 PM</p>
-                            <p class="text-blue-600 text-xs font-medium mt-1">Hace 30 minutos</p>
-                        </div>
-                    </div>
-
-                    <div class="flex items-start space-x-4 p-4 bg-green-50 rounded-xl border-l-4 border-green-400">
-                        <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
-                            </svg>
-                        </div>
-                        <div class="flex-1">
-                            <h4 class="font-semibold text-gray-900">¡Venta realizada!</h4>
-                            <p class="text-gray-600 text-sm">Se completó la venta de "Ganado Holstein Premium" por $850,000</p>
-                            <p class="text-green-600 text-xs font-medium mt-1">Hace 2 horas</p>
-                        </div>
-                    </div>
-
-                    <div class="flex items-start space-x-4 p-4 bg-yellow-50 rounded-xl border-l-4 border-yellow-400">
-                        <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center flex-shrink-0">
-                            <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"/>
-                            </svg>
-                        </div>
-                        <div class="flex-1">
-                            <h4 class="font-semibold text-gray-900">Nuevo mensaje</h4>
-                            <p class="text-gray-600 text-sm">Carlos Ruiz pregunta sobre disponibilidad del terreno agrícola</p>
-                            <p class="text-yellow-600 text-xs font-medium mt-1">Hace 4 horas</p>
+                            <h4 class="font-semibold text-gray-900" th:text="${notificacion.titulo}"></h4>
+                            <p class="text-gray-600 text-sm" th:text="${notificacion.mensajeNotificacion}"></p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Upcoming Appointments -->
-        <div class="bg-white rounded-2xl p-6 border border-gray-200">
-            <div class="flex items-center justify-between mb-6">
-                <h3 class="text-xl font-semibold text-gray-900">Próximas Citas</h3>
-                <button class="bg-[#388e3c] text-white px-4 py-2 rounded-xl font-medium hover:bg-[#2e7d32] transition-colors">
-                    Programar Nueva Cita
-                </button>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div class="border border-gray-200 rounded-xl p-4 hover:shadow-lg transition-all">
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="px-3 py-1 bg-blue-100 text-blue-700 text-sm font-medium rounded-full">Hoy</span>
-                        <span class="text-sm text-gray-500">2:00 PM</span>
-                    </div>
-                    <h4 class="font-semibold text-gray-900 mb-2">María González</h4>
-                    <p class="text-gray-600 text-sm mb-3">Visita a Finca Cafetera 15 Ha</p>
-                    <div class="flex space-x-2">
-                        <button class="flex-1 bg-[#388e3c] text-white py-2 px-3 rounded-lg text-sm font-medium hover:bg-[#2e7d32] transition-colors">
-                            Confirmar
-                        </button>
-                        <button class="flex-1 border border-gray-300 text-gray-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors">
-                            Reagendar
-                        </button>
-                    </div>
-                </div>
-
-                <div class="border border-gray-200 rounded-xl p-4 hover:shadow-lg transition-all">
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full">Mañana</span>
-                        <span class="text-sm text-gray-500">10:00 AM</span>
-                    </div>
-                    <h4 class="font-semibold text-gray-900 mb-2">Roberto Silva</h4>
-                    <p class="text-gray-600 text-sm mb-3">Inspección de Ganado Holstein</p>
-                    <div class="flex space-x-2">
-                        <button class="flex-1 bg-[#388e3c] text-white py-2 px-3 rounded-lg text-sm font-medium hover:bg-[#2e7d32] transition-colors">
-                            Confirmar
-                        </button>
-                        <button class="flex-1 border border-gray-300 text-gray-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors">
-                            Reagendar
-                        </button>
-                    </div>
-                </div>
-
-                <div class="border border-gray-200 rounded-xl p-4 hover:shadow-lg transition-all">
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="px-3 py-1 bg-purple-100 text-purple-700 text-sm font-medium rounded-full">Viernes</span>
-                        <span class="text-sm text-gray-500">4:00 PM</span>
-                    </div>
-                    <h4 class="font-semibold text-gray-900 mb-2">Ana Martínez</h4>
-                    <p class="text-gray-600 text-sm mb-3">Evaluación de Terreno Agrícola</p>
-                    <div class="flex space-x-2">
-                        <button class="flex-1 bg-[#388e3c] text-white py-2 px-3 rounded-lg text-sm font-medium hover:bg-[#2e7d32] transition-colors">
-                            Confirmar
-                        </button>
-                        <button class="flex-1 border border-gray-300 text-gray-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors">
-                            Reagendar
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-
     </main>
 </div>
 
 <div id="productModal" class="fixed inset-0 modal-backdrop hidden items-center justify-center z-50">
-    <div class="modal-content rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl">
+    <div class="modal-content rounded-3xl p-8 max-w-lg w-full mx-4 shadow-2xl bg-white">
         <div class="text-center mb-6">
             <div class="w-16 h-16 gradient-bg rounded-2xl flex items-center justify-center mx-auto mb-4 floating-animation">
                 <i class='bx bx-plus text-white text-2xl'></i>
             </div>
             <h3 class="text-2xl font-bold text-gray-800 mb-2">Agregar Producto</h3>
-            <p class="text-gray-600">Selecciona el tipo de producto que deseas agregar</p>
+            <p class="text-gray-600">Selecciona el tipo de producto y su ubicación</p>
         </div>
 
-        <div class="space-y-4">
+
+        <!-- Opciones de producto -->
+        <div class="space-y-4 mb-6">
             <div class="product-option rounded-2xl p-6 cursor-pointer" onclick="selectProductType('ganado')">
                 <div class="flex items-center space-x-4">
                     <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
@@ -364,7 +277,7 @@
 </div>
 
 <div th:replace="fragments/vendedor/modalRegistro :: formProducto"></div>
-<!-- Modal para subir imágenes -->
+
 <div id="modalImagenes" class="fixed inset-0 hidden items-center justify-center z-50 bg-black bg-opacity-50">
     <div class="bg-white p-6 rounded shadow-lg w-full max-w-md">
         <h2 class="text-xl font-bold mb-4">Subir imágenes del producto</h2>
@@ -411,7 +324,6 @@
             }
         });
 
-        // Modal de selección de tipo
         window.openProductModal = function () {
             document.getElementById('productModal').classList.remove('hidden');
             document.getElementById('productModal').classList.add('flex');
@@ -429,7 +341,6 @@
             }
         });
 
-        // Selección de tipo y apertura de formulario
         window.selectProductType = function (tipo) {
             closeProductModal();
             abrirModalRegistro(tipo);
@@ -682,6 +593,10 @@
 
             modal.classList.remove('hidden');
             modal.classList.add('flex');
+
+            setTimeout(() => {
+                initializeMap();
+            }, 200);
         };
 
         window.cerrarModalRegistro = function () {
@@ -689,12 +604,97 @@
             if (modal) {
                 modal.classList.add('hidden');
                 modal.classList.remove('flex');
+
+                document.getElementById('latitud').value = '';
+                document.getElementById('longitud').value = '';
+                document.getElementById('coordenadas-display').classList.add('hidden');
+
+                if (currentMarker !== null && map !== null) {
+                    map.removeLayer(currentMarker);
+                    currentMarker = null;
+                }
             }
         };
     });
+
+    function toggleUserDropdown() {
+        const dropdown = document.getElementById('userDropdown');
+        const arrow = document.getElementById('dropdownArrow');
+
+        if (dropdown.classList.contains('opacity-0')) {
+            dropdown.classList.remove('opacity-0', 'invisible', 'scale-95');
+            dropdown.classList.add('opacity-100', 'visible', 'scale-100');
+            arrow.style.transform = 'rotate(180deg)';
+        } else {
+            dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
+            dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
+            arrow.style.transform = 'rotate(0deg)';
+        }
+    }
+
+    document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('userDropdown');
+        const userButton = event.target.closest('[onclick="toggleUserDropdown()"]');
+
+        if (!userButton && !dropdown.contains(event.target)) {
+            dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
+            dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
+            document.getElementById('dropdownArrow').style.transform = 'rotate(0deg)';
+        }
+    });
 </script>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    let map = null;
+    let currentMarker = null;
+
+    function initializeMap() {
+        if (map !== null) {
+            map.invalidateSize();
+            return;
+        }
+
+        map = L.map('map').setView([4.5709, -74.2973], 6);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        setTimeout(() => {
+            map.invalidateSize();
+        }, 100);
+
+        map.on('click', function(e) {
+            const lat = e.latlng.lat;
+            const lng = e.latlng.lng;
+
+            if (currentMarker !== null) {
+                map.removeLayer(currentMarker);
+            }
+
+            currentMarker = L.marker([lat, lng]).addTo(map);
+
+            document.getElementById('latitud').value = lat.toFixed(6);
+            document.getElementById('longitud').value = lng.toFixed(6);
+
+            // Mostrar las coordenadas seleccionadas
+            const coordDisplay = document.getElementById('coordenadas-display');
+            if (coordDisplay) {
+                coordDisplay.classList.remove('hidden');
+                coordDisplay.innerHTML = `
+                    <div class="flex items-center gap-2 text-sm text-green-700">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        <span><strong>Ubicación seleccionada:</strong> ${lat.toFixed(6)}, ${lng.toFixed(6)}</span>
+                    </div>
+                `;
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
         const params = new URLSearchParams(window.location.search);
         const productoId = params.get("productoId");
 
@@ -705,8 +705,5 @@
         }
     });
 </script>
-
-
-
 </body>
 </html>

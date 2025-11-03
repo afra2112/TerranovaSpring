@@ -5,14 +5,21 @@ import java.util.List;
 import com.proyecto.terranova.config.enums.EstadoCitaEnum;
 import com.proyecto.terranova.dto.CitaDTO;
 import com.proyecto.terranova.entity.Cita;
+import com.proyecto.terranova.entity.Usuario;
 
 public interface CitaService {
-    CitaDTO save(CitaDTO dto);
+    Cita save(Cita dto);
     CitaDTO update(Long id, CitaDTO dto); // Actualizar
-    CitaDTO findById(Long id);
-    List<CitaDTO> findAll();
-    List<Cita> encontrarPorEstado(EstadoCitaEnum estado);
+    Cita findById(Long id);
+    List<Cita> findAll();
+    List<Cita> encontrarPorVendedor(Usuario vendedor, boolean activo);
+    List<CitaDTO> encontrarPorVendedorParaCalendario(Usuario vendedor, boolean activo);
+    List<Cita> encontrarPorComprador(Usuario comprador, boolean activo);
+    List<Cita> encontrarPorEstado(Usuario vendedor,EstadoCitaEnum estado, boolean activo);
     boolean delete(Long id);
-    boolean existsById(Long id); // ValidaciÃ³n
+    boolean existsById(Long id);
+    boolean yaTieneCita(Usuario comprador, Long idProducto);
     long count(); // Contar registros
+    void cambiarEstado(Cita cita, EstadoCitaEnum estado);
+    void borrarCita(Long idCita);
 }

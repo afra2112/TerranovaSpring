@@ -14,6 +14,8 @@ public class Notificacion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idNotificacion;
 
+    private String titulo;
+
     @Column(nullable = false, length = 255)
     private String mensajeNotificacion;
 
@@ -25,6 +27,12 @@ public class Notificacion {
 
     @Column(nullable = false)
     private boolean leido;
+
+    private boolean activo = true;
+
+    private String urlAccion;
+
+    private Long referenciaId;
 
     @ManyToOne
     @JoinColumn(name = "cedula")

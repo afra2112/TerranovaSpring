@@ -1,11 +1,18 @@
 package com.proyecto.terranova.controller;
 
+import com.proyecto.terranova.config.enums.EstadoCitaEnum;
 import com.proyecto.terranova.config.enums.RolEnum;
-import com.proyecto.terranova.entity.Usuario;
+import com.proyecto.terranova.entity.*;
+import com.proyecto.terranova.repository.ProductoRepository;
+import com.proyecto.terranova.service.*;
+import com.proyecto.terranova.specification.ProductoSpecification;
+import jakarta.mail.MessagingException;
 import com.proyecto.terranova.service.CompradorService;
 import com.proyecto.terranova.service.ProductoService;
 import com.proyecto.terranova.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,6 +23,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +40,22 @@ public class CompradorController {
     UsuarioService usuarioService;
 
     @Autowired
+    CitaService citaService;
+
+    @Autowired
+    DisponibilidadService disponibilidadService;
+
+    @Autowired
+    NotificacionService notificacionService;
+
+    @Autowired
     ProductoService productoService;
+
+    @Autowired
+    VentaService ventaService;
+
+    @Autowired
+    ProductoRepository productoRepository;
 
     @ModelAttribute("usuario")
     public Usuario usuario(Authentication authentication){
@@ -60,9 +84,164 @@ public class CompradorController {
         model.addAttribute("explorar", true);
 
         Map<String, Integer> estadisticas = compradorService.prepararIndex(usuario(authentication).getCedula());
+        List<Cita> citas = citaService.encontrarPorComprador(usuario(authentication), true);
+
         model.addAllAttributes(estadisticas);
+        model.addAttribute("citasCant", citas.size());
+        model.addAttribute("citas", citas.stream().limit(2).toList());
         model.addAttribute("productos", productoService.obtenerTodasMenosVendedor(usuario(authentication)));
         return "comprador/principalComprador";
+    }
+
+    @GetMapping("/citas")
+    public String citas(Model model, Authentication authentication){
+        model.addAttribute("posicionCitas", true);
+        model.addAttribute("citas", citaService.encontrarPorComprador(usuarioService.findByEmail(authentication.getName()), true));
+        return "comprador/citas";
+    }
+
+    @GetMapping("/detalle-producto/{id}")
+    public String detalleProducto(@PathVariable Long id, Model model, Authentication authentication){
+        Usuario usuario = usuario(authentication);
+
+
+        Producto producto = productoRepository.findById(id).orElseThrow(() -> new RuntimeException("producto no encontrado"));
+        producto.setTipoP(producto.getClass().getSimpleName());
+        boolean yaTieneCita = citaService.yaTieneCita(usuario, id);
+
+        model.addAttribute("yaTieneCita", yaTieneCita);
+        model.addAttribute("usuario", usuario);
+        model.addAttribute("producto", producto);
+
+        System.out.println("-----------MAPAAAA-----------: "+producto.getLatitud() + producto.getLongitud());
+        return "comprador/detalleProducto";
+    }
+
+    @GetMapping("/productos")
+    public String productos(
+            Model model,
+            @RequestParam(required = false) String busquedaTexto,
+            @RequestParam(required = false) String tipo,
+            @RequestParam(required = false) String orden){
+
+        Specification<Producto> spec = (root, query, cb) -> cb.conjunction();
+
+        if (busquedaTexto != null && !busquedaTexto.isEmpty()) {
+            spec = spec.and(ProductoSpecification.buscarPorTexto(busquedaTexto));
+        }
+        if (tipo != null && !tipo.isEmpty()) {
+            spec = spec.and(ProductoSpecification.filtrarPorTipo(tipo));
+        }
+
+        if (orden == null) {
+            orden = "recientes";
+        }
+
+        Sort sort = switch (orden) {
+            case "precio_asc" -> Sort.by("precioProducto").ascending();
+            case "precio_desc" -> Sort.by("precioProducto").descending();
+            case "recientes" -> Sort.by("fechaPublicacion").descending();
+            case "antiguos" -> Sort.by("fechaPublicacion").ascending();
+            default -> Sort.by("idProducto").descending();
+        };
+
+        List<Producto> productos = productoRepository.findAll(spec, sort);
+        model.addAttribute("productos", productos);
+        return "productos";
+    }
+
+    @GetMapping("/compras")
+    public String compras(Model model, Authentication authentication){
+        model.addAttribute("posicionCompras", true);
+        model.addAttribute("compras", ventaService.encontrarPorComprador(usuario(authentication)));
+        return "comprador/compras";
+    }
+
+    @PostMapping("/compras/actualizar-compra")
+    public String actualizarCompra(RedirectAttributes redirectAttributes, @RequestParam(name = "idVenta") Long idVenta, @RequestParam(name = "accion") String accion, @RequestParam(name = "razon", required = false) String razon) throws MessagingException, IOException, IOException {
+        Venta venta = ventaService.findById(idVenta);
+
+        switch (accion){
+            case "cancelar":
+                venta.setGananciaNeta(0L);
+                ventaService.actualizarEstado(venta, "Cancelada");
+                redirectAttributes.addFlashAttribute("modalCancelar", true);
+                break;
+            case "finalizar":
+                ventaService.actualizarEstado(venta, "Finalizada");
+                redirectAttributes.addFlashAttribute("modalFinalizar", true);
+                break;
+
+            case "modificar":
+                ventaService.actualizarEstado(venta, "En Proceso");
+                redirectAttributes.addFlashAttribute("modalModificar", true);
+
+                notificacionService.notificacionPedirModificarVenta(venta, razon);
+
+                break;
+        }
+        return "redirect:/comprador/compras";
+    }
+
+    @PostMapping("/citas/reservar-cita")
+    public String reservar(@RequestParam(name = "idDisponibilidad") Long idDisponibilidad, Authentication authentication) throws MessagingException, IOException {
+        Usuario usuario = usuario(authentication);
+        Disponibilidad disponibilidad = disponibilidadService.findById(idDisponibilidad);
+
+        if (!citaService.yaTieneCita(usuario, disponibilidad.getProducto().getIdProducto())){
+
+            Cita cita = new Cita();
+            cita.setEstadoCita(EstadoCitaEnum.RESERVADA);
+            cita.setDisponibilidad(disponibilidad);
+            cita.setNumReprogramaciones(0);
+            cita.setComprador(usuario);
+            cita.setProducto(disponibilidad.getProducto());
+            citaService.save(cita);
+
+            notificacionService.notificacionCitaReservada(cita);
+        }
+
+        return "redirect:/comprador/citas";
+    }
+
+    @PostMapping("/citas/cancelar-cita")
+    public String cancelarCita(@RequestParam(name = "idCita") Long idCita, Authentication authentication) throws MessagingException, IOException {
+        Usuario usuario = usuario(authentication);
+        Cita cita = citaService.findById(idCita);
+        cita.setEstadoCita(EstadoCitaEnum.CANCELADA);
+        citaService.save(cita);
+
+        String titulo = "Actualizacion en tu cita. Cancelacion.";
+        String mensajeVendedor = "Tu cita para el producto: " + cita.getProducto().getNombreProducto() + ". Ha sido cancelada por el comprador: " + usuario.getNombres() + ".";
+        String mensaje = "Has cancelado tu cita para el producto: " + cita.getProducto().getNombreProducto() + ".";
+
+        notificacionService.notificacionCitaCancelada(cita, usuario);
+
+        return "redirect:/comprador/citas";
+    }
+
+    @PostMapping("/citas/reprogramar-cita")
+    public String reprogramarCita(@RequestParam(name = "idCita") Long idCita, @RequestParam(name = "idDisponibilidad") Long idDisponibilidad, Authentication authentication, RedirectAttributes redirectAttributes) throws MessagingException, IOException {
+        Cita cita = citaService.findById(idCita);
+        if(disponibilidadService.validarSiPuedeReprogramar(cita)){
+            Usuario usuario = usuario(authentication);
+            Disponibilidad disponibilidad = disponibilidadService.findById(idDisponibilidad);
+            cita.setDisponibilidad(disponibilidad);
+            cita.setNumReprogramaciones(cita.getNumReprogramaciones() + 1);
+            cita.setUltimaReprogramacion(LocalDateTime.now());
+            citaService.save(cita);
+
+            notificacionService.notificacionCitaReprogramada(cita,usuario);
+        } else {
+            if(cita.getUltimaReprogramacionBloqueada() == null){
+                cita.setUltimaReprogramacionBloqueada(LocalDateTime.now());
+                cita.setFechaHabilitarReprogramacion(LocalDateTime.now().plusSeconds(15));
+                citaService.save(cita);
+            }
+            redirectAttributes.addFlashAttribute("esperar24Horas", true);
+        }
+
+        return "redirect:/comprador/citas";
     }
 
 
@@ -80,5 +259,20 @@ public class CompradorController {
         redirectAttributes.addFlashAttribute("vendedorExitoso", true);
 
         return "redirect:/usuarios/mi-perfil?id=1";
+    }
+
+    @PostMapping("/generar-venta")
+    public String generarVenta(@RequestParam(name = "idCita") Long idCita, Authentication authentication, RedirectAttributes redirectAttributes) throws MessagingException, IOException {
+        Usuario usuario = usuario(authentication);
+
+        Cita cita = citaService.findById(idCita);
+
+        Venta venta = ventaService.generarVenta(cita.getProducto().getIdProducto(), cita.getComprador());
+        citaService.cambiarEstado(cita, EstadoCitaEnum.VENTAGENERADA);
+
+        notificacionService.notificacionVentaGenerada(venta);
+
+        redirectAttributes.addFlashAttribute("ventaGenerada", true);
+        return "redirect:/comprador/compras";
     }
 }

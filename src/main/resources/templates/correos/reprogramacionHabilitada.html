@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Terranova - Reprogramación Habilitada</title>
+    <style th:utext="${css}"></style>
+</head>
+<body>
+<div class="email-container">
+    <div class="header">Terranova</div>
+    <div class="content">
+        <p>¡Hola <strong th:text="${nombreUsuario}"></strong>!</p>
+        <p>Ya han pasado 24 horas desde tu última reprogramación. Ahora puedes volver a reprogramar tu cita hasta dos veces más.</p>
+    </div>
+    <div class="button-container">
+        <a th:href="${linkAccion}" class="btn">Ir a Mis Citas</a>
+    </div>
+    <div class="footer">Este es un mensaje automático, no es necesario responder.</div>
+</div>
+</body>
+</html>

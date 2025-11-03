@@ -28,11 +28,11 @@
                   <i class='bx bx-heart text-xl'></i>
                   <span>Mis Favoritos</span>
               </a>
-              <a href="#" class="sidebar-item flex items-center space-x-3 p-3 rounded-xl hover:bg-emerald-50/50 text-gray-700 hover:text-emerald-700 font-medium">
+              <a th:classappend="${posicionCitas} ? 'bg-emerald-50/50 text-emerald-700' : 'text-gray-600'" th:href="@{/comprador/citas}" class="sidebar-item flex items-center space-x-3 p-3 rounded-xl hover:bg-emerald-50/50 hover:text-emerald-700 font-medium">
                   <i class='bx bx-bell text-xl'></i>
                   <span>Citas</span>
               </a>
-              <a href="#" class="sidebar-item flex items-center space-x-3 p-3 rounded-xl hover:bg-emerald-50/50 text-gray-700 hover:text-emerald-700 font-medium">
+              <a th:classappend="${posicionCompras} ? 'bg-emerald-50/50 text-emerald-700' : 'text-gray-600'" th:href="@{/comprador/compras}" class="sidebar-item flex items-center space-x-3 p-3 rounded-xl hover:bg-emerald-50/50 hover:text-emerald-700 font-medium">
                   <i class='bx bx-cart text-xl'></i>
                   <span>Mis Compras</span>
               </a>
@@ -40,13 +40,22 @@
 
           <div class="p-4 border-t border-white/20 mt-auto relative">
               <div class="flex items-center space-x-2 bg-gray-100 rounded-full px-4 py-3 cursor-pointer hover:bg-gray-200 transition-colors" onclick="toggleUserDropdown()">
-                  <div th:if="${usuario.foto == null}" class="w-9 h-9 bg-[#388e3c] rounded-full flex items-center justify-center">
-                      <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                      </svg>
-                  </div>
-                  <div th:if="${usuario.foto != null}" class="w-9 h-9 rounded-full overflow-hidden flex items-center justify-center">
-                      <img th:src="@{'/' + ${usuario.foto}}" alt="Foto de perfil" class="w-full h-full object-cover">
+                  <div class="relative">
+                      <div th:if="${usuario.foto == null}" class="w-9 h-9 bg-[#388e3c] rounded-full flex items-center justify-center">
+                          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                          </svg>
+                      </div>
+
+                      <div th:if="${usuario.foto != null}" class="w-9 h-9 rounded-full overflow-hidden flex items-center justify-center">
+                          <img th:src="@{'/imagenes/' + ${usuario.foto}}" alt="Foto de perfil" class="w-full h-full object-cover">
+                      </div>
+
+                      <span th:if="${totalNoLeidas > 0}"
+                            th:text="${totalNoLeidas}"
+                            class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center shadow-lg">
+                      </span>
                   </div>
                   <span class="text-base font-medium text-gray-700" th:text="${nombreMostrar}"></span>
                   <svg class="w-5 h-5 text-gray-500 transition-transform duration-200" id="dropdownArrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -60,6 +69,18 @@
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                       </svg>
                       Mi Perfil
+                  </a>
+                  <a th:href="@{/usuarios/notificaciones(id=${1})}"
+                     class="flex items-center px-5 py-4 text-gray-700 hover:bg-gray-50 transition-colors text-base">
+                      <svg class="w-5 h-5 mr-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5-5M17 21a2 2 0 100-4 2 2 0 000 4zM9 21a2 2 0 100-4 2 2 0 000 4z"/>
+                      </svg>
+                      Notificaciones
+
+                      <span th:if="${totalNoLeidas > 0}"
+                            th:text="${totalNoLeidas}"
+                            class="ml-3 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center shadow">
+                      </span>
                   </a>
                   <a th:if="${esVendedor}" th:href="@{/vendedor/dashboard}" class="flex items-center px-5 py-4 text-gray-700 hover:bg-gray-50 transition-colors text-base">
                       <svg class="w-5 h-5 mr-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">

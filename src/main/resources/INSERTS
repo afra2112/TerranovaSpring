@@ -1,0 +1,16 @@
+INSERT DE PRODUCTO PRUEBA
+
+insert into productos(tipo_producto, descripcion, estado, fecha_publicacion, nombre_producto, precio_producto, id_ciudad, cedula_vendedor) values("TERRENO", "Descripcion de prueba", "Disponible", "2025-09-10", "Terreno lindito", 5000000000, 1, "1234567890");
+insert into productos(tipo_producto, descripcion, estado, fecha_publicacion, nombre_producto, precio_producto, id_ciudad, cedula_vendedor) values("FINCA", "Finca en bogota de 53 metro cuadrados", "Disponible", "2025-09-10", "Finca Bogota", 350000000, 1, "1234567890");
+
+INSERT DE TERRENO PRUEBA
+
+insert into terrenos values("Trocha", "Agua", 24,"Arenoso","Arenosito","Vivienda",1);
+insert into fincas values("24 hectareas", "30 hectareas", 4,4,6,2);
+
+
+INSERT DE CITA PRUEBA
+
+insert into citas(estado_cita, cedula_comprador, id_disponibilidad, id_producto) values("RESERVADA", "9876543210", 1, 1);
+insert into citas(estado_cita, cedula_comprador, id_disponibilidad, id_producto) values("RESERVADA", "9876543210", 2, 2);
+insert into citas(estado_cita, cedula_comprador, id_disponibilidad, id_producto) values("CANCELADA", "9876543210", 3, 1);

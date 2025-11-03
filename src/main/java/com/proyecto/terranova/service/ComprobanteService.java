@@ -2,9 +2,10 @@ package com.proyecto.terranova.service;
 
 import java.util.List;
 import com.proyecto.terranova.dto.ComprobanteDTO;
+import com.proyecto.terranova.entity.Comprobante;
 
 public interface ComprobanteService {
-    ComprobanteDTO save(ComprobanteDTO dto);
+    Comprobante save(Comprobante comprobante);
     ComprobanteDTO update(Long id, ComprobanteDTO dto); // Actualizar
     ComprobanteDTO findById(Long id);
     List<ComprobanteDTO> findAll();

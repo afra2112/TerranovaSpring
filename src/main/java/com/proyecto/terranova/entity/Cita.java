@@ -1,6 +1,7 @@
 package com.proyecto.terranova.entity;
 
 import com.proyecto.terranova.config.enums.EstadoCitaEnum;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -17,18 +18,25 @@ public class Cita {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idCita;
 
-    @Column(nullable = false)
-    private LocalDate fechaCita;
-
-    @Column(nullable = false, length = 30)
+    @Enumerated(EnumType.STRING)
     private EstadoCitaEnum estadoCita;
-
-    @Column(nullable = false)
-    private LocalTime horaCita;
 
     @ManyToOne
     @JoinColumn(name = "idProducto")
     private Producto producto;
+
+    @Column(nullable = true)
+    private LocalDateTime ultimaReprogramacion;
+
+    @Column(nullable = true)
+    private LocalDateTime ultimaReprogramacionBloqueada;
+
+    @Column(nullable = true)
+    private LocalDateTime fechaHabilitarReprogramacion;
+
+    private boolean activo = true;
+
+    private int numReprogramaciones = 0;
 
     @ManyToOne
     @JoinColumn(name = "cedula_comprador")
@@ -37,4 +45,13 @@ public class Cita {
     @ManyToOne
     @JoinColumn(name = "id_disponibilidad")
     private Disponibilidad disponibilidad;
+
+    public boolean isFechaDisponibleParaFinalizar() {
+        LocalDateTime ahora = LocalDateTime.now();
+        LocalDateTime fechaCita = LocalDateTime.of(
+                this.disponibilidad.getFecha(),
+                this.disponibilidad.getHora()
+        );
+        return !fechaCita.isAfter(ahora);
+    }
 }

@@ -31,7 +31,10 @@
             font-family: 'DM Sans', sans-serif;
         }
 
-        /* Modern gradient animations */
+        .gradient-bg {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+        }
+
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -63,19 +66,28 @@
         .fade-in-up-delay-2 {
             animation: fadeInUp 1s ease-out 0.4s both;
         }
+
+        .product-card {
+            transition: all 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
     </style>
 </head>
 <body class="bg-gray-50">
 
-<!-- Modern navbar with Tailwind -->
-<nav class="fixed top-0 w-full bg-gradient-to-r from-primary-emerald to-bright-emerald backdrop-blur-md shadow-lg z-50">
+<nav class="fixed top-0 w-full gradient-bg backdrop-blur-md shadow-lg z-50">
     <div class="container mx-auto px-4">
         <div class="flex items-center justify-between py-4">
-            <a class="text-white text-2xl font-bold flex items-center" href="#">
+            <a class="text-white text-2xl font-bold flex items-center" href="#inicio">
                 <i class="fas fa-leaf mr-2"></i>Terranova
             </a>
             <div class="hidden md:flex items-center space-x-6">
                 <a class="text-white/90 hover:text-white font-medium transition-all duration-300 hover:-translate-y-0.5" href="#inicio">Inicio</a>
+                <a class="text-white/90 hover:text-white font-medium transition-all duration-300 hover:-translate-y-0.5" href="#productos">Productos</a>
                 <a class="text-white/90 hover:text-white font-medium transition-all duration-300 hover:-translate-y-0.5" href="#servicios">Servicios</a>
                 <a class="text-white/90 hover:text-white font-medium transition-all duration-300 hover:-translate-y-0.5" href="#contacto">Contacto</a>
             </div>
@@ -95,7 +107,7 @@
                    + (${param.error} or ${param.logout} or ${param.creado} ? 'scale-100 opacity-100' : 'scale-75 opacity-0')">
 
         <div class="mb-6">
-            <div class="w-16 h-16 bg-gradient-to-r from-primary-emerald to-bright-emerald rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <div class="w-16 h-16 gradient-bg rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <i class="fas fa-leaf text-white text-2xl"></i>
             </div>
             <h1 class="text-2xl font-bold text-gray-900">Terranova</h1>
@@ -110,13 +122,17 @@
                 <input type="password" id="contrasena" name="password" placeholder="Contraseña" required
                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl outline-none focus:border-primary-emerald focus:ring-2 focus:ring-primary-emerald/20 transition-all duration-300" />
             </div>
+            <div class="text-right">
+                <a th:href="@{/password-olvidada}" class="text-sm text-primary-emerald hover:text-bright-emerald transition-colors">
+                    ¿Olvidaste tu contraseña?
+                </a>
+            </div>
             <button type="submit"
-                    class="w-full bg-gradient-to-r from-primary-emerald to-bright-emerald text-white font-semibold py-3 rounded-xl transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
+                    class="w-full gradient-bg text-white font-semibold py-3 rounded-xl transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
                 Iniciar Sesión
             </button>
         </form>
 
-        <!-- Modern status messages -->
         <div th:if="${param.error}" class="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
             <p class="text-red-600 text-sm font-medium">Correo o Contraseña Incorrecta</p>
         </div>
@@ -140,7 +156,6 @@
     </div>
 </div>
 
-<!-- Modern hero section with Tailwind -->
 <section id="inicio" class="min-h-screen bg-gradient-to-br from-primary-emerald via-bright-emerald to-emerald-900 flex items-center relative overflow-hidden pt-20">
     <div class="absolute inset-0 bg-black/10"></div>
     <div class="container mx-auto px-4 relative z-10">
@@ -154,10 +169,7 @@
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 fade-in-up-delay-2">
                     <button class="bg-white text-primary-emerald px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-                        <a href="../PaginaPProductos/PaginaPProductos.html" class="text-primary-emerald">Explorar Venta</a>
-                    </button>
-                    <button class="border-2 border-white text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 hover:bg-white hover:text-primary-emerald">
-                        <a href="../PaginaPProductos/PaginaPProductos.html" class="text-inherit">Ver Arriendos</a>
+                        <a th:href="@{/comprador/productos}" class="text-primary-emerald">Explorar Venta</a>
                     </button>
                 </div>
             </div>
@@ -165,29 +177,27 @@
                 <div class="bg-white/95 backdrop-blur-lg rounded-2xl p-8 shadow-2xl">
                     <div class="flex mb-6 bg-gray-100 rounded-xl p-1">
                         <button class="flex-1 bg-primary-emerald text-white py-3 px-4 rounded-lg font-semibold transition-all duration-300">
-                            <i class="fas fa-shopping-cart mr-2"></i>Venta
-                        </button>
-                        <button class="flex-1 text-gray-600 py-3 px-4 rounded-lg font-semibold transition-all duration-300 hover:bg-gray-200">
-                            <i class="fas fa-handshake mr-2"></i>Arriendo
+                            <i class="fas fa-shopping-cart mr-2"></i>Ver Todos
                         </button>
                     </div>
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-gray-700 font-semibold mb-2">¿Qué buscas?</label>
-                            <select class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-emerald focus:ring-2 focus:ring-primary-emerald/20 outline-none transition-all duration-300">
-                                <option>Terrenos</option>
-                                <option>Ganado</option>
-                                <option>Fincas</option>
-                                <option>Maquinaria</option>
-                            </select>
+                            <form th:action="@{/comprador/productos}" method="get">
+                                <label class="block text-gray-700 font-semibold mb-2">¿Qué buscas?</label>
+                                <select name="tipo" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-emerald focus:ring-2 focus:ring-primary-emerald/20 outline-none transition-all duration-300">
+                                    <option value="terreno">Terrenos</option>
+                                    <option value="ganado">Ganado</option>
+                                    <option value="finca">Fincas</option>
+                                </select>
+                                <label class="mt-3 block text-gray-700 font-semibold mb-2">Ciudad</label>
+                                <select class="mb-8 w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-emerald focus:ring-2 focus:ring-primary-emerald/20 outline-none transition-all duration-300" name="busquedaTexto">
+                                    <option th:each="ciudad : ${ciudades}" th:value="${ciudad}" th:text="${ciudad}"></option>
+                                </select>
+                                <button type="submit" class="w-full bg-gradient-to-r from-primary-emerald to-bright-emerald text-white py-3 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
+                                    <i class="fas fa-search mr-2"></i>Buscar
+                                </button>
+                            </form>
                         </div>
-                        <div>
-                            <label class="block text-gray-700 font-semibold mb-2">Ubicación</label>
-                            <input type="text" placeholder="Ciudad o región" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-emerald focus:ring-2 focus:ring-primary-emerald/20 outline-none transition-all duration-300">
-                        </div>
-                        <button class="w-full bg-gradient-to-r from-primary-emerald to-bright-emerald text-white py-3 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
-                            <i class="fas fa-search mr-2"></i>Buscar
-                        </button>
                     </div>
                 </div>
             </div>
@@ -195,7 +205,108 @@
     </div>
 </section>
 
-<!-- Modern services section -->
+<section id="productos" class="py-20 bg-white">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-bold text-gray-900 mb-4">Productos Destacados</h2>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">Explora nuestra selección de productos agrícolas disponibles</p>
+        </div>
+
+        <div class="flex flex-wrap justify-center gap-3 mb-12">
+            <button onclick="filtrarProductos('todos')" class="filter-btn active px-6 py-3 rounded-xl font-semibold transition-all duration-300 gradient-bg text-white">
+                <i class="fas fa-th mr-2"></i>Todos
+            </button>
+            <button onclick="filtrarProductos('TERRENO')" class="filter-btn px-6 py-3 rounded-xl font-semibold transition-all duration-300 bg-gray-100 text-gray-700 hover:bg-gray-200">
+                <i class="fas fa-map-marked-alt mr-2"></i>Terrenos
+            </button>
+            <button onclick="filtrarProductos('GANADO')" class="filter-btn px-6 py-3 rounded-xl font-semibold transition-all duration-300 bg-gray-100 text-gray-700 hover:bg-gray-200">
+                <i class="fas fa-cow mr-2"></i>Ganado
+            </button>
+            <button onclick="filtrarProductos('FINCA')" class="filter-btn px-6 py-3 rounded-xl font-semibold transition-all duration-300 bg-gray-100 text-gray-700 hover:bg-gray-200">
+                <i class="fas fa-home mr-2"></i>Fincas
+            </button>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="productosGrid">
+            <div th:each="producto : ${productos}"
+                 th:attr="data-tipo=${producto.tipoP}"
+                 class="product-card bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
+
+                <div class="relative h-64 overflow-hidden">
+                    <img th:if="${!#lists.isEmpty(producto.imagenes)}"
+                         th:src="${#lists.isEmpty(producto.imagenes) ? '/placeholder.svg?height=100&width=150' : producto.imagenes.get(0).nombreArchivo}"
+                         th:alt="${producto.nombreProducto}"
+                         class="w-full h-full object-cover">
+                    <img th:if="${#lists.isEmpty(producto.imagenes)}"
+                         src="/placeholder.svg?height=256&width=400"
+                         alt="Sin imagen"
+                         class="w-full h-full object-cover">
+
+                    <div class="absolute top-4 left-4">
+                        <span th:if="${producto.tipoP == 'TERRENO'}"
+                              class="px-3 py-1 bg-blue-500 text-white text-xs font-semibold rounded-full">
+                            <i class="fas fa-map-marked-alt mr-1"></i>Terreno
+                        </span>
+                        <span th:if="${producto.tipoP == 'GANADO'}"
+                              class="px-3 py-1 bg-amber-500 text-white text-xs font-semibold rounded-full">
+                            <i class="fas fa-cow mr-1"></i>Ganado
+                        </span>
+                        <span th:if="${producto.tipoP == 'FINCA'}"
+                              class="px-3 py-1 bg-green-500 text-white text-xs font-semibold rounded-full">
+                            <i class="fas fa-home mr-1"></i>Finca
+                        </span>
+                    </div>
+
+                    <div class="absolute top-4 right-4">
+                        <span class="px-3 py-1 bg-white/90 backdrop-blur-sm text-primary-emerald text-xs font-semibold rounded-full">
+                            <i class="fas fa-check-circle mr-1"></i>
+                            <span th:text="${producto.estado}">Disponible</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-2 line-clamp-1" th:text="${producto.nombreProducto}">
+                        Nombre del Producto
+                    </h3>
+
+                    <p class="text-gray-600 text-sm mb-4 line-clamp-2" th:text="${producto.descripcion}">
+                        Descripción del producto
+                    </p>
+
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <p class="text-2xl font-bold text-primary-emerald">
+                                $<span th:text="${#numbers.formatDecimal(producto.precioProducto, 0, 'COMMA', 0, 'POINT')}">0</span>
+                            </p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xs text-gray-500">
+                                <i class="fas fa-map-marker-alt mr-1"></i>
+                                <span th:text="${producto.ciudad.nombreCiudad}">Ciudad</span>
+                            </p>
+                            <p class="text-xs text-gray-500">
+                                <i class="fas fa-calendar mr-1"></i>
+                                <span th:text="${#temporals.format(producto.fechaPublicacion, 'dd/MM/yyyy')}">01/01/2024</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <a th:href="@{/producto/{id}(id=${producto.idProducto})}"
+                       class="block w-full text-center gradient-bg text-white font-semibold py-3 rounded-xl transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
+                        <i class="fas fa-eye mr-2"></i>Ver Detalles
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="emptyState" class="hidden text-center py-16">
+            <i class="fas fa-box-open text-gray-300 text-6xl mb-4"></i>
+            <p class="text-gray-500 text-lg">No se encontraron productos en esta categoría</p>
+        </div>
+    </div>
+</section>
+
 <section id="servicios" class="py-20 bg-white">
     <div class="container mx-auto px-4">
         <div class="text-center mb-16">
@@ -249,7 +360,6 @@
     </div>
 </section>
 
-<!-- Modern footer -->
 <footer id="contacto" class="bg-gray-900 text-white py-16">
     <div class="container mx-auto px-4">
         <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -299,7 +409,6 @@
     </div>
 </footer>
 
-<!-- Updated JavaScript with modern functionality -->
 <script>
     function abrirModalInicio() {
         const modal = document.getElementById('successModal');
@@ -323,7 +432,36 @@
         }, 300);
     }
 
-    // Auto-open modal based on URL parameters
+    function filtrarProductos(tipo) {
+        const productos = document.querySelectorAll('.product-card');
+        const emptyState = document.getElementById('emptyState');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        let visibleCount = 0;
+
+        filterBtns.forEach(btn => {
+            btn.classList.remove('gradient-bg', 'text-white');
+            btn.classList.add('bg-gray-100', 'text-gray-700');
+        });
+        event.target.classList.remove('bg-gray-100', 'text-gray-700');
+        event.target.classList.add('gradient-bg', 'text-white');
+
+        productos.forEach(producto => {
+            const productoTipo = producto.getAttribute('data-tipo');
+            if (tipo === 'todos' || productoTipo === tipo) {
+                producto.style.display = 'block';
+                visibleCount++;
+            } else {
+                producto.style.display = 'none';
+            }
+        });
+
+        if (visibleCount === 0) {
+            emptyState.classList.remove('hidden');
+        } else {
+            emptyState.classList.add('hidden');
+        }
+    }
+
     window.addEventListener("DOMContentLoaded", () => {
         const params = new URLSearchParams(window.location.search);
         if (params.get("error") === "true" || params.get("logout") === "true" || params.get("creado") === "true") {
@@ -331,21 +469,18 @@
         }
     });
 
-    // Close modal with Escape key
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
             cerrarModalInicio();
         }
     });
 
-    // Close modal when clicking outside
     document.getElementById('successModal')?.addEventListener('click', (e) => {
         if (e.target.id === 'successModal') {
             cerrarModalInicio();
         }
     });
 
-    // Smooth scrolling for navigation
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();

@@ -16,6 +16,6 @@ public interface ProductoService {
     boolean existsById(Long id); // ValidaciÃ³n
     long count();// Contar registros
     void actualizarProducto(Producto prodForm);
-    List<Producto> obtenerTodasMenosVendedor(Usuario vendedor);
     void eliminarProducto(Long idProducto, String correo);
+    List<Producto> obtenerTodasMenosVendedor(Usuario vendedor);
 }

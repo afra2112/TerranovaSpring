@@ -2,19 +2,17 @@
 package com.proyecto.terranova.controller;
 
 import com.proyecto.terranova.config.enums.RolEnum;
-import com.proyecto.terranova.dto.UsuarioDTO;
 import com.proyecto.terranova.entity.Usuario;
+import com.proyecto.terranova.service.NotificacionService;
 import com.proyecto.terranova.service.RolService;
 import com.proyecto.terranova.service.UsuarioService;
-import jakarta.validation.Valid;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -36,6 +34,9 @@ public class UsuarioController {
 
     @Autowired
     private RolService rolService;
+
+    @Autowired
+    private NotificacionService notificacionService;
 
     @ModelAttribute("usuario")
     public Usuario usuario(Authentication authentication){
@@ -77,7 +78,7 @@ public class UsuarioController {
     }
 
     @PostMapping("/mi-perfil/cambiar-foto")
-    public String cambiarFoto(@RequestParam(name = "foto") MultipartFile foto, Authentication authentication) throws IOException {
+    public String cambiarFoto(@RequestParam(name = "foto") MultipartFile foto, Authentication authentication) throws IOException, MessagingException {
         String nombreArchivo = UUID.randomUUID().toString() + "_" + foto.getOriginalFilename();
         Path rutaImagen = Paths.get("imagenes").resolve(nombreArchivo);
 
@@ -86,6 +87,8 @@ public class UsuarioController {
         usuario.setFoto(nombreArchivo);
         serviceUsuario.update(usuario);
 
+        notificacionService.notificacionFotoPerfilCambiada(usuario);
+
         if(esVendedor(authentication)){
             return "redirect:/usuarios/mi-perfil?id=2";
         }
@@ -93,13 +96,43 @@ public class UsuarioController {
     }
 
     @PostMapping("/mi-perfil/editar")
-    public String editar(@ModelAttribute Usuario usuarioNuevo, Authentication authentication) {
+    public String editar(@ModelAttribute Usuario usuarioNuevo, Authentication authentication) throws MessagingException, IOException {
         Usuario usuario = usuario(authentication);
         usuario.setNombres(usuarioNuevo.getNombres());
         usuario.setApellidos(usuarioNuevo.getApellidos());
         usuario.setTelefono(usuarioNuevo.getTelefono());
         usuario.setNacimiento(usuarioNuevo.getNacimiento());
         serviceUsuario.update(usuario);
+
+        notificacionService.notificacionDatosPersonalesActualizados(usuario);
+
+        if(esVendedor(authentication)){
+            return "redirect:/usuarios/mi-perfil?id=2";
+        }
+        return "redirect:/usuarios/mi-perfil?id=1";
+    }
+
+    @PostMapping("/mi-perfil/notificaciones")
+    public String cambiarConfiguracionNotificaciones(
+            @RequestParam(name = "emailNotif", required = false , defaultValue = "false") boolean correos,
+            @RequestParam(name = "ventasCompras", required = false , defaultValue = "false") boolean ventas,
+            @RequestParam(name = "citas", required = false , defaultValue = "false") boolean citas,
+            @RequestParam(name = "disponibilidades", required = false , defaultValue = "false") boolean disponibilidades,
+            @RequestParam(name = "sistema", required = false , defaultValue = "false") boolean sistema,
+            @RequestParam(name = "productos", required = false , defaultValue = "false") boolean productos,
+            Authentication authentication
+    ) {
+        Usuario usuario = usuario(authentication);
+
+        usuario.setRecibirCorreos(correos);
+        usuario.setNotificacionesCitas(citas);
+        usuario.setNotificacionesSistema(sistema);
+        usuario.setNotificacionesVentas(ventas);
+        usuario.setNotificacionesProductos(productos);
+        usuario.setNotificacionesDisponibilidades(disponibilidades);
+        serviceUsuario.update(usuario);
+
+
         if(esVendedor(authentication)){
             return "redirect:/usuarios/mi-perfil?id=2";
         }

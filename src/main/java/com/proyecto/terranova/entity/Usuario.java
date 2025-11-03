@@ -7,6 +7,7 @@ import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -41,6 +42,18 @@ public class Usuario {
 
     private String foto;
 
+    private boolean notificacionesDisponibilidades = true;
+
+    private boolean notificacionesCitas = true;
+
+    private boolean notificacionesVentas = true;
+
+    private boolean notificacionesProductos = true;
+
+    private boolean notificacionesSistema = true;
+
+    private boolean recibirCorreos = true;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "usuario_rol",
@@ -66,4 +79,7 @@ public class Usuario {
     //estos campos son para el oauth2
     private String provider;
     private String providerId;
+
+    private String resetToken;
+    private LocalDateTime resetTokenExpiracion;
 }

@@ -18,4 +18,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, String> {
     boolean existsBycedula(String cedula);
 
     Usuario findByProviderAndProviderId(String provider, String providerId);
+
+    Optional<Usuario> findByResetToken(String resetToken);
 }

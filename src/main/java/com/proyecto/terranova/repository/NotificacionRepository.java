@@ -9,5 +9,9 @@ import java.util.List;
 
 @Repository
 public interface NotificacionRepository extends JpaRepository<Notificacion, Long> {
-    List<Notificacion> findByUsuario(Usuario usuario);
+    List<Notificacion> findByUsuarioAndLeidoFalseAndActivoOrderByFechaNotificacionDesc(Usuario usuario, boolean activa);
+    List<Notificacion> findByUsuarioAndActivoOrderByFechaNotificacionDesc(Usuario usuario, boolean activa);
+    List<Notificacion> findByUsuarioAndTipoOrderByFechaNotificacionDesc(Usuario usuario, String activa);
+    int countByUsuarioAndTipoAndActivo(Usuario usuario, String tipo, boolean activa);
+    int countByUsuarioAndLeidoAndActivo(Usuario usuario, boolean leido, boolean activa);
 }

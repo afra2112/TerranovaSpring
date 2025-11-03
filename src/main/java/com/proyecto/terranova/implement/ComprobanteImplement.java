@@ -21,10 +21,8 @@ public class ComprobanteImplement implements ComprobanteService {
     private ModelMapper modelMapper;
 
     @Override
-    public ComprobanteDTO save(ComprobanteDTO dto) {
-        Comprobante entidadComprobante = modelMapper.map(dto, Comprobante.class);
-        Comprobante entidadGuardada = repository.save(entidadComprobante);
-        return modelMapper.map(entidadGuardada, ComprobanteDTO.class);
+    public Comprobante save(Comprobante comprobante) {
+        return repository.save(comprobante);
     }
 
     @Override
