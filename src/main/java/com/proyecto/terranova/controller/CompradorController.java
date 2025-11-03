@@ -117,39 +117,6 @@ public class CompradorController {
         return "comprador/detalleProducto";
     }
 
-    @GetMapping("/productos")
-    public String productos(
-            Model model,
-            @RequestParam(required = false) String busquedaTexto,
-            @RequestParam(required = false) String tipo,
-            @RequestParam(required = false) String orden){
-
-        Specification<Producto> spec = (root, query, cb) -> cb.conjunction();
-
-        if (busquedaTexto != null && !busquedaTexto.isEmpty()) {
-            spec = spec.and(ProductoSpecification.buscarPorTexto(busquedaTexto));
-        }
-        if (tipo != null && !tipo.isEmpty()) {
-            spec = spec.and(ProductoSpecification.filtrarPorTipo(tipo));
-        }
-
-        if (orden == null) {
-            orden = "recientes";
-        }
-
-        Sort sort = switch (orden) {
-            case "precio_asc" -> Sort.by("precioProducto").ascending();
-            case "precio_desc" -> Sort.by("precioProducto").descending();
-            case "recientes" -> Sort.by("fechaPublicacion").descending();
-            case "antiguos" -> Sort.by("fechaPublicacion").ascending();
-            default -> Sort.by("idProducto").descending();
-        };
-
-        List<Producto> productos = productoRepository.findAll(spec, sort);
-        model.addAttribute("productos", productos);
-        return "productos";
-    }
-
     @GetMapping("/compras")
     public String compras(Model model, Authentication authentication){
         model.addAttribute("posicionCompras", true);

@@ -11,6 +11,7 @@ import com.proyecto.terranova.service.UsuarioService;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,7 +33,7 @@ public class PublicController {
     UsuarioService usuarioService;
 
     @Autowired
-    PasswordEncoder passwordEncoder;
+    ProductoService productoService;
 
     @Autowired
     ProductoRepository productoRepository;
@@ -52,7 +53,21 @@ public class PublicController {
         return "login";
     }
 
-        @GetMapping("/registro")
+    @GetMapping("/productos")
+    public String productos(
+            Model model,
+            Authentication authentication,
+            @RequestParam(required = false) boolean logueado,
+            @RequestParam(required = false) String busquedaTexto,
+            @RequestParam(required = false) String tipo,
+            @RequestParam(required = false) String orden){
+
+        model.addAttribute("productos", productoService.filtrarConSpecification(busquedaTexto, tipo, orden));
+        model.addAttribute("logueado", logueado);
+        return "productos";
+    }
+
+    @GetMapping("/registro")
     public String registroForm(Model model){
         model.addAttribute("usuarioDTO", new UsuarioDTO());
         return "registro";

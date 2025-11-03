@@ -29,7 +29,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
         return httpSecurity
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/login","/registro","/403", "/password-olvidada", "/recuperar-password", "/comprador/productos", "/oauth2/**").permitAll();
+                    auth.requestMatchers("/login","/registro","/403", "/password-olvidada", "/recuperar-password", "/oauth2/**").permitAll();
+                    auth.requestMatchers( "/productos").permitAll();
                     auth.requestMatchers("/comprador/**").hasAuthority("COMPRADOR");
                     auth.requestMatchers("/vendedor/**").hasAuthority("VENDEDOR");
                     auth.anyRequest().authenticated();
