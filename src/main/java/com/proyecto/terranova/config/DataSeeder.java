@@ -78,14 +78,14 @@ public class DataSeeder {
                 usuarioRepository.save(usuario);
             }
             crearUsuarioSiNoExiste(usuarioRepository, passwordEncoder, rolRepository,
-                    "maria.rodriguez", "Maria", "Rodriguez Lopez", "9876543210", "3109876543", "maria1234", true);
+                    "maria@gmail.com", "Maria", "Rodriguez Lopez", "9876543210", "3109876543", "maria1234", true);
             crearUsuarioSiNoExiste(usuarioRepository, passwordEncoder, rolRepository,
-                    "carlos.mendez", "Carlos", "Mendez Silva", "5551234567", "3201234567", "carlos1234", false);
+                    "carlos@gmail.com", "Carlos", "Mendez Silva", "5551234567", "3201234567", "carlos1234", false);
             crearUsuarioSiNoExiste(usuarioRepository, passwordEncoder, rolRepository,
-                    "laura.torres", "Laura", "Torres Ramirez", "7778889990", "3157654321", "laura1234", false);
+                    "laura@gmail.com", "Laura", "Torres Ramirez", "7778889990", "3157654321", "laura1234", false);
 
             //PRODUCTOS
-            if (terrenoRepository.count() == 0 && fincaRepository.count() == 0 && ganadoRepository.count() == 0) {
+            if (productoRepository.count() == 0) {
 
                 List<Usuario> vendedores = usuarioRepository.findAll().stream()
                         .filter(u -> u.getRoles().stream().anyMatch(r -> r.getNombreRol() == RolEnum.VENDEDOR))
@@ -183,10 +183,9 @@ public class DataSeeder {
     private void crearUsuarioSiNoExiste(UsuarioRepository usuarioRepository,
                                         PasswordEncoder passwordEncoder,
                                         RolRepository rolRepository,
-                                        String baseEmail, String nombres, String apellidos,
+                                        String email, String nombres, String apellidos,
                                         String cedula, String telefono, String contrasena, boolean vendedor) {
         Random random = new Random();
-        String email = baseEmail + random.nextInt(1000) + "@gmail.com";
 
         if (usuarioRepository.findByEmail(email) == null) {
             Usuario usuario = new Usuario();
@@ -232,14 +231,29 @@ public class DataSeeder {
     }
 
     private void crearDisponibilidades(Long idProducto, DisponibilidadRepository disponibilidadRepository, ProductoRepository productoRepository) {
+
+        Random random = new Random();
+        Producto producto = productoRepository.findById(idProducto).orElseThrow();
+
+        if (disponibilidadRepository.countByProducto(producto) > 0) {
+            return;
+        }
+
         LocalDate hoy = LocalDate.now();
-        for (int i = 0; i < 7; i++) {
+
+        for (int i = 0; i < 3; i++) {
             Disponibilidad disponibilidad = new Disponibilidad();
-            disponibilidad.setProducto(productoRepository.findById(idProducto).orElseThrow());
-            disponibilidad.setFecha(hoy.plusDays(i));
-            disponibilidad.setHora(LocalTime.of(9, 0));
+
+            disponibilidad.setFecha(hoy.plusDays(random.nextInt(10)));
+
+            int hora = 8 + random.nextInt(10);
+            int minuto = random.nextBoolean() ? 0 : 30;
+            disponibilidad.setHora(LocalTime.of(hora, minuto));
+
             disponibilidad.setDisponible(true);
-            disponibilidad.setDescripcion("Disponible para visita");
+            disponibilidad.setDescripcion("Disponible para visita " + producto.getNombreProducto());
+            disponibilidad.setProducto(producto);
+
             disponibilidadRepository.save(disponibilidad);
         }
     }

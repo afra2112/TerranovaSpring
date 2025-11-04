@@ -12,5 +12,7 @@ import java.util.List;
 public interface DisponibilidadRepository extends JpaRepository<Disponibilidad, Long> {
     List<Disponibilidad> findByProductoAndDisponible(Producto producto, boolean disponible);
 
+    long countByProducto(Producto producto);
+
     List<Disponibilidad> findByProducto_VendedorAndDisponible(Usuario vendedor, boolean disponible);
 }
