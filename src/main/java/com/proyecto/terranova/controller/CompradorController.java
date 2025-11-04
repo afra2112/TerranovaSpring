@@ -88,8 +88,9 @@ public class CompradorController {
 
         model.addAllAttributes(estadisticas);
         model.addAttribute("citasCant", citas.size());
+        model.addAttribute("notificacionesCant", notificacionService.contarNoLeidasPorUsuario(usuario(authentication), false));
         model.addAttribute("citas", citas.stream().limit(2).toList());
-        model.addAttribute("productos", productoService.obtenerTodasMenosVendedor(usuario(authentication)));
+        model.addAttribute("productos", productoService.obtenerTodasMenosVendedor(usuario(authentication)).stream().limit(3).toList());
         return "comprador/principalComprador";
     }
 
@@ -98,23 +99,6 @@ public class CompradorController {
         model.addAttribute("posicionCitas", true);
         model.addAttribute("citas", citaService.encontrarPorComprador(usuarioService.findByEmail(authentication.getName()), true));
         return "comprador/citas";
-    }
-
-    @GetMapping("/detalle-producto/{id}")
-    public String detalleProducto(@PathVariable Long id, Model model, Authentication authentication){
-        Usuario usuario = usuario(authentication);
-
-
-        Producto producto = productoRepository.findById(id).orElseThrow(() -> new RuntimeException("producto no encontrado"));
-        producto.setTipoP(producto.getClass().getSimpleName());
-        boolean yaTieneCita = citaService.yaTieneCita(usuario, id);
-
-        model.addAttribute("yaTieneCita", yaTieneCita);
-        model.addAttribute("usuario", usuario);
-        model.addAttribute("producto", producto);
-
-        System.out.println("-----------MAPAAAA-----------: "+producto.getLatitud() + producto.getLongitud());
-        return "comprador/detalleProducto";
     }
 
     @GetMapping("/compras")

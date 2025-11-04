@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terranova - Marketplace Agrícola</title>
+    <title>Terranova - Iniciar Sesión</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -33,6 +33,69 @@
 
         .gradient-bg {
             background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+        }
+
+        /* Carousel styles for automatic image rotation */
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .carousel-slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+            object-fit: cover;
+        }
+
+        .carousel-slide.active {
+            opacity: 1;
+        }
+
+        .carousel-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .carousel-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(5, 150, 105, 0.4) 0%, rgba(16, 185, 129, 0.3) 100%);
+            z-index: 5;
+        }
+
+        .carousel-indicators {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .carousel-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .carousel-indicator.active {
+            background: white;
+            width: 30px;
+            border-radius: 6px;
         }
 
         @keyframes fadeInUp {
@@ -79,6 +142,7 @@
 </head>
 <body class="bg-gray-50">
 
+<!-- Modern navbar with Tailwind -->
 <nav class="fixed top-0 w-full gradient-bg backdrop-blur-md shadow-lg z-50">
     <div class="container mx-auto px-4">
         <div class="flex items-center justify-between py-4">
@@ -87,7 +151,7 @@
             </a>
             <div class="hidden md:flex items-center space-x-6">
                 <a class="text-white/90 hover:text-white font-medium transition-all duration-300 hover:-translate-y-0.5" href="#inicio">Inicio</a>
-                <a class="text-white/90 hover:text-white font-medium transition-all duration-300 hover:-translate-y-0.5" th:href="@{/productos?logueado=false}">Productos</a>
+                <a class="text-white/90 hover:text-white font-medium transition-all duration-300 hover:-translate-y-0.5" href="#productos">Productos</a>
                 <a class="text-white/90 hover:text-white font-medium transition-all duration-300 hover:-translate-y-0.5" href="#servicios">Servicios</a>
                 <a class="text-white/90 hover:text-white font-medium transition-all duration-300 hover:-translate-y-0.5" href="#contacto">Contacto</a>
             </div>
@@ -98,6 +162,7 @@
     </div>
 </nav>
 
+<!-- Modal with Tailwind styles and Thymeleaf functionality -->
 <div id="successModal"
      th:class="'fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 '
                + (${param.error} or ${param.logout} or ${param.creado} ? '' : 'hidden')">
@@ -122,7 +187,7 @@
                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl outline-none focus:border-primary-emerald focus:ring-2 focus:ring-primary-emerald/20 transition-all duration-300" />
             </div>
             <div class="text-right">
-                <a th:href="@{/password-olvidada}" class="text-sm text-primary-emerald hover:text-bright-emerald transition-colors">
+                <a th:href="@{/forgot-password}" class="text-sm text-primary-emerald hover:text-bright-emerald transition-colors">
                     ¿Olvidaste tu contraseña?
                 </a>
             </div>
@@ -132,6 +197,7 @@
             </button>
         </form>
 
+        <!-- Modern status messages -->
         <div th:if="${param.error}" class="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
             <p class="text-red-600 text-sm font-medium">Correo o Contraseña Incorrecta</p>
         </div>
@@ -155,49 +221,72 @@
     </div>
 </div>
 
-<section id="inicio" class="min-h-screen bg-gradient-to-br from-primary-emerald via-bright-emerald to-emerald-900 flex items-center relative overflow-hidden pt-20">
-    <div class="absolute inset-0 bg-black/10"></div>
-    <div class="container mx-auto px-4 relative z-10">
-        <div class="grid lg:grid-cols-2 gap-12 items-center">
-            <div class="text-white">
-                <h1 class="text-5xl lg:text-6xl font-bold mb-6 fade-in-up">
-                    Descubre el Futuro del Campo
-                </h1>
-                <p class="text-xl mb-8 text-white/90 fade-in-up-delay">
-                    Conectamos productores, compradores y vendedores en el marketplace agrícola más innovador de Colombia
-                </p>
-                <div class="flex flex-col sm:flex-row gap-4 fade-in-up-delay-2">
-                    <button class="bg-white text-primary-emerald px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-                        <a th:href="@{/productos?logueado=false}" class="text-primary-emerald">Explorar Venta</a>
-                    </button>
-                </div>
-            </div>
-            <div class="floating">
-                <div class="bg-white/95 backdrop-blur-lg rounded-2xl p-8 shadow-2xl">
-                    <div class="flex mb-6 bg-gray-100 rounded-xl p-1">
-                        <button class="flex-1 bg-primary-emerald text-white py-3 px-4 rounded-lg font-semibold transition-all duration-300">
-                            <i class="fas fa-shopping-cart mr-2"></i>Ver Todos
+<section id="inicio" class="min-h-screen flex items-center relative overflow-hidden pt-20">
+
+    <div class="carousel-container">
+        <div class="carousel-slide active">
+            <img th:src="@{/imagenes/imagen1_finca_id3_andres.jpg}" alt="Campo agrícola">
+        </div>
+        <div class="carousel-slide">
+            <img src="/imagenes/imagen1_finca_id3_andres.jpg" alt="Ganado pastoral">
+        </div>
+        <div class="carousel-slide">
+            <img src="/imagenes/imagen1_finca_id3_andres.jpg" alt="Finca moderna">
+        </div>
+
+        <div class="carousel-overlay"></div>
+
+        <div class="carousel-indicators">
+            <div class="carousel-indicator active" onclick="goToSlide(0)"></div>
+            <div class="carousel-indicator" onclick="goToSlide(1)"></div>
+            <div class="carousel-indicator" onclick="goToSlide(2)"></div>
+        </div>
+    </div>
+
+    <!-- Content overlay on carousel -->
+    <div class="absolute inset-0 flex items-center z-10 pointer-events-none">
+        <div class="container mx-auto px-4 relative z-10 pointer-events-auto">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="text-white">
+                    <h1 class="text-5xl lg:text-6xl font-bold mb-6 fade-in-up">
+                        Descubre el Futuro del Campo
+                    </h1>
+                    <p class="text-xl mb-8 text-white/90 fade-in-up-delay">
+                        Conectamos productores, compradores y arrendatarios en el marketplace agrícola más innovador de Colombia
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 fade-in-up-delay-2">
+                        <a href="/productos" class="bg-white text-primary-emerald px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1 text-center">
+                            Explorar Productos
+                        </a>
+                        <button onclick="abrirModalInicio()" class="bg-white/20 border-2 border-white text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 hover:bg-white/30 hover:-translate-y-1 text-center">
+                            Iniciar Sesión
                         </button>
                     </div>
-                    <div class="space-y-4">
-                        <div>
-                            <form th:action="@{/productos?logueado=false}" method="get">
+                </div>
+                <div class="floating hidden lg:block">
+                    <div class="bg-white/95 backdrop-blur-lg rounded-2xl p-8 shadow-2xl">
+                        <div class="flex mb-6 bg-gray-100 rounded-xl p-1">
+                            <button class="flex-1 bg-primary-emerald text-white py-3 px-4 rounded-lg font-semibold transition-all duration-300">
+                                <i class="fas fa-shopping-cart mr-2"></i>Buscar
+                            </button>
+                        </div>
+                        <div class="space-y-4">
+                            <div>
                                 <label class="block text-gray-700 font-semibold mb-2">¿Qué buscas?</label>
-                                <select name="tipo" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-emerald focus:ring-2 focus:ring-primary-emerald/20 outline-none transition-all duration-300">
-                                    <option value="">Todos los productos</option>
-                                    <option value="terreno">Terrenos</option>
-                                    <option value="ganado">Ganado</option>
-                                    <option value="finca">Fincas</option>
+                                <select class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-emerald focus:ring-2 focus:ring-primary-emerald/20 outline-none transition-all duration-300">
+                                    <option>Todos los productos</option>
+                                    <option>Terrenos</option>
+                                    <option>Ganado</option>
+                                    <option>Fincas</option>
                                 </select>
-                                <label class="mt-3 block text-gray-700 font-semibold mb-2">Ciudad</label>
-                                <select class="mb-8 w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-emerald focus:ring-2 focus:ring-primary-emerald/20 outline-none transition-all duration-300" name="busquedaTexto">
-                                    <option value="">Todas</option>
-                                    <option th:each="ciudad : ${ciudades}" th:value="${ciudad}" th:text="${ciudad}"></option>
-                                </select>
-                                <button type="submit" class="w-full bg-gradient-to-r from-primary-emerald to-bright-emerald text-white py-3 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
-                                    <i class="fas fa-search mr-2"></i>Buscar
-                                </button>
-                            </form>
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-semibold mb-2">Ubicación</label>
+                                <input type="text" placeholder="Ciudad o región" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-emerald focus:ring-2 focus:ring-primary-emerald/20 outline-none transition-all duration-300">
+                            </div>
+                            <button class="w-full bg-gradient-to-r from-primary-emerald to-bright-emerald text-white py-3 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
+                                <i class="fas fa-search mr-2"></i>Buscar
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -206,6 +295,7 @@
     </div>
 </section>
 
+<!-- Products Section -->
 <section id="productos" class="py-20 bg-white">
     <div class="container mx-auto px-4">
         <div class="text-center mb-16">
@@ -213,6 +303,7 @@
             <p class="text-xl text-gray-600 max-w-2xl mx-auto">Explora nuestra selección de productos agrícolas disponibles</p>
         </div>
 
+        <!-- Filter Tabs -->
         <div class="flex flex-wrap justify-center gap-3 mb-12">
             <button onclick="filtrarProductos('todos')" class="filter-btn active px-6 py-3 rounded-xl font-semibold transition-all duration-300 gradient-bg text-white">
                 <i class="fas fa-th mr-2"></i>Todos
@@ -228,14 +319,16 @@
             </button>
         </div>
 
+        <!-- Products Grid -->
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="productosGrid">
             <div th:each="producto : ${productos}"
                  th:attr="data-tipo=${producto.tipoP}"
                  class="product-card bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
 
+                <!-- Product Image -->
                 <div class="relative h-64 overflow-hidden">
                     <img th:if="${!#lists.isEmpty(producto.imagenes)}"
-                         th:src="${#lists.isEmpty(producto.imagenes) ? '/placeholder.svg?height=100&width=150' : producto.imagenes.get(0).nombreArchivo}"
+                         th:src="${producto.imagenes[0].nombreArchivo}"
                          th:alt="${producto.nombreProducto}"
                          class="w-full h-full object-cover">
                     <img th:if="${#lists.isEmpty(producto.imagenes)}"
@@ -243,21 +336,23 @@
                          alt="Sin imagen"
                          class="w-full h-full object-cover">
 
+                    <!-- Type Badge -->
                     <div class="absolute top-4 left-4">
-                        <span th:if="${producto.tipoP == 'TERRENO'}"
+                        <span th:if="${producto.tipoP == 'Terreno'}"
                               class="px-3 py-1 bg-blue-500 text-white text-xs font-semibold rounded-full">
                             <i class="fas fa-map-marked-alt mr-1"></i>Terreno
                         </span>
-                        <span th:if="${producto.tipoP == 'GANADO'}"
+                        <span th:if="${producto.tipoP == 'Ganado'}"
                               class="px-3 py-1 bg-amber-500 text-white text-xs font-semibold rounded-full">
                             <i class="fas fa-cow mr-1"></i>Ganado
                         </span>
-                        <span th:if="${producto.tipoP == 'FINCA'}"
+                        <span th:if="${producto.tipoP == 'Finca'}"
                               class="px-3 py-1 bg-green-500 text-white text-xs font-semibold rounded-full">
                             <i class="fas fa-home mr-1"></i>Finca
                         </span>
                     </div>
 
+                    <!-- Status Badge -->
                     <div class="absolute top-4 right-4">
                         <span class="px-3 py-1 bg-white/90 backdrop-blur-sm text-primary-emerald text-xs font-semibold rounded-full">
                             <i class="fas fa-check-circle mr-1"></i>
@@ -266,6 +361,7 @@
                     </div>
                 </div>
 
+                <!-- Product Info -->
                 <div class="p-6">
                     <h3 class="text-xl font-bold text-gray-900 mb-2 line-clamp-1" th:text="${producto.nombreProducto}">
                         Nombre del Producto
@@ -293,7 +389,8 @@
                         </div>
                     </div>
 
-                    <a th:href="@{/comprador/detalle-producto/{id}(id=${producto.idProducto})}"
+                    <!-- Action Button -->
+                    <a th:href="@{/detalle-producto/{id}(id=${producto.idProducto})}"
                        class="block w-full text-center gradient-bg text-white font-semibold py-3 rounded-xl transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
                         <i class="fas fa-eye mr-2"></i>Ver Detalles
                     </a>
@@ -301,13 +398,22 @@
             </div>
         </div>
 
+        <!-- Empty State -->
         <div id="emptyState" class="hidden text-center py-16">
             <i class="fas fa-box-open text-gray-300 text-6xl mb-4"></i>
             <p class="text-gray-500 text-lg">No se encontraron productos en esta categoría</p>
         </div>
+
+        <!-- Load More Button -->
+        <div class="text-center mt-12">
+            <button class="gradient-bg text-white px-8 py-3 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
+                <i class="fas fa-plus-circle mr-2"></i>Cargar Más Productos
+            </button>
+        </div>
     </div>
 </section>
 
+<!-- Modern services section -->
 <section id="servicios" class="py-20 bg-white">
     <div class="container mx-auto px-4">
         <div class="text-center mb-16">
@@ -361,6 +467,7 @@
     </div>
 </section>
 
+<!-- Modern footer -->
 <footer id="contacto" class="bg-gray-900 text-white py-16">
     <div class="container mx-auto px-4">
         <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -405,12 +512,41 @@
             </div>
         </div>
         <div class="border-t border-gray-800 mt-12 pt-8 text-center">
-            <p class="text-gray-400">© 2024 Terranova. Todos los derechos reservados.</p>
+            <p class="text-gray-400">© 2025 Terranova. Todos los derechos reservados.</p>
         </div>
     </div>
 </footer>
 
+<!-- JavaScript for automatic carousel rotation -->
 <script>
+    let currentSlideIndex = 0;
+    const slides = document.querySelectorAll('.carousel-slide');
+    const indicators = document.querySelectorAll('.carousel-indicator');
+    const carouselAutoPlayInterval = 5000; // 5 seconds
+
+    function showSlide(index) {
+        // Remove active class from all slides and indicators
+        slides.forEach(slide => slide.classList.remove('active'));
+        indicators.forEach(indicator => indicator.classList.remove('active'));
+
+        // Add active class to current slide and indicator
+        slides[index].classList.add('active');
+        indicators[index].classList.add('active');
+    }
+
+    function nextSlide() {
+        currentSlideIndex = (currentSlideIndex + 1) % slides.length;
+        showSlide(currentSlideIndex);
+    }
+
+    function goToSlide(index) {
+        currentSlideIndex = index;
+        showSlide(currentSlideIndex);
+    }
+
+    // Auto-play carousel
+    setInterval(nextSlide, carouselAutoPlayInterval);
+
     function abrirModalInicio() {
         const modal = document.getElementById('successModal');
         const modalContent = document.getElementById('modalContent');

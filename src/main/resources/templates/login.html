@@ -87,7 +87,7 @@
             </a>
             <div class="hidden md:flex items-center space-x-6">
                 <a class="text-white/90 hover:text-white font-medium transition-all duration-300 hover:-translate-y-0.5" href="#inicio">Inicio</a>
-                <a class="text-white/90 hover:text-white font-medium transition-all duration-300 hover:-translate-y-0.5" th:href="@{/productos?logueado=false}">Productos</a>
+                <a class="text-white/90 hover:text-white font-medium transition-all duration-300 hover:-translate-y-0.5" th:href="@{/productos}">Productos</a>
                 <a class="text-white/90 hover:text-white font-medium transition-all duration-300 hover:-translate-y-0.5" href="#servicios">Servicios</a>
                 <a class="text-white/90 hover:text-white font-medium transition-all duration-300 hover:-translate-y-0.5" href="#contacto">Contacto</a>
             </div>
@@ -168,7 +168,7 @@
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 fade-in-up-delay-2">
                     <button class="bg-white text-primary-emerald px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-                        <a th:href="@{/productos?logueado=false}" class="text-primary-emerald">Explorar Venta</a>
+                        <a th:href="@{/productos}" class="text-primary-emerald">Explorar Venta</a>
                     </button>
                 </div>
             </div>
@@ -181,7 +181,7 @@
                     </div>
                     <div class="space-y-4">
                         <div>
-                            <form th:action="@{/productos?logueado=false}" method="get">
+                            <form th:action="@{/productos}" method="get">
                                 <label class="block text-gray-700 font-semibold mb-2">¿Qué buscas?</label>
                                 <select name="tipo" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-emerald focus:ring-2 focus:ring-primary-emerald/20 outline-none transition-all duration-300">
                                     <option value="">Todos los productos</option>
@@ -293,7 +293,7 @@
                         </div>
                     </div>
 
-                    <a th:href="@{/comprador/detalle-producto/{id}(id=${producto.idProducto})}"
+                    <a th:href="@{/detalle-producto/{id}(id=${producto.idProducto})}"
                        class="block w-full text-center gradient-bg text-white font-semibold py-3 rounded-xl transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
                         <i class="fas fa-eye mr-2"></i>Ver Detalles
                     </a>

@@ -142,17 +142,21 @@
 </head>
 <body class="min-h-screen">
 
-<div th:replace="fragments/comprador/navbarComprador :: navbarComprador"></div>
+<div th:if="${usuario != null}">
+    <div th:replace="fragments/comprador/navbarComprador :: navbarComprador">></div>
+</div>
 
 <div class="container mx-auto px-4 py-8 max-w-7xl">
 
-    <nav class="mb-6 fade-in-up">
-        <ol class="flex items-center space-x-2 text-sm">
-            <li><a th:href="@{/comprador/explorar}" class="text-primary hover:text-green-700 transition-colors font-medium">Productos</a></li>
-            <li><i class='bx bx-chevron-right text-gray-400'></i></li>
-            <li class="text-gray-600 font-medium" th:text="${producto.nombreProducto}">Producto</li>
-        </ol>
-    </nav>
+    <div th:if="${usuario != null}">
+        <nav class="mb-6 fade-in-up">
+            <ol class="flex items-center space-x-2 text-sm">
+                <li><a th:href="@{/comprador/explorar}" class="text-primary hover:text-green-700 transition-colors font-medium">Productos</a></li>
+                <li><i class='bx bx-chevron-right text-gray-400'></i></li>
+                <li class="text-gray-600 font-medium" th:text="${producto.nombreProducto}">Producto</li>
+            </ol>
+        </nav>
+    </div>
 
     <div class="grid lg:grid-cols-3 gap-8">
 
@@ -597,26 +601,7 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const items = document.querySelectorAll('.availability-item');
-        const form = document.getElementById('formReservarCita');
-        const input = document.getElementById('idDisponibilidadInput');
 
-        items.forEach(item => {
-            item.addEventListener('click', () => {
-                const idDisponibilidad = item.getAttribute('data-id');
-                const estaLogueado = item.getAttribute('data-login') === 'true';
-
-                if (!estaLogueado) {
-                    window.location.href = '/login';
-                    return;
-                }
-
-                input.value = idDisponibilidad;
-                form.submit();
-            });
-        });
-    });
 
     let currentSlide = 0;
     const slides = document.querySelectorAll('.carousel-slide');

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="www.thymeleaf.org">
+<html xmlns:th="www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -39,7 +39,9 @@
 </head>
 <body class="min-h-screen">
 
-<div th:if="${logueado}" th:replace="fragments/comprador/navbarComprador :: navbarComprador"></div>
+<div th:if="${usuario != null}">
+    <div th:replace="fragments/comprador/navbarComprador :: navbarComprador">></div>
+</div>
 
 <div class="ml-64 flex flex-col min-h-screen">
     <main class="lg:px-10 py-10">

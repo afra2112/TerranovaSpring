@@ -6,26 +6,21 @@ import com.proyecto.terranova.entity.Producto;
 import com.proyecto.terranova.entity.Usuario;
 import com.proyecto.terranova.repository.CiudadRepository;
 import com.proyecto.terranova.repository.ProductoRepository;
+import com.proyecto.terranova.service.CitaService;
 import com.proyecto.terranova.service.ProductoService;
 import com.proyecto.terranova.service.UsuarioService;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 public class PublicController {
@@ -40,6 +35,9 @@ public class PublicController {
 
     @Autowired
     CiudadRepository ciudadRepository;
+
+    @Autowired
+    CitaService citaService;
 
     @GetMapping("/login")
     public String login(Model model){
@@ -57,14 +55,40 @@ public class PublicController {
     public String productos(
             Model model,
             Authentication authentication,
-            @RequestParam(required = false) boolean logueado,
             @RequestParam(required = false) String busquedaTexto,
             @RequestParam(required = false) String tipo,
             @RequestParam(required = false) String orden){
 
+        Usuario usuario = null;
+
+        if (authentication != null){
+            usuario = usuarioService.findByEmail(authentication.getName());
+            model.addAttribute("nombreMostrar", usuario.getNombres() + ". " + usuario.getApellidos().charAt(0));
+        }
+        model.addAttribute("usuario", usuario);
         model.addAttribute("productos", productoService.filtrarConSpecification(busquedaTexto, tipo, orden));
-        model.addAttribute("logueado", logueado);
         return "productos";
+    }
+
+    @GetMapping("/detalle-producto/{id}")
+    public String detalleProducto(@PathVariable Long id, Model model, Authentication authentication){
+        Usuario usuario = null;
+        boolean yaTieneCita = false;
+
+        if(authentication != null){
+            usuario = usuarioService.findByEmail(authentication.getName());
+            model.addAttribute("nombreMostrar", usuario.getNombres() + ". " + usuario.getApellidos().charAt(0));
+            yaTieneCita = citaService.yaTieneCita(usuario, id);
+        }
+
+        Producto producto = productoRepository.findById(id).orElseThrow(() -> new RuntimeException("producto no encontrado"));
+        producto.setTipoP(producto.getClass().getSimpleName());
+
+        model.addAttribute("yaTieneCita", yaTieneCita);
+        model.addAttribute("usuario", usuario);
+        model.addAttribute("producto", producto);
+
+        return "detalleProducto";
     }
 
     @GetMapping("/registro")
