@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Terranova - Cita Reservada</title>
+    <style th:utext="${css}"></style>
+</head>
+<body>
+<div class="email-container">
+    <div class="header">Terranova</div>
+    <div class="content">
+        <p>¡Hola <strong th:text="${nombreUsuario}"></strong>!</p>
+        <p th:utext="'Haz reservado una cita para el producto <b>' + ${nombreTipoNotificacion} +
+                     '</b> con el vendedor <b>' + ${nombreUsuarioContrario} +
+                     '</b>. Puedes revisar en Mis Citas para más detalles.'"></p>
+    </div>
+    <div class="button-container">
+        <a th:href="${linkAccion}" class="btn">Ir a Mis Citas</a>
+    </div>
+    <div class="footer">Este es un mensaje automático, no es necesario responder.</div>
+</div>
+</body>
+</html>

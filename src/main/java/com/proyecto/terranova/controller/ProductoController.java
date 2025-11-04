@@ -8,7 +8,6 @@ import com.proyecto.terranova.repository.ProductoRepository;
 import com.proyecto.terranova.service.ProductoService;
 import com.proyecto.terranova.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -111,6 +110,4 @@ public class ProductoController {
         }
         return "redirect:/vendedor/productos";
     }
-
-
 }

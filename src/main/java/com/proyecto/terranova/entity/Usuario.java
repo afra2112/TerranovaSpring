@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
@@ -62,19 +63,15 @@ public class Usuario {
     )
     private List<Rol> roles;
 
-    @ManyToMany
-    @JoinTable(
-            name = "usuarios_productos",
-            joinColumns = @JoinColumn(name = "cedula"),
-            inverseJoinColumns = @JoinColumn(name = "id_producto")
-    )
-    private List<Producto> favoritos;
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Favorito> favoritos;
 
     @OneToMany(mappedBy = "vendedor")
     private List<Producto> disponibilidad;
 
     @OneToMany(mappedBy = "comprador")
     private List<Cita> citas;
+
 
     //estos campos son para el oauth2
     private String provider;
