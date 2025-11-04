@@ -676,6 +676,27 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const items = document.querySelectorAll('.availability-item');
+        const form = document.getElementById('formReservarCita');
+        const input = document.getElementById('idDisponibilidadInput');
+
+        items.forEach(item => {
+            item.addEventListener('click', () => {
+                const idDisponibilidad = item.getAttribute('data-id');
+                const estaLogueado = item.getAttribute('data-login') === 'true';
+
+                if (!estaLogueado) {
+                    window.location.href = '/login';
+                    return;
+                }
+
+                input.value = idDisponibilidad;
+                form.submit();
+            });
+        });
+    });
+
     let currentSlide = 0;
     const slides = document.querySelectorAll('.carousel-slide');
     const indicators = document.querySelectorAll('.carousel-indicator');

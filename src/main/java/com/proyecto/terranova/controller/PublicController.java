@@ -1,5 +1,6 @@
 package com.proyecto.terranova.controller;
 
+import com.proyecto.terranova.config.enums.RolEnum;
 import com.proyecto.terranova.dto.UsuarioDTO;
 import com.proyecto.terranova.entity.Ciudad;
 import com.proyecto.terranova.entity.Producto;
@@ -59,14 +60,27 @@ public class PublicController {
             @RequestParam(required = false) String tipo,
             @RequestParam(required = false) String orden){
 
-        Usuario usuario = null;
+        Usuario usuario;
+        List<Producto> productos = productoService.filtrarConSpecification(busquedaTexto, tipo, orden);
 
         if (authentication != null){
             usuario = usuarioService.findByEmail(authentication.getName());
+
+            List<RolEnum> rolesUsuario = usuarioService.obtenerNombresRoles(usuario);
+
+            boolean esVendedor = false;
+            if(rolesUsuario.contains(RolEnum.VENDEDOR)){
+                esVendedor = true;
+            }
+
+            productos = productos.stream().filter(producto -> !producto.getVendedor().equals(usuario)).toList();
             model.addAttribute("nombreMostrar", usuario.getNombres() + ". " + usuario.getApellidos().charAt(0));
+            model.addAttribute("esVendedor", esVendedor);
+        } else {
+            usuario = null;
         }
         model.addAttribute("usuario", usuario);
-        model.addAttribute("productos", productoService.filtrarConSpecification(busquedaTexto, tipo, orden));
+        model.addAttribute("productos", productos);
         return "productos";
     }
 
@@ -77,7 +91,16 @@ public class PublicController {
 
         if(authentication != null){
             usuario = usuarioService.findByEmail(authentication.getName());
+
+            List<RolEnum> rolesUsuario = usuarioService.obtenerNombresRoles(usuario);
+
+            boolean esVendedor = false;
+            if(rolesUsuario.contains(RolEnum.VENDEDOR)){
+                esVendedor = true;
+            }
+
             model.addAttribute("nombreMostrar", usuario.getNombres() + ". " + usuario.getApellidos().charAt(0));
+            model.addAttribute("esVendedor", esVendedor);
             yaTieneCita = citaService.yaTieneCita(usuario, id);
         }
 

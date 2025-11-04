@@ -186,7 +186,7 @@ public class DataSeeder {
                                         String baseEmail, String nombres, String apellidos,
                                         String cedula, String telefono, String contrasena, boolean vendedor) {
         Random random = new Random();
-        String email = baseEmail + random.nextInt(1000) + "@example.com";
+        String email = baseEmail + random.nextInt(1000) + "@gmail.com";
 
         if (usuarioRepository.findByEmail(email) == null) {
             Usuario usuario = new Usuario();

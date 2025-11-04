@@ -91,6 +91,11 @@ public class CitaImplement implements CitaService {
     }
 
     @Override
+    public List<Cita> encontrarPorCompradorYEstado(Usuario comprador, EstadoCitaEnum estadoCitaEnum) {
+        return repository.findByCompradorAndEstadoCita(comprador, estadoCitaEnum);
+    }
+
+    @Override
     public List<Cita> encontrarPorEstado(Usuario vendedor, EstadoCitaEnum estado, boolean activo) {
 
         return repository.findByDisponibilidad_Producto_VendedorAndEstadoCitaAndActivo(vendedor,estado, activo);

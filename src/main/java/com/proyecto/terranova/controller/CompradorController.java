@@ -84,7 +84,7 @@ public class CompradorController {
         model.addAttribute("explorar", true);
 
         Map<String, Integer> estadisticas = compradorService.prepararIndex(usuario(authentication).getCedula());
-        List<Cita> citas = citaService.encontrarPorComprador(usuario(authentication), true);
+        List<Cita> citas = citaService.encontrarPorCompradorYEstado(usuario(authentication), EstadoCitaEnum.RESERVADA);
 
         model.addAllAttributes(estadisticas);
         model.addAttribute("citasCant", citas.size());
