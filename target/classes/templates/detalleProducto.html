@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script>
         tailwind.config = {
@@ -142,11 +143,34 @@
 </head>
 <body class="min-h-screen">
 
-<div th:if="${usuario != null}">
-    <div th:replace="fragments/comprador/navbarComprador :: navbarComprador">></div>
+<div th:if="${usuario == null}">
+    <nav class="fixed top-0 w-full gradient-bg backdrop-blur-md shadow-lg z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between py-4">
+                <a class="text-white text-2xl font-bold flex items-center" href="/">
+                    <i class='fas fa-leaf mr-2'></i>Terranova
+                </a>
+                <div class="hidden md:flex items-center space-x-6">
+                    <a class="text-white/90 hover:text-white font-medium transition-all duration-300 hover:-translate-y-0.5" href="/">Inicio</a>
+                    <a class="text-white/90 hover:text-white font-medium transition-all duration-300 hover:-translate-y-0.5" th:href="@{/productos}">Productos</a>
+                    <a class="text-white/90 hover:text-white font-medium transition-all duration-300 hover:-translate-y-0.5" href="#servicios">Servicios</a>
+                    <a class="text-white/90 hover:text-white font-medium transition-all duration-300 hover:-translate-y-0.5" href="#contacto">Contacto</a>
+                </div>
+                <button th:if="${usuario == null}" onclick="abrirModalInicio()" class="bg-white/20 border-2 border-white/30 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 hover:bg-white hover:text-primary-emerald hover:-translate-y-0.5 backdrop-blur-md">
+                    <i class='bx bx-user mr-2'></i>Iniciar Sesión
+                </button>
+
+            </div>
+        </div>
+    </nav>
+    <div class="pt-16"></div>
 </div>
 
-<div class="container mx-auto px-4 py-8 max-w-7xl">
+<div th:if="${usuario != null}">
+    <div th:replace="fragments/comprador/navbarComprador :: navbarComprador"></div>
+</div>
+
+<div th:classappend="${usuario == null} ? 'max-w-7xl px-8' : 'ml-80 flex flex-col min-h-screen'" class="container mx-auto py-8">
 
     <div th:if="${usuario != null}">
         <nav class="mb-6 fade-in-up">
@@ -158,9 +182,9 @@
         </nav>
     </div>
 
-    <div class="grid lg:grid-cols-3 gap-8">
+    <div th:classappend="${usuario == null} ? 'lg:grid-cols-1' : 'lg:grid-cols-4'" class="grid gap-8">
 
-        <div class="lg:col-span-2 space-y-6">
+        <div th:classappend="${usuario == null} ? 'lg:col-span-1' : 'lg:col-span-3'" class="space-y-6">
 
             <div class="bg-white rounded-2xl shadow-lg overflow-hidden fade-in-up carousel-container">
                 <div class="relative">
@@ -420,7 +444,6 @@
                 </div>
             </div>
 
-
             <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
             <script th:inline="javascript">
                 document.addEventListener('DOMContentLoaded', function() {
@@ -465,12 +488,8 @@
             </script>
         </div>
 
-        <!-- Right Column - Seller Info & Actions -->
-        <div class="space-y-6">
-
-            <!-- Right Column -->
+        <div th:if="${usuario != null}" class="space-y-6">
             <div class="lg:col-span-1 space-y-8 sticky top-0">
-                <!-- Seller Card -->
                 <div class="bg-white rounded-2xl shadow-lg p-6 fade-in-up card-hover sticky top-4">
                     <h3 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
                         <i class='bx bxs-badge-check text-green-500 text-6xl mb-4'></i>
@@ -501,20 +520,8 @@
                         </div>
                     </div>
 
-                    <!-- Action Buttons with Auth Check -->
                     <div class="space-y-3">
-                        <!-- Botón de agendar cita -->
                         <button
-                                th:if="${usuario == null}"
-                                onclick="window.location.href='/login'"
-                                class="w-full gradient-btn text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg"
-                        >
-                            <i class='bx bx-calendar-check text-xl'></i>
-                            Agendar Cita
-                        </button>
-
-                        <button
-                                th:if="${usuario != null}"
                                 onclick="scrollToAvailability()"
                                 class="w-full gradient-btn text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg"
                         >
@@ -522,7 +529,6 @@
                             Guardar en Favoritos
                         </button>
 
-                        <!-- Botón compartir -->
                         <button
                                 onclick="compartir()"
                                 class="w-full bg-gray-100 text-gray-700 font-bold py-4 rounded-xl transition-all duration-300 hover:bg-gray-200 flex items-center justify-center gap-2"
@@ -594,15 +600,82 @@
                     </div>
                 </div>
             </div>
+        </div>
 
+        <div th:if="${usuario == null}" class="lg:col-span-1">
+            <div class="bg-white rounded-2xl shadow-lg p-8 sticky top-24 fade-in-up card-hover text-center">
+                <div class="mb-6">
+                    <div class="w-20 h-20 gradient-bg rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <i class='bx bx-lock-open-alt text-white text-3xl'></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Descubre Más</h3>
+                    <p class="text-gray-600 mb-6">Inicia sesión para agendar citas, guardar favoritos y contactar vendedores</p>
+                </div>
+
+                <button onclick="abrirModalInicio()" class="w-full gradient-btn text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg mb-3">
+                    <i class='bx bx-user text-xl'></i>
+                    Iniciar Sesión
+                </button>
+
+                <p class="text-sm text-gray-600 mb-4">¿No tienes cuenta?</p>
+
+                <a href="/registro" class="w-full bg-gray-100 text-gray-700 font-bold py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-gray-200 transition-all">
+                    <i class='bx bx-user-plus text-xl'></i>
+                    Registrarse
+                </a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div th:if="${usuario == null}" id="loginModal"
+     class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+    <div id="loginModalContent"
+         class="bg-white rounded-2xl shadow-2xl p-8 text-center transform transition-all duration-300 ease-out max-w-md w-full mx-4 scale-75 opacity-0">
+
+        <div class="mb-6">
+            <div class="w-16 h-16 gradient-bg rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <i class='bx bx-leaf text-white text-2xl'></i>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900">Terranova</h1>
+        </div>
+
+        <form th:action="@{/login}" method="post" class="space-y-4">
+            <div>
+                <input type="email" name="username" placeholder="Correo Electrónico" required
+                       class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-300" />
+            </div>
+            <div>
+                <input type="password" name="password" placeholder="Contraseña" required
+                       class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-300" />
+            </div>
+            <div class="text-right">
+                <a th:href="@{/password-olvidada}" class="text-sm text-primary hover:text-green-700 transition-colors">
+                    ¿Olvidaste tu contraseña?
+                </a>
+            </div>
+            <button type="submit"
+                    class="w-full gradient-bg text-white font-semibold py-3 rounded-xl transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
+                Iniciar Sesión
+            </button>
+        </form>
+
+        <div class="flex flex-col gap-3 mt-6">
+            <a th:href="@{/registro}"
+               class="block w-full bg-gray-100 text-gray-700 hover:bg-gray-200 font-semibold py-3 rounded-xl transition-all duration-300">
+                Regístrate
+            </a>
+            <button onclick="cerrarModalInicio()"
+                    class="w-full border-2 border-red-200 text-red-600 hover:bg-red-50 font-semibold py-3 rounded-xl transition-all duration-300">
+                Cancelar
+            </button>
         </div>
     </div>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-
-
     let currentSlide = 0;
     const slides = document.querySelectorAll('.carousel-slide');
     const indicators = document.querySelectorAll('.carousel-indicator');
@@ -655,20 +728,40 @@
         }
     }
 
+    function abrirModalInicio() {
+        const modal = document.getElementById('loginModal');
+        const modalContent = document.getElementById('loginModalContent');
+        modal.classList.remove('hidden');
+        requestAnimationFrame(() => {
+            modalContent.classList.remove('scale-75', 'opacity-0');
+            modalContent.classList.add('scale-100', 'opacity-100');
+        });
+        document.body.style.overflow = 'hidden';
+    }
+
+    function cerrarModalInicio() {
+        const modal = document.getElementById('loginModal');
+        const modalContent = document.getElementById('loginModalContent');
+        modalContent.classList.remove('scale-100', 'opacity-100');
+        modalContent.classList.add('scale-75', 'opacity-0');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }, 300);
+    }
+
     function toggleUserDropdown() {
         const dropdown = document.getElementById('userDropdown');
         const arrow = document.getElementById('dropdownArrow');
 
-        if (dropdown.classList.contains('opacity-0')) {
-
+        if (dropdown && dropdown.classList.contains('opacity-0')) {
             dropdown.classList.remove('opacity-0', 'invisible', 'scale-95');
             dropdown.classList.add('opacity-100', 'visible', 'scale-100');
-            arrow.style.transform = 'rotate(180deg)';
-        } else {
-            // Ocultar dropdown
+            if (arrow) arrow.style.transform = 'rotate(180deg)';
+        } else if (dropdown) {
             dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
             dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
-            arrow.style.transform = 'rotate(0deg)';
+            if (arrow) arrow.style.transform = 'rotate(0deg)';
         }
     }
 
@@ -676,10 +769,23 @@
         const dropdown = document.getElementById('userDropdown');
         const userButton = event.target.closest('[onclick="toggleUserDropdown()"]');
 
-        if (!userButton && !dropdown.contains(event.target)) {
+        if (dropdown && !userButton && !dropdown.contains(event.target)) {
             dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
             dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
-            document.getElementById('dropdownArrow').style.transform = 'rotate(0deg)';
+            const arrow = document.getElementById('dropdownArrow');
+            if (arrow) arrow.style.transform = 'rotate(0deg)';
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            cerrarModalInicio();
+        }
+    });
+
+    document.getElementById('loginModal')?.addEventListener('click', (e) => {
+        if (e.target.id === 'loginModal') {
+            cerrarModalInicio();
         }
     });
 </script>

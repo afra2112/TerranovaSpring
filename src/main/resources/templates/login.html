@@ -75,6 +75,73 @@
             transform: translateY(-8px);
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
         }
+        .carousel-wrapper {
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+        }
+
+        .carousel-slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        .carousel-slide.active {
+            opacity: 1;
+        }
+
+        .carousel-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .carousel-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom,
+            rgba(0, 0, 0, 0.55),
+            rgba(0, 0, 0, 0.25),
+            rgba(0, 0, 0, 0.55)
+            );
+            z-index: 1;
+        }
+
+        .carousel-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .carousel-indicators {
+            position: absolute;
+            bottom: 20px;
+            left: 35%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 3;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .carousel-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .carousel-indicator.active {
+            background: white;
+            width: 30px;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -155,10 +222,27 @@
     </div>
 </div>
 
-<section id="inicio" class="min-h-screen bg-gradient-to-br from-primary-emerald via-bright-emerald to-emerald-900 flex items-center relative overflow-hidden pt-20">
-    <div class="absolute inset-0 bg-black/10"></div>
+<section id="inicio" class="min-h-screen flex items-center relative overflow-hidden pt-20">
+    <div class="carousel-wrapper absolute inset-0">
+        <div class="carousel-slide active">
+            <img th:src="@{/images/fondo1.jpg}" alt="Terreno" />
+        </div>
+        <div class="carousel-slide">
+            <img th:src="@{/images/fondo2.jpg}" alt="Caballos" />
+        </div>
+        <div class="carousel-slide">
+            <img th:src="@{/images/fondo3.jpg}" alt="Finca" />
+        </div>
+        <div class="carousel-overlay"></div>
+        <div class="carousel-indicators">
+            <div class="carousel-indicator active" onclick="goToCarouselSlide(0)"></div>
+            <div class="carousel-indicator" onclick="goToCarouselSlide(1)"></div>
+            <div class="carousel-indicator" onclick="goToCarouselSlide(2)"></div>
+        </div>
+    </div>
+
     <div class="container mx-auto px-4 relative z-10">
-        <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <div class="grid lg:grid-cols-2 gap-20 items-center">
             <div class="text-white">
                 <h1 class="text-5xl lg:text-6xl font-bold mb-6 fade-in-up">
                     Descubre el Futuro del Campo
@@ -172,13 +256,8 @@
                     </button>
                 </div>
             </div>
-            <div class="floating">
+            <div class="floating mt-10 lg:mt-0">
                 <div class="bg-white/95 backdrop-blur-lg rounded-2xl p-8 shadow-2xl">
-                    <div class="flex mb-6 bg-gray-100 rounded-xl p-1">
-                        <button class="flex-1 bg-primary-emerald text-white py-3 px-4 rounded-lg font-semibold transition-all duration-300">
-                            <i class="fas fa-shopping-cart mr-2"></i>Ver Todos
-                        </button>
-                    </div>
                     <div class="space-y-4">
                         <div>
                             <form th:action="@{/productos}" method="get">
@@ -405,12 +484,38 @@
             </div>
         </div>
         <div class="border-t border-gray-800 mt-12 pt-8 text-center">
-            <p class="text-gray-400">© 2024 Terranova. Todos los derechos reservados.</p>
+            <p class="text-gray-400">© 2025 Terranova. Todos los derechos reservados.</p>
         </div>
     </div>
 </footer>
 
 <script>
+    let carouselIndex = 0;
+    const carouselSlides = document.querySelectorAll('.carousel-slide');
+    const carouselIndicators = document.querySelectorAll('.carousel-indicator');
+
+    function showCarouselSlide(index) {
+        carouselSlides.forEach((slide, i) => {
+            slide.classList.toggle('active', i === index);
+        });
+        carouselIndicators.forEach((indicator, i) => {
+            indicator.classList.toggle('active', i === index);
+        });
+    }
+
+    function nextCarouselSlide() {
+        carouselIndex = (carouselIndex + 1) % carouselSlides.length;
+        showCarouselSlide(carouselIndex);
+    }
+
+    function goToCarouselSlide(index) {
+        carouselIndex = index;
+        showCarouselSlide(carouselIndex);
+    }
+
+    // Auto-advance carousel every 5 seconds
+    setInterval(nextCarouselSlide, 5000);
+
     function abrirModalInicio() {
         const modal = document.getElementById('successModal');
         const modalContent = document.getElementById('modalContent');
