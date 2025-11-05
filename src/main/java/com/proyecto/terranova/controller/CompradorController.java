@@ -4,6 +4,7 @@ import com.proyecto.terranova.config.enums.EstadoCitaEnum;
 import com.proyecto.terranova.config.enums.RolEnum;
 import com.proyecto.terranova.entity.*;
 import com.proyecto.terranova.repository.ProductoRepository;
+import com.proyecto.terranova.repository.UsuarioRepository;
 import com.proyecto.terranova.service.*;
 import com.proyecto.terranova.specification.ProductoSpecification;
 import jakarta.mail.MessagingException;
@@ -56,6 +57,12 @@ public class CompradorController {
 
     @Autowired
     ProductoRepository productoRepository;
+
+    @Autowired
+    UsuarioRepository usuarioRepository;
+
+    @Autowired
+    FavoritoService favoritoService;
 
     @ModelAttribute("usuario")
     public Usuario usuario(Authentication authentication){
@@ -225,5 +232,30 @@ public class CompradorController {
 
         redirectAttributes.addFlashAttribute("ventaGenerada", true);
         return "redirect:/comprador/compras";
+    }
+
+    @PostMapping("/agregarF/{id}")
+    public String agregarFavoritos(@PathVariable Long id ,Authentication auth){
+        String correo = auth.getName();
+        Usuario usuario = usuarioRepository.findByEmail(correo);
+        System.out.println("------------------usuario autenticado en el controlador-------"+correo);
+        Producto producto = productoRepository.findById(id).orElseThrow();
+        favoritoService.agregarFavorito(usuario,producto);
+
+        return "redirect:/comprador/Favorito";
+    }
+
+    @GetMapping("/Favorito")
+    public String mostrarFavorito(Model model,  Authentication auth){
+        String correo = auth.getName();
+        Usuario usuario = usuarioRepository.findByEmail(correo);
+
+        List<Favorito> favoritos = favoritoService.obtenerFavoritos(usuario);
+        List<Producto> productos = favoritos.stream()
+                .map(Favorito::getProducto)
+                .toList();
+
+        model.addAttribute("productos", productos);
+        return "comprador/Favoritos";
     }
 }

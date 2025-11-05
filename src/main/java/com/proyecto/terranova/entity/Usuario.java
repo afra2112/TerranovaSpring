@@ -62,13 +62,8 @@ public class Usuario {
     )
     private List<Rol> roles;
 
-    @ManyToMany
-    @JoinTable(
-            name = "usuarios_productos",
-            joinColumns = @JoinColumn(name = "cedula"),
-            inverseJoinColumns = @JoinColumn(name = "id_producto")
-    )
-    private List<Producto> favoritos;
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Favorito> favoritos;
 
     @OneToMany(mappedBy = "vendedor")
     private List<Producto> disponibilidad;
