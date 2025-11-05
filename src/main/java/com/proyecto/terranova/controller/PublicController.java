@@ -8,6 +8,7 @@ import com.proyecto.terranova.entity.Usuario;
 import com.proyecto.terranova.repository.CiudadRepository;
 import com.proyecto.terranova.repository.ProductoRepository;
 import com.proyecto.terranova.service.CitaService;
+import com.proyecto.terranova.service.FavoritoService;
 import com.proyecto.terranova.service.ProductoService;
 import com.proyecto.terranova.service.UsuarioService;
 import jakarta.mail.MessagingException;
@@ -39,6 +40,9 @@ public class PublicController {
 
     @Autowired
     CitaService citaService;
+
+    @Autowired
+    FavoritoService favoritoService;
 
     @GetMapping("/login")
     public String login(Model model){
@@ -73,7 +77,10 @@ public class PublicController {
                 esVendedor = true;
             }
 
+            List<Long> favoritosIds = favoritoService.obtenerIdsFavoritosPorUsuario(usuario);
             productos = productos.stream().filter(producto -> !producto.getVendedor().equals(usuario)).toList();
+            model.addAttribute("favoritosIds", favoritosIds);
+            System.out.println("---------------FAVORITOSSSSSSSSS---------------"+favoritosIds);
             model.addAttribute("nombreMostrar", usuario.getNombres() + ". " + usuario.getApellidos().charAt(0));
             model.addAttribute("esVendedor", esVendedor);
         } else {
