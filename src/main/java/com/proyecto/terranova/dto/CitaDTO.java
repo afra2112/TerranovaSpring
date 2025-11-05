@@ -7,6 +7,7 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Data
 public class CitaDTO {
@@ -21,11 +22,16 @@ public class CitaDTO {
 
     private LocalDate fecha;
 
-    private LocalTime hora;
+    private LocalTime horaInicio;
+
+    private LocalTime horaFin;
+
+    private int cupoMaximo;
+
+    private List<Long> idsAsistencias;
 
     private String nombreProducto;
 
-    private String nombreComprador;
 
     private String nombreVendedor;
 

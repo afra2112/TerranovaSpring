@@ -225,7 +225,7 @@ public class NotificacionImplement implements NotificacionService {
 
     @Override
     public void notificacionCitaCancelada(Cita cita, Usuario compradorOVendedor) throws MessagingException, IOException {
-        Usuario comprador = cita.getComprador();
+        Usuario comprador = null;
         Usuario vendedor = cita.getProducto().getVendedor();
         String producto = cita.getProducto().getNombreProducto();
 
@@ -271,7 +271,7 @@ public class NotificacionImplement implements NotificacionService {
 
     @Override
     public void notificacionCitaFinalizada(Cita cita) throws MessagingException, IOException {
-        Usuario comprador = cita.getComprador();
+        Usuario comprador = null;
         Usuario vendedor = cita.getProducto().getVendedor();
         String producto = cita.getProducto().getNombreProducto();
 
@@ -280,7 +280,7 @@ public class NotificacionImplement implements NotificacionService {
                 "La cita para el producto " + producto + " ha finalizado exitosamente. Ahora puedes proceder a generar la compra desde tu panel.",
                 "Citas",
                 "Cita finalizada",
-                cita.getComprador(),
+                null,
                 "/comprador/citas",
                 "Tu cita para el producto " + producto + " ha sido marcada como finalizada.",
                 "http://localhost:8080/comprador/citas",
@@ -332,7 +332,7 @@ public class NotificacionImplement implements NotificacionService {
 
     @Override
     public void notificacionCitaReservada(Cita cita) throws MessagingException, IOException {
-        Usuario comprador = cita.getComprador();
+        Usuario comprador = null;
         Usuario vendedor = cita.getProducto().getVendedor();
         String producto = cita.getProducto().getNombreProducto();
 
@@ -341,7 +341,7 @@ public class NotificacionImplement implements NotificacionService {
                 "Haz reservado una cita para el producto: " + producto + ". Con el vendedor: "+vendedor.getNombres()+". Puedes ir a Mis Citas para mas detalles.",
                 "Citas",
                 "Cita Reservada",
-                cita.getComprador(),
+                null,
                 "/comprador/citas",
                 "Tu cita para el producto " + producto + " ha sido reservada.",
                 "http://localhost:8080/comprador/citas",
@@ -373,7 +373,7 @@ public class NotificacionImplement implements NotificacionService {
 
     @Override
     public void notificacionCitaReprogramada(Cita cita, Usuario compradorOVendedor) throws MessagingException, IOException {
-        Usuario comprador = cita.getComprador();
+        Usuario comprador = null;
         Usuario vendedor = cita.getProducto().getVendedor();
         String producto = cita.getProducto().getNombreProducto();
 
@@ -424,14 +424,14 @@ public class NotificacionImplement implements NotificacionService {
                 "Ya han pasado 24 horas desde tu ultima reprogramacion posible, ya puedes volver a reprogramar tu cita dos veces mas",
                 "Citas",
                 "Reprogramacion Disponible",
-                cita.getComprador(),
+                null,
                 "/comprador/citas",
                 "Reprogramacion Disponible",
                 "http://localhost:8080/comprador/citas",
                 "reprogramacionHabilitada",
                 cita.getProducto().getNombreProducto(),
                 cita.getProducto().getVendedor().getNombres(),
-                cita.getComprador().getNombres()
+                null
         );
 
         crearNotificacionAutomatica(notificacionPeticion);

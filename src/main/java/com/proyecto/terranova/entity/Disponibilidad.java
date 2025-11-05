@@ -21,18 +21,15 @@ public class Disponibilidad {
     @Column(nullable = false)
     private LocalDate fecha;
 
-    @Column(nullable = false)
-    private LocalTime hora;
+    private LocalTime horaFin;
+
+    private LocalTime horaInicio;
 
     private boolean disponible = true;
 
     @Nullable
     private String descripcion;
 
-    @ManyToOne
-    @JoinColumn(name = "id_producto", nullable = false)
-    private Producto producto;
-
-    @OneToMany(mappedBy = "disponibilidad")
-    private List<Cita> citas = new ArrayList<>();
+    @OneToOne(mappedBy = "disponibilidad", cascade = CascadeType.ALL)
+    private Cita cita;
 }

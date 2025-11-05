@@ -1,5 +1,6 @@
 package com.proyecto.terranova.controller;
 
+import com.proyecto.terranova.config.enums.EstadoAsistenciaEnum;
 import com.proyecto.terranova.config.enums.EstadoCitaEnum;
 import com.proyecto.terranova.config.enums.RolEnum;
 import com.proyecto.terranova.entity.*;
@@ -41,7 +42,7 @@ public class CompradorController {
     UsuarioService usuarioService;
 
     @Autowired
-    CitaService citaService;
+    AsistenciaService asistenciaService;
 
     @Autowired
     DisponibilidadService disponibilidadService;
@@ -51,6 +52,9 @@ public class CompradorController {
 
     @Autowired
     ProductoService productoService;
+
+    @Autowired
+    CitaService citaService;
 
     @Autowired
     VentaService ventaService;
@@ -91,7 +95,7 @@ public class CompradorController {
         model.addAttribute("explorar", true);
 
         Map<String, Integer> estadisticas = compradorService.prepararIndex(usuario(authentication).getCedula());
-        List<Cita> citas = citaService.encontrarPorCompradorYEstado(usuario(authentication), EstadoCitaEnum.RESERVADA);
+        List<Asistencia> citas = asistenciaService.encontrarPorComprador(usuario(authentication));
         List<Long> favoritosIds = favoritoService.obtenerIdsFavoritosPorUsuario(usuario(authentication));
 
         model.addAttribute("favoritosIds", favoritosIds);
@@ -106,7 +110,7 @@ public class CompradorController {
     @GetMapping("/citas")
     public String citas(Model model, Authentication authentication){
         model.addAttribute("posicionCitas", true);
-        model.addAttribute("citas", citaService.encontrarPorComprador(usuarioService.findByEmail(authentication.getName()), true));
+        model.addAttribute("citas", asistenciaService.encontrarPorComprador(usuario(authentication)));
         return "comprador/citas";
     }
 
@@ -118,7 +122,7 @@ public class CompradorController {
     }
 
     @PostMapping("/compras/actualizar-compra")
-    public String actualizarCompra(RedirectAttributes redirectAttributes, @RequestParam(name = "idVenta") Long idVenta, @RequestParam(name = "accion") String accion, @RequestParam(name = "razon", required = false) String razon) throws MessagingException, IOException, IOException {
+    public String actualizarCompra(RedirectAttributes redirectAttributes, @RequestParam(name = "idVenta") Long idVenta, @RequestParam(name = "accion") String accion, @RequestParam(name = "razon", required = false) String razon) throws MessagingException, IOException {
         Venta venta = ventaService.findById(idVenta);
 
         switch (accion){
@@ -144,19 +148,20 @@ public class CompradorController {
     }
 
     @PostMapping("/citas/reservar-cita")
-    public String reservar(@RequestParam(name = "idDisponibilidad") Long idDisponibilidad, Authentication authentication) throws MessagingException, IOException {
+    public String reservar(@RequestParam(name = "idCita") Long idCita, Authentication authentication) throws MessagingException, IOException {
         Usuario usuario = usuario(authentication);
-        Disponibilidad disponibilidad = disponibilidadService.findById(idDisponibilidad);
+        Cita cita = citaService.findById(idCita);
 
-        if (!citaService.yaTieneCita(usuario, disponibilidad.getProducto().getIdProducto())){
+        if (!asistenciaService.yaTieneAsistencia(usuario, cita.getProducto().getIdProducto())){
 
-            Cita cita = new Cita();
-            cita.setEstadoCita(EstadoCitaEnum.RESERVADA);
-            cita.setDisponibilidad(disponibilidad);
-            cita.setNumReprogramaciones(0);
-            cita.setComprador(usuario);
-            cita.setProducto(disponibilidad.getProducto());
-            citaService.save(cita);
+            Asistencia asistencia = new Asistencia();
+
+            asistencia.setCita(cita);
+            asistencia.setUsuario(usuario);
+            asistencia.setEstado(EstadoAsistenciaEnum.INSCRITO);
+            asistencia.setFechaInscripcion(LocalDateTime.now());
+
+            asistenciaService.save(asistencia);
 
             notificacionService.notificacionCitaReservada(cita);
         }
@@ -227,7 +232,7 @@ public class CompradorController {
 
         Cita cita = citaService.findById(idCita);
 
-        Venta venta = ventaService.generarVenta(cita.getProducto().getIdProducto(), cita.getComprador());
+        Venta venta = ventaService.generarVenta(cita.getProducto().getIdProducto(), null/*comprador*/);
         citaService.cambiarEstado(cita, EstadoCitaEnum.VENTAGENERADA);
 
         notificacionService.notificacionVentaGenerada(venta);

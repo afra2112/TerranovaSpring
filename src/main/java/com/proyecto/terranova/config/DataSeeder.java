@@ -15,7 +15,7 @@ import java.util.*;
 @Configuration
 public class DataSeeder {
 
-    @Bean
+    /*@Bean
     CommandLineRunner commandLineRunner(
             UsuarioRepository usuarioRepository,
             PasswordEncoder passwordEncoder,
@@ -256,5 +256,5 @@ public class DataSeeder {
 
             disponibilidadRepository.save(disponibilidad);
         }
-    }
+    }*/
 }

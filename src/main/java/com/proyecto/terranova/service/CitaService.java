@@ -14,12 +14,10 @@ public interface CitaService {
     List<Cita> findAll();
     List<Cita> encontrarPorVendedor(Usuario vendedor, boolean activo);
     List<CitaDTO> encontrarPorVendedorParaCalendario(Usuario vendedor, boolean activo);
-    List<Cita> encontrarPorComprador(Usuario comprador, boolean activo);
-    List<Cita> encontrarPorCompradorYEstado(Usuario comprador, EstadoCitaEnum estadoCitaEnum);
+    //List<Cita> encontrarPorCompradorYEstado(Usuario comprador, EstadoCitaEnum estadoCitaEnum);
     List<Cita> encontrarPorEstado(Usuario vendedor,EstadoCitaEnum estado, boolean activo);
     boolean delete(Long id);
     boolean existsById(Long id);
-    boolean yaTieneCita(Usuario comprador, Long idProducto);
     long count(); // Contar registros
     void cambiarEstado(Cita cita, EstadoCitaEnum estado);
     void borrarCita(Long idCita);

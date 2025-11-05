@@ -5,6 +5,7 @@ import com.proyecto.terranova.dto.DisponibilidadDTO;
 import com.proyecto.terranova.entity.Disponibilidad;
 import com.proyecto.terranova.entity.Producto;
 import com.proyecto.terranova.entity.Usuario;
+import com.proyecto.terranova.repository.AsistenciaRepository;
 import com.proyecto.terranova.repository.DisponibilidadRepository;
 import com.proyecto.terranova.repository.ProductoRepository;
 import org.modelmapper.ModelMapper;
@@ -31,6 +32,9 @@ public class CitaImplement implements CitaService {
 
     @Autowired
     private ProductoRepository productoRepository;
+
+    @Autowired
+    private AsistenciaRepository asistenciaRepository;
 
     @Override
     public Cita save(Cita cita) {
@@ -71,10 +75,10 @@ public class CitaImplement implements CitaService {
             CitaDTO citaDTO = new CitaDTO();
             citaDTO.setEstadoCita(cita.getEstadoCita());
             citaDTO.setNombreVendedor(cita.getProducto().getVendedor().getNombres());
-            citaDTO.setNombreComprador(cita.getComprador().getNombres());
             citaDTO.setIdCita(cita.getIdCita());
             citaDTO.setFecha(cita.getDisponibilidad().getFecha());
-            citaDTO.setHora(cita.getDisponibilidad().getHora());
+            citaDTO.setHoraInicio(cita.getDisponibilidad().getHoraInicio());
+            citaDTO.setHoraFin(cita.getDisponibilidad().getHoraFin());
             citaDTO.setNombreProducto(cita.getProducto().getNombreProducto());
             citaDTO.setUbicacion(cita.getProducto().getCiudad().getNombreCiudad());
             citaDTO.setIdProducto(cita.getProducto().getIdProducto());
@@ -85,15 +89,10 @@ public class CitaImplement implements CitaService {
         return citasDto;
     }
 
-    @Override
-    public List<Cita> encontrarPorComprador(Usuario comprador, boolean activo) {
-        return repository.findByCompradorAndActivoOrderByDisponibilidad_FechaAscDisponibilidad_HoraAsc(comprador, activo);
-    }
-
-    @Override
+    /*@Override
     public List<Cita> encontrarPorCompradorYEstado(Usuario comprador, EstadoCitaEnum estadoCitaEnum) {
         return repository.findByCompradorAndEstadoCita(comprador, estadoCitaEnum);
-    }
+    }*/
 
     @Override
     public List<Cita> encontrarPorEstado(Usuario vendedor, EstadoCitaEnum estado, boolean activo) {
@@ -113,11 +112,6 @@ public class CitaImplement implements CitaService {
     @Override
     public boolean existsById(Long id) {
         return repository.existsById(id);
-    }
-
-    @Override
-    public boolean yaTieneCita(Usuario comprador, Long idProducto) {
-        return repository.existsByProductoAndComprador(productoRepository.findById(idProducto).orElseThrow(), comprador);
     }
 
     @Override

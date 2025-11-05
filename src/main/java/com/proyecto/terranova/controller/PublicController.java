@@ -2,15 +2,10 @@ package com.proyecto.terranova.controller;
 
 import com.proyecto.terranova.config.enums.RolEnum;
 import com.proyecto.terranova.dto.UsuarioDTO;
-import com.proyecto.terranova.entity.Ciudad;
-import com.proyecto.terranova.entity.Producto;
-import com.proyecto.terranova.entity.Usuario;
+import com.proyecto.terranova.entity.*;
 import com.proyecto.terranova.repository.CiudadRepository;
 import com.proyecto.terranova.repository.ProductoRepository;
-import com.proyecto.terranova.service.CitaService;
-import com.proyecto.terranova.service.FavoritoService;
-import com.proyecto.terranova.service.ProductoService;
-import com.proyecto.terranova.service.UsuarioService;
+import com.proyecto.terranova.service.*;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class PublicController {
@@ -39,7 +35,7 @@ public class PublicController {
     CiudadRepository ciudadRepository;
 
     @Autowired
-    CitaService citaService;
+    AsistenciaService asistenciaService;
 
     @Autowired
     FavoritoService favoritoService;
@@ -110,11 +106,17 @@ public class PublicController {
             model.addAttribute("favoritosIds", favoritosIds);
             model.addAttribute("nombreMostrar", usuario.getNombres() + ". " + usuario.getApellidos().charAt(0));
             model.addAttribute("esVendedor", esVendedor);
-            yaTieneCita = citaService.yaTieneCita(usuario, id);
+            yaTieneCita = asistenciaService.yaTieneAsistencia(usuario, id);
         }
 
         Producto producto = productoRepository.findById(id).orElseThrow(() -> new RuntimeException("producto no encontrado"));
         producto.setTipoP(producto.getClass().getSimpleName());
+        List<Cita> citas = producto.getDisponibilidades().stream().map(Disponibilidad::getCita).toList();
+        for (Cita cita :citas){
+            cita.setOcupados(cita.getAsistencias().size());
+            cita.setDisponibles(cita.getCupoMaximo() - cita.getOcupados());
+            producto.getDisponibilidades().stream().map(disponibilidad -> disponibilidad.setCita(cita)).toList();
+        }
 
         model.addAttribute("yaTieneCita", yaTieneCita);
         model.addAttribute("usuario", usuario);

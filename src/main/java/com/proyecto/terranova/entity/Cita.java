@@ -8,6 +8,8 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "citas")
@@ -20,6 +22,11 @@ public class Cita {
 
     @Enumerated(EnumType.STRING)
     private EstadoCitaEnum estadoCita;
+
+    private int cupoMaximo;
+
+    @OneToMany(mappedBy = "cita", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Asistencia> asistencias = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "idProducto")
@@ -38,11 +45,10 @@ public class Cita {
 
     private int numReprogramaciones = 0;
 
-    @ManyToOne
-    @JoinColumn(name = "cedula_comprador")
-    private Usuario comprador;
+    private int ocupados;
+    private int disponibles;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "id_disponibilidad")
     private Disponibilidad disponibilidad;
 
@@ -50,7 +56,7 @@ public class Cita {
         LocalDateTime ahora = LocalDateTime.now();
         LocalDateTime fechaCita = LocalDateTime.of(
                 this.disponibilidad.getFecha(),
-                this.disponibilidad.getHora()
+                this.disponibilidad.getHoraFin()
         );
         return !fechaCita.isAfter(ahora);
     }

@@ -1,6 +1,8 @@
 
 package com.proyecto.terranova.controller;
 
+import com.proyecto.terranova.config.enums.EstadoCitaEnum;
+import com.proyecto.terranova.entity.Cita;
 import com.proyecto.terranova.entity.Disponibilidad;
 import com.proyecto.terranova.entity.Usuario;
 import com.proyecto.terranova.service.DisponibilidadService;
@@ -43,23 +45,30 @@ public class DisponibilidadController {
     @PostMapping("/mi-calendario/registrar-disponibilidad")
     public String registrarDisponibilidad(
             @RequestParam(name = "fecha") LocalDate fecha,
-            @RequestParam(name = "hora") LocalTime hora,
+            @RequestParam(name = "horaInicio") LocalTime horaInicio,
+            @RequestParam(name = "horaFin") LocalTime horaFin,
             @RequestParam(name = "descripcion", required = false) String descripcion,
             @RequestParam(name = "idProducto") Long idProducto,
             @RequestParam(name = "vieneDe", required = false) String vieneDe,
+            @RequestParam(name = "cupoMaximo") int cupoMaximo,
             Authentication authentication
     ) throws MessagingException, IOException {
         Disponibilidad disponibilidad = new Disponibilidad();
         disponibilidad.setFecha(fecha);
-        disponibilidad.setHora(hora);
+        disponibilidad.setHoraInicio(horaInicio);
+        disponibilidad.setHoraFin(horaFin);
         disponibilidad.setDescripcion(descripcion);
-        disponibilidad.setProducto(productoService.findById(idProducto));
-        disponibilidadService.save(disponibilidad);
+
+        Cita cita = new Cita();
+        cita.setDisponibilidad(disponibilidadService.save(disponibilidad));
+        cita.setEstadoCita(EstadoCitaEnum.PROGRAMADA);
+        cita.setProducto(productoService.findById(idProducto));
+        cita.setCupoMaximo(cupoMaximo);
 
         DateTimeFormatter fechaFormatter = DateTimeFormatter.ofPattern("EEEE d MMMM", new Locale("es", "ES"));
         DateTimeFormatter horaFormatter = DateTimeFormatter.ofPattern("h:mm a", new Locale("es", "ES"));
 
-        notificacionService.notificacionDisponibilidadRegistrada(disponibilidad, fechaFormatter.format(disponibilidad.getFecha()), horaFormatter.format(disponibilidad.getHora()));
+        notificacionService.notificacionDisponibilidadRegistrada(disponibilidad, fechaFormatter.format(disponibilidad.getFecha()), horaFormatter.format(disponibilidad.getHoraInicio()));
 
         if(vieneDe != null && vieneDe.equals("calendario")){
             return "redirect:/vendedor/mi-calendario";
