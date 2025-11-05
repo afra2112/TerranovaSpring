@@ -88,7 +88,7 @@ public class VendedorController {
         model.addAttribute("ciudades", ciudadRepository.findAll());
         model.addAttribute("dashboard", true);
         model.addAttribute("totalVentas", ventaService.encontrarPorVendedor(usuario).size());
-        model.addAttribute("productos", productoService.obtenerTodosPorVendedor(usuario));
+        model.addAttribute("productos", productoService.obtenerTodosPorVendedor(usuario).stream().limit(3).toList());
         model.addAttribute("totalCitas", citaService.encontrarPorVendedor(usuario, true).size());
         model.addAttribute("notificaciones", notificacionService.obtenerPorUsuarioYLeido(usuario,true));
         return "vendedor/dashboard";
@@ -97,7 +97,7 @@ public class VendedorController {
     @GetMapping("/mi-calendario")
     public String calendario(Model model, Authentication authentication){
         model.addAttribute("calendario", true);
-        model.addAttribute("productos", productoService.findAll());
+        model.addAttribute("productos", productoService.obtenerTodosPorVendedor(usuario(authentication)));
         model.addAttribute("cedula", usuario(authentication).getCedula());
         return "vendedor/calendario";
     }

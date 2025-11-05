@@ -532,6 +532,7 @@
 
                         <form th:if="${favoritosIds != null and #lists.contains(favoritosIds, producto.idProducto.longValue())}"
                               th:action="@{'/comprador/favoritos/eliminar/' + ${producto.idProducto}}" method="post">
+                            <input type="hidden" name="vieneDe" value="detalle">
                             <button class="w-full bg-red-500 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg hover:bg-red-600 transition">
                                 <i class='bx bxs-heart text-xl'></i>
                                 Guardado en Favoritos

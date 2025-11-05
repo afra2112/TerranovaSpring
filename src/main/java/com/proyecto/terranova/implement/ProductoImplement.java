@@ -95,7 +95,7 @@ public class ProductoImplement implements ProductoService {
 
     @Override
     public List<Producto> obtenerTodosPorVendedor(Usuario vendedor) {
-        return repository.findByVendedor(vendedor);
+        return repository.findByVendedorOrderByFechaPublicacionDesc(vendedor);
     }
 
     @Override

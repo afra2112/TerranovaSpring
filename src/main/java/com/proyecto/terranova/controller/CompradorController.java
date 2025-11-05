@@ -256,12 +256,20 @@ public class CompradorController {
     }
 
     @PostMapping("/favoritos/eliminar/{id}")
-    public String eliminarFavorito(@PathVariable Long id, Authentication auth) {
+    public String eliminarFavorito(@PathVariable Long id,@RequestParam(name = "vieneDe") String vieneDe ,Authentication auth) {
         Usuario usuario = usuarioService.findByEmail(auth.getName());
         Producto producto = productoRepository.findById(id).orElseThrow();
         favoritoService.eliminarFavorito(usuario, producto);
 
-        return "redirect:/comprador/Favorito";
+        switch (vieneDe) {
+            case "detalle":
+                return "redirect:/detalle-producto/"+id;
+            case "dashboard":
+                return "redirect:/comprador/explorar";
+            case "productos":
+                return "redirect:/productos";
+        }
+        return "";
     }
 
     @GetMapping("/Favorito")
