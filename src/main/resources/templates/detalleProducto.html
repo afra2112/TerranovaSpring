@@ -521,13 +521,22 @@
                     </div>
 
                     <div class="space-y-3">
-                        <button
-                                onclick="scrollToAvailability()"
-                                class="w-full gradient-btn text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg"
-                        >
-                            <i class='bx bx-heart text-xl'></i>
-                            Guardar en Favoritos
-                        </button>
+                        <form th:if="${favoritosIds != null and !#lists.contains(favoritosIds, producto.idProducto.longValue())}"
+                              th:action="@{'/comprador/agregarF/' + ${producto.idProducto}}" method="post">
+                            <input type="hidden" name="vieneDe" value="detalle">
+                            <button class="w-full gradient-btn text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg">
+                                <i class='bx bx-heart text-xl'></i>
+                                Guardar en Favoritos
+                            </button>
+                        </form>
+
+                        <form th:if="${favoritosIds != null and #lists.contains(favoritosIds, producto.idProducto.longValue())}"
+                              th:action="@{'/comprador/favoritos/eliminar/' + ${producto.idProducto}}" method="post">
+                            <button class="w-full bg-red-500 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg hover:bg-red-600 transition">
+                                <i class='bx bxs-heart text-xl'></i>
+                                Guardado en Favoritos
+                            </button>
+                        </form>
 
                         <button
                                 onclick="compartir()"
@@ -803,7 +812,7 @@
             cerrarModalInicio();
         }
     });
-
+detalleproducto
     document.getElementById('loginModal')?.addEventListener('click', (e) => {
         if (e.target.id === 'loginModal') {
             cerrarModalInicio();

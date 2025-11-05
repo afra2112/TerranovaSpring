@@ -192,7 +192,18 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div th:each="producto : ${productos}" class="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 hover-lift border border-gray-100">
                         <div class="relative h-56 overflow-hidden">
-                            <form th:action="@{'/comprador/agregarF/' + ${producto.idProducto}}" method="post"
+                            <form th:if="${favoritosIds != null and !#lists.contains(favoritosIds, producto.idProducto.longValue())}"
+                                  th:action="@{'/comprador/agregarF/' + ${producto.idProducto}}" method="post"
+                                  class="absolute top-4 right-4 z-10">
+                                <input type="hidden" name="vieneDe" value="dashboard">
+                                <button type="submit"
+                                        class="bg-white bg-opacity-90 backdrop-blur-sm p-2.5 rounded-lg hover:bg-opacity-100 transition-all duration-300 hover:scale-105 shadow-md">
+                                    <i class='bx bxs-heart text-xl text-gray-400'></i>
+                                </button>
+                            </form>
+
+                            <form th:if="${favoritosIds != null and #lists.contains(favoritosIds, producto.idProducto.longValue())}"
+                                  th:action="@{'/comprador/favoritos/eliminar/' + ${producto.idProducto}}" method="post"
                                   class="absolute top-4 right-4 z-10">
                                 <button type="submit"
                                         class="bg-white bg-opacity-90 backdrop-blur-sm p-2.5 rounded-lg hover:bg-opacity-100 transition-all duration-300 hover:scale-105 shadow-md">

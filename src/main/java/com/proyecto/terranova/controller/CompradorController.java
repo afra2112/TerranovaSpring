@@ -92,7 +92,9 @@ public class CompradorController {
 
         Map<String, Integer> estadisticas = compradorService.prepararIndex(usuario(authentication).getCedula());
         List<Cita> citas = citaService.encontrarPorCompradorYEstado(usuario(authentication), EstadoCitaEnum.RESERVADA);
+        List<Long> favoritosIds = favoritoService.obtenerIdsFavoritosPorUsuario(usuario(authentication));
 
+        model.addAttribute("favoritosIds", favoritosIds);
         model.addAllAttributes(estadisticas);
         model.addAttribute("citasCant", citas.size());
         model.addAttribute("notificacionesCant", notificacionService.contarNoLeidasPorUsuario(usuario(authentication), false));
@@ -235,14 +237,22 @@ public class CompradorController {
     }
 
     @PostMapping("/agregarF/{id}")
-    public String agregarFavoritos(@PathVariable Long id ,Authentication auth){
+    public String agregarFavoritos(@PathVariable Long id, @RequestParam(name = "vieneDe") String vieneDe, Authentication auth){
         String correo = auth.getName();
         Usuario usuario = usuarioRepository.findByEmail(correo);
         System.out.println("------------------usuario autenticado en el controlador-------"+correo);
         Producto producto = productoRepository.findById(id).orElseThrow();
         favoritoService.agregarFavorito(usuario,producto);
 
-        return "redirect:/comprador/Favorito";
+        switch (vieneDe) {
+            case "detalle":
+                return "redirect:/detalle-producto/"+id;
+            case "dashboard":
+                return "redirect:/comprador/explorar";
+            case "productos":
+                return "redirect:/productos";
+        }
+        return "";
     }
 
     @PostMapping("/favoritos/eliminar/{id}")

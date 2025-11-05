@@ -80,7 +80,6 @@ public class PublicController {
             List<Long> favoritosIds = favoritoService.obtenerIdsFavoritosPorUsuario(usuario);
             productos = productos.stream().filter(producto -> !producto.getVendedor().equals(usuario)).toList();
             model.addAttribute("favoritosIds", favoritosIds);
-            System.out.println("---------------FAVORITOSSSSSSSSS---------------"+favoritosIds);
             model.addAttribute("nombreMostrar", usuario.getNombres() + ". " + usuario.getApellidos().charAt(0));
             model.addAttribute("esVendedor", esVendedor);
         } else {
@@ -106,6 +105,9 @@ public class PublicController {
                 esVendedor = true;
             }
 
+            List<Long> favoritosIds = favoritoService.obtenerIdsFavoritosPorUsuario(usuario);
+
+            model.addAttribute("favoritosIds", favoritosIds);
             model.addAttribute("nombreMostrar", usuario.getNombres() + ". " + usuario.getApellidos().charAt(0));
             model.addAttribute("esVendedor", esVendedor);
             yaTieneCita = citaService.yaTieneCita(usuario, id);
