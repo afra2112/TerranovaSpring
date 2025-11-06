@@ -21,7 +21,7 @@ public class AsistenciaImplement implements AsistenciaService {
 
     @Override
     public List<Asistencia> encontrarPorComprador(Usuario comprador) {
-        return asistenciaRepository.findByUsuarioOrderByCita_Disponibilidad_FechaAscCita_Disponibilidad_HoraInicioAsc(comprador);
+        return asistenciaRepository.findByUsuarioOrderByCita_FechaAscCita_HoraInicioAsc(comprador);
     }
 
     @Override

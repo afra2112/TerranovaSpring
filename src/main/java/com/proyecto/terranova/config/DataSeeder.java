@@ -15,7 +15,7 @@ import java.util.*;
 @Configuration
 public class DataSeeder {
 
-    /*@Bean
+    @Bean
     CommandLineRunner commandLineRunner(
             UsuarioRepository usuarioRepository,
             PasswordEncoder passwordEncoder,
@@ -24,7 +24,6 @@ public class DataSeeder {
             TerrenoRepository terrenoRepository,
             FincaRepository fincaRepository,
             GanadoRepository ganadoRepository,
-            DisponibilidadRepository disponibilidadRepository,
             ProductoRepository productoRepository) {
 
         return args -> {
@@ -121,7 +120,6 @@ public class DataSeeder {
 
                         terreno = terrenoRepository.save(terreno);
                         agregarImagenesProducto(terreno, "terreno", productoRepository);
-                        crearDisponibilidades(terreno.getIdProducto(), disponibilidadRepository, productoRepository);
                     }
 
                     //2 FINCAS
@@ -144,7 +142,6 @@ public class DataSeeder {
 
                         finca = fincaRepository.save(finca);
                         agregarImagenesProducto(finca, "finca", productoRepository);
-                        crearDisponibilidades(finca.getIdProducto(), disponibilidadRepository, productoRepository);
                     }
 
                     //2 GANADOS
@@ -171,7 +168,6 @@ public class DataSeeder {
 
                         ganado = ganadoRepository.save(ganado);
                         agregarImagenesProducto(ganado, "ganado", productoRepository);
-                        crearDisponibilidades(ganado.getIdProducto(), disponibilidadRepository, productoRepository);
                     }
                 }
 
@@ -229,32 +225,4 @@ public class DataSeeder {
         producto.setImagenes(imagenes);
         productoRepository.save(producto);
     }
-
-    private void crearDisponibilidades(Long idProducto, DisponibilidadRepository disponibilidadRepository, ProductoRepository productoRepository) {
-
-        Random random = new Random();
-        Producto producto = productoRepository.findById(idProducto).orElseThrow();
-
-        if (disponibilidadRepository.countByProducto(producto) > 0) {
-            return;
-        }
-
-        LocalDate hoy = LocalDate.now();
-
-        for (int i = 0; i < 3; i++) {
-            Disponibilidad disponibilidad = new Disponibilidad();
-
-            disponibilidad.setFecha(hoy.plusDays(random.nextInt(10)));
-
-            int hora = 8 + random.nextInt(10);
-            int minuto = random.nextBoolean() ? 0 : 30;
-            disponibilidad.setHora(LocalTime.of(hora, minuto));
-
-            disponibilidad.setDisponible(true);
-            disponibilidad.setDescripcion("Disponible para visita " + producto.getNombreProducto());
-            disponibilidad.setProducto(producto);
-
-            disponibilidadRepository.save(disponibilidad);
-        }
-    }*/
 }

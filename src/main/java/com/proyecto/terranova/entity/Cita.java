@@ -28,6 +28,30 @@ public class Cita {
     @OneToMany(mappedBy = "cita", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Asistencia> asistencias = new ArrayList<>();
 
+    private boolean activo = true;
+
+    private int ocupados;
+
+    private int disponibles;
+
+    private LocalDate fecha;
+
+    private LocalTime horaInicio;
+
+    private LocalTime HoraFin;
+
+    @Nullable
+    private String descripcion;
+
+    public boolean isFechaDisponibleParaFinalizar() {
+        LocalDateTime ahora = LocalDateTime.now();
+        LocalDateTime fechaCita = LocalDateTime.of(
+                this.getFecha(),
+                this.getHoraFin()
+        );
+        return !fechaCita.isAfter(ahora);
+    }
+
     @ManyToOne
     @JoinColumn(name = "idProducto")
     private Producto producto;
@@ -41,23 +65,5 @@ public class Cita {
     @Column(nullable = true)
     private LocalDateTime fechaHabilitarReprogramacion;
 
-    private boolean activo = true;
-
     private int numReprogramaciones = 0;
-
-    private int ocupados;
-    private int disponibles;
-
-    @OneToOne
-    @JoinColumn(name = "id_disponibilidad")
-    private Disponibilidad disponibilidad;
-
-    public boolean isFechaDisponibleParaFinalizar() {
-        LocalDateTime ahora = LocalDateTime.now();
-        LocalDateTime fechaCita = LocalDateTime.of(
-                this.disponibilidad.getFecha(),
-                this.disponibilidad.getHoraFin()
-        );
-        return !fechaCita.isAfter(ahora);
-    }
 }

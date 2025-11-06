@@ -1,23 +1,13 @@
 package com.proyecto.terranova.implement;
 
-import com.proyecto.terranova.entity.Cita;
-import com.proyecto.terranova.entity.Usuario;
 import com.proyecto.terranova.repository.ProductoRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
-import java.time.LocalDateTime;
-import java.util.List;
 import com.proyecto.terranova.service.DisponibilidadService;
-import com.proyecto.terranova.repository.DisponibilidadRepository;
-import com.proyecto.terranova.dto.DisponibilidadDTO;
-import com.proyecto.terranova.entity.Disponibilidad;
 
 @Service
 public class DisponibilidadImplement implements DisponibilidadService {
-
-    @Autowired
-    private DisponibilidadRepository repository;
 
     @Autowired
     private ProductoRepository productoRepository;
@@ -25,7 +15,7 @@ public class DisponibilidadImplement implements DisponibilidadService {
     @Autowired
     private ModelMapper modelMapper;
 
-    @Override
+    /*@Override
     public Disponibilidad save(Disponibilidad disponibilidad) {
         return repository.save(disponibilidad);
     }
@@ -98,5 +88,5 @@ public class DisponibilidadImplement implements DisponibilidadService {
         }
 
         return false;
-    }
+    }*/
 }

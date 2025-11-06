@@ -35,7 +35,6 @@ public interface NotificacionService {
     void notificacionVentaGenerada(Venta venta) throws MessagingException, IOException;
     void notificacionVentaModificada(Venta venta) throws MessagingException, IOException;
     void notificacionPeticionFinalizacionVenta(Venta venta) throws MessagingException, IOException;
-    void notificacionDisponibilidadRegistrada(Disponibilidad disponibilidad, String fecha, String hora) throws MessagingException, IOException;
     void notificacionFotoPerfilCambiada(Usuario usuario) throws MessagingException, IOException;
     void notificacionDatosPersonalesActualizados(Usuario usuario) throws MessagingException, IOException;
     void notificacionPedirModificarVenta(Venta venta, String razon) throws MessagingException, IOException;

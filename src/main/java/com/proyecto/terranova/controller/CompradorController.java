@@ -45,9 +45,6 @@ public class CompradorController {
     AsistenciaService asistenciaService;
 
     @Autowired
-    DisponibilidadService disponibilidadService;
-
-    @Autowired
     NotificacionService notificacionService;
 
     @Autowired
@@ -112,6 +109,12 @@ public class CompradorController {
         model.addAttribute("posicionCitas", true);
         model.addAttribute("citas", asistenciaService.encontrarPorComprador(usuario(authentication)));
         return "comprador/citas";
+    }
+
+    @GetMapping("/citas/detalle/{id}")
+    public String detalleCitas(@PathVariable Long id, Model model){
+        model.addAttribute("cita", citaService.findById(id));
+        return "vistasTemporales/detalleCita";
     }
 
     @GetMapping("/compras")
@@ -185,7 +188,7 @@ public class CompradorController {
         return "redirect:/comprador/citas";
     }
 
-    @PostMapping("/citas/reprogramar-cita")
+    /*@PostMapping("/citas/reprogramar-cita")
     public String reprogramarCita(@RequestParam(name = "idCita") Long idCita, @RequestParam(name = "idDisponibilidad") Long idDisponibilidad, Authentication authentication, RedirectAttributes redirectAttributes) throws MessagingException, IOException {
         Cita cita = citaService.findById(idCita);
         if(disponibilidadService.validarSiPuedeReprogramar(cita)){
@@ -207,7 +210,7 @@ public class CompradorController {
         }
 
         return "redirect:/comprador/citas";
-    }
+    }*/
 
 
 
@@ -233,7 +236,7 @@ public class CompradorController {
         Cita cita = citaService.findById(idCita);
 
         Venta venta = ventaService.generarVenta(cita.getProducto().getIdProducto(), null/*comprador*/);
-        citaService.cambiarEstado(cita, EstadoCitaEnum.VENTAGENERADA);
+        citaService.cambiarEstado(cita, EstadoCitaEnum.FINALIZADA);
 
         notificacionService.notificacionVentaGenerada(venta);
 

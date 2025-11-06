@@ -1,12 +1,9 @@
 package com.proyecto.terranova.implement;
 
 import com.proyecto.terranova.config.enums.EstadoCitaEnum;
-import com.proyecto.terranova.dto.DisponibilidadDTO;
-import com.proyecto.terranova.entity.Disponibilidad;
-import com.proyecto.terranova.entity.Producto;
+import com.proyecto.terranova.entity.Asistencia;
 import com.proyecto.terranova.entity.Usuario;
 import com.proyecto.terranova.repository.AsistenciaRepository;
-import com.proyecto.terranova.repository.DisponibilidadRepository;
 import com.proyecto.terranova.repository.ProductoRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -14,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.proyecto.terranova.service.CitaService;
 import com.proyecto.terranova.repository.CitaRepository;
@@ -76,13 +72,13 @@ public class CitaImplement implements CitaService {
             citaDTO.setEstadoCita(cita.getEstadoCita());
             citaDTO.setNombreVendedor(cita.getProducto().getVendedor().getNombres());
             citaDTO.setIdCita(cita.getIdCita());
-            citaDTO.setFecha(cita.getDisponibilidad().getFecha());
-            citaDTO.setHoraInicio(cita.getDisponibilidad().getHoraInicio());
-            citaDTO.setHoraFin(cita.getDisponibilidad().getHoraFin());
+            citaDTO.setFecha(cita.getFecha());
+            citaDTO.setHoraInicio(cita.getHoraInicio());
+            citaDTO.setHoraFin(cita.getHoraFin());
             citaDTO.setNombreProducto(cita.getProducto().getNombreProducto());
             citaDTO.setUbicacion(cita.getProducto().getCiudad().getNombreCiudad());
             citaDTO.setIdProducto(cita.getProducto().getIdProducto());
-            citaDTO.setIdDisponibilidad(cita.getDisponibilidad().getIdDisponibilidad());
+            citaDTO.setIdsAsistencias(cita.getAsistencias().stream().map(Asistencia::getIdAsistencia).toList());
 
             citasDto.add(citaDTO);
         }
@@ -97,7 +93,7 @@ public class CitaImplement implements CitaService {
     @Override
     public List<Cita> encontrarPorEstado(Usuario vendedor, EstadoCitaEnum estado, boolean activo) {
 
-        return repository.findByDisponibilidad_Producto_VendedorAndEstadoCitaAndActivo(vendedor,estado, activo);
+        return repository.findByProducto_VendedorAndEstadoCitaAndActivo(vendedor,estado, activo);
     }
 
     @Override

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de Cita - Terranova</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#388e3c',
+                        secondary: '#ffcf00'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .hover-lift {
+            transition: all 0.3s ease;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-50">
+
+<div th:replace="fragments/comprador/navbarComprador :: navbarComprador"></div>
+
+<div class="ml-64 flex flex-col min-h-screen">
+    <main class="lg:px-10 py-10">
+
+        <!-- Breadcrumb -->
+        <nav class="mb-6 animate-fade-in-up">
+            <ol class="flex items-center space-x-2 text-sm">
+                <li><a href="/comprador/citas" class="text-primary hover:text-green-700 transition-colors font-medium">Mis Citas</a></li>
+                <li><i class='bx bx-chevron-right text-gray-400'></i></li>
+                <li class="text-gray-600 font-medium">Detalle de Cita</li>
+            </ol>
+        </nav>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- Columna Principal -->
+            <div class="lg:col-span-2 space-y-6">
+
+                <!-- Información de la Cita -->
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden animate-fade-in-up">
+                    <div class="gradient-bg p-6 text-white">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
+                                    <i class='bx bx-calendar text-4xl'></i>
+                                </div>
+                                <div>
+                                    <h1 class="text-3xl font-bold mb-1">Detalle de Cita</h1>
+                                    <p class="text-emerald-100">Información completa de tu cita</p>
+                                </div>
+                            </div>
+                            <span th:if="${cita.estadoCita.name() == 'ACTIVA'}"
+                                  class="px-4 py-2 bg-white/20 border-2 border-white/30 rounded-lg text-sm font-semibold">
+                                Activa
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="p-8">
+                        <!-- Fecha y Hora -->
+                        <div class="grid grid-cols-2 gap-6 mb-6">
+                            <div class="p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-14 h-14 gradient-bg rounded-xl flex items-center justify-center text-white">
+                                        <i class='bx bx-calendar text-2xl'></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-600 font-medium mb-1">Fecha</p>
+                                        <p class="text-xl font-bold text-gray-900" th:text="${#temporals.format(cita.fecha, 'EEEE, dd MMMM yyyy')}">Fecha</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="p-6 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center text-white">
+                                        <i class='bx bx-time-five text-2xl'></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-600 font-medium mb-1">Horario</p>
+                                        <p class="text-xl font-bold text-gray-900" th:text="${#temporals.format(cita.horaInicio, 'HH:mm')} + ' - ' + ${#temporals.format(cita.horaFin, 'HH:mm')}">Hora</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Descripción -->
+                        <div th:if="${cita.descripcion != null and !#strings.isEmpty(cita.descripcion)}"
+                             class="mb-6 p-6 bg-gray-50 rounded-2xl">
+                            <h3 class="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
+                                <i class='bx bx-info-circle text-green-600 text-xl'></i>
+                                Descripción
+                            </h3>
+                            <p class="text-gray-700 leading-relaxed" th:text="${cita.descripcion}">Descripción de la cita</p>
+                        </div>
+
+                        <!-- Disponibilidad -->
+                        <div class="p-6 bg-gray-50 rounded-2xl">
+                            <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                <i class='bx bx-group text-green-600 text-xl'></i>
+                                Disponibilidad
+                            </h3>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-gray-600">Cupos ocupados</span>
+                                <span class="text-2xl font-bold text-gray-900">
+                                    <span th:text="${cita.ocupados}">0</span> / <span th:text="${cita.cupoMaximo}">0</span>
+                                </span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+                                <div class="h-full gradient-bg rounded-full transition-all duration-500"
+                                     th:style="'width: ' + ${(cita.ocupados * 100.0 / cita.cupoMaximo)} + '%'"></div>
+                            </div>
+                            <p class="text-sm text-gray-600 mt-3">
+                                <span th:text="${cita.disponibles}">0</span> cupos disponibles
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lista de Asistentes (Solo para Vendedor) -->
+                <div th:if="${esVendedor}" class="bg-white rounded-2xl shadow-lg p-8 animate-fade-in-up" style="animation-delay: 0.1s;">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                        <i class='bx bx-user-check text-green-600 text-2xl'></i>
+                        Asistentes Confirmados
+                    </h3>
+
+                    <div th:if="${#lists.isEmpty(asistentesConfirmados)}" class="text-center py-8">
+                        <i class='bx bx-user-x text-gray-300 text-6xl mb-4'></i>
+                        <p class="text-gray-500">No hay asistentes confirmados aún</p>
+                    </div>
+
+                    <div th:if="${!#lists.isEmpty(asistentesConfirmados)}" class="space-y-3">
+                        <div th:each="asistencia : ${asistentesConfirmados}"
+                             class="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-all">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 gradient-bg rounded-full flex items-center justify-center text-white font-bold">
+                                    <span th:text="${#strings.substring(asistencia.usuario.nombres, 0, 1)}">U</span>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-gray-900" th:text="${asistencia.usuario.nombres + ' ' + asistencia.usuario.apellidos}">Usuario</p>
+                                    <p class="text-sm text-gray-600" th:text="${asistencia.usuario.email}">email@example.com</p>
+                                </div>
+                            </div>
+                            <span class="px-3 py-1 bg-green-100 text-green-700 rounded-lg text-sm font-semibold">
+                                Confirmado
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lista de Espera (Solo para Vendedor) -->
+                <div th:if="${esVendedor}" class="bg-white rounded-2xl shadow-lg p-8 animate-fade-in-up" style="animation-delay: 0.2s;">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                        <i class='bx bx-time text-yellow-600 text-2xl'></i>
+                        Lista de Espera
+                    </h3>
+
+                    <div th:if="${#lists.isEmpty(asistentesEspera)}" class="text-center py-8">
+                        <i class='bx bx-list-ul text-gray-300 text-6xl mb-4'></i>
+                        <p class="text-gray-500">No hay usuarios en lista de espera</p>
+                    </div>
+
+                    <div th:if="${!#lists.isEmpty(asistentesEspera)}" class="space-y-3">
+                        <div th:each="asistencia, iterStat : ${asistentesEspera}"
+                             class="flex items-center justify-between p-4 bg-yellow-50 rounded-xl">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center text-white font-bold">
+                                    <span th:text="${iterStat.index + 1}">1</span>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-gray-900" th:text="${asistencia.usuario.nombres + ' ' + asistencia.usuario.apellidos}">Usuario</p>
+                                    <p class="text-sm text-gray-600" th:text="${asistencia.usuario.email}">email@example.com</p>
+                                </div>
+                            </div>
+                            <span class="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-lg text-sm font-semibold">
+                                Posición <span th:text="${iterStat.index + 1}">1</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Columna Lateral -->
+            <div class="space-y-6">
+
+                <!-- Información del Producto -->
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden animate-fade-in-up sticky top-4">
+                    <div class="h-48 overflow-hidden">
+                        <img th:src="${#lists.isEmpty(cita.producto.imagenes) ? '/placeholder.svg?height=200&width=400' : cita.producto.imagenes.get(0).nombreArchivo}"
+                             alt="Producto"
+                             class="w-full h-full object-cover hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-900 mb-3" th:text="${cita.producto.nombreProducto}">Producto</h3>
+                        <div class="space-y-3 mb-6">
+                            <div class="flex items-center gap-3 text-gray-600">
+                                <i class='bx bx-map text-green-600 text-xl'></i>
+                                <span th:text="${cita.producto.ciudad.nombreCiudad}">Ciudad</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-gray-600">
+                                <i class='bx bx-dollar text-green-600 text-xl'></i>
+                                <span th:text="'$' + ${#numbers.formatDecimal(cita.producto.precioProducto, 0, 'POINT', 0, 'COMMA')}">$0</span>
+                            </div>
+                        </div>
+                        <a th:href="@{'/detalle-producto/' + ${cita.producto.idProducto}}"
+                           class="block w-full gradient-bg text-white font-bold py-3 rounded-xl hover:shadow-lg transition-all duration-300 text-center">
+                            Ver Producto
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Acciones del Comprador -->
+                <div th:if="${!esVendedor}" class="bg-white rounded-2xl shadow-lg p-6 animate-fade-in-up" style="animation-delay: 0.1s;">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">Acciones</h3>
+                    <div class="space-y-3">
+                        <!--<form th:action="@{'/comprador/citas/cancelar/' + ${miAsistencia.idAsistencia}}"-->
+                        <form th:action="@{'/comprador/citas/cancelar/'}"
+                              method="post"
+                              onsubmit="return confirm('¿Estás seguro de cancelar tu participación en esta cita?');">
+                            <button type="submit"
+                                    class="w-full bg-red-500 text-white font-bold py-3 rounded-xl hover:bg-red-600 transition-all duration-300 flex items-center justify-center gap-2">
+                                <i class='bx bx-x-circle text-xl'></i>
+                                Cancelar Participación
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Acciones del Vendedor -->
+                <div th:if="${esVendedor}" class="bg-white rounded-2xl shadow-lg p-6 animate-fade-in-up" style="animation-delay: 0.1s;">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">Acciones</h3>
+                    <div class="space-y-3">
+                        <a th:href="@{'/vendedor/citas/reprogramar/' + ${cita.idCita}}"
+                           class="block w-full gradient-bg text-white font-bold py-3 rounded-xl hover:shadow-lg transition-all duration-300 text-center flex items-center justify-center gap-2">
+                            <i class='bx bx-calendar-edit text-xl'></i>
+                            Reprogramar Cita
+                        </a>
+                        <form th:action="@{'/vendedor/citas/cancelar/' + ${cita.idCita}}"
+                              method="post"
+                              onsubmit="return confirm('¿Estás seguro de cancelar esta cita? Se notificará a todos los asistentes.');">
+                            <button type="submit"
+                                    class="w-full bg-red-500 text-white font-bold py-3 rounded-xl hover:bg-red-600 transition-all duration-300 flex items-center justify-center gap-2">
+                                <i class='bx bx-x-circle text-xl'></i>
+                                Cancelar Cita
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+</div>
+
+<script>
+    function toggleUserDropdown() {
+        const dropdown = document.getElementById('userDropdown');
+        const arrow = document.getElementById('dropdownArrow');
+
+        if (dropdown.classList.contains('opacity-0')) {
+            dropdown.classList.remove('opacity-0', 'invisible', 'scale-95');
+            dropdown.classList.add('opacity-100', 'visible', 'scale-100');
+            arrow.style.transform = 'rotate(180deg)';
+        } else {
+            dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
+            dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
+            arrow.style.transform = 'rotate(0deg)';
+        }
+    }
+
+    document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('userDropdown');
+        const userButton = event.target.closest('[onclick="toggleUserDropdown()"]');
+
+        if (!userButton && !dropdown.contains(event.target)) {
+            dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
+            dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
+            document.getElementById('dropdownArrow').style.transform = 'rotate(0deg)';
+        }
+    });
+</script>
+</body>
+</html>

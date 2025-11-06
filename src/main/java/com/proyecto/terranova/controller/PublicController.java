@@ -111,12 +111,6 @@ public class PublicController {
 
         Producto producto = productoRepository.findById(id).orElseThrow(() -> new RuntimeException("producto no encontrado"));
         producto.setTipoP(producto.getClass().getSimpleName());
-        List<Cita> citas = producto.getDisponibilidades().stream().map(Disponibilidad::getCita).toList();
-        for (Cita cita :citas){
-            cita.setOcupados(cita.getAsistencias().size());
-            cita.setDisponibles(cita.getCupoMaximo() - cita.getOcupados());
-            producto.getDisponibilidades().stream().map(disponibilidad -> disponibilidad.setCita(cita)).toList();
-        }
 
         model.addAttribute("yaTieneCita", yaTieneCita);
         model.addAttribute("usuario", usuario);

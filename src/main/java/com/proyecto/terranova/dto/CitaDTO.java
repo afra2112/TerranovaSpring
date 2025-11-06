@@ -1,8 +1,6 @@
 package com.proyecto.terranova.dto;
 
 import com.proyecto.terranova.config.enums.EstadoCitaEnum;
-import com.proyecto.terranova.entity.Disponibilidad;
-import com.proyecto.terranova.entity.Producto;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -31,7 +29,6 @@ public class CitaDTO {
     private List<Long> idsAsistencias;
 
     private String nombreProducto;
-
 
     private String nombreVendedor;
 

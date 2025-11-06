@@ -106,7 +106,7 @@ public class VendedorController {
     public String citas(Model model, Authentication authentication){
         Usuario vendedor = usuarioService.findByEmail(authentication.getName());
         model.addAttribute("posicionCitas", true);
-        model.addAttribute("numReservadas", citaService.encontrarPorEstado(vendedor,EstadoCitaEnum.RESERVADA, true).size());
+        model.addAttribute("numReservadas", citaService.encontrarPorEstado(vendedor,EstadoCitaEnum.PROGRAMADA, true).size());
         model.addAttribute("numFinalizadas", citaService.encontrarPorEstado(vendedor,EstadoCitaEnum.FINALIZADA, true).size());
         model.addAttribute("numCanceladas", citaService.encontrarPorEstado(vendedor,EstadoCitaEnum.CANCELADA, true).size());
 
@@ -186,8 +186,8 @@ public class VendedorController {
         long numDisponibilidades = 0;
 
         for(Producto producto : productos){
-            long disponibilidades = producto.getDisponibilidades().stream().count();
-            numDisponibilidades += disponibilidades;
+            long citas = producto.getCitas().stream().count();
+            numDisponibilidades += citas;
         }
 
         model.addAttribute("disponibilidades", numDisponibilidades);

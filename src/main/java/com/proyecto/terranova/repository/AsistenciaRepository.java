@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface AsistenciaRepository extends JpaRepository<Asistencia, Long> {
 
-    List<Asistencia> findByUsuarioOrderByCita_Disponibilidad_FechaAscCita_Disponibilidad_HoraInicioAsc(Usuario usuario);
+    List<Asistencia> findByUsuarioOrderByCita_FechaAscCita_HoraInicioAsc(Usuario usuario);
 
     boolean existsByCita_ProductoAndUsuario(Producto citaProducto, Usuario usuario);
 }
