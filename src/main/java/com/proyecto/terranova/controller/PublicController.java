@@ -91,6 +91,7 @@ public class PublicController {
     public String detalleProducto(@PathVariable Long id, Model model, Authentication authentication){
         Usuario usuario = null;
         boolean yaTieneCita = false;
+        boolean estaEnListaDeEspera = false;
 
         if(authentication != null){
             usuario = usuarioService.findByEmail(authentication.getName());
@@ -109,12 +110,14 @@ public class PublicController {
             model.addAttribute("favoritosIds", favoritosIds);
             model.addAttribute("nombreMostrar", usuario.getNombres() + ". " + usuario.getApellidos().charAt(0));
             model.addAttribute("esVendedor", esVendedor);
-            yaTieneCita = asistenciaService.existeCualquierAsistenciaPorUsuario(usuario, id);
+            yaTieneCita = asistenciaService.existeAsistenciaPorEstado(usuario, id, EstadoAsistenciaEnum.INSCRITO);
+            estaEnListaDeEspera = asistenciaService.existeAsistenciaPorEstado(usuario, id, EstadoAsistenciaEnum.EN_ESPERA);
         }
 
         Producto producto = productoRepository.findById(id).orElseThrow(() -> new RuntimeException("producto no encontrado"));
         producto.setTipoP(producto.getClass().getSimpleName());
 
+        model.addAttribute("estaEnListaDeEspera", estaEnListaDeEspera);
         model.addAttribute("yaTieneCita", yaTieneCita);
         model.addAttribute("usuario", usuario);
         model.addAttribute("producto", producto);

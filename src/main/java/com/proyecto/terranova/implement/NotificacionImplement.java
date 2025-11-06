@@ -331,38 +331,37 @@ public class NotificacionImplement implements NotificacionService {
     }
 
     @Override
-    public void notificacionCitaReservada(Cita cita) throws MessagingException, IOException {
-        Usuario comprador = null;
-        Usuario vendedor = cita.getProducto().getVendedor();
-        String producto = cita.getProducto().getNombreProducto();
+    public void notificacionCitaReservada(Asistencia asistencia, Usuario nuevoAsistente) throws MessagingException, IOException {
+        Usuario vendedor = asistencia.getCita().getProducto().getVendedor();
+        String producto = asistencia.getCita().getProducto().getNombreProducto();
 
         NotificacionPeticion notifComprador = buildNotificacion(
-                cita.getIdCita(),
-                "Haz reservado una cita para el producto: " + producto + ". Con el vendedor: "+vendedor.getNombres()+". Puedes ir a Mis Citas para mas detalles.",
+                asistencia.getIdAsistencia(),
+                "Una persona cancelo su cita, como estabas en lista de espera ahora pueder ir a la cita para el producto: " + producto + ". Con el vendedor: "+vendedor.getNombres()+". Puedes ir a Mis Citas para mas detalles.",
                 "Citas",
-                "Cita Reservada",
-                null,
+                "Ya pueder ir a la cita para: " + producto,
+                nuevoAsistente,
                 "/comprador/citas",
-                "Tu cita para el producto " + producto + " ha sido reservada.",
+                "Se te ha asignado un cupo en la cita para el producto: " + producto,
                 "http://localhost:8080/comprador/citas",
                 "citaReservada",
-                cita.getProducto().getNombreProducto(),
+                asistencia.getCita().getProducto().getNombreProducto(),
                 vendedor.getNombres(),
-                comprador.getNombres()
+                nuevoAsistente.getNombres()
         );
 
         NotificacionPeticion notifVendedor = buildNotificacion(
-                cita.getIdCita(),
-                "El comprador " + comprador.getNombres() + ". Ha reservado una cita para tu producto " + producto + ".",
+                asistencia.getIdAsistencia(),
+                "El comprador " + nuevoAsistente.getNombres() + ". Ahora esta en la lista de personas que iran a tu cita para: " + producto + ".",
                 "Citas",
-                "Cita Reservada",
+                "Nuevo visitante",
                 vendedor,
                 "/vendedor/citas",
-                "Han reservado una cita para tu producto: " + producto + ".",
+                "Un nuevo comprador esta en tu lista de asistentes: " + producto + ".",
                 "http://localhost:8080/vendedor/citas",
                 "citaReservadaVendedor",
-                cita.getProducto().getNombreProducto(),
-                comprador.getNombres(),
+                asistencia.getCita().getProducto().getNombreProducto(),
+                nuevoAsistente.getNombres(),
                 vendedor.getNombres()
         );
 

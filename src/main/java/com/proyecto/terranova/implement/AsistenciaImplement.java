@@ -2,14 +2,19 @@ package com.proyecto.terranova.implement;
 
 import com.proyecto.terranova.config.enums.EstadoAsistenciaEnum;
 import com.proyecto.terranova.entity.Asistencia;
+import com.proyecto.terranova.entity.Cita;
 import com.proyecto.terranova.entity.Usuario;
 import com.proyecto.terranova.repository.AsistenciaRepository;
 import com.proyecto.terranova.repository.CitaRepository;
 import com.proyecto.terranova.repository.ProductoRepository;
 import com.proyecto.terranova.service.AsistenciaService;
+import com.proyecto.terranova.service.NotificacionService;
+import jakarta.mail.MessagingException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -25,9 +30,17 @@ public class AsistenciaImplement implements AsistenciaService {
     @Autowired
     CitaRepository citaRepository;
 
+    @Autowired
+    NotificacionService notificacionService;
+
     @Override
     public List<Asistencia> encontrarPorComprador(Usuario comprador) {
         return asistenciaRepository.findByUsuarioOrderByCita_FechaAscCita_HoraInicioAsc(comprador);
+    }
+
+    @Override
+    public List<Asistencia> encontrarPorCompradorYEstado(Usuario comprador, EstadoAsistenciaEnum estadoAsistenciaEnum) {
+        return asistenciaRepository.findByUsuarioAndEstadoOrderByCita_FechaAscCita_HoraInicioAsc(comprador, estadoAsistenciaEnum);
     }
 
     @Override
@@ -54,11 +67,45 @@ public class AsistenciaImplement implements AsistenciaService {
             asistencia.setCita(citaRepository.findById(idCita).orElseThrow());
             asistencia.setUsuario(usuario);
             asistencia.setEstado(estadoAsistenciaEnum);
+            asistenciaRepository.save(asistencia);
+        }else {
+            Asistencia asistencia = asistenciaRepository.findByCita_IdCitaAndUsuario(idCita, usuario);
+            asistencia.setEstado(estadoAsistenciaEnum);
+            asistenciaRepository.save(asistencia);
         }
+    }
 
-        Asistencia asistencia = asistenciaRepository.findByCita_IdCitaAndUsuario(idCita, usuario);
-        asistencia.setEstado(estadoAsistenciaEnum);
+    @Transactional
+    @Override
+    public void cancelarAsistencia(Long idAsistencia) throws MessagingException, IOException {
+        Asistencia asistencia = asistenciaRepository.findById(idAsistencia).orElseThrow();
+
+        asistencia.setEstado(EstadoAsistenciaEnum.CANCELADO);
         asistenciaRepository.save(asistencia);
+
+        Long idCita = asistencia.getCita().getIdCita();
+
+        List<Asistencia> listaEspera = asistenciaRepository.encontrarListaEsperaOrdenada(idCita);
+
+        if (!listaEspera.isEmpty()) {
+            Asistencia siguiente = listaEspera.getFirst();
+            siguiente.setEstado(EstadoAsistenciaEnum.INSCRITO);
+            asistenciaRepository.save(siguiente);
+
+            notificacionService.notificacionCitaReservada(asistencia, siguiente.getUsuario());
+        }
+    }
+
+    @Override
+    public Integer obtenerPosicionDeUsuarioEnListaDeEspera(Long idCita, String cedulaUsuario) {
+        List<Asistencia> listaDeEspera = asistenciaRepository.encontrarListaEsperaOrdenada(idCita);
+
+        for (int i = 0; i < listaDeEspera.size(); i++){
+            if (listaDeEspera.get(i).getUsuario().getCedula().equals(cedulaUsuario)){
+                return i + 1;
+            }
+        }
+        return null;
     }
 
     /*@Override

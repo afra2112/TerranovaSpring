@@ -532,7 +532,7 @@
                                         Disponibilidad
                                     </span>
                                     <span class="text-sm font-bold px-3 py-1 rounded-full"
-                                          th:classappend="${cita.disponibles > 0} ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'">
+                                          th:classappend="${cita.disponibles > 0} ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'">
                                         <span th:text="${cita.ocupados}"></span> ocupados de <span th:text="${cita.cupoMaximo}"></span> disponibles
                                     </span>
                                 </div>
@@ -569,7 +569,7 @@
                                     </button>
                                 </form>
 
-                                <form th:if="${usuarioInscrito and !usuarioEnEspera and cita.disponibles == 0}"
+                                <form th:if="${!usuarioInscrito and !usuarioEnEspera and cita.disponibles == 0}"
                                       th:action="@{/comprador/citas/inscribirse/{id}(id=${cita.idCita})}"
                                       method="post"
                                       class="flex-1">
@@ -682,6 +682,24 @@
                         <h4 class="text-lg font-bold text-gray-900 mb-2">¡Cita Agendada!</h4>
                         <p class="text-gray-700 text-sm mb-5">Ya tienes una cita programada para este producto</p>
                         <a href="/comprador/citas" class="inline-flex items-center justify-center gap-2 gradient-btn text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+                            <i class='bx bx-calendar text-xl'></i>
+                            Ver Mis Citas
+                        </a>
+                    </div>
+                </div>
+
+                <div th:if="${estaEnListaDeEspera}" class="bg-gradient-to-br from-yellow-50 to-amber-50 rounded-2xl shadow-lg p-6 border-2 border-yellow-200">
+                    <div class="text-center">
+                        <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                            <i class='bx bx-time-five text-amber-500 text-5xl'></i>
+                        </div>
+                        <h4 class="text-lg font-bold text-gray-900 mb-2">Estás en lista de espera</h4>
+                        <p class="text-gray-700 text-sm mb-5">
+                            La cita está llena por ahora. Te notificaremos automáticamente si se libera un cupo.
+                        </p>
+
+                        <a href="/comprador/citas"
+                           class="inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
                             <i class='bx bx-calendar text-xl'></i>
                             Ver Mis Citas
                         </a>

@@ -28,10 +28,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 @RequestMapping("/comprador")
@@ -96,7 +93,7 @@ public class CompradorController {
         model.addAttribute("explorar", true);
 
         Map<String, Integer> estadisticas = compradorService.prepararIndex(usuario(authentication).getCedula());
-        List<Asistencia> asistencias = asistenciaService.encontrarPorComprador(usuario(authentication));
+        List<Asistencia> asistencias = asistenciaService.encontrarPorCompradorYEstado(usuario(authentication), EstadoAsistenciaEnum.INSCRITO);
         List<Long> favoritosIds = favoritoService.obtenerIdsFavoritosPorUsuario(usuario(authentication));
 
         model.addAttribute("favoritosIds", favoritosIds);
@@ -110,8 +107,20 @@ public class CompradorController {
 
     @GetMapping("/citas")
     public String citas(Model model, Authentication authentication){
+        Usuario usuario = usuario(authentication);
+
+        List<Asistencia> asistenciasProximas = asistenciaService.encontrarPorCompradorYEstado(usuario, EstadoAsistenciaEnum.INSCRITO);
+        List<Asistencia> asistenciasEnEspera = asistenciaService.encontrarPorCompradorYEstado(usuario, EstadoAsistenciaEnum.EN_ESPERA);
+
         model.addAttribute("posicionCitas", true);
-        model.addAttribute("citas", asistenciaService.encontrarPorComprador(usuario(authentication)));
+        model.addAttribute("asistenciasProximas", asistenciasProximas);
+        model.addAttribute("asistenciasEnEspera", asistenciasEnEspera);
+        model.addAttribute("asistenciasPasadas", asistenciaService.encontrarPorCompradorYEstado(usuario, EstadoAsistenciaEnum.ASISTIO));
+        List<Asistencia> asistenciasProximasYEnEspera = new ArrayList<>();
+        asistenciasProximasYEnEspera.addAll(asistenciasProximas);
+        asistenciasProximasYEnEspera.addAll(asistenciasEnEspera);
+        asistenciasProximasYEnEspera.sort(Comparator.comparing(a -> a.getCita().getFecha()));
+        model.addAttribute("asistenciasProximasYEnEspera", asistenciasProximasYEnEspera);
         return "comprador/citas";
     }
 
@@ -122,23 +131,29 @@ public class CompradorController {
         List<Asistencia> listaAsistencia = asistenciaService.encontrarAsistenciasPorCita(id);
         Asistencia asistencia = asistenciaRepository.findByCita_IdCitaAndUsuario(id,usuario(authentication));
 
+        Integer posicion = null;
+        if(asistencia != null && asistencia.getEstado() == EstadoAsistenciaEnum.EN_ESPERA){
+            posicion = asistenciaService.obtenerPosicionDeUsuarioEnListaDeEspera(id, usuario(authentication).getCedula());
+        }
+
+        model.addAttribute("esDueno", false);
         model.addAttribute("asistencias", listaAsistencia);
-        model.addAttribute("IdAsistencia",asistencia.getIdAsistencia());
+        model.addAttribute("miAsistencia", asistencia);
+        model.addAttribute("posicionEnEspera", posicion);
         return "vistasTemporales/detalleCita";
     }
 
     @PostMapping("/citas/inscribirse/{id}")
     public String inscribirseACita(@PathVariable Long id, @RequestParam EstadoAsistenciaEnum estado, Authentication authentication){
         asistenciaService.crearAsistencia(usuario(authentication), id, estado);
-        return "comprador/citas";
+        return "redirect:/comprador/citas";
     }
 
-    /*@PostMapping("/citas/cancerlarAs/{id}")
-    public String cancelarCita(@PathVariable Long id, @RequestParam EstadoAsistenciaEnum estado, Authentication authentication){
-        asistenciaService.cambiarEstadoAsistencia(usuario(authentication), id, estado);
-        System.out.println("Este es el parametroooo---------------------"+estado);
-        return "comprador/citas";
-    }*/
+    @PostMapping("/citas/cancerlar/asistencia/{id}")
+    public String cancelarAsistencia(@PathVariable Long id) throws MessagingException, IOException {
+        asistenciaService.cancelarAsistencia(id);
+        return "redirect:/comprador/citas";
+    }
 
     @GetMapping("/compras")
     public String compras(Model model, Authentication authentication){
@@ -189,7 +204,6 @@ public class CompradorController {
 
             asistenciaService.save(asistencia);
 
-            notificacionService.notificacionCitaReservada(cita);
         }
 
         return "redirect:/comprador/citas";

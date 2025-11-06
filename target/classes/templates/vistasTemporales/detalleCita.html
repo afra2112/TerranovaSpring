@@ -78,6 +78,7 @@
                 <div class="bg-white rounded-2xl shadow-lg overflow-hidden animate-fade-in-up">
                     <div class="gradient-bg p-6 text-white">
                         <div class="flex items-center justify-between">
+
                             <div class="flex items-center gap-4">
                                 <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
                                     <i class='bx bx-calendar text-4xl'></i>
@@ -87,10 +88,14 @@
                                     <p class="text-emerald-100">Información completa de tu cita</p>
                                 </div>
                             </div>
-                            <span th:if="${cita.estadoCita.name() == 'ACTIVA'}"
-                                  class="px-4 py-2 bg-white/20 border-2 border-white/30 rounded-lg text-sm font-semibold">
-                                Activa
-                            </span>
+
+                            <div th:switch="${cita.estadoCita.name()}" class="rounded-xl text-sm font-semibold border border-white/40 backdrop-blur-sm">
+                                <div th:case="'PROGRAMADA'" class="px-4 py-2 bg-white/20">Programada</div>
+                                <div th:case="'EN_CURSO'" class="px-4 py-2 bg-blue-500/30">Reprogramada</div>
+                                <div th:case="'CANCELADA'" class="px-4 py-2 bg-red-500/30">Cancelada</div>
+                                <div th:case="'FINALIZADA'" class="px-4 py-2 bg-gray-500/30">Finalizada</div>
+                                <div th:case="*">Sin estado</div>
+                            </div>
                         </div>
                     </div>
 
@@ -156,7 +161,7 @@
                 </div>
 
                 <!-- Lista de Asistentes (Solo para Vendedor) -->
-                <div th:if="${esVendedor}" class="bg-white rounded-2xl shadow-lg p-8 animate-fade-in-up" style="animation-delay: 0.1s;">
+                <div th:if="${esDueno}" class="bg-white rounded-2xl shadow-lg p-8 animate-fade-in-up" style="animation-delay: 0.1s;">
                     <h3 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
                         <i class='bx bx-user-check text-green-600 text-2xl'></i>
                         Asistentes Confirmados
@@ -186,26 +191,8 @@
                     </div>
                 </div>
 
-                <div class="space-y-3">
-                    <div th:each="asistencia : ${asistencias}"
-                         class="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-all">
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 gradient-bg rounded-full flex items-center justify-center text-white font-bold">
-                                <span th:text="${asistencia.usuario.nombres}"></span>
-                            </div>
-                            <div>
-                                <p class="font-bold text-gray-900" th:text="${asistencia.usuario.nombres + ' ' + asistencia.usuario.apellidos}"></p>
-                                <p class="text-sm text-gray-600" th:text="${asistencia.usuario.email}">email@example.com</p>
-                            </div>
-                        </div>
-                        <span class="px-3 py-1 bg-green-100 text-green-700 rounded-lg text-sm font-semibold">
-                                Confirmado
-                            </span>
-                    </div>
-                </div>
-
                 <!-- Lista de Espera (Solo para Vendedor) -->
-                <div th:if="${esVendedor}" class="bg-white rounded-2xl shadow-lg p-8 animate-fade-in-up" style="animation-delay: 0.2s;">
+                <div th:if="${esDueno}" class="bg-white rounded-2xl shadow-lg p-8 animate-fade-in-up" style="animation-delay: 0.2s;">
                     <h3 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
                         <i class='bx bx-time text-yellow-600 text-2xl'></i>
                         Lista de Espera
@@ -266,26 +253,99 @@
                     </div>
                 </div>
 
-                <!-- Acciones del Comprador -->
-                <div th:if="${!esVendedor}" class="bg-white rounded-2xl shadow-lg p-6 animate-fade-in-up" style="animation-delay: 0.1s;">
-                    <h3 class="text-lg font-bold text-gray-900 mb-4">Acciones</h3>
-                    <div class="space-y-3">
-                        <!--<form th:action="@{'/comprador/citas/cancelar/' + ${miAsistencia.idAsistencia}}"-->
-                        <form th:action="@{/comprador/citas/inscribirse/{id}(id=${cita.idCita})}"
+                <!-- Estado del comprador - Mostrar si está confirmado o en espera -->
+                <div th:if="${!esDueno and miAsistencia != null}" class="bg-white rounded-2xl shadow-lg p-6 animate-fade-in-up" style="animation-delay: 0.1s;">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        <i class='bx bx-user-circle text-green-600 text-xl'></i>
+                        Tu Estado
+                    </h3>
+
+                    <!-- Si está CONFIRMADO -->
+                    <div th:if="${miAsistencia.estado.name() == 'INSCRITO'}">
+                        <div class="p-4 bg-green-50 border-2 border-green-500 rounded-xl mb-4">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
+                                    <i class='bx bx-check text-white text-2xl'></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-green-800 text-lg">Cita Confirmada</p>
+                                    <p class="text-sm text-green-700">Tu asistencia está garantizada</p>
+                                </div>
+                            </div>
+                            <div class="bg-white/50 rounded-lg p-3">
+                                <p class="text-sm text-green-800">
+                                    <i class='bx bx-info-circle'></i>
+                                    Recuerda asistir en la fecha y hora programada. Si no puedes asistir, cancela con anticipación.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Botón de cancelar solo si está confirmado -->
+                        <form th:action="@{'/comprador/citas/cancerlar/asistencia/' + ${miAsistencia.idAsistencia}}"
                               method="post"
-                              >
-                            <input type="hidden" name="estado" value="CANCELADO">
+                              onsubmit="return confirm('¿Estás seguro de cancelar tu participación en esta cita?');">
                             <button type="submit"
                                     class="w-full bg-red-500 text-white font-bold py-3 rounded-xl hover:bg-red-600 transition-all duration-300 flex items-center justify-center gap-2">
                                 <i class='bx bx-x-circle text-xl'></i>
-                                Cancelar Participación
+                                Cancelar Mi Cita
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Si está EN_ESPERA -->
+                    <div th:if="${miAsistencia.estado.name() == 'EN_ESPERA'}">
+                        <div class="p-4 bg-yellow-50 border-2 border-yellow-500 rounded-xl mb-4">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center animate-pulse">
+                                    <i class='bx bx-time text-white text-2xl'></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-yellow-800 text-lg">En Lista de Espera</p>
+                                    <p class="text-sm text-yellow-700">Esperando disponibilidad</p>
+                                </div>
+                            </div>
+
+                            <!-- Información de posición en lista de espera -->
+                            <div class="bg-white/70 rounded-lg p-4 mb-3 space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-yellow-800 font-medium">Tu posición:</span>
+                                    <span class="text-2xl font-bold text-yellow-600" th:text="${posicionEnEspera != null ? posicionEnEspera : '?'}">?</span>
+                                </div>
+                                <div class="w-full bg-yellow-200 rounded-full h-2">
+                                    <div class="h-full bg-yellow-500 rounded-full" style="width: 60%"></div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white/50 rounded-lg p-3">
+                                <p class="text-sm text-yellow-800 mb-2">
+                                    <i class='bx bx-info-circle'></i>
+                                    <strong>¿Qué significa esto?</strong>
+                                </p>
+                                <ul class="text-xs text-yellow-700 space-y-1 ml-5 list-disc">
+                                    <li>Los cupos están llenos actualmente</li>
+                                    <li>Si alguien cancela, entrarás automáticamente</li>
+                                    <li>Te notificaremos por correo si obtienes un cupo</li>
+                                    <li>Puedes salir de la lista cuando quieras</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Botón para salir de lista de espera -->
+                        <form th:action="@{'/comprador/citas/inscribirse/' + ${miAsistencia.cita.idCita}}"
+                              method="post"
+                              onsubmit="return confirm('¿Deseas salir de la lista de espera?');">
+                            <input type="hidden" name="estado" value="CANCELADO">
+                            <button type="submit"
+                                    class="w-full bg-yellow-500 text-white font-bold py-3 rounded-xl hover:bg-yellow-600 transition-all duration-300 flex items-center justify-center gap-2">
+                                <i class='bx bx-exit text-xl'></i>
+                                Salir de Lista de Espera
                             </button>
                         </form>
                     </div>
                 </div>
 
                 <!-- Acciones del Vendedor -->
-                <div th:if="${esVendedor}" class="bg-white rounded-2xl shadow-lg p-6 animate-fade-in-up" style="animation-delay: 0.1s;">
+                <div th:if="${esDueno}" class="bg-white rounded-2xl shadow-lg p-6 animate-fade-in-up" style="animation-delay: 0.1s;">
                     <h3 class="text-lg font-bold text-gray-900 mb-4">Acciones</h3>
                     <div class="space-y-3">
                         <a th:href="@{'/vendedor/citas/reprogramar/' + ${cita.idCita}}"
@@ -294,10 +354,8 @@
                             Reprogramar Cita
                         </a>
                         <form th:action="@{'/vendedor/citas/cancelar/' + ${cita.idCita}}"
-
                               method="post"
                               onsubmit="return confirm('¿Estás seguro de cancelar esta cita? Se notificará a todos los asistentes.');">
-
                             <button type="submit"
                                     class="w-full bg-red-500 text-white font-bold py-3 rounded-xl hover:bg-red-600 transition-all duration-300 flex items-center justify-center gap-2">
                                 <i class='bx bx-x-circle text-xl'></i>

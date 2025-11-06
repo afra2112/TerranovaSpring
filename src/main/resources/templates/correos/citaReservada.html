@@ -10,9 +10,9 @@
     <div class="header">Terranova</div>
     <div class="content">
         <p>¡Hola <strong th:text="${nombreUsuario}"></strong>!</p>
-        <p th:utext="'Haz reservado una cita para el producto <b>' + ${nombreTipoNotificacion} +
+        <p th:utext="'Una persona cancelo su cupo apra la cita con el producto <b>' + ${nombreTipoNotificacion} +
                      '</b> con el vendedor <b>' + ${nombreUsuarioContrario} +
-                     '</b>. Puedes revisar en Mis Citas para más detalles.'"></p>
+                     '</b>. Tu quedaste siguiente en la lista de epera, puedes revisar en Mis Citas para más detalles.'"></p>
     </div>
     <div class="button-container">
         <a th:href="${linkAccion}" class="btn">Ir a Mis Citas</a>
