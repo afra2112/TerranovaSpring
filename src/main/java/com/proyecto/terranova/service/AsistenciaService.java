@@ -11,15 +11,16 @@ import java.util.List;
 @Service
 public interface AsistenciaService {
     List<Asistencia> encontrarPorComprador(Usuario comprador);
+
     boolean existeAsistenciaPorEstado(Usuario comprador, Long idProducto, EstadoAsistenciaEnum estadoAsistenciaEnum);
 
     List<Asistencia> encontrarAsistenciasPorCita(Long idCita);
 
     boolean existeCualquierAsistenciaPorUsuario(Usuario comprador, Long idProducto);
 
-    Asistencia crearAsistencia(Usuario usuario, Long idCita, EstadoAsistenciaEnum estadoAsistenciaEnum);
+    void crearAsistencia(Usuario usuario, Long idCita, EstadoAsistenciaEnum estadoAsistenciaEnum);
 
-    Boolean cambiarEstadoAsistencia(Usuario usuario,Long idCita , EstadoAsistenciaEnum estadoAsistenciaEnum);
+    //Boolean cambiarEstadoAsistencia(Usuario usuario,Long idCita , EstadoAsistenciaEnum estadoAsistenciaEnum);
 
     Asistencia save(Asistencia asistencia);
 }

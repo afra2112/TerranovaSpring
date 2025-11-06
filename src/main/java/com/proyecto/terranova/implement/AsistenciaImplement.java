@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class AsistenciaImplement implements AsistenciaService {
@@ -47,23 +46,29 @@ public class AsistenciaImplement implements AsistenciaService {
     }
 
     @Override
-    public Asistencia crearAsistencia(Usuario usuario, Long idCita, EstadoAsistenciaEnum estadoAsistenciaEnum) {
-        Asistencia asistencia = new Asistencia();
-        asistencia.setFechaInscripcion(LocalDateTime.now());
-        asistencia.setCita(citaRepository.findById(idCita).orElseThrow());
-        asistencia.setUsuario(usuario);
+    public void crearAsistencia(Usuario usuario, Long idCita, EstadoAsistenciaEnum estadoAsistenciaEnum) {
+
+        if(!asistenciaRepository.existsByCita_ProductoAndUsuario(citaRepository.findById(idCita).orElseThrow().getProducto(), usuario)){
+            Asistencia asistencia = new Asistencia();
+            asistencia.setFechaInscripcion(LocalDateTime.now());
+            asistencia.setCita(citaRepository.findById(idCita).orElseThrow());
+            asistencia.setUsuario(usuario);
+            asistencia.setEstado(estadoAsistenciaEnum);
+        }
+
+        Asistencia asistencia = asistenciaRepository.findByCita_IdCitaAndUsuario(idCita, usuario);
         asistencia.setEstado(estadoAsistenciaEnum);
-        return asistenciaRepository.save(asistencia);
+        asistenciaRepository.save(asistencia);
     }
 
-    @Override
+    /*@Override
     public Boolean cambiarEstadoAsistencia(Usuario usuario, Long idAsiatencia, EstadoAsistenciaEnum estadoAsistenciaEnum) {
         Asistencia asistenciaOptional = asistenciaRepository.findById(idAsiatencia).orElseThrow();
 
             asistenciaOptional.setEstado(estadoAsistenciaEnum);
             asistenciaRepository.save(asistenciaOptional);
             return true;
-    }
+    }*/
 
     @Override
     public Asistencia save(Asistencia asistencia) {

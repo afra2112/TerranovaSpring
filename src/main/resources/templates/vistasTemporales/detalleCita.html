@@ -271,7 +271,7 @@
                     <h3 class="text-lg font-bold text-gray-900 mb-4">Acciones</h3>
                     <div class="space-y-3">
                         <!--<form th:action="@{'/comprador/citas/cancelar/' + ${miAsistencia.idAsistencia}}"-->
-                        <form th:action="@{/comprador/citas/cancerlarAs/{id}(id=${IdAsistencia})}"
+                        <form th:action="@{/comprador/citas/inscribirse/{id}(id=${cita.idCita})}"
                               method="post"
                               >
                             <input type="hidden" name="estado" value="CANCELADO">

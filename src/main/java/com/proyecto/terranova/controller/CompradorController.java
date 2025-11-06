@@ -96,14 +96,14 @@ public class CompradorController {
         model.addAttribute("explorar", true);
 
         Map<String, Integer> estadisticas = compradorService.prepararIndex(usuario(authentication).getCedula());
-        List<Asistencia> citas = asistenciaService.encontrarPorComprador(usuario(authentication));
+        List<Asistencia> asistencias = asistenciaService.encontrarPorComprador(usuario(authentication));
         List<Long> favoritosIds = favoritoService.obtenerIdsFavoritosPorUsuario(usuario(authentication));
 
         model.addAttribute("favoritosIds", favoritosIds);
         model.addAllAttributes(estadisticas);
-        model.addAttribute("citasCant", citas.size());
+        model.addAttribute("asistenciasCant", asistencias.size());
         model.addAttribute("notificacionesCant", notificacionService.contarNoLeidasPorUsuario(usuario(authentication), false));
-        model.addAttribute("citas", citas.stream().limit(2).toList());
+        model.addAttribute("asistencias", asistencias.stream().limit(2).toList());
         model.addAttribute("productos", productoService.obtenerTodasMenosVendedor(usuario(authentication)).stream().limit(3).toList());
         return "comprador/principalComprador";
     }
@@ -133,12 +133,12 @@ public class CompradorController {
         return "comprador/citas";
     }
 
-    @PostMapping("/citas/cancerlarAs/{id}")
+    /*@PostMapping("/citas/cancerlarAs/{id}")
     public String cancelarCita(@PathVariable Long id, @RequestParam EstadoAsistenciaEnum estado, Authentication authentication){
         asistenciaService.cambiarEstadoAsistencia(usuario(authentication), id, estado);
         System.out.println("Este es el parametroooo---------------------"+estado);
         return "comprador/citas";
-    }
+    }*/
 
     @GetMapping("/compras")
     public String compras(Model model, Authentication authentication){

@@ -76,7 +76,7 @@
                 <div class="absolute -bottom-5 -left-5 w-32 h-32 bg-white/5 rounded-full"></div>
                 <div class="relative z-10 text-left max-w-xl">
                     <h1 class="text-4xl font-bold mb-2" th:text="'Bienvenido de nuevo, ' + ${usuario.nombres}"></h1>
-                    <p class="text-emerald-100 text-lg">Tienes <span class="font-semibold text-green-600" th:text="${notificaciones}">0</span> nuevas notificaciones y <span class="font-semibold text-green-600" th:text="${citasCant}">0</span> citas programadas</p>
+                    <p class="text-emerald-100 text-lg">Tienes <span class="font-semibold text-green-600" th:text="${notificaciones}">0</span> nuevas notificaciones y <span class="font-semibold text-green-600" th:text="${asistenciasCant}">0</span> citas programadas</p>
                 </div>
                 <form th:action="@{/productos}" method="get" class="relative z-10">
                     <button class="bg-white/25 text-white border border-white px-6 py-3 rounded-lg font-semibold shadow-md hover:bg-emerald-800 hover:border-emerald-600 transition transform duration-200 flex items-center gap-2">
@@ -154,19 +154,19 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div th:each="cita : ${citas}" class="bg-white bg-opacity-20 backdrop-blur-sm rounded-2xl p-5 border border-white border-opacity-30">
+                        <div th:each="asistencia : ${asistencias}" class="bg-white bg-opacity-20 backdrop-blur-sm rounded-2xl p-5 border border-white border-opacity-30">
                             <div class="flex items-start gap-4">
                                 <div class="w-16 h-16 bg-white bg-opacity-30 rounded-xl flex items-center justify-center flex-shrink-0">
                                     <i class='bx bxs-purchase-tag-alt text-5xl'></i>
                                 </div>
                                 <div class="flex-1">
-                                    <h3 class="font-bold text-lg mb-1" th:text="${cita.producto.nombreProducto}"></h3>
-                                    <p class="text-blue-100 text-sm mb-2 flex items-center gap-1" th:text="${cita.producto.ciudad.nombreCiudad}">
+                                    <h3 class="font-bold text-lg mb-1" th:text="${asistencia.cita.producto.nombreProducto}"></h3>
+                                    <p class="text-blue-100 text-sm mb-2 flex items-center gap-1" th:text="${asistencia.cita.producto.ciudad.nombreCiudad}">
                                         <i class='bx bx-map'></i>
                                     </p>
                                     <div class="flex items-center gap-2 text-sm">
                                         <i class='bx bx-time-five'></i>
-                                        <span th:text="${#temporals.format(cita.disponibilidad.fecha, 'EEEE, dd MMMM')} + ', ' + ${#temporals.format(cita.disponibilidad.hora, 'hh:mm a')}"></span>
+                                        <span th:text="${#temporals.format(asistencia.cita.fecha, 'EEEE, dd MMMM')} + ', ' + ${#temporals.format(asistencia.cita.horaInicio, 'hh:mm a')}"></span>
                                     </div>
                                 </div>
                             </div>
