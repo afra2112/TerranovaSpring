@@ -271,9 +271,10 @@
                     <h3 class="text-lg font-bold text-gray-900 mb-4">Acciones</h3>
                     <div class="space-y-3">
                         <!--<form th:action="@{'/comprador/citas/cancelar/' + ${miAsistencia.idAsistencia}}"-->
-                        <form th:action="@{'/comprador/citas/cancelar/'}"
+                        <form th:action="@{/comprador/citas/cancerlarAs/{id}(id=${IdAsistencia})}"
                               method="post"
-                              onsubmit="return confirm('¿Estás seguro de cancelar tu participación en esta cita?');">
+                              >
+                            <input type="hidden" name="estado" value="CANCELADO">
                             <button type="submit"
                                     class="w-full bg-red-500 text-white font-bold py-3 rounded-xl hover:bg-red-600 transition-all duration-300 flex items-center justify-center gap-2">
                                 <i class='bx bx-x-circle text-xl'></i>
@@ -293,8 +294,10 @@
                             Reprogramar Cita
                         </a>
                         <form th:action="@{'/vendedor/citas/cancelar/' + ${cita.idCita}}"
+
                               method="post"
                               onsubmit="return confirm('¿Estás seguro de cancelar esta cita? Se notificará a todos los asistentes.');">
+
                             <button type="submit"
                                     class="w-full bg-red-500 text-white font-bold py-3 rounded-xl hover:bg-red-600 transition-all duration-300 flex items-center justify-center gap-2">
                                 <i class='bx bx-x-circle text-xl'></i>

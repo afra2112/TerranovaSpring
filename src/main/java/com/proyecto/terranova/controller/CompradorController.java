@@ -4,6 +4,7 @@ import com.proyecto.terranova.config.enums.EstadoAsistenciaEnum;
 import com.proyecto.terranova.config.enums.EstadoCitaEnum;
 import com.proyecto.terranova.config.enums.RolEnum;
 import com.proyecto.terranova.entity.*;
+import com.proyecto.terranova.repository.AsistenciaRepository;
 import com.proyecto.terranova.repository.ProductoRepository;
 import com.proyecto.terranova.repository.UsuarioRepository;
 import com.proyecto.terranova.service.*;
@@ -30,6 +31,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/comprador")
@@ -64,6 +66,8 @@ public class CompradorController {
 
     @Autowired
     FavoritoService favoritoService;
+    @Autowired
+    private AsistenciaRepository asistenciaRepository;
 
     @ModelAttribute("usuario")
     public Usuario usuario(Authentication authentication){
@@ -112,16 +116,27 @@ public class CompradorController {
     }
 
     @GetMapping("/citas/detalle/{id}")
-    public String detalleCitas(@PathVariable Long id, Model model){
+    public String detalleCitas(@PathVariable Long id, Model model,Authentication authentication){
         model.addAttribute("cita", citaService.findById(id));
+
         List<Asistencia> listaAsistencia = asistenciaService.encontrarAsistenciasPorCita(id);
+        Asistencia asistencia = asistenciaRepository.findByCita_IdCitaAndUsuario(id,usuario(authentication));
+
         model.addAttribute("asistencias", listaAsistencia);
+        model.addAttribute("IdAsistencia",asistencia.getIdAsistencia());
         return "vistasTemporales/detalleCita";
     }
 
     @PostMapping("/citas/inscribirse/{id}")
     public String inscribirseACita(@PathVariable Long id, @RequestParam EstadoAsistenciaEnum estado, Authentication authentication){
         asistenciaService.crearAsistencia(usuario(authentication), id, estado);
+        return "comprador/citas";
+    }
+
+    @PostMapping("/citas/cancerlarAs/{id}")
+    public String cancelarCita(@PathVariable Long id, @RequestParam EstadoAsistenciaEnum estado, Authentication authentication){
+        asistenciaService.cambiarEstadoAsistencia(usuario(authentication), id, estado);
+        System.out.println("Este es el parametroooo---------------------"+estado);
         return "comprador/citas";
     }
 

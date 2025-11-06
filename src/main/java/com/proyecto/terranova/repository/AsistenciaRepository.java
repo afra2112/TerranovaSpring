@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface AsistenciaRepository extends JpaRepository<Asistencia, Long> {
@@ -20,4 +21,6 @@ public interface AsistenciaRepository extends JpaRepository<Asistencia, Long> {
     boolean existsByCita_ProductoAndUsuarioAndEstado(Producto citaProducto, Usuario usuario, EstadoAsistenciaEnum estadoAsistenciaEnum);
 
     boolean existsByCita_ProductoAndUsuario(Producto citaProducto, Usuario usuario);
+
+    Asistencia findByCita_IdCitaAndUsuario( Long idCita, Usuario usuario);
 }

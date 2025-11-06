@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AsistenciaImplement implements AsistenciaService {
@@ -53,6 +54,15 @@ public class AsistenciaImplement implements AsistenciaService {
         asistencia.setUsuario(usuario);
         asistencia.setEstado(estadoAsistenciaEnum);
         return asistenciaRepository.save(asistencia);
+    }
+
+    @Override
+    public Boolean cambiarEstadoAsistencia(Usuario usuario, Long idAsiatencia, EstadoAsistenciaEnum estadoAsistenciaEnum) {
+        Asistencia asistenciaOptional = asistenciaRepository.findById(idAsiatencia).orElseThrow();
+
+            asistenciaOptional.setEstado(estadoAsistenciaEnum);
+            asistenciaRepository.save(asistenciaOptional);
+            return true;
     }
 
     @Override

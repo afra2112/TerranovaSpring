@@ -19,5 +19,7 @@ public interface AsistenciaService {
 
     Asistencia crearAsistencia(Usuario usuario, Long idCita, EstadoAsistenciaEnum estadoAsistenciaEnum);
 
+    Boolean cambiarEstadoAsistencia(Usuario usuario,Long idCita , EstadoAsistenciaEnum estadoAsistenciaEnum);
+
     Asistencia save(Asistencia asistencia);
 }
