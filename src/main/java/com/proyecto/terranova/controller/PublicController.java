@@ -1,5 +1,6 @@
 package com.proyecto.terranova.controller;
 
+import com.proyecto.terranova.config.enums.EstadoAsistenciaEnum;
 import com.proyecto.terranova.config.enums.RolEnum;
 import com.proyecto.terranova.dto.UsuarioDTO;
 import com.proyecto.terranova.entity.*;
@@ -103,10 +104,12 @@ public class PublicController {
 
             List<Long> favoritosIds = favoritoService.obtenerIdsFavoritosPorUsuario(usuario);
 
+            model.addAttribute("usuarioInscrito", asistenciaService.existeAsistenciaPorEstado(usuario, id, EstadoAsistenciaEnum.INSCRITO));
+            model.addAttribute("usuarioEnEspera", asistenciaService.existeAsistenciaPorEstado(usuario, id, EstadoAsistenciaEnum.EN_ESPERA));
             model.addAttribute("favoritosIds", favoritosIds);
             model.addAttribute("nombreMostrar", usuario.getNombres() + ". " + usuario.getApellidos().charAt(0));
             model.addAttribute("esVendedor", esVendedor);
-            yaTieneCita = asistenciaService.yaTieneAsistencia(usuario, id);
+            yaTieneCita = asistenciaService.existeCualquierAsistenciaPorUsuario(usuario, id);
         }
 
         Producto producto = productoRepository.findById(id).orElseThrow(() -> new RuntimeException("producto no encontrado"));

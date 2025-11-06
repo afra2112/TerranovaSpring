@@ -114,7 +114,15 @@ public class CompradorController {
     @GetMapping("/citas/detalle/{id}")
     public String detalleCitas(@PathVariable Long id, Model model){
         model.addAttribute("cita", citaService.findById(id));
+        List<Asistencia> listaAsistencia = asistenciaService.encontrarAsistenciasPorCita(id);
+        model.addAttribute("asistencias", listaAsistencia);
         return "vistasTemporales/detalleCita";
+    }
+
+    @PostMapping("/citas/inscribirse/{id}")
+    public String inscribirseACita(@PathVariable Long id, @RequestParam EstadoAsistenciaEnum estado, Authentication authentication){
+        asistenciaService.crearAsistencia(usuario(authentication), id, estado);
+        return "comprador/citas";
     }
 
     @GetMapping("/compras")
@@ -155,7 +163,7 @@ public class CompradorController {
         Usuario usuario = usuario(authentication);
         Cita cita = citaService.findById(idCita);
 
-        if (!asistenciaService.yaTieneAsistencia(usuario, cita.getProducto().getIdProducto())){
+        if (!asistenciaService.existeCualquierAsistenciaPorUsuario(usuario, cita.getProducto().getIdProducto())){
 
             Asistencia asistencia = new Asistencia();
 

@@ -1,5 +1,6 @@
 package com.proyecto.terranova.entity;
 
+import com.proyecto.terranova.config.enums.EstadoAsistenciaEnum;
 import com.proyecto.terranova.config.enums.EstadoCitaEnum;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
@@ -30,8 +31,10 @@ public class Cita {
 
     private boolean activo = true;
 
+    @Transient
     private int ocupados;
 
+    @Transient
     private int disponibles;
 
     private LocalDate fecha;
@@ -66,4 +69,16 @@ public class Cita {
     private LocalDateTime fechaHabilitarReprogramacion;
 
     private int numReprogramaciones = 0;
+
+    @Transient
+    public int getOcupados() {
+        return (int) asistencias.stream()
+                .filter(a -> a.getEstado() == EstadoAsistenciaEnum.INSCRITO)
+                .count();
+    }
+
+    @Transient
+    public int getDisponibles() {
+        return getCupoMaximo() - getOcupados();
+    }
 }

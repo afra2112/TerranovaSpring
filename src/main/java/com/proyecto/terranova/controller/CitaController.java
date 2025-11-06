@@ -60,6 +60,8 @@ public class CitaController {
         cita.setProducto(productoService.findById(idProducto));
         cita.setCupoMaximo(cupoMaximo);
         cita.setDescripcion(descripcion);
+        cita.setOcupados(cita.getAsistencias().size());
+        cita.setDisponibles(cita.getCupoMaximo() - cita.getOcupados());
 
         citaService.save(cita);
 
