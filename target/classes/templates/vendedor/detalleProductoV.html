@@ -265,13 +265,19 @@
                 </div>
 
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="imageGallery">
+
                     <div class="relative group" th:each="img : ${prod.imagenes}">
                         <img th:src="${img.nombreArchivo}" alt="Imagen del producto" class="w-full h-48 object-cover rounded-xl">
-                        <button onclick="removeImage(this)" class="absolute bottom-2 right-2 bg-red-600 text-white px-3 py-2 rounded-full font-medium hover:bg-red-700 transition-colors hidden">
-                            Eliminar
-                        </button>
+                        <form th:action="@{/imagenes/EliminarImgs/{idProducto}(idProducto=${prod.idProducto})}" method="post">
+                            <input name="idImagen" type="hidden" th:value="${img.idImagen}">
+                            <button type="submit"
+                                    class="absolute bottom-2 right-2 bg-red-600 text-white px-3 py-2 rounded-full font-medium hover:bg-red-700 transition-colors hidden">
+                                Eliminar
+                            </button>
+                        </form>
                     </div>
                 </div>
+
                 <button id="addImageBtn" class="bg-[#388e3c] text-white px-6 py-2 rounded-xl font-medium hover:bg-[#2e7d32] transition-colors hidden">
                     Agregar Imagen
                 </button>
@@ -331,14 +337,14 @@
             <button onclick="cancelEdit()" class="px-6 py-3 text-gray-600 hover:text-gray-800 font-medium transition-colors border border-gray-300 rounded-xl hover:bg-gray-50">
                 Cancelar
             </button>
-            <button type="submit" form="productForm" class="bg-[#388e3c] text-white px-8 py-3 rounded-xl font-semibold hover:bg-[#2e7d32] transition-all">
+            <button type="submit"  class="bg-[#388e3c] text-white px-8 py-3 rounded-xl font-semibold hover:bg-[#2e7d32] transition-all">
                 Guardar Cambios
             </button>
         </div>
     </div>
 </div>
 
-<div th:replace="fragments/detalleProducto :: detalleProducto"></div>
+
 
 <!-- Reescribí completamente el JavaScript para manejar la edición inline -->
 <script>

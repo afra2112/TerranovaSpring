@@ -25,5 +25,10 @@ public class ImagenController {
         return "redirect:/vendedor/dashboard?imagenes=" + idProducto;
     }
 
+    @PostMapping("/EliminarImgs/{idProducto}")
+    public String eliminarImagenes(@PathVariable Long idProducto , @RequestParam("idImagen") Long idImagen){
+        imagenService.eliminarImagen(idImagen);
+        return "redirect:/vendedor/productos/Detalle/" + idProducto;
+    }
 
 }

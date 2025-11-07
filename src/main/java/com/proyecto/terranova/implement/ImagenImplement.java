@@ -103,7 +103,7 @@ public class ImagenImplement implements ImagenService {
     }
 
     @Override
-    public boolean delete(Long id) {
+    public boolean eliminarImagen(Long id) {
         if(!repository.existsById(id)){
                return false;
         }
