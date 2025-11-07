@@ -1,5 +1,6 @@
 package com.proyecto.terranova.service;
 
+import com.proyecto.terranova.config.enums.EstadoCitaEnum;
 import com.proyecto.terranova.entity.Cita;
 import com.proyecto.terranova.repository.CitaRepository;
 import jakarta.mail.MessagingException;
@@ -21,18 +22,27 @@ public class NotificacionRecordatorio {
     NotificacionService notificacionService;
 
 
-    @Scheduled(fixedRate = 5000)
-    public void revisarTiempo() throws MessagingException, IOException {
-        List<Cita> citasBloqueadas = citaRepository.findByUltimaReprogramacionBloqueadaNotNull();
+    @Scheduled(cron = "0 */1 * * * *")
+    public void actualizarEstadosCitas() {
 
-        for (Cita cita : citasBloqueadas){
-            if(cita.getFechaHabilitarReprogramacion().isBefore(LocalDateTime.now())){
+        LocalDateTime ahora = LocalDateTime.now();
 
-                notificacionService.notificacionReprogramarCitaHabilitado(cita);
+        List<Cita> programadas = citaRepository.findByEstadoCita(EstadoCitaEnum.PROGRAMADA);
+        for (Cita cita : programadas) {
+            LocalDateTime inicio = LocalDateTime.of(cita.getFecha(), cita.getHoraInicio());
+            LocalDateTime fin = LocalDateTime.of(cita.getFecha(), cita.getHoraFin());
 
-                cita.setNumReprogramaciones(0);
-                cita.setUltimaReprogramacionBloqueada(null);
-                cita.setFechaHabilitarReprogramacion(null);
+            if (!ahora.isBefore(inicio) && !ahora.isAfter(fin)) {
+                cita.setEstadoCita(EstadoCitaEnum.EN_CURSO);
+                citaRepository.save(cita);
+            }
+        }
+
+        List<Cita> enProceso = citaRepository.findByEstadoCita(EstadoCitaEnum.EN_CURSO);
+        for (Cita cita : enProceso) {
+            LocalDateTime fin = LocalDateTime.of(cita.getFecha(), cita.getHoraFin());
+            if (ahora.isAfter(fin)) {
+                cita.setEstadoCita(EstadoCitaEnum.FINALIZADA);
                 citaRepository.save(cita);
             }
         }

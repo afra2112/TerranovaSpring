@@ -27,4 +27,6 @@ public class Asistencia {
     private EstadoAsistenciaEnum estado;
 
     private LocalDateTime fechaInscripcion;
+
+    private boolean asistio;
 }

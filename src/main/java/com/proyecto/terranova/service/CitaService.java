@@ -1,6 +1,9 @@
 package com.proyecto.terranova.service;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 
 import com.proyecto.terranova.config.enums.EstadoCitaEnum;
 import com.proyecto.terranova.dto.CitaDTO;
@@ -22,4 +25,7 @@ public interface CitaService {
     long contarPorVendedor(Usuario vendedor);
     void cambiarEstado(Cita cita, EstadoCitaEnum estado);
     void borrarCita(Long idCita);
+    void reprogramarCita(Long idCita, LocalDate nuevaFecha, LocalTime nuevaHoraInicio, LocalTime nuevaHoraFin);
+    void cancelarCita(Long idCita);
+    void finalizarCita(Long idCita, Map<String, String> params);
 }

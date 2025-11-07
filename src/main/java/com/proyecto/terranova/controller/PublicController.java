@@ -1,9 +1,11 @@
 package com.proyecto.terranova.controller;
 
 import com.proyecto.terranova.config.enums.EstadoAsistenciaEnum;
+import com.proyecto.terranova.config.enums.EstadoCitaEnum;
 import com.proyecto.terranova.config.enums.RolEnum;
 import com.proyecto.terranova.dto.UsuarioDTO;
 import com.proyecto.terranova.entity.*;
+import com.proyecto.terranova.repository.CitaRepository;
 import com.proyecto.terranova.repository.CiudadRepository;
 import com.proyecto.terranova.repository.ProductoRepository;
 import com.proyecto.terranova.service.*;
@@ -40,6 +42,9 @@ public class PublicController {
 
     @Autowired
     FavoritoService favoritoService;
+
+    @Autowired
+    CitaRepository citaRepository;
 
     @GetMapping("/login")
     public String login(Model model){
@@ -121,6 +126,7 @@ public class PublicController {
         model.addAttribute("yaTieneCita", yaTieneCita);
         model.addAttribute("usuario", usuario);
         model.addAttribute("producto", producto);
+        model.addAttribute("citasDisponibles", citaRepository.findByProductoAndEstadoCita(producto, EstadoCitaEnum.PROGRAMADA));
 
         return "detalleProducto";
     }

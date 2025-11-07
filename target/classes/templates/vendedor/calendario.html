@@ -745,7 +745,8 @@
                 openDetalleDisponibilidadModal(info.event.extendedProps);
             },
             eventContent: function(arg) {
-                const inscritos = arg.event.extendedProps.asistenciasDTO?.filter(a => a.estado === 'INSCRITO').length || 0;
+                const asistencias = arg.event.extendedProps.asistenciasDTO || [];
+                const inscritos = asistencias.filter(a => a.estado === 'INSCRITO').length;
                 const cupoMaximo = arg.event.extendedProps.cupoMaximo || 0;
 
                 return {

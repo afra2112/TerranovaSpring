@@ -480,13 +480,13 @@
                             <i class='bx bx-calendar-check text-primary text-3xl'></i>
                             <div>
                                 <p class="text-sm text-gray-600 font-medium">Total de citas</p>
-                                <p class="text-3xl font-bold text-green-600" th:text="${producto.citas.size()}">0</p>
+                                <p class="text-3xl font-bold text-green-600" th:text="${citasDisponibles.size()}">0</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div th:if="${#lists.isEmpty(producto.citas)}" class="text-center py-16">
+                <div th:if="${#lists.isEmpty(citasDisponibles)}" class="text-center py-16">
                     <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
                         <i class='bx bx-calendar-x text-gray-400 text-6xl'></i>
                     </div>
@@ -496,7 +496,7 @@
 
                 <!-- Grid de citas -->
                 <div th:if="${!#lists.isEmpty(producto.citas)}" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div th:each="cita : ${producto.citas}" class="cita-card bg-gradient-to-br from-white to-gray-50 rounded-2xl overflow-hidden">
+                    <div th:each="cita : ${citasDisponibles}" class="cita-card bg-gradient-to-br from-white to-gray-50 rounded-2xl overflow-hidden">
                         <div class="p-6">
                             <!-- Header con fecha y estado -->
                             <div class="flex items-start justify-between mb-5">

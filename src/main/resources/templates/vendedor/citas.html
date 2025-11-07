@@ -307,22 +307,18 @@
                                 <!-- Botones según estado -->
                                 <div th:if="${cita.estadoCita.toString() == 'PROGRAMADA'}" class="flex flex-wrap gap-3 w-full">
                                     <a th:href="@{/vendedor/citas/detalle/{id}(id=${cita.idCita})}">
-                                    <button class="flex-1 min-w-[160px] gradient-bg text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2">
-                                        <i class='bx bx-play-circle'></i> Ver detalle
-                                    </button>
+                                        <button class="flex-1 min-w-[160px] gradient-bg text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2">
+                                            <i class='bx bx-play-circle'></i> Ver detalle
+                                        </button>
                                     </a>
-                                    <button class="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-all">
-                                        <i class='bx bx-edit'></i> Reprogramar
-                                    </button>
-                                    <button class="px-6 py-3 bg-white text-red-600 rounded-xl font-medium hover:bg-red-50 transition-all border border-red-200">
-                                        <i class='bx bx-x'></i> Cancelar
-                                    </button>
                                 </div>
 
                                 <div th:if="${cita.estadoCita.toString() == 'EN_CURSO'}" class="flex flex-wrap gap-3 w-full">
-                                    <button class="flex-1 min-w-[160px] gradient-bg text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2">
-                                        <i class='bx bx-check-circle'></i> Finalizar Cita
-                                    </button>
+                                    <a th:href="@{/vendedor/citas/detalle/{id}(id=${cita.idCita})}">
+                                        <button class="flex-1 min-w-[160px] gradient-bg text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2">
+                                            <i class='bx bx-play-circle'></i> Ver detalle
+                                        </button>
+                                    </a>
                                 </div>
 
                                 <div th:if="${cita.estadoCita.toString() == 'FINALIZADA'}" class="flex flex-wrap gap-3 w-full">
@@ -403,6 +399,33 @@
                 });
             });
         });
+    });
+
+    // User dropdown
+    function toggleUserDropdown() {
+        const dropdown = document.getElementById('userDropdown');
+        const arrow = document.getElementById('dropdownArrow');
+
+        if (dropdown.classList.contains('opacity-0')) {
+            dropdown.classList.remove('opacity-0', 'invisible', 'scale-95');
+            dropdown.classList.add('opacity-100', 'visible', 'scale-100');
+            arrow.style.transform = 'rotate(180deg)';
+        } else {
+            dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
+            dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
+            arrow.style.transform = 'rotate(0deg)';
+        }
+    }
+
+    document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('userDropdown');
+        const userButton = event.target.closest('[onclick="toggleUserDropdown()"]');
+
+        if (!userButton && !dropdown.contains(event.target)) {
+            dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
+            dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
+            document.getElementById('dropdownArrow').style.transform = 'rotate(0deg)';
+        }
     });
 </script>
 

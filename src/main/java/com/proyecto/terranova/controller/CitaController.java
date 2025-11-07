@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/vendedor/citas")
@@ -71,44 +72,6 @@ public class CitaController {
         return "redirect:/vendedor/productos?idProducto=" + idProducto;
     }
 
-    @GetMapping("/eliminar-cita")
-    public String eliminarDisponibilidad(
-            @RequestParam(name = "idDisponibilidad") Long idCita,
-            @RequestParam(name = "idProducto") Long idProducto,
-            @RequestParam(name = "vieneDe", required = false) String vieneDe
-    ){
-        citaService.delete(idCita);
-
-        if(vieneDe != null && vieneDe.equals("calendario")){
-            return "redirect:/vendedor/mi-calendario";
-        }
-        return "redirect:/vendedor/productos?idProducto=" + idProducto;
-    }
-
-    @PostMapping("/cancelar-cita")
-    public String cancelarCita(@RequestParam(name = "idCita") Long idCita, Authentication authentication) throws MessagingException, IOException {
-        Usuario usuario = usuario(authentication);
-        Cita cita = citaService.findById(idCita);
-        cita.setEstadoCita(EstadoCitaEnum.CANCELADA);
-        citaService.save(cita);
-
-        notificacionService.notificacionCitaCancelada(cita, usuario);
-
-        return "redirect:/vendedor/citas";
-    }
-
-    @PostMapping("/finalizar-cita")
-    public String finalizarCita(@RequestParam(name = "idCita") Long idCita, Authentication authentication) throws MessagingException, IOException {
-        Usuario usuario = usuario(authentication);
-        Cita cita = citaService.findById(idCita);
-        cita.setEstadoCita(EstadoCitaEnum.FINALIZADA);
-        citaService.save(cita);
-
-        notificacionService.notificacionCitaFinalizada(cita);
-
-        return "redirect:/vendedor/citas";
-    }
-
     @PostMapping("/borrar-cita")
     public String borrarCita(@RequestParam(name = "idCita") Long idCita, Authentication authentication){
         Usuario usuario = usuario(authentication);
@@ -117,22 +80,26 @@ public class CitaController {
         return "redirect:/vendedor/citas";
     }
 
-    @PostMapping("/reprogramar-cita")
+    @PostMapping("/reprogramar-cita/{id}")
     public String reprogramarCita(
-            @RequestParam(name = "idCita") Long idCita,
+            @PathVariable Long id,
             @RequestParam LocalDate fecha,
             @RequestParam LocalTime horaInicio,
-            @RequestParam LocalTime horaFin,
-            Authentication authentication
+            @RequestParam LocalTime horaFin
             ) throws MessagingException, IOException {
-        Cita cita = citaService.findById(idCita);
-        cita.setHoraInicio(horaInicio);
-        cita.setHoraFin(horaFin);
-        cita.setFecha(fecha);
-        citaService.save(cita);
+        citaService.reprogramarCita(id, fecha, horaInicio, horaFin);
+        return "redirect:/vendedor/citas";
+    }
 
-        notificacionService.notificacionCitaReprogramada(cita, usuario(authentication));
+    @PostMapping("/cancelar-cita/{id}")
+    public String cancelarCita(@PathVariable Long id) throws MessagingException, IOException {
+        citaService.cancelarCita(id);
+        return "redirect:/vendedor/citas";
+    }
 
+    @PostMapping("/finalizar-cita/{idCita}")
+    public String finalizarCita(@PathVariable Long idCita, @RequestParam Map<String, String> params) throws MessagingException, IOException {
+        citaService.finalizarCita(idCita, params);
         return "redirect:/vendedor/citas";
     }
 }

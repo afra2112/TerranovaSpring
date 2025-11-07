@@ -1,6 +1,7 @@
 package com.proyecto.terranova.implement;
 
 import com.proyecto.terranova.config.enums.EstadoAsistenciaEnum;
+import com.proyecto.terranova.config.enums.EstadoCitaEnum;
 import com.proyecto.terranova.entity.Asistencia;
 import com.proyecto.terranova.entity.Cita;
 import com.proyecto.terranova.entity.Usuario;
@@ -15,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -75,8 +78,17 @@ public class AsistenciaImplement implements AsistenciaService {
             asistenciaRepository.save(asistencia);
         }else {
             Asistencia asistencia = asistenciaRepository.findByCita_IdCitaAndUsuario(idCita, usuario);
-            asistencia.setEstado(estadoAsistenciaEnum);
-            asistenciaRepository.save(asistencia);
+            if (asistencia == null){
+                Asistencia asistenciaConNuevaCita = new Asistencia();
+                asistenciaConNuevaCita.setFechaInscripcion(LocalDateTime.now());
+                asistenciaConNuevaCita.setCita(citaRepository.findById(idCita).orElseThrow());
+                asistenciaConNuevaCita.setUsuario(usuario);
+                asistenciaConNuevaCita.setEstado(estadoAsistenciaEnum);
+                asistenciaRepository.save(asistenciaConNuevaCita);
+            } else {
+                asistencia.setEstado(estadoAsistenciaEnum);
+                asistenciaRepository.save(asistencia);
+            }
         }
     }
 
