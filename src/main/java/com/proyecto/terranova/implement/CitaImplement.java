@@ -164,8 +164,12 @@ public class CitaImplement implements CitaService {
 
             if (asistio) {
                 asistencia.getUsuario().setPuntuacionUsuario(puntuacionUsuario + 5);
+                asistencia.setEstado(EstadoAsistenciaEnum.ASISTIO);
+                asistenciaRepository.save(asistencia);
             } else {
                 asistencia.getUsuario().setPuntuacionUsuario(puntuacionUsuario - 7);
+                asistencia.setEstado(EstadoAsistenciaEnum.NO_ASISTIO);
+                asistenciaRepository.save(asistencia);
             }
         }
 

@@ -485,7 +485,7 @@
                         </div>
 
                         <!-- Botón de cancelar solo si está confirmado y la cita no está cancelada ni finalizada -->
-                        <form th:action="@{'/comprador/citas/cancelar/asistencia/' + ${miAsistencia.idAsistencia}}"
+                        <form th:action="@{'/comprador/citas/cancelar-cita/' + ${miAsistencia.idAsistencia}}"
                               method="post"
                               onsubmit="return confirm('¿Estás seguro de cancelar tu participación en esta cita?');">
                             <button type="submit"
@@ -742,7 +742,7 @@
                 </button>
             </div>
 
-            <form th:action="@{'/vendedor/citas/finalizar/' + ${cita.idCita}}" method="post" id="finalizarForm">
+            <form th:action="@{'/vendedor/citas/finalizar-cita/' + ${cita.idCita}}" method="post" id="finalizarForm">
                 <div class="space-y-4">
                     <div class="bg-emerald-50 border-l-4 border-emerald-500 rounded-lg p-4 mb-4">
                         <div class="flex items-start gap-3">
@@ -921,6 +921,34 @@
                 updateCheckboxLabel(this);
             });
         });
+    });
+
+    function toggleUserDropdown() {
+        const dropdown = document.getElementById('userDropdown');
+        const arrow = document.getElementById('dropdownArrow');
+
+        if (dropdown.classList.contains('opacity-0')) {
+
+            dropdown.classList.remove('opacity-0', 'invisible', 'scale-95');
+            dropdown.classList.add('opacity-100', 'visible', 'scale-100');
+            arrow.style.transform = 'rotate(180deg)';
+        } else {
+            // Ocultar dropdown
+            dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
+            dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
+            arrow.style.transform = 'rotate(0deg)';
+        }
+    }
+
+    document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('userDropdown');
+        const userButton = event.target.closest('[onclick="toggleUserDropdown()"]');
+
+        if (!userButton && !dropdown.contains(event.target)) {
+            dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
+            dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
+            document.getElementById('dropdownArrow').style.transform = 'rotate(0deg)';
+        }
     });
 </script>
 </body>

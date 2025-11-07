@@ -110,16 +110,24 @@ public class CompradorController {
         Usuario usuario = usuario(authentication);
 
         List<Asistencia> asistenciasProximas = asistenciaService.encontrarPorCompradorYEstado(usuario, EstadoAsistenciaEnum.INSCRITO);
+        asistenciasProximas.removeIf(asistencia -> asistencia.getCita().getEstadoCita() == EstadoCitaEnum.FINALIZADA);
         List<Asistencia> asistenciasEnEspera = asistenciaService.encontrarPorCompradorYEstado(usuario, EstadoAsistenciaEnum.EN_ESPERA);
+        List<Asistencia> asistenciasPasadasAsistidas = asistenciaService.encontrarPorCompradorYEstado(usuario, EstadoAsistenciaEnum.ASISTIO);
+        List<Asistencia> asistenciasPasadasNoAsistidas = asistenciaService.encontrarPorCompradorYEstado(usuario, EstadoAsistenciaEnum.NO_ASISTIO);
 
         model.addAttribute("posicionCitas", true);
         model.addAttribute("asistenciasProximas", asistenciasProximas);
         model.addAttribute("asistenciasEnEspera", asistenciasEnEspera);
-        model.addAttribute("asistenciasPasadas", asistenciaService.encontrarPorCompradorYEstado(usuario, EstadoAsistenciaEnum.ASISTIO));
         List<Asistencia> asistenciasProximasYEnEspera = new ArrayList<>();
         asistenciasProximasYEnEspera.addAll(asistenciasProximas);
         asistenciasProximasYEnEspera.addAll(asistenciasEnEspera);
+        asistenciasProximasYEnEspera.removeIf(asistencia -> asistencia.getCita().getEstadoCita() == EstadoCitaEnum.FINALIZADA);
         asistenciasProximasYEnEspera.sort(Comparator.comparing(a -> a.getCita().getFecha()));
+        List<Asistencia> asistenciasPasadasAsistidasYNoAsistidas = new ArrayList<>();
+        asistenciasPasadasAsistidasYNoAsistidas.addAll(asistenciasPasadasAsistidas);
+        asistenciasPasadasAsistidasYNoAsistidas.addAll(asistenciasPasadasNoAsistidas);
+        asistenciasPasadasAsistidasYNoAsistidas.sort(Comparator.comparing(a -> a.getCita().getFecha()));
+        model.addAttribute("asistenciasPasadasAsistidasYNoAsistidas", asistenciasPasadasAsistidasYNoAsistidas);
         model.addAttribute("asistenciasProximasYEnEspera", asistenciasProximasYEnEspera);
         return "comprador/citas";
     }
