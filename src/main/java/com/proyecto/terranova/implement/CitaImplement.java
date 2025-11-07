@@ -1,6 +1,8 @@
 package com.proyecto.terranova.implement;
 
 import com.proyecto.terranova.config.enums.EstadoCitaEnum;
+import com.proyecto.terranova.dto.AsistenciaDTO;
+import com.proyecto.terranova.dto.ProductoDTO;
 import com.proyecto.terranova.entity.Asistencia;
 import com.proyecto.terranova.entity.Usuario;
 import com.proyecto.terranova.repository.AsistenciaRepository;
@@ -64,6 +66,11 @@ public class CitaImplement implements CitaService {
     }
 
     @Override
+    public List<Cita> encontrarPorProducto(Long idProducto) {
+        return repository.findByProducto(productoRepository.findById(idProducto).orElseThrow());
+    }
+
+    @Override
     public List<CitaDTO> encontrarPorVendedorParaCalendario(Usuario vendedor, boolean activo) {
         List<Cita> citas = repository.findByProducto_VendedorAndActivo(vendedor, activo);
         List<CitaDTO> citasDto = new ArrayList<>();
@@ -77,8 +84,8 @@ public class CitaImplement implements CitaService {
             citaDTO.setHoraFin(cita.getHoraFin());
             citaDTO.setNombreProducto(cita.getProducto().getNombreProducto());
             citaDTO.setUbicacion(cita.getProducto().getCiudad().getNombreCiudad());
-            citaDTO.setIdProducto(cita.getProducto().getIdProducto());
-            citaDTO.setIdsAsistencias(cita.getAsistencias().stream().map(Asistencia::getIdAsistencia).toList());
+            citaDTO.setProductoDTO(modelMapper.map(cita.getProducto(), ProductoDTO.class));
+            citaDTO.setAsistenciasDTO(cita.getAsistencias().stream().map(asistencia -> modelMapper.map(asistencia, AsistenciaDTO.class)).toList());
 
             citasDto.add(citaDTO);
         }
@@ -111,8 +118,8 @@ public class CitaImplement implements CitaService {
     }
 
     @Override
-    public long count() {
-        return repository.count();
+    public long contarPorVendedor(Usuario vendedor) {
+        return repository.countByProducto_Vendedor(vendedor);
     }
 
     @Override

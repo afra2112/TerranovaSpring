@@ -26,6 +26,8 @@ public interface AsistenciaRepository extends JpaRepository<Asistencia, Long> {
 
     List<Asistencia> findByCita(Cita cita);
 
+    List<Asistencia> findByCitaAndEstado(Cita cita, EstadoAsistenciaEnum estadoAsistenciaEnum);
+
     boolean existsByCita_ProductoAndUsuarioAndEstado(Producto citaProducto, Usuario usuario, EstadoAsistenciaEnum estadoAsistenciaEnum);
 
     boolean existsByCita_ProductoAndUsuario(Producto citaProducto, Usuario usuario);

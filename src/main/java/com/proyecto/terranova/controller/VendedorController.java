@@ -1,8 +1,10 @@
 package com.proyecto.terranova.controller;
 
+import com.proyecto.terranova.config.enums.EstadoAsistenciaEnum;
 import com.proyecto.terranova.config.enums.EstadoCitaEnum;
 import com.proyecto.terranova.config.enums.RolEnum;
 import com.proyecto.terranova.entity.*;
+import com.proyecto.terranova.repository.AsistenciaRepository;
 import com.proyecto.terranova.repository.CiudadRepository;
 import com.proyecto.terranova.service.*;
 import jakarta.mail.MessagingException;
@@ -49,6 +51,12 @@ public class VendedorController {
 
     @Autowired
     ComprobanteService comprobanteService;
+
+    @Autowired
+    AsistenciaService asistenciaService;
+
+    @Autowired
+    AsistenciaRepository asistenciaRepository;
 
     @Autowired
     CiudadRepository ciudadRepository;
@@ -182,21 +190,31 @@ public class VendedorController {
 
         model.addAttribute("posicionProductos", true);
         model.addAttribute("productos", productos);
-
-        long numDisponibilidades = 0;
-
-        for(Producto producto : productos){
-            long citas = producto.getCitas().stream().count();
-            numDisponibilidades += citas;
-        }
-
-        model.addAttribute("disponibilidades", numDisponibilidades);
+        model.addAttribute("citasCant", citaService.encontrarPorVendedor(usuario(authentication), true).size());
 
         if(idProducto != null){
             model.addAttribute("producto", productoService.findById(idProducto));
             model.addAttribute("mostrarModalDisponibilidades", true);
+            model.addAttribute("citas", citaService.encontrarPorProducto(idProducto));
             return "vendedor/productos";
         }
         return "vendedor/productos";
+    }
+
+    @GetMapping("/citas/detalle/{id}")
+    public String detalleCitas(@PathVariable Long id, Model model,Authentication authentication){
+        model.addAttribute("cita", citaService.findById(id));
+
+        Asistencia asistencia = asistenciaRepository.findByCita_IdCitaAndUsuario(id,usuario(authentication));
+
+        Integer posicion = null;
+        if(asistencia != null && asistencia.getEstado() == EstadoAsistenciaEnum.EN_ESPERA){
+            posicion = asistenciaService.obtenerPosicionDeUsuarioEnListaDeEspera(id, usuario(authentication).getCedula());
+        }
+
+        model.addAttribute("esDueno", true);
+        model.addAttribute("asistentesConfirmados", asistenciaService.encontrarAsistenciasPorCitaYEstadoAsistencia(id, EstadoAsistenciaEnum.INSCRITO));
+        model.addAttribute("asistentesEspera", asistenciaService.encontrarAsistenciasPorCitaYEstadoAsistencia(id, EstadoAsistenciaEnum.EN_ESPERA));
+        return "vistasTemporales/detalleCita";
     }
 }

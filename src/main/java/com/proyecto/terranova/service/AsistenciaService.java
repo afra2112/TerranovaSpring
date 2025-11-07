@@ -20,6 +20,8 @@ public interface AsistenciaService {
 
     List<Asistencia> encontrarAsistenciasPorCita(Long idCita);
 
+    List<Asistencia> encontrarAsistenciasPorCitaYEstadoAsistencia(Long idCita, EstadoAsistenciaEnum estadoAsistenciaEnum);
+
     boolean existeCualquierAsistenciaPorUsuario(Usuario comprador, Long idProducto);
 
     void crearAsistencia(Usuario usuario, Long idCita, EstadoAsistenciaEnum estadoAsistenciaEnum);

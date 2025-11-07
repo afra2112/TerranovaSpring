@@ -101,9 +101,9 @@
                     <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
                         <i class='bx bx-calendar text-purple-600 text-xl'></i>
                     </div>
-                    <span class="text-2xl font-bold text-gray-900" th:text="${disponibilidades}"></span>
+                    <span class="text-2xl font-bold text-gray-900" th:text="${citasCant}"></span>
                 </div>
-                <h3 class="font-medium text-gray-600 mb-1">Disponibilidades</h3>
+                <h3 class="font-medium text-gray-600 mb-1">Citas</h3>
             </div>
         </div>
 
@@ -163,7 +163,7 @@
                         <a th:href="@{/vendedor/productos/disponibilidades/{id}(id=${prod.idProducto})}"
                            class="flex-1 gradient-bg text-white py-2 px-4 rounded-xl text-sm font-medium hover:shadow-lg transition-all flex items-center justify-center">
                             <i class='bx bx-calendar mr-1'></i>
-                            Disponibilidades
+                            Gestionar Citas
                         </a>
 
                         <!--onclick="openEditModal('1')"-->
@@ -256,7 +256,7 @@
 <div th:if="${mostrarModalDisponibilidades}" id="availabilityModal" class="fixed inset-0 modal-backdrop flex items-center justify-center z-50">
     <div class="modal-content rounded-3xl p-8 max-w-4xl w-full mx-4 shadow-2xl max-h-[90vh] overflow-y-auto">
         <div class="flex items-center justify-between mb-6">
-            <h3 class="text-2xl font-bold text-gray-800">Gestionar Disponibilidades</h3>
+            <h3 class="text-2xl font-bold text-gray-800">Citas</h3>
             <button onclick="closeAvailabilityModal()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors">
                 <i class='bx bx-x text-gray-600'></i>
             </button>
@@ -272,23 +272,23 @@
                 </div>
 
                 <div class="space-y-3">
-                    <div th:each="disponibilidad : ${producto.disponibilidades}" class="availability-slot bg-gray-50 rounded-xl p-4 border border-gray-200 cursor-pointer">
+                    <div th:each="cita : ${citas}" class="availability-slot bg-gray-50 rounded-xl p-4 border border-gray-200 cursor-pointer">
                         <div class="flex items-center justify-between">
                             <div>
                                 <div class="flex items-center space-x-2 mb-1">
                                     <i class='bx bx-calendar text-green-600'></i>
-                                    <span class="font-medium text-gray-800" th:text="${#strings.capitalize(#temporals.format(disponibilidad.fecha, 'EEEE d MMMM', T(java.util.Locale).forLanguageTag('es-ES')))}"></span>
+                                    <span class="font-medium text-gray-800" th:text="${#strings.capitalize(#temporals.format(cita.fecha, 'EEEE d MMMM', T(java.util.Locale).forLanguageTag('es-ES')))}"></span>
                                 </div>
                                 <div class="flex items-center space-x-2 text-sm text-gray-600">
                                     <i class='bx bx-time'></i>
-                                    <span th:text="${disponibilidad.hora}"></span>
+                                    <span th:text="${cita.horaInicio}"></span>
                                 </div>
                             </div>
                             <div class="flex items-center space-x-2">
-                                <span th:if="${disponibilidad.disponible}" class="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">Disponible</span>
-                                <span th:if="${!disponibilidad.disponible}" class="px-2 py-1 bg-red-100 text-red-700 text-xs font-medium rounded-full">No Disponible</span>
+                                <span th:if="${cita.estadoCita == 'PROGRAMADA'}" class="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">Programada</span>
+                                <span th:if="${cita.estadoCita == 'CANCELADA'}" class="px-2 py-1 bg-red-100 text-red-700 text-xs font-medium rounded-full">Cancelada</span>
                                 <button class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center hover:bg-red-200 transition-colors">
-                                    <a th:href="@{/vendedor/eliminar-disponibilidad(idDisponibilidad=${disponibilidad.idDisponibilidad}, idProducto=${producto.idProducto})}"><i class='bx bx-trash text-red-600 text-sm'></i></a>
+                                    <a href="#"><i class='bx bx-trash text-red-600 text-sm'></i></a>
                                 </button>
                             </div>
                         </div>
@@ -297,15 +297,23 @@
             </div>
 
             <div>
-                <h4 class="text-lg font-semibold text-gray-800 mb-4">Agregar Nueva Disponibilidad</h4>
-                <form class="space-y-4" th:action="@{/vendedor/mi-calendario/registrar-disponibilidad}" method="post">
+                <h4 class="text-lg font-semibold text-gray-800 mb-4">Agregar Nueva Cita</h4>
+                <form th:action="@{/vendedor/citas/mi-calendario/registrar-cita}" method="post">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Fecha</label>
                         <input required type="date" name="fecha" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Hora</label>
-                        <input required type="time" name="hora" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Hora de inicio</label>
+                        <input required type="time" name="horaInicio" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Hora de finalizacion</label>
+                        <input required type="time" name="horaFin" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Cupo maximo de visitantes</label>
+                        <input required type="number" name="cupoMaximo" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Notas (Opcional)</label>
@@ -313,7 +321,7 @@
                     </div>
                     <input type="hidden" name="idProducto" th:value="${producto.idProducto}">
                     <button type="submit" class="w-full gradient-bg text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all">
-                        Agregar Disponibilidad
+                        Agregar Cita
                     </button>
                 </form>
             </div>
