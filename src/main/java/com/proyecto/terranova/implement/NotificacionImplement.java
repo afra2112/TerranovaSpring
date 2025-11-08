@@ -372,48 +372,26 @@ public class NotificacionImplement implements NotificacionService {
 
     @Override
     public void notificacionCitaReprogramada(Cita cita, Usuario compradorOVendedor) throws MessagingException, IOException {
-        Usuario comprador = null;
         Usuario vendedor = cita.getProducto().getVendedor();
         String producto = cita.getProducto().getNombreProducto();
 
-        boolean fueComprador = compradorOVendedor.equals(comprador);
 
         NotificacionPeticion notifComprador = buildNotificacion(
                 cita.getIdCita(),
-                fueComprador
-                        ? "Reprogramaste tu cita para el producto: " + producto + " con el vendedor: " + vendedor.getNombres()  + ". Para la fecha: " + cita.getFecha()
-                        : "Tu cita para el producto: " + producto + " ha sido reprogramada por el vendedor: " + vendedor.getNombres() + ". Para la fecha: " + cita.getFecha(),
+                "El vendedor: " +  vendedor.getNombres() + ". Reprogramo la cita para el producto: " + producto +  ". Para la fecha: " + cita.getFecha(),
                 "Citas",
                 "Actualización en tu cita: Reprogramacion",
-                comprador,
+                compradorOVendedor,
                 "/comprador/citas",
-                (fueComprador ? "Reprogramaste" : "Reprogramaron") + " tu cita para el producto: " + producto  + ". Para la fecha: ",
+                "Reprogramaron tu cita para el producto: " + producto  + ". Para la fecha: " + cita.getFecha() + " y hora: " + cita.getHoraInicio(),
                 "http://localhost:8080/comprador/citas",
                 "reprogramacionCita",
                 cita.getProducto().getNombreProducto(),
                 vendedor.getNombres(),
-                comprador.getNombres()
-        );
-
-        NotificacionPeticion notifVendedor = buildNotificacion(
-                cita.getIdCita(),
-                fueComprador
-                        ? "El comprador " + comprador.getNombres() + " reprogramo la cita para el producto: " + producto  + ". Para la fecha: " + cita.getFecha()
-                        : "Reprogramaste tu cita para el producto: " + producto + " con el comprador: " + comprador.getNombres()  + ". Para la fecha: " + cita.getFecha(),
-                "Citas",
-                "Actualización en tu cita: Reprogramacion",
-                vendedor,
-                "/vendedor/citas",
-                (fueComprador ? "El comprador reprogramo" : "Reprogramaste") + " tu cita para el producto: " + producto  + ". Para la fecha: ",
-                "http://localhost:8080/vendedor/citas",
-                "reprogramacionCita",
-                cita.getProducto().getNombreProducto(),
-                comprador.getNombres(),
-                vendedor.getNombres()
+                compradorOVendedor.getNombres()
         );
 
         crearNotificacionAutomatica(notifComprador);
-        crearNotificacionAutomatica(notifVendedor);
     }
 
     @Override

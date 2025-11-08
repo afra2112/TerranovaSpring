@@ -8,11 +8,14 @@ import com.proyecto.terranova.entity.Asistencia;
 import com.proyecto.terranova.entity.Usuario;
 import com.proyecto.terranova.repository.AsistenciaRepository;
 import com.proyecto.terranova.repository.ProductoRepository;
+import com.proyecto.terranova.service.NotificacionService;
+import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -38,6 +41,9 @@ public class CitaImplement implements CitaService {
 
     @Autowired
     private AsistenciaRepository asistenciaRepository;
+
+    @Autowired
+    private NotificacionService notificacionService;
 
     @Override
     public Cita save(Cita cita) {
@@ -67,7 +73,7 @@ public class CitaImplement implements CitaService {
 
     @Override
     public List<Cita> encontrarPorVendedor(Usuario vendedor, boolean activo) {
-        return repository.findByProducto_VendedorAndActivo(vendedor, activo);
+        return repository.findByProducto_VendedorAndActivoOrderByFechaDescHoraInicioDesc(vendedor, activo);
     }
 
     @Override
@@ -77,7 +83,7 @@ public class CitaImplement implements CitaService {
 
     @Override
     public List<CitaDTO> encontrarPorVendedorParaCalendario(Usuario vendedor, boolean activo) {
-        List<Cita> citas = repository.findByProducto_VendedorAndActivo(vendedor, activo);
+        List<Cita> citas = repository.findByProducto_VendedorAndActivoOrderByFechaDescHoraInicioDesc(vendedor, activo);
         List<CitaDTO> citasDto = new ArrayList<>();
         for (Cita cita : citas){
             CitaDTO citaDTO = new CitaDTO();
@@ -91,6 +97,7 @@ public class CitaImplement implements CitaService {
             citaDTO.setUbicacion(cita.getProducto().getCiudad().getNombreCiudad());
             citaDTO.setProductoDTO(modelMapper.map(cita.getProducto(), ProductoDTO.class));
             citaDTO.setAsistenciasDTO(cita.getAsistencias().stream().map(asistencia -> modelMapper.map(asistencia, AsistenciaDTO.class)).toList());
+            citaDTO.setCupoMaximo(cita.getCupoMaximo());
 
             citasDto.add(citaDTO);
         }
@@ -104,7 +111,7 @@ public class CitaImplement implements CitaService {
 
     @Transactional
     @Override
-    public void reprogramarCita(Long idCita, LocalDate nuevaFecha, LocalTime nuevaHoraInicio, LocalTime nuevaHoraFin) {
+    public void reprogramarCita(Long idCita, LocalDate nuevaFecha, LocalTime nuevaHoraInicio, LocalTime nuevaHoraFin) throws MessagingException, IOException {
         Cita cita = repository.findById(idCita).orElseThrow();
 
         cita.setFecha(nuevaFecha);
@@ -116,7 +123,7 @@ public class CitaImplement implements CitaService {
 
         List<Asistencia> asistencias = asistenciaRepository.findByCita(repository.findById(idCita).orElseThrow());
         for (Asistencia a : asistencias) {
-            //notificacionService.notificarReprogramacion(a.getUsuario(), cita);
+            notificacionService.notificacionCitaReprogramada(a.getCita(), a.getUsuario());
         }
     }
 
