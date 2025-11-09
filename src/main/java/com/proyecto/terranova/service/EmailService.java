@@ -36,7 +36,7 @@ public class EmailService {
         return templateEngine.process("correos/"+nombreTemplateHtml,context);
     }
 
-    @Async
+    @Async  
     public void enviarEmailConHtml(boolean enviar, String email, String asunto, String mensajeHtml) throws MessagingException {
 
         if(enviar){
