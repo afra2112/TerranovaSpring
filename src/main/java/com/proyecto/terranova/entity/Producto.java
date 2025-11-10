@@ -45,7 +45,10 @@ public abstract class Producto {
     private List<Imagen> imagenes = new ArrayList<>();
 
     @OneToMany(mappedBy = "producto",  cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Disponibilidad> disponibilidades = new ArrayList<>();
+    private List<Cita> citas = new ArrayList<>();
+
+    @OneToMany(mappedBy = "producto")
+    private List<Favorito> favoritos;
 
     @Transient
     private String tipoP;

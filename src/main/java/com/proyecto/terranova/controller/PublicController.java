@@ -1,28 +1,25 @@
 package com.proyecto.terranova.controller;
 
+import com.proyecto.terranova.config.enums.EstadoAsistenciaEnum;
+import com.proyecto.terranova.config.enums.EstadoCitaEnum;
+import com.proyecto.terranova.config.enums.RolEnum;
 import com.proyecto.terranova.dto.UsuarioDTO;
-import com.proyecto.terranova.entity.Ciudad;
-import com.proyecto.terranova.entity.Producto;
-import com.proyecto.terranova.entity.Usuario;
+import com.proyecto.terranova.entity.*;
+import com.proyecto.terranova.repository.CitaRepository;
 import com.proyecto.terranova.repository.CiudadRepository;
 import com.proyecto.terranova.repository.ProductoRepository;
-import com.proyecto.terranova.service.ProductoService;
-import com.proyecto.terranova.service.UsuarioService;
+import com.proyecto.terranova.service.*;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,13 +29,22 @@ public class PublicController {
     UsuarioService usuarioService;
 
     @Autowired
-    PasswordEncoder passwordEncoder;
+    ProductoService productoService;
 
     @Autowired
     ProductoRepository productoRepository;
 
     @Autowired
     CiudadRepository ciudadRepository;
+
+    @Autowired
+    AsistenciaService asistenciaService;
+
+    @Autowired
+    FavoritoService favoritoService;
+
+    @Autowired
+    CitaRepository citaRepository;
 
     @GetMapping("/login")
     public String login(Model model){
@@ -52,7 +58,80 @@ public class PublicController {
         return "login";
     }
 
-        @GetMapping("/registro")
+    @GetMapping("/productos")
+    public String productos(
+            Model model,
+            Authentication authentication,
+            @RequestParam(required = false) String busquedaTexto,
+            @RequestParam(required = false) String tipo,
+            @RequestParam(required = false) String orden){
+
+        Usuario usuario;
+        List<Producto> productos = productoService.filtrarConSpecification(busquedaTexto, tipo, orden);
+
+        if (authentication != null){
+            usuario = usuarioService.findByEmail(authentication.getName());
+
+            List<RolEnum> rolesUsuario = usuarioService.obtenerNombresRoles(usuario);
+
+            boolean esVendedor = false;
+            if(rolesUsuario.contains(RolEnum.VENDEDOR)){
+                esVendedor = true;
+            }
+
+            List<Long> favoritosIds = favoritoService.obtenerIdsFavoritosPorUsuario(usuario);
+            productos = productos.stream().filter(producto -> !producto.getVendedor().equals(usuario)).toList();
+            model.addAttribute("favoritosIds", favoritosIds);
+            model.addAttribute("nombreMostrar", usuario.getNombres() + ". " + usuario.getApellidos().charAt(0));
+            model.addAttribute("esVendedor", esVendedor);
+        } else {
+            usuario = null;
+        }
+        model.addAttribute("usuario", usuario);
+        model.addAttribute("productos", productos);
+        return "productos";
+    }
+
+    @GetMapping("/detalle-producto/{id}")
+    public String detalleProducto(@PathVariable Long id, Model model, Authentication authentication){
+        Usuario usuario = null;
+        boolean yaTieneCita = false;
+        boolean estaEnListaDeEspera = false;
+
+        if(authentication != null){
+            usuario = usuarioService.findByEmail(authentication.getName());
+
+            List<RolEnum> rolesUsuario = usuarioService.obtenerNombresRoles(usuario);
+
+            boolean esVendedor = false;
+            if(rolesUsuario.contains(RolEnum.VENDEDOR)){
+                esVendedor = true;
+            }
+
+            List<Long> favoritosIds = favoritoService.obtenerIdsFavoritosPorUsuario(usuario);
+
+            model.addAttribute("usuarioInscrito", asistenciaService.existeAsistenciaPorEstado(usuario, id, EstadoAsistenciaEnum.INSCRITO));
+            model.addAttribute("usuarioEnEspera", asistenciaService.existeAsistenciaPorEstado(usuario, id, EstadoAsistenciaEnum.EN_ESPERA));
+            model.addAttribute("favoritosIds", favoritosIds);
+            model.addAttribute("nombreMostrar", usuario.getNombres() + ". " + usuario.getApellidos().charAt(0));
+            model.addAttribute("esVendedor", esVendedor);
+            yaTieneCita = asistenciaService.existeAsistenciaPorEstado(usuario, id, EstadoAsistenciaEnum.INSCRITO);
+            estaEnListaDeEspera = asistenciaService.existeAsistenciaPorEstado(usuario, id, EstadoAsistenciaEnum.EN_ESPERA);
+        }
+
+        Producto producto = productoRepository.findById(id).orElseThrow(() -> new RuntimeException("producto no encontrado"));
+        producto.setTipoP(producto.getClass().getSimpleName());
+
+        model.addAttribute("estaEnListaDeEspera", estaEnListaDeEspera);
+        model.addAttribute("yaTieneCita", yaTieneCita);
+        model.addAttribute("usuario", usuario);
+        model.addAttribute("producto", producto);
+        model.addAttribute("citasDisponibles", citaRepository.findByProductoAndEstadoCita(producto, EstadoCitaEnum.PROGRAMADA));
+
+        return "detalleProducto";
+    }
+
+    @GetMapping("/registro")
     public String registroForm(Model model){
         model.addAttribute("usuarioDTO", new UsuarioDTO());
         return "registro";

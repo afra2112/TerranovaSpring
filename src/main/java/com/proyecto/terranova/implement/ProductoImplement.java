@@ -3,7 +3,10 @@ package com.proyecto.terranova.implement;
 import com.proyecto.terranova.entity.*;
 import com.proyecto.terranova.repository.*;
 import com.proyecto.terranova.service.UsuarioService;
+import com.proyecto.terranova.specification.ProductoSpecification;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -92,7 +95,7 @@ public class ProductoImplement implements ProductoService {
 
     @Override
     public List<Producto> obtenerTodosPorVendedor(Usuario vendedor) {
-        return repository.findByVendedor(vendedor);
+        return repository.findByVendedorOrderByFechaPublicacionDesc(vendedor);
     }
 
     @Override
@@ -161,6 +164,32 @@ public class ProductoImplement implements ProductoService {
     @Override
     public List<Producto> obtenerTodasMenosVendedor(Usuario vendedor) {
         return repository.findByVendedorNot(vendedor);
+    }
+
+    @Override
+    public List<Producto> filtrarConSpecification(String texto, String tipo, String orden) {
+        Specification<Producto> spec = (root, query, cb) -> cb.conjunction();
+
+        if (texto != null && !texto.isEmpty()) {
+            spec = spec.and(ProductoSpecification.buscarPorTexto(texto));
+        }
+        if (tipo != null && !tipo.isEmpty()) {
+            spec = spec.and(ProductoSpecification.filtrarPorTipo(tipo));
+        }
+
+        if (orden == null) {
+            orden = "recientes";
+        }
+
+        Sort sort = switch (orden) {
+            case "precio_asc" -> Sort.by("precioProducto").ascending();
+            case "precio_desc" -> Sort.by("precioProducto").descending();
+            case "recientes" -> Sort.by("fechaPublicacion").descending();
+            case "antiguos" -> Sort.by("fechaPublicacion").ascending();
+            default -> Sort.by("idProducto").descending();
+        };
+
+        return productoRepository.findAll(spec, sort);
     }
 
     @Override

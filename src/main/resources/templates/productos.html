@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html xmlns:th="www.thymeleaf.org">
+<html xmlns:th="www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Terranova - Explorar Productos</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
@@ -39,16 +40,40 @@
 </head>
 <body class="min-h-screen">
 
-<div th:replace="fragments/comprador/navbarComprador :: navbarComprador"></div>
+<div th:if="${usuario == null}">
+    <nav class="fixed top-0 w-full gradient-bg backdrop-blur-md shadow-lg z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between py-4">
+                <a class="text-white text-2xl font-bold flex items-center" href="/">
+                    <i class='fas fa-leaf mr-2'></i>Terranova
+                </a>
+                <div class="hidden md:flex items-center space-x-6">
+                    <a class="text-white/90 hover:text-white font-medium transition-all duration-300 hover:-translate-y-0.5" href="/">Inicio</a>
+                    <a class="text-white/90 hover:text-white font-medium transition-all duration-300 hover:-translate-y-0.5" th:href="@{/productos}">Productos</a>
+                    <a class="text-white/90 hover:text-white font-medium transition-all duration-300 hover:-translate-y-0.5" href="#servicios">Servicios</a>
+                    <a class="text-white/90 hover:text-white font-medium transition-all duration-300 hover:-translate-y-0.5" href="#contacto">Contacto</a>
+                </div>
+                <button th:if="${usuario == null}" onclick="abrirModalInicio()" class="bg-white/20 border-2 border-white/30 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 hover:bg-white hover:text-primary-emerald hover:-translate-y-0.5 backdrop-blur-md">
+                    <i class='bx bx-user mr-2'></i>Iniciar Sesión
+                </button>
+            </div>
+        </div>
+    </nav>
+    <div class="pt-16"></div>
+</div>
 
-<div class="ml-64 flex flex-col min-h-screen">
+<div th:if="${usuario != null}">
+    <div th:replace="fragments/comprador/navbarComprador :: navbarComprador">></div>
+</div>
+
+<div th:classappend="${usuario != null} ? 'ml-64' : ''" class="flex flex-col min-h-screen">
     <main class="lg:px-10 py-10">
         <section class="mb-8">
             <div class="container mx-auto">
                 <div class="bg-white rounded-2xl shadow-md p-6">
                     <h1 class="text-3xl font-bold text-gray-800 mb-6">Explorar Productos</h1>
 
-                    <form th:action="@{/comprador/productos}" method="get" class="space-y-6">
+                    <form th:action="@{/productos}" method="get" class="space-y-6">
 
                         <div class="flex flex-col lg:flex-row gap-4">
                             <div class="flex-1 relative">
@@ -127,14 +152,25 @@
                     <div th:each="producto : ${productos}" class="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 hover-lift border border-gray-100">
                         <div class="relative h-56 overflow-hidden">
 
-                            <form th:action="@{'/comprador/agregarF/' + ${producto.idProducto}}" method="post"
+                            <form th:if="${favoritosIds != null and !#lists.contains(favoritosIds, producto.idProducto.longValue())}"
+                                  th:action="@{'/comprador/agregarF/' + ${producto.idProducto}}" method="post"
                                   class="absolute top-4 right-4 z-10">
+                                <input type="hidden" name="vieneDe" value="productos">
+                                <button type="submit"
+                                        class="bg-white bg-opacity-90 backdrop-blur-sm p-2.5 rounded-lg hover:bg-opacity-100 transition-all duration-300 hover:scale-105 shadow-md">
+                                    <i class='bx bxs-heart text-xl text-gray-400'></i>
+                                </button>
+                            </form>
+
+                            <form th:if="${favoritosIds != null and #lists.contains(favoritosIds, producto.idProducto.longValue())}"
+                                  th:action="@{'/comprador/favoritos/eliminar/' + ${producto.idProducto}}" method="post"
+                                  class="absolute top-4 right-4 z-10">
+                                <input type="hidden" name="vieneDe" value="productos">
                                 <button type="submit"
                                         class="bg-white bg-opacity-90 backdrop-blur-sm p-2.5 rounded-lg hover:bg-opacity-100 transition-all duration-300 hover:scale-105 shadow-md">
                                     <i class='bx bxs-heart text-xl text-red-500'></i>
                                 </button>
                             </form>
-
 
                             <img th:src="${#lists.isEmpty(producto.imagenes) ? '/placeholder.svg?height=250&width=400' : producto.imagenes.get(0).nombreArchivo}"
                                  alt="Imagen del producto"
@@ -189,7 +225,7 @@
                             </div>
 
                             <div class="flex gap-2">
-                                <a th:href="@{/comprador/detalle-producto/{idProducto}(idProducto=${producto.idProducto})}"
+                                <a th:href="@{/detalle-producto/{idProducto}(idProducto=${producto.idProducto})}"
                                    class="flex-1 gradient-bg text-white py-2.5 rounded-xl hover:shadow-lg transition-all duration-300 text-sm text-center font-semibold flex items-center justify-center gap-2">
                                     <i class='bx bx-show'></i>
                                     Ver detalles
@@ -214,22 +250,66 @@
         </section>
     </main>
 </div>
+
+<div th:if="${usuario == null}" id="loginModal"
+     class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+    <div id="loginModalContent"
+         class="bg-white rounded-2xl shadow-2xl p-8 text-center transform transition-all duration-300 ease-out max-w-md w-full mx-4 scale-75 opacity-0">
+
+        <div class="mb-6">
+            <div class="w-16 h-16 gradient-bg rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <i class='bx bx-leaf text-white text-2xl'></i>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900">Terranova</h1>
+        </div>
+
+        <form th:action="@{/login}" method="post" class="space-y-4">
+            <div>
+                <input type="email" name="username" placeholder="Correo Electrónico" required
+                       class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-300" />
+            </div>
+            <div>
+                <input type="password" name="password" placeholder="Contraseña" required
+                       class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-300" />
+            </div>
+            <div class="text-right">
+                <a th:href="@{/password-olvidada}" class="text-sm text-primary hover:text-green-700 transition-colors">
+                    ¿Olvidaste tu contraseña?
+                </a>
+            </div>
+            <button type="submit"
+                    class="w-full gradient-bg text-white font-semibold py-3 rounded-xl transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
+                Iniciar Sesión
+            </button>
+        </form>
+
+        <div class="flex flex-col gap-3 mt-6">
+            <a th:href="@{/registro}"
+               class="block w-full bg-gray-100 text-gray-700 hover:bg-gray-200 font-semibold py-3 rounded-xl transition-all duration-300">
+                Regístrate
+            </a>
+            <button onclick="cerrarModalInicio()"
+                    class="w-full border-2 border-red-200 text-red-600 hover:bg-red-50 font-semibold py-3 rounded-xl transition-all duration-300">
+                Cancelar
+            </button>
+        </div>
+    </div>
+</div>
+
 <script>
 
     function toggleUserDropdown() {
         const dropdown = document.getElementById('userDropdown');
         const arrow = document.getElementById('dropdownArrow');
 
-        if (dropdown.classList.contains('opacity-0')) {
-
+        if (dropdown && dropdown.classList.contains('opacity-0')) {
             dropdown.classList.remove('opacity-0', 'invisible', 'scale-95');
             dropdown.classList.add('opacity-100', 'visible', 'scale-100');
-            arrow.style.transform = 'rotate(180deg)';
-        } else {
-            // Ocultar dropdown
+            if (arrow) arrow.style.transform = 'rotate(180deg)';
+        } else if (dropdown) {
             dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
             dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
-            arrow.style.transform = 'rotate(0deg)';
+            if (arrow) arrow.style.transform = 'rotate(0deg)';
         }
     }
 
@@ -237,10 +317,49 @@
         const dropdown = document.getElementById('userDropdown');
         const userButton = event.target.closest('[onclick="toggleUserDropdown()"]');
 
-        if (!userButton && !dropdown.contains(event.target)) {
+        if (dropdown && !userButton && !dropdown.contains(event.target)) {
             dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
             dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
-            document.getElementById('dropdownArrow').style.transform = 'rotate(0deg)';
+            const arrow = document.getElementById('dropdownArrow');
+            if (arrow) arrow.style.transform = 'rotate(0deg)';
+        }
+    });
+
+    function abrirModalInicio() {
+        const modal = document.getElementById('loginModal');
+        const modalContent = document.getElementById('loginModalContent');
+        if (modal) {
+            modal.classList.remove('hidden');
+            requestAnimationFrame(() => {
+                modalContent.classList.remove('scale-75', 'opacity-0');
+                modalContent.classList.add('scale-100', 'opacity-100');
+            });
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    function cerrarModalInicio() {
+        const modal = document.getElementById('loginModal');
+        const modalContent = document.getElementById('loginModalContent');
+        if (modal) {
+            modalContent.classList.remove('scale-100', 'opacity-100');
+            modalContent.classList.add('scale-75', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }, 300);
+        }
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            cerrarModalInicio();
+        }
+    });
+
+    document.getElementById('loginModal')?.addEventListener('click', (e) => {
+        if (e.target.id === 'loginModal') {
+            cerrarModalInicio();
         }
     });
 </script>

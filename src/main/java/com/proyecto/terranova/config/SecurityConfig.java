@@ -14,7 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-public class SecurityConfig {
+public class  SecurityConfig {
 
     @Autowired
     private CustomSuccessHandler customSuccessHandler;
@@ -29,7 +29,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
         return httpSecurity
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/login","/registro","/403", "/password-olvidada", "/recuperar-password", "/comprador/productos", "/oauth2/**","/imagenes/**").permitAll();
+                    auth.requestMatchers("/login","/registro","/403", "/password-olvidada", "/recuperar-password", "/oauth2/**", "/productos/**", "/detalle-producto/**","/images/**","/imagenes/**").permitAll();
                     auth.requestMatchers("/comprador/**").hasAuthority("COMPRADOR");
                     auth.requestMatchers("/vendedor/**").hasAuthority("VENDEDOR");
                     auth.anyRequest().authenticated();

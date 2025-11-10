@@ -225,7 +225,7 @@ public class NotificacionImplement implements NotificacionService {
 
     @Override
     public void notificacionCitaCancelada(Cita cita, Usuario compradorOVendedor) throws MessagingException, IOException {
-        Usuario comprador = cita.getComprador();
+        Usuario comprador = null;
         Usuario vendedor = cita.getProducto().getVendedor();
         String producto = cita.getProducto().getNombreProducto();
 
@@ -271,7 +271,7 @@ public class NotificacionImplement implements NotificacionService {
 
     @Override
     public void notificacionCitaFinalizada(Cita cita) throws MessagingException, IOException {
-        Usuario comprador = cita.getComprador();
+        Usuario comprador = null;
         Usuario vendedor = cita.getProducto().getVendedor();
         String producto = cita.getProducto().getNombreProducto();
 
@@ -280,7 +280,7 @@ public class NotificacionImplement implements NotificacionService {
                 "La cita para el producto " + producto + " ha finalizado exitosamente. Ahora puedes proceder a generar la compra desde tu panel.",
                 "Citas",
                 "Cita finalizada",
-                cita.getComprador(),
+                null,
                 "/comprador/citas",
                 "Tu cita para el producto " + producto + " ha sido marcada como finalizada.",
                 "http://localhost:8080/comprador/citas",
@@ -331,38 +331,37 @@ public class NotificacionImplement implements NotificacionService {
     }
 
     @Override
-    public void notificacionCitaReservada(Cita cita) throws MessagingException, IOException {
-        Usuario comprador = cita.getComprador();
-        Usuario vendedor = cita.getProducto().getVendedor();
-        String producto = cita.getProducto().getNombreProducto();
+    public void notificacionCitaReservada(Asistencia asistencia, Usuario nuevoAsistente) throws MessagingException, IOException {
+        Usuario vendedor = asistencia.getCita().getProducto().getVendedor();
+        String producto = asistencia.getCita().getProducto().getNombreProducto();
 
         NotificacionPeticion notifComprador = buildNotificacion(
-                cita.getIdCita(),
-                "Haz reservado una cita para el producto: " + producto + ". Con el vendedor: "+vendedor.getNombres()+". Puedes ir a Mis Citas para mas detalles.",
+                asistencia.getIdAsistencia(),
+                "Una persona cancelo su cita, como estabas en lista de espera ahora pueder ir a la cita para el producto: " + producto + ". Con el vendedor: "+vendedor.getNombres()+". Puedes ir a Mis Citas para mas detalles.",
                 "Citas",
-                "Cita Reservada",
-                cita.getComprador(),
+                "Ya pueder ir a la cita para: " + producto,
+                nuevoAsistente,
                 "/comprador/citas",
-                "Tu cita para el producto " + producto + " ha sido reservada.",
+                "Se te ha asignado un cupo en la cita para el producto: " + producto,
                 "http://localhost:8080/comprador/citas",
                 "citaReservada",
-                cita.getProducto().getNombreProducto(),
+                asistencia.getCita().getProducto().getNombreProducto(),
                 vendedor.getNombres(),
-                comprador.getNombres()
+                nuevoAsistente.getNombres()
         );
 
         NotificacionPeticion notifVendedor = buildNotificacion(
-                cita.getIdCita(),
-                "El comprador " + comprador.getNombres() + ". Ha reservado una cita para tu producto " + producto + ".",
+                asistencia.getIdAsistencia(),
+                "El comprador " + nuevoAsistente.getNombres() + ". Ahora esta en la lista de personas que iran a tu cita para: " + producto + ".",
                 "Citas",
-                "Cita Reservada",
+                "Nuevo visitante",
                 vendedor,
                 "/vendedor/citas",
-                "Han reservado una cita para tu producto: " + producto + ".",
+                "Un nuevo comprador esta en tu lista de asistentes: " + producto + ".",
                 "http://localhost:8080/vendedor/citas",
                 "citaReservadaVendedor",
-                cita.getProducto().getNombreProducto(),
-                comprador.getNombres(),
+                asistencia.getCita().getProducto().getNombreProducto(),
+                nuevoAsistente.getNombres(),
                 vendedor.getNombres()
         );
 
@@ -373,48 +372,26 @@ public class NotificacionImplement implements NotificacionService {
 
     @Override
     public void notificacionCitaReprogramada(Cita cita, Usuario compradorOVendedor) throws MessagingException, IOException {
-        Usuario comprador = cita.getComprador();
         Usuario vendedor = cita.getProducto().getVendedor();
         String producto = cita.getProducto().getNombreProducto();
 
-        boolean fueComprador = compradorOVendedor.equals(comprador);
 
         NotificacionPeticion notifComprador = buildNotificacion(
                 cita.getIdCita(),
-                fueComprador
-                        ? "Reprogramaste tu cita para el producto: " + producto + " con el vendedor: " + vendedor.getNombres()  + ". Para la fecha: " + cita.getDisponibilidad().getFecha()
-                        : "Tu cita para el producto: " + producto + " ha sido reprogramada por el vendedor: " + vendedor.getNombres() + ". Para la fecha: " + cita.getDisponibilidad().getFecha(),
+                "El vendedor: " +  vendedor.getNombres() + ". Reprogramo la cita para el producto: " + producto +  ". Para la fecha: " + cita.getFecha(),
                 "Citas",
                 "Actualización en tu cita: Reprogramacion",
-                comprador,
+                compradorOVendedor,
                 "/comprador/citas",
-                (fueComprador ? "Reprogramaste" : "Reprogramaron") + " tu cita para el producto: " + producto  + ". Para la fecha: ",
+                "Reprogramaron tu cita para el producto: " + producto  + ". Para la fecha: " + cita.getFecha() + " y hora: " + cita.getHoraInicio(),
                 "http://localhost:8080/comprador/citas",
                 "reprogramacionCita",
                 cita.getProducto().getNombreProducto(),
                 vendedor.getNombres(),
-                comprador.getNombres()
-        );
-
-        NotificacionPeticion notifVendedor = buildNotificacion(
-                cita.getIdCita(),
-                fueComprador
-                        ? "El comprador " + comprador.getNombres() + " reprogramo la cita para el producto: " + producto  + ". Para la fecha: " + cita.getDisponibilidad().getFecha()
-                        : "Reprogramaste tu cita para el producto: " + producto + " con el comprador: " + comprador.getNombres()  + ". Para la fecha: " + cita.getDisponibilidad().getFecha(),
-                "Citas",
-                "Actualización en tu cita: Reprogramacion",
-                vendedor,
-                "/vendedor/citas",
-                (fueComprador ? "El comprador reprogramo" : "Reprogramaste") + " tu cita para el producto: " + producto  + ". Para la fecha: ",
-                "http://localhost:8080/vendedor/citas",
-                "reprogramacionCita",
-                cita.getProducto().getNombreProducto(),
-                comprador.getNombres(),
-                vendedor.getNombres()
+                compradorOVendedor.getNombres()
         );
 
         crearNotificacionAutomatica(notifComprador);
-        crearNotificacionAutomatica(notifVendedor);
     }
 
     @Override
@@ -424,14 +401,14 @@ public class NotificacionImplement implements NotificacionService {
                 "Ya han pasado 24 horas desde tu ultima reprogramacion posible, ya puedes volver a reprogramar tu cita dos veces mas",
                 "Citas",
                 "Reprogramacion Disponible",
-                cita.getComprador(),
+                null,
                 "/comprador/citas",
                 "Reprogramacion Disponible",
                 "http://localhost:8080/comprador/citas",
                 "reprogramacionHabilitada",
                 cita.getProducto().getNombreProducto(),
                 cita.getProducto().getVendedor().getNombres(),
-                cita.getComprador().getNombres()
+                null
         );
 
         crearNotificacionAutomatica(notificacionPeticion);
@@ -561,26 +538,6 @@ public class NotificacionImplement implements NotificacionService {
 
         crearNotificacionAutomatica(notifiComprador);
         crearNotificacionAutomatica(notifVendedor);
-    }
-
-    @Override
-    public void notificacionDisponibilidadRegistrada(Disponibilidad disponibilidad, String fecha, String hora) throws MessagingException, IOException {
-        NotificacionPeticion notificacionPeticion = buildNotificacion(
-                disponibilidad.getIdDisponibilidad(),
-                "Has registrado una disponibilidad para el dia "+fecha+". A las "+hora,
-                "Disponibilidades",
-                "Agregaste una disponibilidad",
-                disponibilidad.getProducto().getVendedor(),
-                "/vendedor/mi-calendario",
-                "Agregaste una disponibilidad",
-                "http://localhost:8080/vendedor/mi-calendario",
-                "disponibilidadCreada",
-                disponibilidad.getProducto().getNombreProducto(),
-                "ninguno",
-                disponibilidad.getProducto().getVendedor().getNombres()
-        );
-
-        crearNotificacionAutomatica(notificacionPeticion);
     }
 
     @Override

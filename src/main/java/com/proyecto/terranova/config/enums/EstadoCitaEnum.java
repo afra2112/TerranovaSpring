@@ -1,5 +1,5 @@
 package com.proyecto.terranova.config.enums;
 
 public enum EstadoCitaEnum {
-    RESERVADA, CANCELADA, FINALIZADA, VENTAGENERADA
+    PROGRAMADA, LLENA, EN_CURSO, FINALIZADA, CANCELADA, REPROGRAMADA
 }

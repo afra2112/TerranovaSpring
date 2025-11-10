@@ -1,19 +1,26 @@
 package com.proyecto.terranova.implement;
 
+import com.proyecto.terranova.config.enums.EstadoAsistenciaEnum;
 import com.proyecto.terranova.config.enums.EstadoCitaEnum;
-import com.proyecto.terranova.dto.DisponibilidadDTO;
-import com.proyecto.terranova.entity.Disponibilidad;
-import com.proyecto.terranova.entity.Producto;
+import com.proyecto.terranova.dto.AsistenciaDTO;
+import com.proyecto.terranova.dto.ProductoDTO;
+import com.proyecto.terranova.entity.Asistencia;
 import com.proyecto.terranova.entity.Usuario;
-import com.proyecto.terranova.repository.DisponibilidadRepository;
+import com.proyecto.terranova.repository.AsistenciaRepository;
 import com.proyecto.terranova.repository.ProductoRepository;
+import com.proyecto.terranova.service.NotificacionService;
+import jakarta.mail.MessagingException;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 import com.proyecto.terranova.service.CitaService;
 import com.proyecto.terranova.repository.CitaRepository;
@@ -31,6 +38,12 @@ public class CitaImplement implements CitaService {
 
     @Autowired
     private ProductoRepository productoRepository;
+
+    @Autowired
+    private AsistenciaRepository asistenciaRepository;
+
+    @Autowired
+    private NotificacionService notificacionService;
 
     @Override
     public Cita save(Cita cita) {
@@ -60,40 +73,121 @@ public class CitaImplement implements CitaService {
 
     @Override
     public List<Cita> encontrarPorVendedor(Usuario vendedor, boolean activo) {
-        return repository.findByProducto_VendedorAndActivo(vendedor, activo);
+        return repository.findByProducto_VendedorAndActivoOrderByFechaDescHoraInicioDesc(vendedor, activo);
+    }
+
+    @Override
+    public List<Cita> encontrarPorProducto(Long idProducto) {
+        return repository.findByProducto(productoRepository.findById(idProducto).orElseThrow());
     }
 
     @Override
     public List<CitaDTO> encontrarPorVendedorParaCalendario(Usuario vendedor, boolean activo) {
-        List<Cita> citas = repository.findByProducto_VendedorAndActivo(vendedor, activo);
+        List<Cita> citas = repository.findByProducto_VendedorAndActivoOrderByFechaDescHoraInicioDesc(vendedor, activo);
         List<CitaDTO> citasDto = new ArrayList<>();
         for (Cita cita : citas){
             CitaDTO citaDTO = new CitaDTO();
             citaDTO.setEstadoCita(cita.getEstadoCita());
             citaDTO.setNombreVendedor(cita.getProducto().getVendedor().getNombres());
-            citaDTO.setNombreComprador(cita.getComprador().getNombres());
             citaDTO.setIdCita(cita.getIdCita());
-            citaDTO.setFecha(cita.getDisponibilidad().getFecha());
-            citaDTO.setHora(cita.getDisponibilidad().getHora());
+            citaDTO.setFecha(cita.getFecha());
+            citaDTO.setHoraInicio(cita.getHoraInicio());
+            citaDTO.setHoraFin(cita.getHoraFin());
             citaDTO.setNombreProducto(cita.getProducto().getNombreProducto());
             citaDTO.setUbicacion(cita.getProducto().getCiudad().getNombreCiudad());
-            citaDTO.setIdProducto(cita.getProducto().getIdProducto());
-            citaDTO.setIdDisponibilidad(cita.getDisponibilidad().getIdDisponibilidad());
+            citaDTO.setProductoDTO(modelMapper.map(cita.getProducto(), ProductoDTO.class));
+            citaDTO.setAsistenciasDTO(cita.getAsistencias().stream().map(asistencia -> modelMapper.map(asistencia, AsistenciaDTO.class)).toList());
+            citaDTO.setCupoMaximo(cita.getCupoMaximo());
 
             citasDto.add(citaDTO);
         }
         return citasDto;
     }
 
+    /*@Override
+    public List<Cita> encontrarPorCompradorYEstado(Usuario comprador, EstadoCitaEnum estadoCitaEnum) {
+        return repository.findByCompradorAndEstadoCita(comprador, estadoCitaEnum);
+    }*/
+
+    @Transactional
     @Override
-    public List<Cita> encontrarPorComprador(Usuario comprador, boolean activo) {
-        return repository.findByCompradorAndActivoOrderByDisponibilidad_FechaAscDisponibilidad_HoraAsc(comprador, activo);
+    public void reprogramarCita(Long idCita, LocalDate nuevaFecha, LocalTime nuevaHoraInicio, LocalTime nuevaHoraFin) throws MessagingException, IOException {
+        Cita cita = repository.findById(idCita).orElseThrow();
+
+        cita.setFecha(nuevaFecha);
+        cita.setHoraInicio(nuevaHoraInicio);
+        cita.setHoraFin(nuevaHoraFin);
+        cita.setEstadoCita(EstadoCitaEnum.PROGRAMADA);
+
+        repository.save(cita);
+
+        List<Asistencia> asistencias = asistenciaRepository.findByCita(repository.findById(idCita).orElseThrow());
+        for (Asistencia a : asistencias) {
+            notificacionService.notificacionCitaReprogramada(a.getCita(), a.getUsuario());
+        }
     }
+
+    @Transactional
+    @Override
+    public void cancelarCita(Long idCita) {
+        Cita cita = repository.findById(idCita).orElseThrow();
+        cita.setEstadoCita(EstadoCitaEnum.CANCELADA);
+        repository.save(cita);
+
+        List<Asistencia> asistencias = asistenciaRepository.findByCita(repository.findById(idCita).orElseThrow());
+
+        for (Asistencia a : asistencias) {
+            a.setEstado(EstadoAsistenciaEnum.CANCELADO_AUTOMATICO);
+            asistenciaRepository.save(a);
+
+            //notificacionService.notificarCancelacion(a.getUsuario(), cita);
+        }
+    }
+
+    @Transactional
+    @Override
+    public void finalizarCita(Long idCita, Map<String, String> params) {
+
+        Cita cita = repository.findById(idCita)
+                .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
+
+        cita.setEstadoCita(EstadoCitaEnum.FINALIZADA);
+        repository.save(cita);
+
+        for (Asistencia asistencia : cita.getAsistencias()) {
+
+            if (asistencia.getEstado() != EstadoAsistenciaEnum.INSCRITO) {
+                continue;
+            }
+
+            String key = "asistencias[" + asistencia.getIdAsistencia() + "].asistio";
+
+            boolean asistio = params.containsKey(key);
+
+            asistencia.setAsistio(asistio);
+            asistenciaRepository.save(asistencia);
+
+            int puntuacionUsuario = asistencia.getUsuario().getPuntuacionUsuario();
+
+            if (asistio) {
+                asistencia.getUsuario().setPuntuacionUsuario(puntuacionUsuario + 5);
+                asistencia.setEstado(EstadoAsistenciaEnum.ASISTIO);
+                asistenciaRepository.save(asistencia);
+            } else {
+                asistencia.getUsuario().setPuntuacionUsuario(puntuacionUsuario - 7);
+                asistencia.setEstado(EstadoAsistenciaEnum.NO_ASISTIO);
+                asistenciaRepository.save(asistencia);
+            }
+        }
+
+        // notificacionService.notificacionCitaFinalizada(cita);
+    }
+
 
     @Override
     public List<Cita> encontrarPorEstado(Usuario vendedor, EstadoCitaEnum estado, boolean activo) {
 
-        return repository.findByDisponibilidad_Producto_VendedorAndEstadoCitaAndActivo(vendedor,estado, activo);
+        return repository.findByProducto_VendedorAndEstadoCitaAndActivo(vendedor,estado, activo);
     }
 
     @Override
@@ -111,13 +205,8 @@ public class CitaImplement implements CitaService {
     }
 
     @Override
-    public boolean yaTieneCita(Usuario comprador, Long idProducto) {
-        return repository.existsByProductoAndComprador(productoRepository.findById(idProducto).orElseThrow(), comprador);
-    }
-
-    @Override
-    public long count() {
-        return repository.count();
+    public long contarPorVendedor(Usuario vendedor) {
+        return repository.countByProducto_Vendedor(vendedor);
     }
 
     @Override

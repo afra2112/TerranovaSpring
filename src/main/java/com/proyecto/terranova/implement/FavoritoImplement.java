@@ -45,4 +45,12 @@ public class FavoritoImplement implements FavoritoService {
     public List<Favorito> obtenerFavoritos(Usuario usuario) {
         return favoritoRepository.findByUsuario(usuario);
     }
+
+    @Override
+    public List<Long> obtenerIdsFavoritosPorUsuario(Usuario usuario) {
+        return favoritoRepository.findByUsuario(usuario).stream()
+                .map(Favorito::getProducto)
+                .map(Producto::getIdProducto)
+                .toList();
+    }
 }

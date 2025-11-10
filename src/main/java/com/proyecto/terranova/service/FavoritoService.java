@@ -12,4 +12,5 @@ public interface FavoritoService {
     boolean agregarFavorito(Usuario usuario, Producto producto);
     boolean eliminarFavorito(Usuario usuario, Producto producto);
     List<Favorito> obtenerFavoritos(Usuario usuario);
+    List<Long> obtenerIdsFavoritosPorUsuario(Usuario usuario);
 }

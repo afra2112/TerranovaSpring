@@ -24,7 +24,6 @@ public class DataSeeder {
             TerrenoRepository terrenoRepository,
             FincaRepository fincaRepository,
             GanadoRepository ganadoRepository,
-            DisponibilidadRepository disponibilidadRepository,
             ProductoRepository productoRepository) {
 
         return args -> {
@@ -78,14 +77,14 @@ public class DataSeeder {
                 usuarioRepository.save(usuario);
             }
             crearUsuarioSiNoExiste(usuarioRepository, passwordEncoder, rolRepository,
-                    "maria.rodriguez", "Maria", "Rodriguez Lopez", "9876543210", "3109876543", "maria1234", true);
+                    "maria@gmail.com", "Maria", "Rodriguez Lopez", "9876543210", "3109876543", "maria1234", true);
             crearUsuarioSiNoExiste(usuarioRepository, passwordEncoder, rolRepository,
-                    "carlos.mendez", "Carlos", "Mendez Silva", "5551234567", "3201234567", "carlos1234", false);
+                    "carlos@gmail.com", "Carlos", "Mendez Silva", "5551234567", "3201234567", "carlos1234", false);
             crearUsuarioSiNoExiste(usuarioRepository, passwordEncoder, rolRepository,
-                    "laura.torres", "Laura", "Torres Ramirez", "7778889990", "3157654321", "laura1234", false);
+                    "laura@gmail.com", "Laura", "Torres Ramirez", "7778889990", "3157654321", "laura1234", false);
 
             //PRODUCTOS
-            if (terrenoRepository.count() == 0 && fincaRepository.count() == 0 && ganadoRepository.count() == 0) {
+            if (productoRepository.count() == 0) {
 
                 List<Usuario> vendedores = usuarioRepository.findAll().stream()
                         .filter(u -> u.getRoles().stream().anyMatch(r -> r.getNombreRol() == RolEnum.VENDEDOR))
@@ -121,7 +120,6 @@ public class DataSeeder {
 
                         terreno = terrenoRepository.save(terreno);
                         agregarImagenesProducto(terreno, "terreno", productoRepository);
-                        crearDisponibilidades(terreno.getIdProducto(), disponibilidadRepository, productoRepository);
                     }
 
                     //2 FINCAS
@@ -144,7 +142,6 @@ public class DataSeeder {
 
                         finca = fincaRepository.save(finca);
                         agregarImagenesProducto(finca, "finca", productoRepository);
-                        crearDisponibilidades(finca.getIdProducto(), disponibilidadRepository, productoRepository);
                     }
 
                     //2 GANADOS
@@ -171,7 +168,6 @@ public class DataSeeder {
 
                         ganado = ganadoRepository.save(ganado);
                         agregarImagenesProducto(ganado, "ganado", productoRepository);
-                        crearDisponibilidades(ganado.getIdProducto(), disponibilidadRepository, productoRepository);
                     }
                 }
 
@@ -183,10 +179,9 @@ public class DataSeeder {
     private void crearUsuarioSiNoExiste(UsuarioRepository usuarioRepository,
                                         PasswordEncoder passwordEncoder,
                                         RolRepository rolRepository,
-                                        String baseEmail, String nombres, String apellidos,
+                                        String email, String nombres, String apellidos,
                                         String cedula, String telefono, String contrasena, boolean vendedor) {
         Random random = new Random();
-        String email = baseEmail + random.nextInt(1000) + "@example.com";
 
         if (usuarioRepository.findByEmail(email) == null) {
             Usuario usuario = new Usuario();
@@ -229,18 +224,5 @@ public class DataSeeder {
 
         producto.setImagenes(imagenes);
         productoRepository.save(producto);
-    }
-
-    private void crearDisponibilidades(Long idProducto, DisponibilidadRepository disponibilidadRepository, ProductoRepository productoRepository) {
-        LocalDate hoy = LocalDate.now();
-        for (int i = 0; i < 7; i++) {
-            Disponibilidad disponibilidad = new Disponibilidad();
-            disponibilidad.setProducto(productoRepository.findById(idProducto).orElseThrow());
-            disponibilidad.setFecha(hoy.plusDays(i));
-            disponibilidad.setHora(LocalTime.of(9, 0));
-            disponibilidad.setDisponible(true);
-            disponibilidad.setDescripcion("Disponible para visita");
-            disponibilidadRepository.save(disponibilidad);
-        }
     }
 }

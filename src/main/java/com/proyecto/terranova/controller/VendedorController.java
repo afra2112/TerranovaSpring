@@ -1,8 +1,10 @@
 package com.proyecto.terranova.controller;
 
+import com.proyecto.terranova.config.enums.EstadoAsistenciaEnum;
 import com.proyecto.terranova.config.enums.EstadoCitaEnum;
 import com.proyecto.terranova.config.enums.RolEnum;
 import com.proyecto.terranova.entity.*;
+import com.proyecto.terranova.repository.AsistenciaRepository;
 import com.proyecto.terranova.repository.CiudadRepository;
 import com.proyecto.terranova.service.*;
 import jakarta.mail.MessagingException;
@@ -51,6 +53,12 @@ public class VendedorController {
     ComprobanteService comprobanteService;
 
     @Autowired
+    AsistenciaService asistenciaService;
+
+    @Autowired
+    AsistenciaRepository asistenciaRepository;
+
+    @Autowired
     CiudadRepository ciudadRepository;
 
     @Autowired
@@ -88,7 +96,7 @@ public class VendedorController {
         model.addAttribute("ciudades", ciudadRepository.findAll());
         model.addAttribute("dashboard", true);
         model.addAttribute("totalVentas", ventaService.encontrarPorVendedor(usuario).size());
-        model.addAttribute("productos", productoService.obtenerTodosPorVendedor(usuario));
+        model.addAttribute("productos", productoService.obtenerTodosPorVendedor(usuario).stream().limit(3).toList());
         model.addAttribute("totalCitas", citaService.encontrarPorVendedor(usuario, true).size());
         model.addAttribute("notificaciones", notificacionService.obtenerPorUsuarioYLeido(usuario,true));
         return "vendedor/dashboard";
@@ -97,7 +105,7 @@ public class VendedorController {
     @GetMapping("/mi-calendario")
     public String calendario(Model model, Authentication authentication){
         model.addAttribute("calendario", true);
-        model.addAttribute("productos", productoService.findAll());
+        model.addAttribute("productos", productoService.obtenerTodosPorVendedor(usuario(authentication)));
         model.addAttribute("cedula", usuario(authentication).getCedula());
         return "vendedor/calendario";
     }
@@ -106,7 +114,7 @@ public class VendedorController {
     public String citas(Model model, Authentication authentication){
         Usuario vendedor = usuarioService.findByEmail(authentication.getName());
         model.addAttribute("posicionCitas", true);
-        model.addAttribute("numReservadas", citaService.encontrarPorEstado(vendedor,EstadoCitaEnum.RESERVADA, true).size());
+        model.addAttribute("numReservadas", citaService.encontrarPorEstado(vendedor,EstadoCitaEnum.PROGRAMADA, true).size());
         model.addAttribute("numFinalizadas", citaService.encontrarPorEstado(vendedor,EstadoCitaEnum.FINALIZADA, true).size());
         model.addAttribute("numCanceladas", citaService.encontrarPorEstado(vendedor,EstadoCitaEnum.CANCELADA, true).size());
 
@@ -182,21 +190,31 @@ public class VendedorController {
 
         model.addAttribute("posicionProductos", true);
         model.addAttribute("productos", productos);
-
-        long numDisponibilidades = 0;
-
-        for(Producto producto : productos){
-            long disponibilidades = producto.getDisponibilidades().stream().count();
-            numDisponibilidades += disponibilidades;
-        }
-
-        model.addAttribute("disponibilidades", numDisponibilidades);
+        model.addAttribute("citasCant", citaService.encontrarPorVendedor(usuario(authentication), true).size());
 
         if(idProducto != null){
             model.addAttribute("producto", productoService.findById(idProducto));
             model.addAttribute("mostrarModalDisponibilidades", true);
+            model.addAttribute("citas", citaService.encontrarPorProducto(idProducto));
             return "vendedor/productos";
         }
         return "vendedor/productos";
+    }
+
+    @GetMapping("/citas/detalle/{id}")
+    public String detalleCitas(@PathVariable Long id, Model model,Authentication authentication){
+        model.addAttribute("cita", citaService.findById(id));
+
+        Asistencia asistencia = asistenciaRepository.findByCita_IdCitaAndUsuario(id,usuario(authentication));
+
+        Integer posicion = null;
+        if(asistencia != null && asistencia.getEstado() == EstadoAsistenciaEnum.EN_ESPERA){
+            posicion = asistenciaService.obtenerPosicionDeUsuarioEnListaDeEspera(id, usuario(authentication).getCedula());
+        }
+
+        model.addAttribute("esDueno", true);
+        model.addAttribute("asistentesConfirmados", asistenciaService.encontrarAsistenciasPorCitaYEstadoAsistencia(id, EstadoAsistenciaEnum.INSCRITO));
+        model.addAttribute("asistentesEspera", asistenciaService.encontrarAsistenciasPorCitaYEstadoAsistencia(id, EstadoAsistenciaEnum.EN_ESPERA));
+        return "vistasTemporales/detalleCita";
     }
 }

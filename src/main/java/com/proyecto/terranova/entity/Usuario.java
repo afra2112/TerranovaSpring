@@ -69,8 +69,10 @@ public class Usuario {
     @OneToMany(mappedBy = "vendedor")
     private List<Producto> disponibilidad;
 
-    @OneToMany(mappedBy = "comprador")
-    private List<Cita> citas;
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Asistencia> asistencias;
+
+    private int puntuacionUsuario;
 
 
     //estos campos son para el oauth2

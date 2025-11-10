@@ -1,9 +1,10 @@
 package com.proyecto.terranova.controller;
 
+import com.proyecto.terranova.config.enums.EstadoAsistenciaEnum;
 import com.proyecto.terranova.config.enums.EstadoCitaEnum;
 import com.proyecto.terranova.config.enums.RolEnum;
 import com.proyecto.terranova.entity.*;
-import com.proyecto.terranova.repository.FavoritoRepository;
+import com.proyecto.terranova.repository.AsistenciaRepository;
 import com.proyecto.terranova.repository.ProductoRepository;
 import com.proyecto.terranova.repository.UsuarioRepository;
 import com.proyecto.terranova.service.*;
@@ -27,9 +28,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping("/comprador")
@@ -42,16 +41,16 @@ public class CompradorController {
     UsuarioService usuarioService;
 
     @Autowired
-    CitaService citaService;
-
-    @Autowired
-    DisponibilidadService disponibilidadService;
+    AsistenciaService asistenciaService;
 
     @Autowired
     NotificacionService notificacionService;
 
     @Autowired
     ProductoService productoService;
+
+    @Autowired
+    CitaService citaService;
 
     @Autowired
     VentaService ventaService;
@@ -64,6 +63,8 @@ public class CompradorController {
 
     @Autowired
     FavoritoService favoritoService;
+    @Autowired
+    private AsistenciaRepository asistenciaRepository;
 
     @ModelAttribute("usuario")
     public Usuario usuario(Authentication authentication){
@@ -92,70 +93,74 @@ public class CompradorController {
         model.addAttribute("explorar", true);
 
         Map<String, Integer> estadisticas = compradorService.prepararIndex(usuario(authentication).getCedula());
-        List<Cita> citas = citaService.encontrarPorComprador(usuario(authentication), true);
+        List<Asistencia> asistencias = asistenciaService.encontrarPorCompradorYEstado(usuario(authentication), EstadoAsistenciaEnum.INSCRITO);
+        List<Long> favoritosIds = favoritoService.obtenerIdsFavoritosPorUsuario(usuario(authentication));
 
+        model.addAttribute("favoritosIds", favoritosIds);
         model.addAllAttributes(estadisticas);
-        model.addAttribute("citasCant", citas.size());
-        model.addAttribute("citas", citas.stream().limit(2).toList());
-        model.addAttribute("productos", productoService.obtenerTodasMenosVendedor(usuario(authentication)));
+        model.addAttribute("asistenciasCant", asistencias.size());
+        model.addAttribute("notificacionesCant", notificacionService.contarNoLeidasPorUsuario(usuario(authentication), false));
+        model.addAttribute("asistencias", asistencias.stream().limit(2).toList());
+        model.addAttribute("productos", productoService.obtenerTodasMenosVendedor(usuario(authentication)).stream().limit(3).toList());
         return "comprador/principalComprador";
     }
 
     @GetMapping("/citas")
     public String citas(Model model, Authentication authentication){
+        Usuario usuario = usuario(authentication);
+
+        List<Asistencia> asistenciasProximas = asistenciaService.encontrarPorCompradorYEstado(usuario, EstadoAsistenciaEnum.INSCRITO);
+        asistenciasProximas.removeIf(asistencia -> asistencia.getCita().getEstadoCita() == EstadoCitaEnum.FINALIZADA);
+        List<Asistencia> asistenciasEnEspera = asistenciaService.encontrarPorCompradorYEstado(usuario, EstadoAsistenciaEnum.EN_ESPERA);
+        List<Asistencia> asistenciasPasadasAsistidas = asistenciaService.encontrarPorCompradorYEstado(usuario, EstadoAsistenciaEnum.ASISTIO);
+        List<Asistencia> asistenciasPasadasNoAsistidas = asistenciaService.encontrarPorCompradorYEstado(usuario, EstadoAsistenciaEnum.NO_ASISTIO);
+
         model.addAttribute("posicionCitas", true);
-        model.addAttribute("citas", citaService.encontrarPorComprador(usuarioService.findByEmail(authentication.getName()), true));
+        model.addAttribute("asistenciasProximas", asistenciasProximas);
+        model.addAttribute("asistenciasEnEspera", asistenciasEnEspera);
+        List<Asistencia> asistenciasProximasYEnEspera = new ArrayList<>();
+        asistenciasProximasYEnEspera.addAll(asistenciasProximas);
+        asistenciasProximasYEnEspera.addAll(asistenciasEnEspera);
+        asistenciasProximasYEnEspera.removeIf(asistencia -> asistencia.getCita().getEstadoCita() == EstadoCitaEnum.FINALIZADA);
+        asistenciasProximasYEnEspera.sort(Comparator.comparing(a -> a.getCita().getFecha()));
+        List<Asistencia> asistenciasPasadasAsistidasYNoAsistidas = new ArrayList<>();
+        asistenciasPasadasAsistidasYNoAsistidas.addAll(asistenciasPasadasAsistidas);
+        asistenciasPasadasAsistidasYNoAsistidas.addAll(asistenciasPasadasNoAsistidas);
+        asistenciasPasadasAsistidasYNoAsistidas.sort(Comparator.comparing(a -> a.getCita().getFecha()));
+        model.addAttribute("asistenciasPasadasAsistidasYNoAsistidas", asistenciasPasadasAsistidasYNoAsistidas);
+        model.addAttribute("asistenciasProximasYEnEspera", asistenciasProximasYEnEspera);
         return "comprador/citas";
     }
 
-    @GetMapping("/detalle-producto/{id}")
-    public String detalleProducto(@PathVariable Long id, Model model, Authentication authentication){
-        Usuario usuario = usuario(authentication);
+    @GetMapping("/citas/detalle/{id}")
+    public String detalleCitas(@PathVariable Long id, Model model,Authentication authentication){
+        model.addAttribute("cita", citaService.findById(id));
 
+        List<Asistencia> listaAsistencia = asistenciaService.encontrarAsistenciasPorCita(id);
+        Asistencia asistencia = asistenciaRepository.findByCita_IdCitaAndUsuario(id,usuario(authentication));
 
-        Producto producto = productoRepository.findById(id).orElseThrow(() -> new RuntimeException("producto no encontrado"));
-        producto.setTipoP(producto.getClass().getSimpleName());
-        boolean yaTieneCita = citaService.yaTieneCita(usuario, id);
+        Integer posicion = null;
+        if(asistencia != null && asistencia.getEstado() == EstadoAsistenciaEnum.EN_ESPERA){
+            posicion = asistenciaService.obtenerPosicionDeUsuarioEnListaDeEspera(id, usuario(authentication).getCedula());
+        }
 
-        model.addAttribute("yaTieneCita", yaTieneCita);
-        model.addAttribute("usuario", usuario);
-        model.addAttribute("producto", producto);
-
-        System.out.println("-----------MAPAAAA-----------: "+producto.getLatitud() + producto.getLongitud());
-        return "comprador/detalleProducto";
+        model.addAttribute("esDueno", false);
+        model.addAttribute("asistencias", listaAsistencia);
+        model.addAttribute("miAsistencia", asistencia);
+        model.addAttribute("posicionEnEspera", posicion);
+        return "vistasTemporales/detalleCita";
     }
 
-    @GetMapping("/productos")
-    public String productos(
-            Model model,
-            @RequestParam(required = false) String busquedaTexto,
-            @RequestParam(required = false) String tipo,
-            @RequestParam(required = false) String orden){
+    @PostMapping("/citas/inscribirse/{id}")
+    public String inscribirseACita(@PathVariable Long id, @RequestParam EstadoAsistenciaEnum estado, Authentication authentication){
+        asistenciaService.crearAsistencia(usuario(authentication), id, estado);
+        return "redirect:/comprador/citas";
+    }
 
-        Specification<Producto> spec = (root, query, cb) -> cb.conjunction();
-
-        if (busquedaTexto != null && !busquedaTexto.isEmpty()) {
-            spec = spec.and(ProductoSpecification.buscarPorTexto(busquedaTexto));
-        }
-        if (tipo != null && !tipo.isEmpty()) {
-            spec = spec.and(ProductoSpecification.filtrarPorTipo(tipo));
-        }
-
-        if (orden == null) {
-            orden = "recientes";
-        }
-
-        Sort sort = switch (orden) {
-            case "precio_asc" -> Sort.by("precioProducto").ascending();
-            case "precio_desc" -> Sort.by("precioProducto").descending();
-            case "recientes" -> Sort.by("fechaPublicacion").descending();
-            case "antiguos" -> Sort.by("fechaPublicacion").ascending();
-            default -> Sort.by("idProducto").descending();
-        };
-
-        List<Producto> productos = productoRepository.findAll(spec, sort);
-        model.addAttribute("productos", productos);
-        return "productos";
+    @PostMapping("/citas/cancerlar/asistencia/{id}")
+    public String cancelarAsistencia(@PathVariable Long id) throws MessagingException, IOException {
+        asistenciaService.cancelarAsistencia(id);
+        return "redirect:/comprador/citas";
     }
 
     @GetMapping("/compras")
@@ -166,7 +171,7 @@ public class CompradorController {
     }
 
     @PostMapping("/compras/actualizar-compra")
-    public String actualizarCompra(RedirectAttributes redirectAttributes, @RequestParam(name = "idVenta") Long idVenta, @RequestParam(name = "accion") String accion, @RequestParam(name = "razon", required = false) String razon) throws MessagingException, IOException, IOException {
+    public String actualizarCompra(RedirectAttributes redirectAttributes, @RequestParam(name = "idVenta") Long idVenta, @RequestParam(name = "accion") String accion, @RequestParam(name = "razon", required = false) String razon) throws MessagingException, IOException {
         Venta venta = ventaService.findById(idVenta);
 
         switch (accion){
@@ -192,21 +197,21 @@ public class CompradorController {
     }
 
     @PostMapping("/citas/reservar-cita")
-    public String reservar(@RequestParam(name = "idDisponibilidad") Long idDisponibilidad, Authentication authentication) throws MessagingException, IOException {
+    public String reservar(@RequestParam(name = "idCita") Long idCita, Authentication authentication) throws MessagingException, IOException {
         Usuario usuario = usuario(authentication);
-        Disponibilidad disponibilidad = disponibilidadService.findById(idDisponibilidad);
+        Cita cita = citaService.findById(idCita);
 
-        if (!citaService.yaTieneCita(usuario, disponibilidad.getProducto().getIdProducto())){
+        if (!asistenciaService.existeCualquierAsistenciaPorUsuario(usuario, cita.getProducto().getIdProducto())){
 
-            Cita cita = new Cita();
-            cita.setEstadoCita(EstadoCitaEnum.RESERVADA);
-            cita.setDisponibilidad(disponibilidad);
-            cita.setNumReprogramaciones(0);
-            cita.setComprador(usuario);
-            cita.setProducto(disponibilidad.getProducto());
-            citaService.save(cita);
+            Asistencia asistencia = new Asistencia();
 
-            notificacionService.notificacionCitaReservada(cita);
+            asistencia.setCita(cita);
+            asistencia.setUsuario(usuario);
+            asistencia.setEstado(EstadoAsistenciaEnum.INSCRITO);
+            asistencia.setFechaInscripcion(LocalDateTime.now());
+
+            asistenciaService.save(asistencia);
+
         }
 
         return "redirect:/comprador/citas";
@@ -228,7 +233,7 @@ public class CompradorController {
         return "redirect:/comprador/citas";
     }
 
-    @PostMapping("/citas/reprogramar-cita")
+    /*@PostMapping("/citas/reprogramar-cita")
     public String reprogramarCita(@RequestParam(name = "idCita") Long idCita, @RequestParam(name = "idDisponibilidad") Long idDisponibilidad, Authentication authentication, RedirectAttributes redirectAttributes) throws MessagingException, IOException {
         Cita cita = citaService.findById(idCita);
         if(disponibilidadService.validarSiPuedeReprogramar(cita)){
@@ -250,7 +255,7 @@ public class CompradorController {
         }
 
         return "redirect:/comprador/citas";
-    }
+    }*/
 
 
 
@@ -275,8 +280,8 @@ public class CompradorController {
 
         Cita cita = citaService.findById(idCita);
 
-        Venta venta = ventaService.generarVenta(cita.getProducto().getIdProducto(), cita.getComprador());
-        citaService.cambiarEstado(cita, EstadoCitaEnum.VENTAGENERADA);
+        Venta venta = ventaService.generarVenta(cita.getProducto().getIdProducto(), null/*comprador*/);
+        citaService.cambiarEstado(cita, EstadoCitaEnum.FINALIZADA);
 
         notificacionService.notificacionVentaGenerada(venta);
 
@@ -285,14 +290,39 @@ public class CompradorController {
     }
 
     @PostMapping("/agregarF/{id}")
-    public String agregarFavoritos(@PathVariable Long id ,Authentication auth){
+    public String agregarFavoritos(@PathVariable Long id, @RequestParam(name = "vieneDe") String vieneDe, Authentication auth){
         String correo = auth.getName();
         Usuario usuario = usuarioRepository.findByEmail(correo);
         System.out.println("------------------usuario autenticado en el controlador-------"+correo);
         Producto producto = productoRepository.findById(id).orElseThrow();
         favoritoService.agregarFavorito(usuario,producto);
 
-        return "redirect:/comprador/Favorito";
+        switch (vieneDe) {
+            case "detalle":
+                return "redirect:/detalle-producto/"+id;
+            case "dashboard":
+                return "redirect:/comprador/explorar";
+            case "productos":
+                return "redirect:/productos";
+        }
+        return "";
+    }
+
+    @PostMapping("/favoritos/eliminar/{id}")
+    public String eliminarFavorito(@PathVariable Long id,@RequestParam(name = "vieneDe") String vieneDe ,Authentication auth) {
+        Usuario usuario = usuarioService.findByEmail(auth.getName());
+        Producto producto = productoRepository.findById(id).orElseThrow();
+        favoritoService.eliminarFavorito(usuario, producto);
+
+        switch (vieneDe) {
+            case "detalle":
+                return "redirect:/detalle-producto/"+id;
+            case "dashboard":
+                return "redirect:/comprador/explorar";
+            case "productos":
+                return "redirect:/productos";
+        }
+        return "";
     }
 
     @GetMapping("/Favorito")

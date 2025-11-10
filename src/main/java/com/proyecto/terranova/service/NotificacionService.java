@@ -29,13 +29,12 @@ public interface NotificacionService {
 
     //HELPERS PARA CREAR LAS NOTIFICACIONES
     void notificacionCitaCancelada(Cita cita, Usuario compradorOVendedor) throws MessagingException, IOException;
-    void notificacionCitaReservada(Cita cita) throws MessagingException, IOException;
+    void notificacionCitaReservada(Asistencia asistencia, Usuario usuario) throws MessagingException, IOException;
     void notificacionCitaReprogramada(Cita cita, Usuario compradorOVendedor) throws MessagingException, IOException;
     void notificacionReprogramarCitaHabilitado(Cita cita) throws MessagingException, IOException;
     void notificacionVentaGenerada(Venta venta) throws MessagingException, IOException;
     void notificacionVentaModificada(Venta venta) throws MessagingException, IOException;
     void notificacionPeticionFinalizacionVenta(Venta venta) throws MessagingException, IOException;
-    void notificacionDisponibilidadRegistrada(Disponibilidad disponibilidad, String fecha, String hora) throws MessagingException, IOException;
     void notificacionFotoPerfilCambiada(Usuario usuario) throws MessagingException, IOException;
     void notificacionDatosPersonalesActualizados(Usuario usuario) throws MessagingException, IOException;
     void notificacionPedirModificarVenta(Venta venta, String razon) throws MessagingException, IOException;

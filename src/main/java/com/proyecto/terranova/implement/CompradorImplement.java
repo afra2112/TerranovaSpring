@@ -16,7 +16,7 @@ public class CompradorImplement implements CompradorService {
     UsuarioRepository usuarioRepository;
 
     @Autowired
-    CitaRepository citaRepository;
+    AsistenciaRepository asistenciaRepository;
 
     @Autowired
     NotificacionRepository notificacionRepository;
@@ -29,7 +29,7 @@ public class CompradorImplement implements CompradorService {
         Usuario usuario = usuarioRepository.findById(cedula).orElseThrow();
 
         int favoritos = usuario.getFavoritos().size();
-        int citas = citaRepository.findByCompradorAndActivoOrderByDisponibilidad_FechaAscDisponibilidad_HoraAsc(usuario, true).size();
+        int citas = asistenciaRepository.findByUsuarioOrderByCita_FechaAscCita_HoraInicioAsc(usuario).size();
         int notificaciones = notificacionRepository.findByUsuarioAndLeidoFalseAndActivoOrderByFechaNotificacionDesc(usuario, true).size();
         int visitados = historialVistosRepository.findByUsuario(usuario).size();
 

@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de Cita - Terranova</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#388e3c',
+                        secondary: '#ffcf00'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .hover-lift {
+            transition: all 0.3s ease;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-50">
+<div th:if="!${esDueno}">
+    <div th:replace="fragments/comprador/navbarComprador :: navbarComprador"></div>
+</div>
+<div th:if="${esDueno}">
+    <div th:replace="fragments/vendedor/navbarVendedor :: navbarVendedor"></div>
+</div>
+
+<div class="ml-64 flex flex-col min-h-screen">
+    <main class="lg:px-10 py-10">
+
+        <!-- Breadcrumb -->
+        <nav class="mb-6 animate-fade-in-up">
+            <ol class="flex items-center space-x-2 text-sm">
+                <li><a th:href="${esDueno ? '/vendedor/citas' : '/comprador/citas'}" class="text-primary hover:text-green-700 transition-colors font-medium">Mis Citas</a></li>
+                <li><i class='bx bx-chevron-right text-gray-400'></i></li>
+                <li class="text-gray-600 font-medium">Detalle de Cita</li>
+            </ol>
+        </nav>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- Columna Principal -->
+            <div class="lg:col-span-2 space-y-6">
+
+                <!-- Información de la Cita -->
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden animate-fade-in-up">
+                    <div class="gradient-bg p-6 text-white">
+                        <div class="flex items-center justify-between">
+
+                            <div class="flex items-center gap-4">
+                                <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
+                                    <i class='bx bx-calendar text-4xl'></i>
+                                </div>
+                                <div>
+                                    <h1 class="text-3xl font-bold mb-1">Detalle de Cita</h1>
+                                    <p class="text-emerald-100">Información completa de tu cita</p>
+                                </div>
+                            </div>
+
+                            <!-- Badge de estado actualizado con los nuevos estados -->
+                            <div th:switch="${cita.estadoCita.name()}" class="rounded-xl text-sm font-semibold border border-white/40 backdrop-blur-sm">
+                                <div th:case="'PROGRAMADA'" class="px-4 py-2 bg-white/20">Programada</div>
+                                <div th:case="'REPROGRAMADA'" class="px-4 py-2 bg-blue-500/30">Re-Programada</div>
+                                <div th:case="'LLENA'" class="px-4 py-2 bg-orange-500/30">Llena</div>
+                                <div th:case="'EN_CURSO'" class="px-4 py-2 bg-blue-500/30">En Curso</div>
+                                <div th:case="'CANCELADA'" class="px-4 py-2 bg-red-500/30">Cancelada</div>
+                                <div th:case="'FINALIZADA'" class="px-4 py-2 bg-gray-500/30">Finalizada</div>
+                                <div th:case="*">Sin estado</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-8">
+                        <!-- Fecha y Hora -->
+                        <div class="grid grid-cols-2 gap-6 mb-6">
+                            <div class="p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-14 h-14 gradient-bg rounded-xl flex items-center justify-center text-white">
+                                        <i class='bx bx-calendar text-2xl'></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-600 font-medium mb-1">Fecha</p>
+                                        <p class="text-xl font-bold text-gray-900" th:text="${#temporals.format(cita.fecha, 'EEEE, dd MMMM yyyy')}">Fecha</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="p-6 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center text-white">
+                                        <i class='bx bx-time-five text-2xl'></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-600 font-medium mb-1">Horario</p>
+                                        <p class="text-xl font-bold text-gray-900" th:text="${#temporals.format(cita.horaInicio, 'HH:mm')} + ' - ' + ${#temporals.format(cita.horaFin, 'HH:mm')}">Hora</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Descripción -->
+                        <div th:if="${cita.descripcion != null and !#strings.isEmpty(cita.descripcion)}"
+                             class="mb-6 p-6 bg-gray-50 rounded-2xl">
+                            <h3 class="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
+                                <i class='bx bx-info-circle text-green-600 text-xl'></i>
+                                Descripción
+                            </h3>
+                            <p class="text-gray-700 leading-relaxed" th:text="${cita.descripcion}">Descripción de la cita</p>
+                        </div>
+
+                        <!-- Disponibilidad -->
+                        <div class="p-6 bg-gray-50 rounded-2xl">
+                            <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                <i class='bx bx-group text-green-600 text-xl'></i>
+                                Disponibilidad
+                            </h3>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-gray-600">Cupos ocupados</span>
+                                <span class="text-2xl font-bold text-gray-900">
+                                    <span th:text="${cita.ocupados}">0</span> / <span th:text="${cita.cupoMaximo}">0</span>
+                                </span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+                                <div class="h-full gradient-bg rounded-full transition-all duration-500"
+                                     th:style="'width: ' + ${(cita.ocupados * 100.0 / cita.cupoMaximo)} + '%'"></div>
+                            </div>
+                            <p class="text-sm text-gray-600 mt-3">
+                                <span th:text="${cita.disponibles}">0</span> cupos disponibles
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lista de Asistentes (Solo para Vendedor) -->
+                <div th:if="${esDueno}" class="bg-white rounded-2xl shadow-lg p-8 animate-fade-in-up" style="animation-delay: 0.15s;">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                        <i class='bx bx-user-check text-green-600 text-2xl'></i>
+                        Asistentes Confirmados
+                    </h3>
+
+                    <div th:if="${asistentesConfirmados == null or #lists.isEmpty(asistentesConfirmados)}" class="text-center py-8">
+                        <i class='bx bx-user-x text-gray-300 text-6xl mb-4'></i>
+                        <p class="text-gray-500">No hay asistentes confirmados aún</p>
+                    </div>
+
+                    <div th:if="${asistentesConfirmados != null and !#lists.isEmpty(asistentesConfirmados)}" class="space-y-3">
+                        <div th:each="asistencia : ${asistentesConfirmados}"
+                             class="flex items-center justify-between p-4 bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl hover:shadow-md transition-all border border-emerald-100">
+                            <div class="flex items-center gap-4">
+                                <img th:if="${asistencia.usuario.foto != null}"
+                                     th:src="@{'/imagenes/' + ${asistencia.usuario.foto}}"
+                                     class="w-12 h-12 rounded-full object-cover border-2 border-emerald-300"
+                                     th:alt="${asistencia.usuario.nombres}">
+                                <div th:if="${asistencia.usuario.foto == null}"
+                                     class="w-12 h-12 gradient-bg rounded-full flex items-center justify-center text-white font-bold text-lg">
+                                    <span th:text="${#strings.substring(asistencia.usuario.nombres, 0, 1)}">U</span>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-gray-900" th:text="${asistencia.usuario.nombres + ' ' + asistencia.usuario.apellidos}">Usuario</p>
+                                    <p class="text-sm text-gray-600 flex items-center gap-2">
+                                        <i class='bx bx-envelope text-xs'></i>
+                                        <span th:text="${asistencia.usuario.email}">email@example.com</span>
+                                    </p>
+                                    <p class="text-xs text-gray-500 mt-1 flex items-center gap-1">
+                                        <i class='bx bx-calendar-check'></i>
+                                        Inscrito: <span th:text="${#temporals.format(asistencia.fechaInscripcion, 'dd/MM/yyyy HH:mm')}">--</span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="flex flex-col items-end gap-2">
+                                <span class="px-3 py-1 bg-emerald-500 text-white rounded-lg text-sm font-semibold flex items-center gap-1">
+                                    <i class='bx bx-check-circle'></i>
+                                    Confirmado
+                                </span>
+                                <a th:href="@{'mailto:' + ${asistencia.usuario.email}}"
+                                   class="text-xs text-emerald-600 hover:text-emerald-700 font-medium flex items-center gap-1">
+                                    <i class='bx bx-send'></i>
+                                    Contactar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lista de Espera (Solo para Vendedor) -->
+                <div th:if="${esDueno and cita.estadoCita.name() != 'EN_CURSO'}" class="bg-white rounded-2xl shadow-lg p-8 animate-fade-in-up" style="animation-delay: 0.2s;">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                        <i class='bx bx-time text-yellow-600 text-2xl'></i>
+                        Lista de Espera
+                    </h3>
+
+                    <div th:if="${asistentesEspera == null or #lists.isEmpty(asistentesEspera)}" class="text-center py-8">
+                        <i class='bx bx-list-ul text-gray-300 text-6xl mb-4'></i>
+                        <p class="text-gray-500">No hay usuarios en lista de espera</p>
+                    </div>
+
+                    <div th:if="${asistentesEspera != null and !#lists.isEmpty(asistentesEspera)}" class="space-y-3">
+                        <div th:each="asistencia, iterStat : ${asistentesEspera}"
+                             class="flex items-center justify-between p-4 bg-gradient-to-r from-yellow-50 to-amber-50 rounded-xl hover:shadow-md transition-all border border-yellow-200">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                                    <span th:text="${iterStat.index + 1}">1</span>
+                                </div>
+                                <img th:if="${asistencia.usuario.foto != null}"
+                                     th:src="@{'/imagenes/' + ${asistencia.usuario.foto}}"
+                                     class="w-12 h-12 rounded-full object-cover border-2 border-yellow-300"
+                                     th:alt="${asistencia.usuario.nombres}">
+                                <div th:if="${asistencia.usuario.foto == null}"
+                                     class="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center text-white font-bold">
+                                    <span th:text="${#strings.substring(asistencia.usuario.nombres, 0, 1)}">U</span>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-gray-900" th:text="${asistencia.usuario.nombres + ' ' + asistencia.usuario.apellidos}">Usuario</p>
+                                    <p class="text-sm text-gray-600 flex items-center gap-2">
+                                        <i class='bx bx-envelope text-xs'></i>
+                                        <span th:text="${asistencia.usuario.email}">email@example.com</span>
+                                    </p>
+                                    <p class="text-xs text-gray-500 mt-1 flex items-center gap-1">
+                                        <i class='bx bx-calendar'></i>
+                                        En espera desde: <span th:text="${#temporals.format(asistencia.fechaInscripcion, 'dd/MM/yyyy HH:mm')}">--</span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="flex flex-col items-end gap-2">
+                                <span class="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm font-semibold flex items-center gap-1">
+                                    <i class='bx bx-time-five'></i>
+                                    Posición <span th:text="${iterStat.index + 1}">1</span>
+                                </span>
+                                <a th:href="@{'mailto:' + ${asistencia.usuario.email}}"
+                                   class="text-xs text-yellow-600 hover:text-yellow-700 font-medium flex items-center gap-1">
+                                    <i class='bx bx-send'></i>
+                                    Contactar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Columna Lateral -->
+            <div class="space-y-6 sticky top-4">
+
+                <!-- Información del Producto -->
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden animate-fade-in-up">
+                    <div class="h-48 overflow-hidden">
+                        <img th:src="${#lists.isEmpty(cita.producto.imagenes) ? '/placeholder.svg?height=200&width=400' : cita.producto.imagenes.get(0).nombreArchivo}"
+                             alt="Producto"
+                             class="w-full h-full object-cover hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-900 mb-3" th:text="${cita.producto.nombreProducto}">Producto</h3>
+                        <div class="space-y-3 mb-6">
+                            <div class="flex items-center gap-3 text-gray-600">
+                                <i class='bx bx-map text-green-600 text-xl'></i>
+                                <span th:text="${cita.producto.ciudad.nombreCiudad}">Ciudad</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-gray-600">
+                                <i class='bx bx-dollar text-green-600 text-xl'></i>
+                                <span th:text="'$' + ${#numbers.formatDecimal(cita.producto.precioProducto, 0, 'POINT', 0, 'COMMA')}">$0</span>
+                            </div>
+                        </div>
+                        <a th:if="!${esDueno}" th:href="@{'/detalle-producto/' + ${cita.producto.idProducto}}"
+                           class="block w-full gradient-bg text-white font-bold py-3 rounded-xl hover:shadow-lg transition-all duration-300 text-center">
+                            Ver Producto
+                        </a>
+                        <a th:if="${esDueno}" th:href="@{'/vendedor/productos/Detalle/' + ${cita.producto.idProducto}}"
+                           class="block w-full gradient-bg text-white font-bold py-3 rounded-xl hover:shadow-lg transition-all duration-300 text-center">
+                            Ver Producto
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Estado del comprador - Mostrar si está confirmado o en espera -->
+                <div th:if="${!esDueno and miAsistencia != null}" class="bg-white rounded-2xl shadow-lg p-6 animate-fade-in-up" style="animation-delay: 0.1s;">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        <i class='bx bx-user-circle text-green-600 text-xl'></i>
+                        Tu Estado
+                    </h3>
+
+                    <!-- Estado EN_CURSO -->
+                    <div th:if="${cita.estadoCita.name() == 'EN_CURSO' and miAsistencia.estado.name() == 'INSCRITO'}">
+                        <div class="p-4 bg-blue-50 border-2 border-blue-500 rounded-xl mb-4">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center animate-pulse">
+                                    <i class='bx bx-time-five text-white text-2xl'></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-blue-800 text-lg">Cita en Curso</p>
+                                    <p class="text-sm text-blue-700">La cita está aconteciendo ahora</p>
+                                </div>
+                            </div>
+                            <div class="bg-white/70 rounded-lg p-4">
+                                <p class="text-sm text-blue-800 mb-2 flex items-center gap-2">
+                                    <i class='bx bx-info-circle'></i>
+                                    <strong>Estado actual</strong>
+                                </p>
+                                <ul class="text-xs text-blue-700 space-y-1 ml-5 list-disc">
+                                    <li>Tu asistencia está confirmada</li>
+                                    <li>La cita está en progreso</li>
+                                    <li>El vendedor registrará tu asistencia al finalizar</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Estado CANCELADA -->
+                    <div th:if="${cita.estadoCita.name() == 'CANCELADA'}">
+                        <div class="p-4 bg-red-50 border-2 border-red-500 rounded-xl mb-4">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center">
+                                    <i class='bx bx-x-circle text-white text-2xl'></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-red-800 text-lg">Cita Cancelada</p>
+                                    <p class="text-sm text-red-700">Esta cita fue cancelada por el vendedor</p>
+                                </div>
+                            </div>
+                            <div class="bg-white/70 rounded-lg p-4">
+                                <p class="text-sm text-red-800 mb-2 flex items-center gap-2">
+                                    <i class='bx bx-info-circle'></i>
+                                    <strong>¿Qué pasó?</strong>
+                                </p>
+                                <ul class="text-xs text-red-700 space-y-1 ml-5 list-disc">
+                                    <li>El vendedor canceló esta cita</li>
+                                    <li>No podrás asistir a esta cita</li>
+                                    <li>Tu cupo ha sido liberado</li>
+                                    <li>Puedes buscar otras citas disponibles</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <a th:href="@{'/comprador/citas'}"
+                           class="w-full gradient-bg text-white font-bold py-3 rounded-xl hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2">
+                            <i class='bx bx-search text-xl'></i>
+                            Ver Otras Citas
+                        </a>
+                    </div>
+
+                    <!-- Estado FINALIZADA con registro de asistencia -->
+                    <div th:if="${cita.estadoCita.name() == 'FINALIZADA' and miAsistencia.estado.name() == 'INSCRITO'}">
+                        <!-- Si asistió -->
+                        <div th:if="${miAsistencia.asistio == true}">
+                            <div class="p-4 bg-emerald-50 border-2 border-emerald-500 rounded-xl mb-4">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center">
+                                        <i class='bx bx-check-double text-white text-2xl'></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-emerald-800 text-lg">¡Asististe a la Cita!</p>
+                                        <p class="text-sm text-emerald-700">Tu asistencia fue registrada</p>
+                                    </div>
+                                </div>
+                                <div class="bg-white/70 rounded-lg p-4">
+                                    <p class="text-sm text-emerald-800 mb-3 flex items-center gap-2">
+                                        <i class='bx bx-info-circle'></i>
+                                        <strong>Resumen de la cita</strong>
+                                    </p>
+                                    <div class="space-y-2 text-xs text-emerald-700">
+                                        <div class="flex items-center justify-between p-2 bg-white rounded-lg">
+                                            <span class="font-medium">Estado:</span>
+                                            <span class="px-2 py-1 bg-emerald-500 text-white rounded-md font-semibold">Asistió</span>
+                                        </div>
+                                        <div class="flex items-center justify-between p-2 bg-white rounded-lg">
+                                            <span class="font-medium">Fecha:</span>
+                                            <span th:text="${#temporals.format(cita.fecha, 'dd/MM/yyyy')}">--</span>
+                                        </div>
+                                        <div class="flex items-center justify-between p-2 bg-white rounded-lg">
+                                            <span class="font-medium">Horario:</span>
+                                            <span th:text="${#temporals.format(cita.horaInicio, 'HH:mm')} + ' - ' + ${#temporals.format(cita.horaFin, 'HH:mm')}">--</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-gradient-to-r from-emerald-500 to-green-500 text-white p-4 rounded-xl text-center">
+                                <i class='bx bx-party text-3xl mb-2'></i>
+                                <p class="font-bold">¡Gracias por asistir!</p>
+                                <p class="text-xs text-emerald-100 mt-1">Esperamos verte pronto</p>
+                            </div>
+                        </div>
+
+                        <!-- Si NO asistió -->
+                        <div th:if="${miAsistencia.asistio == false}">
+                            <div class="p-4 bg-orange-50 border-2 border-orange-500 rounded-xl mb-4">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center">
+                                        <i class='bx bx-x text-white text-2xl'></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-orange-800 text-lg">No Asististe</p>
+                                        <p class="text-sm text-orange-700">Tu asistencia no fue registrada</p>
+                                    </div>
+                                </div>
+                                <div class="bg-white/70 rounded-lg p-4">
+                                    <p class="text-sm text-orange-800 mb-3 flex items-center gap-2">
+                                        <i class='bx bx-info-circle'></i>
+                                        <strong>Resumen de la cita</strong>
+                                    </p>
+                                    <div class="space-y-2 text-xs text-orange-700">
+                                        <div class="flex items-center justify-between p-2 bg-white rounded-lg">
+                                            <span class="font-medium">Estado:</span>
+                                            <span class="px-2 py-1 bg-orange-500 text-white rounded-md font-semibold">No Asistió</span>
+                                        </div>
+                                        <div class="flex items-center justify-between p-2 bg-white rounded-lg">
+                                            <span class="font-medium">Fecha:</span>
+                                            <span th:text="${#temporals.format(cita.fecha, 'dd/MM/yyyy')}">--</span>
+                                        </div>
+                                        <div class="flex items-center justify-between p-2 bg-white rounded-lg">
+                                            <span class="font-medium">Horario:</span>
+                                            <span th:text="${#temporals.format(cita.horaInicio, 'HH:mm')} + ' - ' + ${#temporals.format(cita.horaFin, 'HH:mm')}">--</span>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3 p-3 bg-orange-100 rounded-lg">
+                                        <p class="text-xs text-orange-800">
+                                            <i class='bx bx-bulb'></i>
+                                            <strong>Tip:</strong> Si no pudiste asistir, recuerda cancelar con anticipación para que otros puedan tomar tu lugar.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <a th:href="@{'/comprador/citas'}"
+                           class="w-full gradient-bg text-white font-bold py-3 rounded-xl hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2">
+                            <i class='bx bx-calendar text-xl'></i>
+                            Ver Mis Otras Citas
+                        </a>
+                    </div>
+
+                    <!-- Si está INSCRITO y la cita está PROGRAMADA o LLENA -->
+                    <div th:if="${(cita.estadoCita.name() == 'PROGRAMADA' or cita.estadoCita.name() == 'LLENA') and miAsistencia.estado.name() == 'INSCRITO'}">
+                        <div class="p-4 bg-green-50 border-2 border-green-500 rounded-xl mb-4">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
+                                    <i class='bx bx-check text-white text-2xl'></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-green-800 text-lg">Cita Confirmada</p>
+                                    <p class="text-sm text-green-700">Tu asistencia está garantizada</p>
+                                </div>
+                            </div>
+                            <div class="bg-white/50 rounded-lg p-3">
+                                <p class="text-sm text-green-800">
+                                    <i class='bx bx-info-circle'></i>
+                                    Recuerda asistir en la fecha y hora programada. Si no puedes asistir, cancela con anticipación.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Botón de cancelar solo si está confirmado y la cita no está cancelada ni finalizada -->
+                        <form th:action="@{'/comprador/citas/cancelar-cita/' + ${miAsistencia.idAsistencia}}"
+                              method="post"
+                              onsubmit="return confirm('¿Estás seguro de cancelar tu participación en esta cita?');">
+                            <button type="submit"
+                                    class="w-full bg-red-500 text-white font-bold py-3 rounded-xl hover:bg-red-600 transition-all duration-300 flex items-center justify-center gap-2">
+                                <i class='bx bx-x-circle text-xl'></i>
+                                Cancelar Mi Cita
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Si está EN_ESPERA y la cita está PROGRAMADA o LLENA -->
+                    <div th:if="${(cita.estadoCita.name() == 'PROGRAMADA' or cita.estadoCita.name() == 'LLENA') and miAsistencia.estado.name() == 'EN_ESPERA'}">
+                        <div class="p-4 bg-yellow-50 border-2 border-yellow-500 rounded-xl mb-4">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center animate-pulse">
+                                    <i class='bx bx-time text-white text-2xl'></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-yellow-800 text-lg">En Lista de Espera</p>
+                                    <p class="text-sm text-yellow-700">Esperando disponibilidad</p>
+                                </div>
+                            </div>
+
+                            <!-- Información de posición en lista de espera -->
+                            <div class="bg-white/70 rounded-lg p-4 mb-3 space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-yellow-800 font-medium">Tu posición:</span>
+                                    <span class="text-2xl font-bold text-yellow-600" th:text="${posicionEnEspera != null ? posicionEnEspera : '?'}">?</span>
+                                </div>
+                                <div class="w-full bg-yellow-200 rounded-full h-2">
+                                    <div class="h-full bg-yellow-500 rounded-full" style="width: 60%"></div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white/50 rounded-lg p-3">
+                                <p class="text-sm text-yellow-800 mb-2">
+                                    <i class='bx bx-info-circle'></i>
+                                    <strong>¿Qué significa esto?</strong>
+                                </p>
+                                <ul class="text-xs text-yellow-700 space-y-1 ml-5 list-disc">
+                                    <li>Los cupos están llenos actualmente</li>
+                                    <li>Si alguien cancela, entrarás automáticamente</li>
+                                    <li>Te notificaremos por correo si obtienes un cupo</li>
+                                    <li>Puedes salir de la lista cuando quieras</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Botón para salir de lista de espera -->
+                        <form th:action="@{'/comprador/citas/inscribirse/' + ${miAsistencia.cita.idCita}}"
+                              method="post"
+                              onsubmit="return confirm('¿Deseas salir de la lista de espera?');">
+                            <input type="hidden" name="estado" value="CANCELADO">
+                            <button type="submit"
+                                    class="w-full bg-yellow-500 text-white font-bold py-3 rounded-xl hover:bg-yellow-600 transition-all duration-300 flex items-center justify-center gap-2">
+                                <i class='bx bx-exit text-xl'></i>
+                                Salir de Lista de Espera
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Acciones del Vendedor -->
+                <div th:if="${esDueno}" class="bg-white rounded-2xl shadow-lg p-6 animate-fade-in-up" style="animation-delay: 0.1s;">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        <i class='bx bx-cog text-emerald-600'></i>
+                        Acciones de Gestión
+                    </h3>
+                    <div class="space-y-3">
+                        <!-- Mostrar acciones según el estado de la cita -->
+                        <div th:if="${cita.estadoCita.name() == 'PROGRAMADA'}">
+                            <button onclick="openReprogramarModal()"
+                                    class="w-full gradient-bg text-white font-bold py-3 rounded-xl hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2">
+                                <i class='bx bx-calendar-edit text-xl'></i>
+                                Reprogramar Cita
+                            </button>
+                            <button onclick="openCancelarModal()"
+                                    class="w-full bg-red-500 text-white font-bold py-3 rounded-xl hover:bg-red-600 transition-all duration-300 flex items-center justify-center gap-2 mt-3">
+                                <i class='bx bx-x-circle text-xl'></i>
+                                Cancelar Cita
+                            </button>
+                        </div>
+
+                        <!-- Modal de finalización con checklist en lugar de form directo -->
+                        <div th:if="${cita.estadoCita.name() == 'EN_CURSO'}">
+                            <button type="button" onclick="openFinalizarModal()"
+                                    class="w-full gradient-bg text-white font-bold py-3 rounded-xl hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2">
+                                <i class='bx bx-check-circle text-xl'></i>
+                                Finalizar y Registrar Asistencia
+                            </button>
+                        </div>
+
+                        <div th:if="${cita.estadoCita.name() == 'FINALIZADA'}">
+                            <div class="bg-emerald-50 border-2 border-emerald-300 rounded-xl p-4 text-center">
+                                <i class='bx bx-check-circle text-emerald-600 text-4xl mb-2'></i>
+                                <p class="font-bold text-emerald-800">Cita Finalizada</p>
+                                <p class="text-sm text-emerald-700 mt-1">Esta cita ya fue completada</p>
+                            </div>
+                        </div>
+
+                        <div th:if="${cita.estadoCita.name() == 'CANCELADA'}">
+                            <div class="bg-red-50 border-2 border-red-300 rounded-xl p-4 text-center">
+                                <i class='bx bx-x-circle text-red-600 text-4xl mb-2'></i>
+                                <p class="font-bold text-red-800">Cita Cancelada</p>
+                                <p class="text-sm text-red-700 mt-1">Esta cita fue cancelada</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+</div>
+
+<!-- Modales para reprogramar y cancelar (solo para vendedor) -->
+<div th:if="${esDueno}">
+    <!-- Modal para Reprogramar -->
+    <div id="reprogramarModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 opacity-0 invisible transition-all duration-300">
+        <div class="bg-white rounded-2xl p-6 max-w-lg w-full mx-4 transform scale-95 transition-transform duration-300 shadow-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+                    <i class='bx bx-calendar-edit text-emerald-600'></i>
+                    Reprogramar Cita
+                </h3>
+                <button onclick="closeReprogramarModal()" class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-2 rounded-lg transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <form th:action="@{'/vendedor/citas/reprogramar-cita/' + ${cita.idCita}}" method="post">
+                <div class="space-y-4">
+                    <div class="bg-amber-50 border-l-4 border-amber-500 rounded-lg p-4 mb-4">
+                        <div class="flex items-start gap-3">
+                            <i class='bx bx-info-circle text-amber-600 text-2xl'></i>
+                            <div>
+                                <p class="font-semibold text-amber-800 mb-1">Reprogramando cita</p>
+                                <p class="text-sm text-amber-700" th:text="'Cita actual: ' + ${#temporals.format(cita.fecha, 'dd/MM/yyyy')} + ' de ' + ${#temporals.format(cita.horaInicio, 'HH:mm')} + ' a ' + ${#temporals.format(cita.horaFin, 'HH:mm')}">--</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Nueva Fecha</label>
+                        <input required type="date" name="fecha" th:value="${#temporals.format(cita.fecha, 'yyyy-MM-dd')}"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Hora Inicio</label>
+                            <input required type="time" name="horaInicio" th:value="${#temporals.format(cita.horaInicio, 'HH:mm')}"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Hora Fin</label>
+                            <input required type="time" name="horaFin" th:value="${#temporals.format(cita.horaFin, 'HH:mm')}"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500">
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <p class="text-sm text-blue-800">
+                            <i class='bx bx-bell'></i>
+                            Se notificará automáticamente a todos los asistentes sobre el cambio de horario.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex space-x-3 mt-6">
+                    <button type="button" onclick="closeReprogramarModal()"
+                            class="flex-1 border-2 border-gray-300 text-gray-700 px-4 py-3 rounded-xl font-semibold hover:bg-gray-50">
+                        Cancelar
+                    </button>
+                    <button type="submit"
+                            class="flex-1 gradient-bg text-white px-4 py-3 rounded-xl font-semibold hover:shadow-lg">
+                        Confirmar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para Cancelar -->
+    <div id="cancelarModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 opacity-0 invisible transition-all duration-300">
+        <div class="bg-white rounded-2xl p-6 max-w-lg w-full mx-4 transform scale-95 transition-transform duration-300 shadow-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+                    <i class='bx bx-error-circle text-red-600'></i>
+                    Cancelar Cita
+                </h3>
+                <button onclick="closeCancelarModal()" class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-2 rounded-lg transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <form th:action="@{'/vendedor/citas/cancelar-cita/' + ${cita.idCita}}" method="post">
+                <div class="space-y-4">
+                    <div class="bg-red-50 border-l-4 border-red-500 rounded-lg p-4">
+                        <div class="flex items-start gap-3">
+                            <i class='bx bx-error text-red-600 text-3xl'></i>
+                            <div>
+                                <p class="font-bold text-red-800 mb-2">¿Estás seguro de cancelar esta cita?</p>
+                                <ul class="text-sm text-red-700 space-y-1 list-disc list-inside">
+                                    <li>Se notificará a <span th:text="${cita.ocupados}">0</span> asistentes</li>
+                                    <li>Los cupos quedarán liberados</li>
+                                    <li>Esta acción no se puede deshacer</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Motivo de Cancelación (Opcional)</label>
+                        <textarea name="motivoCancelacion" rows="4"
+                                  class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500"
+                                  placeholder="Explica brevemente por qué cancelas esta cita..."></textarea>
+                    </div>
+                </div>
+
+                <div class="flex space-x-3 mt-6">
+                    <button type="button" onclick="closeCancelarModal()"
+                            class="flex-1 border-2 border-gray-300 text-gray-700 px-4 py-3 rounded-xl font-semibold hover:bg-gray-50">
+                        No, Mantener Cita
+                    </button>
+                    <button type="submit"
+                            class="flex-1 bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-3 rounded-xl font-semibold hover:shadow-lg">
+                        Sí, Cancelar Cita
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Nuevo Modal para Finalizar con Checklist de Asistencias -->
+    <div id="finalizarModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 opacity-0 invisible transition-all duration-300 overflow-y-auto py-10">
+        <div class="bg-white rounded-2xl p-6 max-w-2xl w-full mx-4 transform scale-95 transition-transform duration-300 shadow-2xl my-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+                    <i class='bx bx-check-circle text-emerald-600'></i>
+                    Finalizar Cita y Registrar Asistencia
+                </h3>
+                <button onclick="closeFinalizarModal()" class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-2 rounded-lg transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <form th:action="@{'/vendedor/citas/finalizar-cita/' + ${cita.idCita}}" method="post" id="finalizarForm">
+                <div class="space-y-4">
+                    <div class="bg-emerald-50 border-l-4 border-emerald-500 rounded-lg p-4 mb-4">
+                        <div class="flex items-start gap-3">
+                            <i class='bx bx-info-circle text-emerald-600 text-2xl'></i>
+                            <div class="flex-1">
+                                <p class="font-semibold text-emerald-800 mb-1">Marcar asistencia de participantes</p>
+                                <p class="text-sm text-emerald-700">Selecciona quiénes asistieron a la cita. Solo se muestran los asistentes confirmados.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lista de asistentes confirmados con checkboxes -->
+                    <div class="bg-gray-50 rounded-xl p-4 max-h-96 overflow-y-auto">
+                        <div class="flex items-center justify-between mb-4 pb-3 border-b border-gray-200">
+                            <h4 class="font-bold text-gray-900">Lista de Asistentes Confirmados</h4>
+                            <button type="button" onclick="toggleAllAsistencias()"
+                                    class="text-sm text-emerald-600 hover:text-emerald-700 font-semibold flex items-center gap-1">
+                                <i class='bx bx-checkbox-checked'></i>
+                                Seleccionar Todos
+                            </button>
+                        </div>
+
+                        <div th:if="${asistentesConfirmados == null or #lists.isEmpty(asistentesConfirmados)}" class="text-center py-8">
+                            <i class='bx bx-user-x text-gray-300 text-4xl mb-2'></i>
+                            <p class="text-gray-500 text-sm">No hay asistentes confirmados para registrar</p>
+                        </div>
+
+                        <div th:if="${asistentesConfirmados != null and !#lists.isEmpty(asistentesConfirmados)}" class="space-y-2">
+                            <div th:each="asistencia : ${asistentesConfirmados}"
+                                 class="flex items-center justify-between p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-emerald-300 transition-all">
+                                <div class="flex items-center gap-4 flex-1">
+                                    <img th:if="${asistencia.usuario.foto != null}"
+                                         th:src="@{'/imagenes/' + ${asistencia.usuario.foto}}"
+                                         class="w-12 h-12 rounded-full object-cover border-2 border-gray-200"
+                                         th:alt="${asistencia.usuario.nombres}">
+                                    <div th:if="${asistencia.usuario.foto == null}"
+                                         class="w-12 h-12 gradient-bg rounded-full flex items-center justify-center text-white font-bold text-lg">
+                                        <span th:text="${#strings.substring(asistencia.usuario.nombres, 0, 1)}">U</span>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="font-bold text-gray-900" th:text="${asistencia.usuario.nombres + ' ' + asistencia.usuario.apellidos}">Usuario</p>
+                                        <p class="text-sm text-gray-600" th:text="${asistencia.usuario.email}">email@example.com</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center gap-3">
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox"
+                                               th:name="'asistencias[' + ${asistencia.idAsistencia} + '].asistio'"
+                                               th:value="true"
+                                               class="sr-only peer asistencia-checkbox">
+                                        <div class="w-14 h-8 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-emerald-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-emerald-500"></div>
+                                        <span class="ml-3 text-sm font-semibold text-gray-600 peer-checked:text-emerald-600">
+                                            <span class="no-asistio">No Asistió</span>
+                                            <span class="asistio hidden">Asistió</span>
+                                        </span>
+                                    </label>
+                                    <input type="hidden"
+                                           th:name="'asistencias[' + ${asistencia.idAsistencia} + '].idAsistencia'"
+                                           th:value="${asistencia.idAsistencia}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
+                        <p class="text-sm text-blue-800 flex items-start gap-2">
+                            <i class='bx bx-info-circle text-lg flex-shrink-0 mt-0.5'></i>
+                            <span>Al finalizar, la cita se marcará como completada y se guardará el registro de asistencia de cada participante.</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex space-x-3 mt-6">
+                    <button type="button" onclick="closeFinalizarModal()"
+                            class="flex-1 border-2 border-gray-300 text-gray-700 px-4 py-3 rounded-xl font-semibold hover:bg-gray-50 transition-all">
+                        Cancelar
+                    </button>
+                    <button type="submit"
+                            class="flex-1 gradient-bg text-white px-4 py-3 rounded-xl font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2">
+                        <i class='bx bx-check-double'></i>
+                        Finalizar Cita
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openReprogramarModal() {
+        const modal = document.getElementById('reprogramarModal');
+        modal.classList.remove('opacity-0', 'invisible');
+        modal.classList.add('opacity-100', 'visible');
+        modal.querySelector('.transform').classList.remove('scale-95');
+        modal.querySelector('.transform').classList.add('scale-100');
+    }
+
+    function closeReprogramarModal() {
+        const modal = document.getElementById('reprogramarModal');
+        modal.classList.add('opacity-0', 'invisible');
+        modal.classList.remove('opacity-100', 'visible');
+        modal.querySelector('.transform').classList.add('scale-95');
+        modal.querySelector('.transform').classList.remove('scale-100');
+    }
+
+    function openCancelarModal() {
+        const modal = document.getElementById('cancelarModal');
+        modal.classList.remove('opacity-0', 'invisible');
+        modal.classList.add('opacity-100', 'visible');
+        modal.querySelector('.transform').classList.remove('scale-95');
+        modal.querySelector('.transform').classList.add('scale-100');
+    }
+
+    function closeCancelarModal() {
+        const modal = document.getElementById('cancelarModal');
+        modal.classList.add('opacity-0', 'invisible');
+        modal.classList.remove('opacity-100', 'visible');
+        modal.querySelector('.transform').classList.add('scale-95');
+        modal.querySelector('.transform').classList.remove('scale-100');
+    }
+
+    function openFinalizarModal() {
+        const modal = document.getElementById('finalizarModal');
+        modal.classList.remove('opacity-0', 'invisible');
+        modal.classList.add('opacity-100', 'visible');
+        modal.querySelector('.transform').classList.remove('scale-95');
+        modal.querySelector('.transform').classList.add('scale-100');
+    }
+
+    function closeFinalizarModal() {
+        const modal = document.getElementById('finalizarModal');
+        modal.classList.add('opacity-0', 'invisible');
+        modal.classList.remove('opacity-100', 'visible');
+        modal.querySelector('.transform').classList.add('scale-95');
+        modal.querySelector('.transform').classList.remove('scale-100');
+    }
+
+    function toggleAllAsistencias() {
+        const checkboxes = document.querySelectorAll('.asistencia-checkbox');
+        const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = !allChecked;
+            updateCheckboxLabel(checkbox);
+        });
+
+        // Cambiar el texto del botón
+        const button = event.target.closest('button');
+        if (allChecked) {
+            button.innerHTML = '<i class="bx bx-checkbox-checked"></i> Seleccionar Todos';
+        } else {
+            button.innerHTML = '<i class="bx bx-checkbox"></i> Deseleccionar Todos';
+        }
+    }
+
+    function updateCheckboxLabel(checkbox) {
+        const label = checkbox.closest('label');
+        const noAsistio = label.querySelector('.no-asistio');
+        const asistio = label.querySelector('.asistio');
+
+        if (checkbox.checked) {
+            noAsistio.classList.add('hidden');
+            asistio.classList.remove('hidden');
+        } else {
+            noAsistio.classList.remove('hidden');
+            asistio.classList.add('hidden');
+        }
+    }
+
+    // Agregar listeners a todos los checkboxes cuando cargue la página
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkboxes = document.querySelectorAll('.asistencia-checkbox');
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                updateCheckboxLabel(this);
+            });
+        });
+    });
+
+    function toggleUserDropdown() {
+        const dropdown = document.getElementById('userDropdown');
+        const arrow = document.getElementById('dropdownArrow');
+
+        if (dropdown.classList.contains('opacity-0')) {
+
+            dropdown.classList.remove('opacity-0', 'invisible', 'scale-95');
+            dropdown.classList.add('opacity-100', 'visible', 'scale-100');
+            arrow.style.transform = 'rotate(180deg)';
+        } else {
+            // Ocultar dropdown
+            dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
+            dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
+            arrow.style.transform = 'rotate(0deg)';
+        }
+    }
+
+    document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('userDropdown');
+        const userButton = event.target.closest('[onclick="toggleUserDropdown()"]');
+
+        if (!userButton && !dropdown.contains(event.target)) {
+            dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
+            dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
+            document.getElementById('dropdownArrow').style.transform = 'rotate(0deg)';
+        }
+    });
+</script>
+</body>
+</html>

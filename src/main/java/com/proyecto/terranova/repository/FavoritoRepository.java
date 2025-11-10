@@ -13,3 +13,4 @@ public interface FavoritoRepository extends JpaRepository<Favorito, Long> {
     Optional<Favorito> findByUsuarioAndProducto(Usuario usuario, Producto producto);
     List<Favorito> findByUsuario(Usuario usuario);
 }
+

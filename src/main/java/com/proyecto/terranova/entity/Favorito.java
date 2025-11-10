@@ -28,5 +28,4 @@ public class Favorito {
     // Fecha en que se marcó como favorito
     private LocalDateTime fechaFavorito ;
 
-
 }

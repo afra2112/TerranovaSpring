@@ -2,81 +2,432 @@
 <html xmlns:th="www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Favotiros</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos Favoritos - Terranova</title>
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            min-height: 100vh;
+            color: #f1f5f9;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 256px;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid rgba(16, 185, 129, 0.2);
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-section {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-menu {
+            flex: 1;
+            padding: 1.5rem 0;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            color: #94a3b8;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border-left: 3px solid #10b981;
+        }
+
+        .nav-item.active {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+            border-left: 3px solid #10b981;
+        }
+
+        .user-section {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(16, 185, 129, 0.2);
+            position: relative;
+        }
+
+        .user-button {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            width: 100%;
+            padding: 0.75rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 0.5rem;
+            color: #f1f5f9;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .user-button:hover {
+            background: rgba(16, 185, 129, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .user-avatar {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            bottom: 100%;
+            left: 1.5rem;
+            right: 1.5rem;
+            margin-bottom: 0.5rem;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            display: none;
+            box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .dropdown-menu.show {
+            display: block;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            color: #94a3b8;
+            text-decoration: none;
+            border-radius: 0.375rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .main-content {
+            margin-left: 256px;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .header {
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: #94a3b8;
+            font-size: 1.125rem;
+        }
+
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.75rem 1.5rem;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 0.5rem;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .filter-btn:hover {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border-color: #10b981;
+            transform: translateY(-2px);
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .product-card {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 1rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(16, 185, 129, 0.2);
+            border-color: #10b981;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        }
+
+        .product-content {
+            padding: 1.5rem;
+        }
+
+        .product-category {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .product-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-description {
+            color: #94a3b8;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+        }
+
+        .product-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(16, 185, 129, 0.1);
+        }
+
+        .product-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .favorite-btn {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .favorite-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 0;
+                overflow: hidden;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
 
-<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="productosGrid">
-    <div th:each="producto : ${productos}"
-         th:attr="data-tipo=${producto.tipoP}"
-         class="product-card bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
+<div th:replace="fragments/comprador/navbarComprador :: navbarComprador"></div>
 
-        <div class="relative h-64 overflow-hidden">
-            <img th:src="${#lists.isEmpty(producto.imagenes) ? '/placeholder.svg?height=250&width=400' : producto.imagenes.get(0).nombreArchivo}"
-                 th:alt="${producto.nombreProducto}"
-                 class="w-full h-full object-cover">
+<!-- Main Content -->
+<main class="main-content">
+    <div class="header">
+        <h1>Productos Favoritos</h1>
+        <p>Gestiona y explora tus productos guardados</p>
+    </div>
 
+    <div class="filters">
+        <button class="filter-btn active" data-filter="all">Todos</button>
+        <button class="filter-btn" data-filter="ganado">Ganado</button>
+        <button class="filter-btn" data-filter="terrenos">Terrenos</button>
+        <button class="filter-btn" data-filter="fincas">Fincas</button>
+    </div>
 
-            <div class="absolute top-4 left-4">
-                        <span th:if="${producto.tipoP == 'TERRENO'}"
-                              class="px-3 py-1 bg-blue-500 text-white text-xs font-semibold rounded-full">
-                            <i class="fas fa-map-marked-alt mr-1"></i>Terreno
-                        </span>
-                <span th:if="${producto.tipoP == 'GANADO'}"
-                      class="px-3 py-1 bg-amber-500 text-white text-xs font-semibold rounded-full">
-                            <i class="fas fa-cow mr-1"></i>Ganado
-                        </span>
-                <span th:if="${producto.tipoP == 'FINCA'}"
-                      class="px-3 py-1 bg-green-500 text-white text-xs font-semibold rounded-full">
-                            <i class="fas fa-home mr-1"></i>Finca
-                        </span>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div th:each="producto : ${productos}" class="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 hover-lift border border-gray-100">
+            <div class="relative h-56 overflow-hidden">
+                <form th:action="@{'/comprador/agregarF/' + ${producto.idProducto}}" method="post"
+                      class="absolute top-4 right-4 z-10">
+                    <button type="submit"
+                            class="bg-white bg-opacity-90 backdrop-blur-sm p-2.5 rounded-lg hover:bg-opacity-100 transition-all duration-300 hover:scale-105 shadow-md">
+                        <i class='bx bxs-heart text-xl text-red-500'></i>
+                    </button>
+                </form>
+
+                <img th:src="${#lists.isEmpty(producto.imagenes) ? '/placeholder.svg?height=250&width=400' : producto.imagenes.get(0).nombreArchivo}"
+                     alt="Imagen del producto"
+                     class="w-full h-full object-cover hover:scale-110 transition-transform duration-500">
             </div>
 
-            <div class="absolute top-4 right-4">
-                        <span class="px-3 py-1 bg-white/90 backdrop-blur-sm text-primary-emerald text-xs font-semibold rounded-full">
-                            <i class="fas fa-check-circle mr-1"></i>
-                            <span th:text="${producto.estado}">Disponible</span>
-                        </span>
-            </div>
-        </div>
-
-        <div class="p-6">
-            <h3 class="text-xl font-bold text-gray-900 mb-2 line-clamp-1" th:text="${producto.nombreProducto}">
-                Nombre del Producto
-            </h3>
-
-            <p class="text-gray-600 text-sm mb-4 line-clamp-2" th:text="${producto.descripcion}">
-                Descripción del producto
-            </p>
-
-            <div class="flex items-center justify-between mb-4">
-                <div>
-                    <p class="text-2xl font-bold text-primary-emerald">
-                        $<span th:text="${#numbers.formatDecimal(producto.precioProducto, 0, 'COMMA', 0, 'POINT')}">0</span>
-                    </p>
+            <div class="p-5">
+                <div class="mb-3">
+                    <h3 class="text-lg font-bold text-gray-800 mb-2 line-clamp-1" th:text="${producto.nombreProducto}">Nombre Producto</h3>
+                    <div class="flex items-center justify-between">
+                        <span class="text-2xl font-bold text-green-600" th:text="'$' + ${#numbers.formatDecimal(producto.precioProducto, 0, 'POINT', 0, 'COMMA')}">$0</span>
+                        <span class="text-sm text-gray-500 flex items-center gap-1">
+                                        <i class='bx bx-map text-green-600'></i>
+                                        <span th:text="${producto.ciudad.nombreCiudad}">Ubicación</span>
+                                    </span>
+                    </div>
                 </div>
-                <div class="text-right">
-                    <p class="text-xs text-gray-500">
-                        <i class="fas fa-map-marker-alt mr-1"></i>
-                        <span th:text="${producto.ciudad.nombreCiudad}">Ciudad</span>
-                    </p>
-                    <p class="text-xs text-gray-500">
-                        <i class="fas fa-calendar mr-1"></i>
-                        <span th:text="${#temporals.format(producto.fechaPublicacion, 'dd/MM/yyyy')}">01/01/2024</span>
-                    </p>
+
+                <div class="flex items-center gap-2 mb-4 flex-wrap">
+                                <span th:if="${producto instanceof T(com.proyecto.terranova.entity.Ganado)}"
+                                      class="bg-green-50 text-green-700 px-2.5 py-1 rounded-lg text-xs font-medium flex items-center gap-1">
+                                    <i class='bx bxs-group'></i>
+                                    <span th:text="${producto.cantidad} + ' cabezas'">0 cabezas</span>
+                                </span>
+                    <span th:if="${producto instanceof T(com.proyecto.terranova.entity.Ganado)}"
+                          class="bg-blue-50 text-blue-700 px-2.5 py-1 rounded-lg text-xs font-medium flex items-center gap-1">
+                                    <i class='bx bx-calendar'></i>
+                                    <span th:text="${producto.edadGanado} + ' años'">0 años</span>
+                                </span>
+
+                    <span th:if="${producto instanceof T(com.proyecto.terranova.entity.Terreno)}"
+                          class="bg-amber-50 text-amber-700 px-2.5 py-1 rounded-lg text-xs font-medium flex items-center gap-1">
+                                    <i class='bx bx-area'></i>
+                                    <span th:text="${producto.tamanoTerreno} + ' m²'">0 m²</span>
+                                </span>
+                    <span th:if="${producto instanceof T(com.proyecto.terranova.entity.Terreno)}"
+                          class="bg-green-50 text-green-700 px-2.5 py-1 rounded-lg text-xs font-medium flex items-center gap-1">
+                                    <i class='bx bx-landscape'></i>
+                                    <span th:text="${producto.topografiaTerreno}">Plano</span>
+                                </span>
+
+                    <span th:if="${producto instanceof T(com.proyecto.terranova.entity.Finca)}"
+                          class="bg-purple-50 text-purple-700 px-2.5 py-1 rounded-lg text-xs font-medium flex items-center gap-1">
+                                    <i class='bx bx-home-alt'></i>
+                                    <span th:text="'Estrato ' + ${producto.estratoFinca}">Estrato 0</span>
+                                </span>
+                    <span th:if="${producto instanceof T(com.proyecto.terranova.entity.Finca)}"
+                          class="bg-pink-50 text-pink-700 px-2.5 py-1 rounded-lg text-xs font-medium flex items-center gap-1">
+                                    <i class='bx bx-bed'></i>
+                                    <span th:text="${producto.numeroHabitaciones} + ' hab.'">0 hab.</span>
+                                </span>
+                </div>
+
+                <div class="flex gap-2">
+                    <a th:href="@{/detalle-producto/{idProducto}(idProducto=${producto.idProducto})}"
+                       class="flex-1 gradient-bg text-white py-2.5 rounded-xl hover:shadow-lg transition-all duration-300 text-sm text-center font-semibold flex items-center justify-center gap-2">
+                        <i class='bx bx-show'></i>
+                        Ver detalles
+                    </a>
                 </div>
             </div>
-
-            <a th:href="@{/producto/{id}(id=${producto.idProducto})}"
-               class="block w-full text-center gradient-bg text-white font-semibold py-3 rounded-xl transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
-                <i class="fas fa-eye mr-2"></i>Ver Detalles
-            </a>
         </div>
     </div>
-</div>
+</main>
 
 </body>
 </html>
