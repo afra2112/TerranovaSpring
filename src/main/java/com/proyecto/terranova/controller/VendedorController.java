@@ -110,6 +110,11 @@ public class VendedorController {
         return "vendedor/calendario";
     }
 
+    @GetMapping("/procesoVenta")
+    public String procesoVenta(){
+        return "vistasTemporales/procesoVenta";
+    }
+
     @GetMapping("/citas")
     public String citas(Model model, Authentication authentication){
         Usuario vendedor = usuarioService.findByEmail(authentication.getName());

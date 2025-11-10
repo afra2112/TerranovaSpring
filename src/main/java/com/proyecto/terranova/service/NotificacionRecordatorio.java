@@ -42,5 +42,13 @@ public class NotificacionRecordatorio {
                 citaRepository.save(cita);
             }
         }
+
+        for (Cita cita : programadas) {
+            LocalDateTime fin = LocalDateTime.of(cita.getFecha(), cita.getHoraFin());
+            if (ahora.isAfter(fin)) {
+                cita.setEstadoCita(EstadoCitaEnum.FINALIZADA);
+                citaRepository.save(cita);
+            }
+        }
     }
 }

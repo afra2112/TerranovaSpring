@@ -328,6 +328,13 @@
                                     </div>
                                 </div>
 
+                                <div th:if="${cita.estadoCita.toString() == 'FINALIZADA'}" class="flex flex-wrap gap-3 w-full">
+                                    <button th:onclick="'abrirModalIniciarVenta(' + ${cita.idCita} + ')'"
+                                            class="flex-1 gradient-bg text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2">
+                                        <i class='bx bx-cart'></i> Iniciar Proceso de Venta
+                                    </button>
+                                </div>
+
                                 <div th:if="${cita.estadoCita.toString() == 'CANCELADA'}" class="flex flex-wrap gap-3 w-full">
                                     <div class="flex items-center justify-center gap-2 text-red-600 font-semibold px-6 py-3 bg-red-50 rounded-xl w-full">
                                         <i class='bx bx-x-circle text-xl'></i>
@@ -361,6 +368,47 @@
             </div>
         </div>
     </main>
+</div>
+
+<div id="modalIniciarVenta" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-lg w-full mx-4 transform scale-95 opacity-0 transition-all duration-300" id="modalIniciarVentaContent">
+        <div class="text-center mb-6">
+            <div class="w-20 h-20 gradient-bg rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class='bx bx-cart text-white text-4xl'></i>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-900 mb-2">Iniciar Proceso de Venta</h2>
+            <p class="text-gray-600" id="nombreProductoModal"></p>
+        </div>
+
+        <div class="bg-amber-50 border-l-4 border-amber-500 p-4 mb-6 rounded-lg">
+            <div class="flex items-start gap-3">
+                <i class='bx bx-info-circle text-amber-600 text-2xl flex-shrink-0'></i>
+                <div class="text-sm text-amber-800">
+                    <p class="font-semibold mb-2">Importante:</p>
+                    <ul class="space-y-1 list-disc list-inside">
+                        <li>Solo inicia este proceso si ya sabes a quién le vas a vender</li>
+                        <li>El producto quedará marcado como "En Proceso de Venta"</li>
+                        <li>El producto <strong>NO será visible</strong> para el público hasta que finalices o canceles la venta</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <form th:action="@{/vendedor/ventas/iniciar}" method="post">
+            <input type="hidden" name="idCita" id="idCitaModal">
+
+            <div class="flex gap-3">
+                <button type="button" onclick="cerrarModalIniciarVenta()"
+                        class="flex-1 px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-all">
+                    Cancelar
+                </button>
+                <button type="submit"
+                        class="flex-1 px-6 py-3 gradient-bg text-white rounded-xl font-semibold hover:shadow-lg transition-all">
+                    Iniciar Proceso
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 
 <script>
@@ -400,6 +448,32 @@
             });
         });
     });
+
+    function abrirModalIniciarVenta(idCita, nombreProducto) {
+    document.getElementById('idCitaModal').value = idCita;
+    document.getElementById('nombreProductoModal').textContent = nombreProducto;
+
+    const modal = document.getElementById('modalIniciarVenta');
+    const modalContent = document.getElementById('modalIniciarVentaContent');
+
+    modal.classList.remove('hidden');
+    requestAnimationFrame(() => {
+        modalContent.classList.remove('scale-95', 'opacity-0');
+        modalContent.classList.add('scale-100', 'opacity-100');
+    });
+}
+
+function cerrarModalIniciarVenta() {
+    const modal = document.getElementById('modalIniciarVenta');
+    const modalContent = document.getElementById('modalIniciarVentaContent');
+
+    modalContent.classList.remove('scale-100', 'opacity-100');
+    modalContent.classList.add('scale-95', 'opacity-0');
+
+    setTimeout(() => {
+        modal.classList.add('hidden');
+    }, 300);
+}
 
     // User dropdown
     function toggleUserDropdown() {
