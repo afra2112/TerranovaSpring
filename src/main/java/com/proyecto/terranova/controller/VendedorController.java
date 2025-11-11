@@ -6,6 +6,7 @@ import com.proyecto.terranova.config.enums.RolEnum;
 import com.proyecto.terranova.entity.*;
 import com.proyecto.terranova.repository.AsistenciaRepository;
 import com.proyecto.terranova.repository.CiudadRepository;
+import com.proyecto.terranova.repository.VentaRepository;
 import com.proyecto.terranova.service.*;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.awt.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -45,12 +47,6 @@ public class VendedorController {
 
     @Autowired
     CitaService citaService;
-
-    @Autowired
-    GastoVentaService gastoVentaService;
-
-    @Autowired
-    ComprobanteService comprobanteService;
 
     @Autowired
     AsistenciaService asistenciaService;
@@ -110,20 +106,17 @@ public class VendedorController {
         return "vendedor/calendario";
     }
 
-    @GetMapping("/procesoVenta")
-    public String procesoVenta(){
-        return "vistasTemporales/procesoVenta";
-    }
-
     @GetMapping("/citas")
     public String citas(Model model, Authentication authentication){
         Usuario vendedor = usuarioService.findByEmail(authentication.getName());
         model.addAttribute("posicionCitas", true);
-        model.addAttribute("numReservadas", citaService.encontrarPorEstado(vendedor,EstadoCitaEnum.PROGRAMADA, true).size());
-        model.addAttribute("numFinalizadas", citaService.encontrarPorEstado(vendedor,EstadoCitaEnum.FINALIZADA, true).size());
-        model.addAttribute("numCanceladas", citaService.encontrarPorEstado(vendedor,EstadoCitaEnum.CANCELADA, true).size());
 
-        model.addAttribute("citas", citaService.encontrarPorVendedor(vendedor, true));
+        List<Cita> citas = citaService.encontrarPorVendedor(vendedor, true);
+        for (Cita cita : citas){
+            cita.setTieneVenta(ventaService.existePorCita(cita.getIdCita()));
+        }
+
+        model.addAttribute("citas", citas);
 
         return "vendedor/citas";
     }

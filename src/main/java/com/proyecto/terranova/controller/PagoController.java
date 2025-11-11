@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/pagos")
@@ -17,8 +18,8 @@ public class PagoController {
     MercadoPagoService mercadoPagoService;
 
     @GetMapping("iniciar-pago")
-    public String iniciarPago(Model model) throws MPException, MPApiException {
-        String puntoInicio = mercadoPagoService.crearPreferencia();
+    public String iniciarPago(@RequestParam Long idProducto, @RequestParam Long idVenta, Model model) throws MPException, MPApiException {
+        String puntoInicio = mercadoPagoService.crearPreferencia(idProducto, idVenta);
         model.addAttribute("puntoInicio", puntoInicio);
         return "comprador/pago";
     }

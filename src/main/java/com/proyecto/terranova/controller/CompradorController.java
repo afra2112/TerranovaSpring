@@ -166,8 +166,16 @@ public class CompradorController {
     @GetMapping("/compras")
     public String compras(Model model, Authentication authentication){
         model.addAttribute("posicionCompras", true);
-        model.addAttribute("compras", ventaService.encontrarPorComprador(usuario(authentication)));
+        model.addAttribute("ventas", ventaService.encontrarPorComprador(usuario(authentication)));
         return "comprador/compras";
+    }
+
+    @GetMapping("/compras/detalle/{id}")
+    public String compras(@PathVariable Long id, Model model){
+        Venta venta = ventaService.findById(id);
+        model.addAttribute("venta", venta);
+        model.addAttribute("tipoProducto", venta.getProducto().getClass().getSimpleName());
+        return "vistasTemporales/detalleVentaComprador";
     }
 
     @PostMapping("/compras/actualizar-compra")
@@ -280,10 +288,10 @@ public class CompradorController {
 
         Cita cita = citaService.findById(idCita);
 
-        Venta venta = ventaService.generarVenta(cita.getProducto().getIdProducto(), null/*comprador*/);
+        //Venta venta = ventaService.generarVenta(cita.getProducto().getIdProducto(), null/*comprador*/);
         citaService.cambiarEstado(cita, EstadoCitaEnum.FINALIZADA);
 
-        notificacionService.notificacionVentaGenerada(venta);
+        //notificacionService.notificacionVentaGenerada(venta);
 
         redirectAttributes.addFlashAttribute("ventaGenerada", true);
         return "redirect:/comprador/compras";

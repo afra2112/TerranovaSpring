@@ -328,7 +328,7 @@
                                     </div>
                                 </div>
 
-                                <div th:if="${cita.estadoCita.toString() == 'FINALIZADA'}" class="flex flex-wrap gap-3 w-full">
+                                <div th:if="${cita.estadoCita.toString() == 'FINALIZADA' and !cita.tieneVenta}" class="flex flex-wrap gap-3 w-full">
                                     <button th:onclick="'abrirModalIniciarVenta(' + ${cita.idCita} + ')'"
                                             class="flex-1 gradient-bg text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2">
                                         <i class='bx bx-cart'></i> Iniciar Proceso de Venta

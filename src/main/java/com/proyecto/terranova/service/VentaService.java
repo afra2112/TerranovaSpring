@@ -17,7 +17,10 @@ public interface VentaService {
     List<Venta> encontrarPorVendedor(Usuario vendedor);
     List<Venta> encontrarPorComprador(Usuario comprador);
     boolean delete(Long id);
-    boolean existsById(Long id); // ValidaciÃ³n
+    boolean existePorCita(Long idCita);
     long count(); // Contar registros
-    Venta generarVenta(Long idProducto, Usuario comprador);
+    Venta generarVenta(Long idCita);
+    void seleccionarComprador(Long idVenta, String cedulaComprador);
+    void actualizarVentaPaso2Ganado(Long idVenta, Long precioTotal, int cantidad, String condicionesEntrega, String observaciones);
+    void actualizarVentaPaso3Ganado(Long idVenta, MultipartFile certificadoSanitario, MultipartFile registroProcedencia, MultipartFile inventario) throws IOException;
 }

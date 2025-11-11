@@ -1,8 +1,7 @@
 package com.proyecto.terranova.implement;
 
 import com.proyecto.terranova.entity.*;
-import com.proyecto.terranova.repository.ProductoRepository;
-import com.proyecto.terranova.service.NotificacionService;
+import com.proyecto.terranova.repository.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,12 +11,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.proyecto.terranova.service.VentaService;
-import com.proyecto.terranova.repository.VentaRepository;
 import com.proyecto.terranova.dto.VentaDTO;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,6 +25,18 @@ public class VentaImplement implements VentaService {
 
     @Autowired
     private VentaRepository repository;
+
+    @Autowired
+    private CitaRepository citaRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private VentaGanadoRepository ventaGanadoRepository;
+
+    @Autowired
+    private GanadoRepository ganadoRepository;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -133,8 +144,9 @@ public class VentaImplement implements VentaService {
     }
 
     @Override
-    public boolean existsById(Long id) {
-        return repository.existsById(id);
+    public boolean existePorCita(Long idCita)
+    {
+        return repository.existsByCita(citaRepository.findById(idCita).orElseThrow());
     }
 
     @Override
@@ -144,16 +156,73 @@ public class VentaImplement implements VentaService {
 
 
     @Override
-    public Venta generarVenta(Long idProducto, Usuario comprador) {
-        Producto producto = productoRepository.findById(idProducto).orElseThrow();
+    public Venta generarVenta(Long idCita) {
+        Cita cita = citaRepository.findById(idCita).orElseThrow();
+        Producto producto = cita.getProducto();
+        producto.setEstado("NO_DISPONIBLE");
+        productoRepository.save(producto);
 
         Venta venta = new Venta();
-        venta.setComprador(comprador);
+        venta.setCita(cita);
         venta.setEstado("En Proceso");
         venta.setFechaInicioVenta(LocalDateTime.now());
         venta.setProducto(producto);
         venta.setVendedor(producto.getVendedor());
 
         return repository.save(venta);
+    }
+
+    @Override
+    public void seleccionarComprador(Long idVenta, String cedulaComprador) {
+        Venta venta = repository.findById(idVenta).orElseThrow();
+        venta.setComprador(usuarioRepository.findById(cedulaComprador).orElseThrow());
+        venta.setPasoActual(2);
+        repository.save(venta);
+    }
+
+    @Override
+    public void actualizarVentaPaso2Ganado(Long idVenta, Long precioTotal, int cantidad, String condicionesEntrega, String observaciones) {
+        Venta venta = repository.findById(idVenta).orElseThrow();
+        Ganado ganado = ganadoRepository.findById(venta.getProducto().getIdProducto()).orElseThrow();
+        ganado.setCantidad(cantidad);
+        productoRepository.save(ganado);
+
+        VentaGanado ventaGanado = new VentaGanado();
+        ventaGanado.setCondicionesEntrega(condicionesEntrega);
+        ventaGanado.setObservacionesSanitarias(observaciones);
+        ventaGanadoRepository.save(ventaGanado);
+
+        venta.setPrecioTotal(precioTotal);
+        venta.setPasoActual(3);
+        repository.save(venta);
+    }
+
+    @Override
+    public void actualizarVentaPaso3Ganado(Long idVenta, MultipartFile certificadoSanitario, MultipartFile registroProcedencia, MultipartFile inventario) throws IOException {
+        Venta venta = repository.findById(idVenta).orElseThrow();
+
+        List<MultipartFile> archivos = new ArrayList<>();
+        archivos.add(certificadoSanitario);
+        archivos.add(registroProcedencia);
+        if (inventario != null && !inventario.isEmpty()){
+            archivos.add(inventario);
+        }
+
+        for (MultipartFile archivo : archivos){
+            String nombreArchivo = UUID.randomUUID() + "_" + archivo.getOriginalFilename();
+            Path rutaArchivo = Paths.get("archivos").resolve(nombreArchivo);
+            Files.write(rutaArchivo, archivo.getBytes());
+
+            Comprobante comprobante = new Comprobante();
+            comprobante.setFechaSubida(LocalDateTime.now());
+            comprobante.setVenta(venta);
+            comprobante.setNombreComprobante(archivo.getOriginalFilename());
+            comprobante.setRutaArchivo(nombreArchivo);
+            venta.getListaComprobantes().add(comprobante);
+        }
+
+        venta.setPasoActual(4);
+
+        repository.save(venta);
     }
 }

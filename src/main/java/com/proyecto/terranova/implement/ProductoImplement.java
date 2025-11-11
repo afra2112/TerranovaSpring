@@ -170,12 +170,16 @@ public class ProductoImplement implements ProductoService {
     public List<Producto> filtrarConSpecification(String texto, String tipo, String orden) {
         Specification<Producto> spec = (root, query, cb) -> cb.conjunction();
 
+        Specification<Producto> filtroDisponibles = (root, query, cb) -> cb.equal(root.get("estado"), "DISPONIBLE");
+
         if (texto != null && !texto.isEmpty()) {
             spec = spec.and(ProductoSpecification.buscarPorTexto(texto));
         }
         if (tipo != null && !tipo.isEmpty()) {
             spec = spec.and(ProductoSpecification.filtrarPorTipo(tipo));
         }
+
+        spec = filtroDisponibles.and(spec);
 
         if (orden == null) {
             orden = "recientes";

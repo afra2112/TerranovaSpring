@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +20,11 @@ public class Venta {
 
     private LocalDate fechaVenta;
 
+    //campos de prueba para el flujo de compra/venta xd
+    private Long precioTotal;
+    private boolean pagado = false;
+    private LocalDate fechaLimitePago;
+
     @Column(nullable = false)
     private LocalDateTime fechaInicioVenta;
 
@@ -27,8 +33,14 @@ public class Venta {
 
     private String nota;
 
+    private int pasoActual = 1;
+
     @Column(length = 30, nullable = true)
     private String metodoPago;
+
+    @OneToOne
+    @JoinColumn(name = "idCita")
+    private Cita cita;
 
     @OneToOne
     @JoinColumn(name = "idProducto")

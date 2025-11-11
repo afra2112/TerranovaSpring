@@ -37,6 +37,9 @@ public class Cita {
     @Transient
     private int disponibles;
 
+    @Transient
+    private boolean tieneVenta;
+
     private LocalDate fecha;
 
     private LocalTime horaInicio;
