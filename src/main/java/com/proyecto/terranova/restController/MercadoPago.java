@@ -1,6 +1,7 @@
 package com.proyecto.terranova.restController;
 
 import com.proyecto.terranova.service.MercadoPagoService;
+import org.apache.http.io.SessionOutputBuffer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ public class MercadoPago {
     @PostMapping("/webhook")
     public ResponseEntity<String> recibirNotificacion(@RequestBody Map<String, Object> payload){
         try {
+            System.out.println("INFO DEL PAYLOAD: " + payload);
             mercadoPagoService.procesarNotificacion(payload);
             return ResponseEntity.ok("OK");
         } catch (Exception e) {

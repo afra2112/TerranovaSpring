@@ -28,7 +28,11 @@ public class  SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
         return httpSecurity
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/api/mercadopago/webhook")
+                )
                 .authorizeHttpRequests(auth -> {
+                    auth.requestMatchers("/api/mercadopago/webhook").permitAll();
                     auth.requestMatchers("/login","/registro","/403", "/password-olvidada", "/recuperar-password", "/oauth2/**", "/productos/**", "/detalle-producto/**","/images/**","/imagenes/**").permitAll();
                     auth.requestMatchers("/comprador/**").hasAuthority("COMPRADOR");
                     auth.requestMatchers("/vendedor/**").hasAuthority("VENDEDOR");

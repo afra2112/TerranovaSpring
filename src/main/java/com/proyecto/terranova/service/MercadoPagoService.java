@@ -11,6 +11,7 @@ import com.mercadopago.resources.payment.Payment;
 import com.mercadopago.resources.preference.Preference;
 import com.proyecto.terranova.entity.Pago;
 import com.proyecto.terranova.entity.Producto;
+import com.proyecto.terranova.entity.Venta;
 import com.proyecto.terranova.repository.PagoRepository;
 import com.proyecto.terranova.repository.ProductoRepository;
 import com.proyecto.terranova.repository.VentaRepository;
@@ -61,6 +62,7 @@ public class MercadoPagoService {
         PreferenceRequest preferenceRequest = PreferenceRequest.builder()
                 .items(items)
                 .externalReference(String.valueOf(idVenta))
+                .notificationUrl("https://beckham-olden-squabblingly.ngrok-free.dev/api/mercadopago/webhook")
                 .build();
 
         PreferenceClient client = new PreferenceClient();
@@ -69,32 +71,78 @@ public class MercadoPagoService {
         return preference.getInitPoint();
     }
 
-    public void procesarNotificacion(Map<String, Object> payload) throws MPException, MPApiException {
-        MercadoPagoConfig.setAccessToken(accesToken);
+    public void procesarNotificacion(Map<String, Object> payload) {
+        try {
+            MercadoPagoConfig.setAccessToken(accesToken);
 
-        String tipo = (String) payload.get("type");
-        Map<String, Object> datos = (Map<String, Object>) payload.get("data");
-        Long paymentId = Long.valueOf(datos.get("id").toString());
+            String tipo = (String) payload.get("type");
+            if (!"payment".equalsIgnoreCase(tipo)) {
+                return;
+            }
 
-        PaymentClient paymentClient = new PaymentClient();
-        Payment payment = paymentClient.get(paymentId);
+            System.out.println("paso el primer filtro");
 
-        String estado = payment.getStatus();           //LOS ESTADOS PUEDEN SER ESTOS: approved, pending, rejected
-        BigDecimal monto = payment.getTransactionAmount();
-        String moneda = payment.getCurrencyId();
-        String metodoPago = payment.getPaymentMethodId();
-        String externalReference = payment.getExternalReference();
-        Long idVenta = Long.valueOf(externalReference);
+            Map<String, Object> datos = (Map<String, Object>) payload.get("data");
+            if (datos == null || datos.get("id") == null) {
+                return;
+            }
 
-        Pago pago = new Pago();
-        pago.setVenta(ventaRepository.findById(idVenta).orElseThrow());
-        pago.setIdPaymentMercadoPago(paymentId);
-        pago.setMontoPagado(monto.toBigInteger().longValue());
-        pago.setMoneda(moneda);
-        pago.setEstado(estado);
-        pago.setMetodoPago(metodoPago);
-        pago.setFechaRegistroPago(LocalDateTime.now());
+            System.out.println("paso el segundo filtro");
 
-        pagoRepository.save(pago);
+            Long paymentId = Long.valueOf(datos.get("id").toString());
+
+            System.out.println("ID PAYMENTID: " + paymentId);
+
+            if (pagoRepository.existsByIdPaymentMercadoPago(paymentId)) {
+                return;
+            }
+
+            System.out.println("paso el tercer filtro");
+
+            PaymentClient paymentClient = new PaymentClient();
+            Payment payment = paymentClient.get(paymentId);
+
+            String estado = payment.getStatus(); //ESTAS SON LAS POSIBLES REPUESTAS approved, pending, rejected
+            BigDecimal monto = payment.getTransactionAmount();
+            String moneda = payment.getCurrencyId();
+            String metodoPago = payment.getPaymentMethodId();
+            String externalReference = payment.getExternalReference();
+
+            if (externalReference == null) {
+                System.err.println("Pago sin externalReference entonces no se puede asociar a una venta");
+                return;
+            }
+
+            System.out.println("paso el cuarto filtro");
+
+            Long idVenta = Long.valueOf(externalReference);
+
+            Pago pago = new Pago();
+            pago.setVenta(ventaRepository.findById(idVenta).orElseThrow());
+            pago.setIdPaymentMercadoPago(paymentId);
+            pago.setMontoPagado(monto.toBigInteger().longValue());
+            pago.setMoneda(moneda);
+            pago.setEstado(estado);
+            pago.setMetodoPago(metodoPago);
+            pago.setFechaRegistroPago(LocalDateTime.now());
+
+            Pago pagoHecho = pagoRepository.save(pago);
+            System.out.println("CREO EL PAGO");
+
+            Venta venta = ventaRepository.findById(pagoHecho.getVenta().getIdVenta()).orElseThrow();
+            venta.setMetodoPago(metodoPago);
+            venta.setPasoActual(5);
+            ventaRepository.save(venta);
+
+        } catch (MPApiException e) {
+            System.err.println("Error procesando webhook de Mercado Pago: " + e.getMessage());
+            var apiResponse = e.getApiResponse();
+            var content = apiResponse.getContent();
+            System.out.println(content);
+            e.printStackTrace();
+        } catch (MPException e) {
+            throw new RuntimeException(e);
+        }
     }
+
 }
