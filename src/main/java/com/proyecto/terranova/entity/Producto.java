@@ -50,6 +50,9 @@ public abstract class Producto {
     @OneToMany(mappedBy = "producto")
     private List<Favorito> favoritos;
 
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comentario> comentarios;
+
     @Transient
     private String tipoP;
 

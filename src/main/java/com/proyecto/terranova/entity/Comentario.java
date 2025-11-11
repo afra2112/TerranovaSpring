@@ -1,16 +1,12 @@
 package com.proyecto.terranova.entity;
 
-
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "comentarios")
 @Data
-@NoArgsConstructor
+@Table(name = "comentarios")
 public class Comentario {
 
     @Id
@@ -22,13 +18,11 @@ public class Comentario {
     private Producto producto;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cedula_usuario", nullable = false)
-    private Usuario usuario;
+    @JoinColumn(name = "cedula_comprador", nullable = false)
+    private Usuario comprador;
 
     @Column(nullable = false, length = 500)
     private String contenido;
 
-    @Column(nullable = false)
     private LocalDateTime fechaComentario = LocalDateTime.now();
 }
-
