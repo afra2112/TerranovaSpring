@@ -21,5 +21,6 @@ public interface UsuarioService {
     void volverVendedor(String cedula);
     List<RolEnum> obtenerNombresRoles(Usuario usuario);
     void generarTokenYEnviarCorreoRecuperarContrasena(String email) throws MessagingException, IOException;
+    void generarCodigoVerificacionYEnviarCorreo(String email) throws MessagingException, IOException;
     String validarTokenYActualizarContrasena(String token, String nuevaContrasena);
 }

@@ -81,4 +81,8 @@ public class Usuario {
 
     private String resetToken;
     private LocalDateTime resetTokenExpiracion;
+
+    private String codigoVerificacion;
+    private LocalDateTime codigoVerificacionExpiracion;
+
 }

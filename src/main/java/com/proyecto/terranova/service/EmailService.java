@@ -24,7 +24,7 @@ public class EmailService {
     @Autowired
     TemplateEngine templateEngine;
 
-    public String generarHtmlParaCorreo(String nombreUsuario, String nombreTipoNotificacion, String linkAccion, String nombreUsuarioContrario, String nombreTemplateHtml) throws IOException {
+    public String generarHtmlParaCorreo(String nombreUsuario, String nombreTipoNotificacion, String linkAccion, String nombreUsuarioContrario, String nombreTemplateHtml,String codigoVerificacion) throws IOException {
         Context context = new Context();
         String css = Files.readString(Paths.get("src/main/resources/templates/correos/email.css"));
         context.setVariable("css", css);
@@ -32,6 +32,7 @@ public class EmailService {
         context.setVariable("nombreTipoNotificacion", nombreTipoNotificacion);
         context.setVariable("nombreUsuarioContrario", nombreUsuarioContrario);
         context.setVariable("linkAccion", linkAccion);
+        context.setVariable("codigoVerificacion", codigoVerificacion);
 
         return templateEngine.process("correos/"+nombreTemplateHtml,context);
     }

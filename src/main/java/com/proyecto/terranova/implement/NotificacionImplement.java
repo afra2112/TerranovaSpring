@@ -185,7 +185,8 @@ public class NotificacionImplement implements NotificacionService {
                     peticion.getNombreTipoNotificacionCorreo(),
                     peticion.getLinkAccionCorreo(),
                     peticion.getNombreUsuarioContrarioCorreo(),
-                    peticion.getNombreTemplateHtmlCorreo()
+                    peticion.getNombreTemplateHtmlCorreo(),
+                    null
             );
             emailService.enviarEmailConHtml(usuario.isRecibirCorreos(),usuario.getEmail(), peticion.getAsuntoCorreo(),html);
         }

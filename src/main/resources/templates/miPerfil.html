@@ -90,11 +90,35 @@
                         </div>
                         <h3 class="text-lg font-semibold mb-2">¿Quieres vender?</h3>
                         <p class="text-white/90 text-sm mb-4">Conviértete en vendedor y publica tus propiedades, ganado y terrenos</p>
-                        <form th:action="@{/comprador/mi-perfil/ser-vendedor}" method="post">
+
+                        <!--Acion antigua del boton ser vendedor = @{/comprador/mi-perfil/ser-vendedor} -->
+
+                        <form th:action="@{/comprador/codigo-Verificacion}" method="post">
                             <button type="submit" class="bg-secondary hover:bg-secondary-dark text-gray-800 font-semibold px-4 py-2 rounded-lg transition-colors w-full">
                                 Ser Vendedor
                             </button>
                         </form>
+                    </div>
+                    <!-- Modal -->
+                    <div id="modalCodigo" th:if="${mostrarModal}" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                        <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
+                            <h3 class="text-lg font-semibold mb-4">Ingresa tu código de verificación</h3>
+                            <form method="post" action="">
+                                <input type="hidden" name="email" th:value="${email}" />
+                                <input type="text" name="codigo" placeholder="Código de 6 dígitos" required
+                                       class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:border-green-500 mb-4">
+                                <div class="flex justify-end space-x-2">
+                                    <button type="submit"
+                                            class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">
+                                        Validar
+                                    </button>
+                                    <button type="button" onclick="cerrarModal()"
+                                            class="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400 transition">
+                                        Cancelar
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
 
@@ -328,6 +352,12 @@
         </div>
     </main>
 </div>
+
+<script>
+    function cerrarModal() {
+        document.getElementById('modalCodigo').style.display = 'none';
+    }
+</script>
 
 <script>
     let isEditing = false;

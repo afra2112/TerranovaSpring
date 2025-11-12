@@ -338,4 +338,20 @@ public class CompradorController {
         model.addAttribute("productos", productos);
         return "comprador/Favoritos";
     }
+
+    @PostMapping("/codigo-Verificacion")
+    public String codigoVerificacion(Model model, Authentication authentication) throws MessagingException, IOException{
+        Usuario usuario = usuarioService.findByEmail(authentication.getName());
+        String email = usuario.getEmail();
+        usuarioService.generarCodigoVerificacionYEnviarCorreo(email);
+        model.addAttribute("mostrarModal", true);
+        model.addAttribute("email", email);
+
+
+        if(esVendedor(authentication)){
+            return "redirect:/usuarios/mi-perfil?id=2";
+        }
+        return "redirect:/usuarios/mi-perfil?id=1";
+
+    }
 }

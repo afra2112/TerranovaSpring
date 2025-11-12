@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Terranova - Verificación de Código</title>
+    <style th:utext="${css}"></style>
+</head>
+<body>
+<div class="email-container">
+    <div class="header">Terranova</div>
+    <div class="content">
+        <p>¡Hola <strong th:text="${nombreUsuario}"></strong>!</p>
+        <p>Tu código de verificación es:</p>
+    </div>
+    <div class="code-container">
+        <div class="verification-code" th:text="${codigoVerificacion}"></div>
+    </div>
+    <div class="content">
+        <p>Este código expirará en <strong>3 minutos</strong>.</p>
+        <p>Si no solicitaste este código, puedes ignorar este mensaje.</p>
+    </div>
+    <div class="footer">Este es un mensaje automático, no es necesario responder.</div>
+</div>
+</body>
+</html>

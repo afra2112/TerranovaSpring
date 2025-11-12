@@ -6,6 +6,7 @@ import com.proyecto.terranova.entity.Rol;
 import com.proyecto.terranova.repository.RolRepository;
 import com.proyecto.terranova.service.EmailService;
 import com.proyecto.terranova.service.NotificacionService;
+import jakarta.mail.IllegalWriteException;
 import jakarta.mail.MessagingException;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,6 +18,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -166,8 +168,24 @@ public class UsuarioImplement implements UsuarioService {
         usuario.setResetTokenExpiracion(LocalDateTime.now().plusMinutes(30));
         repository.save(usuario);
 
-        String html = emailService.generarHtmlParaCorreo(usuario.getNombres(), "Sistema", "http://localhost:8080/recuperar-password?token="+token, null, "recuperarContrasena");
+        String html = emailService.generarHtmlParaCorreo(usuario.getNombres(), "Sistema", "http://localhost:8080/recuperar-password?token="+token, null, "recuperarContrasena",null);
         emailService.enviarEmailConHtml(true, email, "Recuperacion de Contrasena", html);
+    }
+
+    @Override
+    public void generarCodigoVerificacionYEnviarCorreo(String email) throws MessagingException, IOException {
+        Usuario usuario = repository.findByEmail(email);
+
+        if(usuario == null){ throw new IllegalWriteException("Usuario no encontrado"); }
+
+        String codigo = String.format("%06d", new Random().nextInt(999999));
+        usuario.setCodigoVerificacion(codigo);
+        usuario.setCodigoVerificacionExpiracion(LocalDateTime.now().plusMinutes(3));
+        repository.save(usuario);
+
+        String html = emailService.generarHtmlParaCorreo(usuario.getNombres(),null,null,null,"codigoVerificacionV",codigo);
+        emailService.enviarEmailConHtml(true,email, "Codigo de Verificacion para ser Vendedor", html);
+
     }
 
     @Override
