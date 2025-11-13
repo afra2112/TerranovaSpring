@@ -100,11 +100,11 @@
                         </form>
                     </div>
                     <!-- Modal -->
-                    <div id="modalCodigo" th:if="${mostrarModal}" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div id="modalCodigo"  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                         <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
                             <h3 class="text-lg font-semibold mb-4">Ingresa tu código de verificación</h3>
                             <form method="post" action="">
-                                <input type="hidden" name="email" th:value="${email}" />
+                                <h1 th:value="${email}"/>
                                 <input type="text" name="codigo" placeholder="Código de 6 dígitos" required
                                        class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:border-green-500 mb-4">
                                 <div class="flex justify-end space-x-2">
@@ -112,6 +112,8 @@
                                             class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">
                                         Validar
                                     </button>
+
+                                    <p  th:if="${error != null}" th:text="${error}"></p>
                                     <button type="button" onclick="cerrarModal()"
                                             class="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400 transition">
                                         Cancelar
