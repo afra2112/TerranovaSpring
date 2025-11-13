@@ -30,6 +30,6 @@ public class ComentarioController {
         }
 
         comentarioService.agregarComentario(usuario.getCedula(), idProducto, contenido);
-        return "redirect:/producto/detalle/" + idProducto;
+        return "redirect:/detalle-producto/" + idProducto;
     }
 }

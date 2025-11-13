@@ -617,7 +617,7 @@
                 </h3>
 
                 <!-- Si no hay comentarios -->
-                <div th:if="${#lists.isEmpty(comentarios)}" class="text-center py-16">
+                <div th:if="${#lists.isEmpty(comentariosL)}" class="text-center py-16">
                     <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
                         <i class='bx bx-message-square-x text-gray-400 text-6xl'></i>
                     </div>
@@ -626,17 +626,17 @@
                 </div>
 
                 <!-- Lista de comentarios -->
-                <div th:if="${!#lists.isEmpty(comentarios)}" class="space-y-4 mb-6">
-                    <div th:each="comentario : ${comentarios}"
+                <div th:if="${!#lists.isEmpty(comentariosL)}" class="space-y-4 mb-6">
+                    <div th:each="comentario : ${comentariosL}"
                          class="p-5 bg-gradient-to-br from-gray-50 to-green-50 border-l-4 border-primary rounded-xl hover:shadow-md transition-all duration-300">
                         <div class="flex items-start gap-4">
                             <div class="w-12 h-12 gradient-bg rounded-full flex items-center justify-center text-white font-bold flex-shrink-0 shadow-md">
-                                <span th:text="${#strings.substring(comentario.usuario.nombres, 0, 1)}">U</span>
+<!--                                <span th:text="${#strings.substring(comentario.usuario.nombres, 0, 1)}">U</span>-->
                             </div>
                             <div class="flex-1">
                                 <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-2">
                                     <h5 class="font-bold text-gray-900 text-lg"
-                                        th:text="${comentario.usuario.nombres + ' ' + comentario.usuario.apellidos}">Usuario</h5>
+                                        th:text="${comentario.comprador.nombres + ' ' + comentario.comprador.apellidos}">Usuario</h5>
                                     <small class="text-gray-500 flex items-center gap-1">
                                         <i class='bx bx-calendar text-primary'></i>
                                         <span th:text="${comentario.fechaComentario}">Fecha</span>

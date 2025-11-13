@@ -46,6 +46,9 @@ public class PublicController {
     @Autowired
     CitaRepository citaRepository;
 
+    @Autowired
+    ComentarioService comentarioService;
+
     @GetMapping("/login")
     public String login(Model model){
         List<Producto> productos = productoRepository.findAll();
@@ -109,12 +112,14 @@ public class PublicController {
             }
 
             List<Long> favoritosIds = favoritoService.obtenerIdsFavoritosPorUsuario(usuario);
+            List<Comentario> listaComentario = comentarioService.obtenerComentariosPorProducto(id);
 
             model.addAttribute("usuarioInscrito", asistenciaService.existeAsistenciaPorEstado(usuario, id, EstadoAsistenciaEnum.INSCRITO));
             model.addAttribute("usuarioEnEspera", asistenciaService.existeAsistenciaPorEstado(usuario, id, EstadoAsistenciaEnum.EN_ESPERA));
             model.addAttribute("favoritosIds", favoritosIds);
             model.addAttribute("nombreMostrar", usuario.getNombres() + ". " + usuario.getApellidos().charAt(0));
             model.addAttribute("esVendedor", esVendedor);
+            model.addAttribute("comentariosL", listaComentario);
             yaTieneCita = asistenciaService.existeAsistenciaPorEstado(usuario, id, EstadoAsistenciaEnum.INSCRITO);
             estaEnListaDeEspera = asistenciaService.existeAsistenciaPorEstado(usuario, id, EstadoAsistenciaEnum.EN_ESPERA);
         }
