@@ -81,6 +81,7 @@ public class PublicController {
 
             List<Long> favoritosIds = favoritoService.obtenerIdsFavoritosPorUsuario(usuario);
             productos = productos.stream().filter(producto -> !producto.getVendedor().equals(usuario)).toList();
+            productos.forEach(producto -> producto.setCitasDisponibles(citaRepository.countByProducto(producto)));
             model.addAttribute("favoritosIds", favoritosIds);
             model.addAttribute("nombreMostrar", usuario.getNombres() + ". " + usuario.getApellidos().charAt(0));
             model.addAttribute("esVendedor", esVendedor);

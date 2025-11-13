@@ -53,6 +53,9 @@ public abstract class Producto {
     @Transient
     private String tipoP;
 
+    @Transient
+    private Long citasDisponibles;
+
     private String latitud;
 
     private String longitud;

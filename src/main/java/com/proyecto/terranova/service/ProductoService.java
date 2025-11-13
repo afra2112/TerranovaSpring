@@ -14,7 +14,7 @@ public interface ProductoService {
     List<Producto> obtenerTodosPorVendedor(Usuario vendedor);
     boolean delete(Long id);
     boolean existsById(Long id); // ValidaciÃ³n
-    long count();// Contar registros
+    long count();
     void actualizarProducto(Producto prodForm);
     void eliminarProducto(Long idProducto, String correo);
     List<Producto> obtenerTodasMenosVendedor(Usuario vendedor);
