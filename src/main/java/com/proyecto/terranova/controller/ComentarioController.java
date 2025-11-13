@@ -10,13 +10,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+
+
 @Controller
 @RequestMapping("/comprador/comentarios")
 @RequiredArgsConstructor
 public class ComentarioController {
 
     @Autowired
-    UsuarioService usuarioService;
+    private final UsuarioService usuarioService;
 
     private final ComentarioService comentarioService;
 
@@ -24,12 +26,22 @@ public class ComentarioController {
     public String agregarComentario(@RequestParam Long idProducto,
                                     @RequestParam String contenido,
                                     Authentication authentication) {
+        // Verificar si el usuario está autenticado
+        if (authentication == null || authentication.getName() == null) {
+            return "redirect:/login";
+        }
+
         Usuario usuario = usuarioService.findByEmail(authentication.getName());
         if (usuario == null) {
             return "redirect:/login";
         }
 
-        comentarioService.agregarComentario(usuario.getCedula(), idProducto, contenido);
-        return "redirect:/detalle-producto/" + idProducto;
+        try {
+            comentarioService.agregarComentario(usuario.getCedula(), idProducto, contenido);
+            return "redirect:/detalle-producto/" + idProducto + "?success=Comentario agregado correctamente";
+        } catch (RuntimeException e) {
+            // Si lanza excepción (por ejemplo: no asistió a la cita)
+            return "redirect:/detalle-producto/" + idProducto + "?error=" + e.getMessage();
+        }
     }
 }
