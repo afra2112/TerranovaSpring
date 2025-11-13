@@ -485,7 +485,8 @@
                         </div>
 
                         <!-- Botón de cancelar solo si está confirmado y la cita no está cancelada ni finalizada -->
-                        <form th:action="@{'/comprador/citas/cancelar-cita/' + ${miAsistencia.idAsistencia}}"
+
+                        <form th:action="@{'/comprador/citas/cancerlar/asistencia/' + ${miAsistencia.idAsistencia}}"
                               method="post"
                               onsubmit="return confirm('¿Estás seguro de cancelar tu participación en esta cita?');">
                             <button type="submit"

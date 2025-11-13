@@ -1,5 +1,6 @@
 package com.proyecto.terranova.entity;
 
+import com.proyecto.terranova.config.enums.EstadoProductoEnum;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDate;
@@ -27,8 +28,8 @@ public abstract class Producto {
     @Column(length = 255, nullable = false)
     private String descripcion;
 
-    @Column(length = 20, nullable = false)
-    private String estado;
+    @Enumerated(EnumType.STRING)
+    private EstadoProductoEnum estado;
 
     @Column(nullable = false)
     private LocalDate fechaPublicacion;

@@ -1,5 +1,6 @@
 package com.proyecto.terranova.implement;
 
+import com.proyecto.terranova.config.enums.EstadoProductoEnum;
 import com.proyecto.terranova.entity.*;
 import com.proyecto.terranova.repository.*;
 import org.modelmapper.ModelMapper;
@@ -159,7 +160,7 @@ public class VentaImplement implements VentaService {
     public Venta generarVenta(Long idCita) {
         Cita cita = citaRepository.findById(idCita).orElseThrow();
         Producto producto = cita.getProducto();
-        producto.setEstado("NO_DISPONIBLE");
+        producto.setEstado(EstadoProductoEnum.NO_DISPONIBLE);
         productoRepository.save(producto);
 
         Venta venta = new Venta();
