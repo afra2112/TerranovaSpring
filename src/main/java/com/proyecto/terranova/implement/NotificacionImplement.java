@@ -20,605 +20,605 @@ import com.proyecto.terranova.dto.NotificacionDTO;
 @Service
 public class NotificacionImplement implements NotificacionService {
 
-    @Autowired
-    private NotificacionRepository repository;
+  @Autowired
+  private NotificacionRepository repository;
 
-    @Autowired
-    ModelMapper modelMapper;
+  @Autowired
+  ModelMapper modelMapper;
 
-    @Autowired
-    EmailService emailService;
+  @Autowired
+  EmailService emailService;
 
-    @Override
-    public NotificacionDTO save(NotificacionDTO dto) {
-        Notificacion entidadNotificacion = modelMapper.map(dto, Notificacion.class);
-        Notificacion entidadGuardada = repository.save(entidadNotificacion);
-        return modelMapper.map(entidadGuardada, NotificacionDTO.class);
+  @Override
+  public NotificacionDTO save(NotificacionDTO dto) {
+    Notificacion entidadNotificacion = modelMapper.map(dto, Notificacion.class);
+    Notificacion entidadGuardada = repository.save(entidadNotificacion);
+    return modelMapper.map(entidadGuardada, NotificacionDTO.class);
+  }
+
+  @Override
+  public NotificacionDTO update(Long id, NotificacionDTO dto) {
+    Notificacion entidadNotificacion = repository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Notificacion no encontrado"));
+
+    modelMapper.map(dto, entidadNotificacion);
+
+    Notificacion entidadActualizada = repository.save(entidadNotificacion);
+    return modelMapper.map(entidadActualizada, NotificacionDTO.class);
+  }
+
+  @Override
+  public NotificacionDTO findById(Long id) {
+    Notificacion entidadNotificacion = repository.findById(id).orElseThrow(() -> new RuntimeException("Notificacion no encontrado"));
+    return modelMapper.map(entidadNotificacion, NotificacionDTO.class);
+  }
+
+  @Override
+  public List<NotificacionDTO> findAll() {
+    return repository.findAll().stream()
+            .map(entity -> modelMapper.map(entity, NotificacionDTO.class))
+            .collect(Collectors.toList());
+  }
+
+  @Override
+  public boolean delete(Long id) {
+    if (!repository.existsById(id)) {
+      return false;
     }
+    repository.deleteById(id);
+    return true;
+  }
 
-    @Override
-    public NotificacionDTO update(Long id, NotificacionDTO dto) {
-        Notificacion entidadNotificacion = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Notificacion no encontrado"));
+  @Override
+  public boolean existsById(Long id) {
+    return repository.existsById(id);
+  }
 
-        modelMapper.map(dto, entidadNotificacion);
+  @Override
+  public long count() {
+    return repository.count();
+  }
 
-        Notificacion entidadActualizada = repository.save(entidadNotificacion);
-        return modelMapper.map(entidadActualizada, NotificacionDTO.class);
+  @Override
+  public boolean validarSiEnviarNotificacionONo(Usuario usuario, String tipo) {
+    boolean enviar = true;
+
+    switch (tipo) {
+      case "Disponibilidades":
+        enviar = usuario.isNotificacionesDisponibilidades();
+        break;
+      case "Productos":
+        enviar = usuario.isNotificacionesProductos();
+        break;
+      case "Citas":
+        enviar = usuario.isNotificacionesCitas();
+        break;
+      case "Ventas":
+        enviar = usuario.isNotificacionesVentas();
+        break;
+      case "Sistema":
+        enviar = usuario.isNotificacionesSistema();
+        break;
     }
+    return enviar;
+  }
 
-    @Override
-    public NotificacionDTO findById(Long id) {
-        Notificacion entidadNotificacion = repository.findById(id).orElseThrow(() -> new RuntimeException("Notificacion no encontrado"));
-        return modelMapper.map(entidadNotificacion, NotificacionDTO.class);
+  @Override
+  public void marcarComoLeida(Long idNotificacion) {
+    Notificacion notificacion = repository.findById(idNotificacion).orElseThrow(() -> new RuntimeException("Notificacion no encontrada"));
+
+    if (!notificacion.isLeido()) {
+      notificacion.setLeido(true);
+    } else {
+      notificacion.setLeido(false);
     }
+    repository.save(notificacion);
+  }
 
-    @Override
-    public List<NotificacionDTO> findAll() {
-        return repository.findAll().stream()
-                .map(entity -> modelMapper.map(entity, NotificacionDTO.class))
-                .collect(Collectors.toList());
+  @Override
+  public void marcarTodasComoLeidas(Usuario usuario) {
+    List<Notificacion> notificaciones = repository.findByUsuarioAndLeidoFalseAndActivoOrderByFechaNotificacionDesc(usuario, true);
+    notificaciones.forEach(noti -> noti.setLeido(true));
+    repository.saveAll(notificaciones);
+  }
+
+  @Override
+  public List<Notificacion> obtenerPorUsuarioYActivo(Usuario usuario, boolean activo) {
+    return repository.findByUsuarioAndActivoOrderByFechaNotificacionDesc(usuario, activo);
+  }
+
+  @Override
+  public List<Notificacion> obtenerPorUsuarioYLeido(Usuario usuario, boolean leido) {
+    return repository.findByUsuarioAndLeidoFalseAndActivoOrderByFechaNotificacionDesc(usuario, true);
+  }
+
+  @Override
+  public int contarPorUsuarioYTipo(Usuario usuario, String tipo) {
+    return repository.countByUsuarioAndTipoAndActivo(usuario, tipo, true);
+  }
+
+  @Override
+  public List<Notificacion> obtenerPorUsuarioYTipo(Usuario usuario, String tipo) {
+    return repository.findByUsuarioAndTipoOrderByFechaNotificacionDesc(usuario, tipo);
+  }
+
+  @Override
+  public int contarNoLeidasPorUsuario(Usuario usuario, boolean leido) {
+    return repository.countByUsuarioAndLeidoAndActivo(usuario, false, true);
+  }
+
+  @Override
+  public void borrarNotificacion(Long idNotificacion) {
+    Notificacion notificacion = repository.findById(idNotificacion).orElseThrow();
+    notificacion.setActivo(false);
+    notificacion.setLeido(true);
+    repository.save(notificacion);
+  }
+
+  @Override
+  public void eliminarHistorial(Usuario usuario) {
+    List<Notificacion> notificacionesBorradas = repository.findByUsuarioAndActivoOrderByFechaNotificacionDesc(usuario, false);
+    for (Notificacion notificacion : notificacionesBorradas) {
+      repository.delete(notificacion);
     }
+  }
 
-    @Override
-    public boolean delete(Long id) {
-        if(!repository.existsById(id)){
-               return false;
-        }
-        repository.deleteById(id);
-        return true;
+  @Override
+  public void crearNotificacionAutomatica(NotificacionPeticion peticion) throws MessagingException, IOException {
+    Usuario usuario = peticion.getUsuarioNotificacion();
+
+    if (validarSiEnviarNotificacionONo(usuario, peticion.getTipoNotificacion())) {
+      Notificacion notificacion = new Notificacion();
+      notificacion.setTitulo(peticion.getTituloNotificacion());
+      notificacion.setMensajeNotificacion(peticion.getMensajeNotificacion());
+      notificacion.setTipo(peticion.getTipoNotificacion());
+      notificacion.setLeido(false);
+      notificacion.setFechaNotificacion(LocalDateTime.now());
+      notificacion.setUsuario(usuario);
+      notificacion.setReferenciaId(peticion.getIdReferenciaNotificacion());
+      notificacion.setUrlAccion(peticion.getUrlAccionNotificacion());
+      repository.save(notificacion);
     }
-
-    @Override
-    public boolean existsById(Long id) {
-        return repository.existsById(id);
+    if (usuario.isRecibirCorreos()) {
+      String html = emailService.generarHtmlParaCorreo(
+              peticion.getNombreUsuarioCorreo(),
+              peticion.getNombreTipoNotificacionCorreo(),
+              peticion.getLinkAccionCorreo(),
+              peticion.getNombreUsuarioContrarioCorreo(),
+              peticion.getNombreTemplateHtmlCorreo()
+      );
+      emailService.enviarEmailConHtml(usuario.isRecibirCorreos(), usuario.getEmail(), peticion.getAsuntoCorreo(), html);
     }
+  }
 
-    @Override
-    public long count() {
-        return repository.count();
-    }
-
-    @Override
-    public boolean validarSiEnviarNotificacionONo(Usuario usuario, String tipo) {
-        boolean enviar = true;
-
-        switch (tipo){
-            case "Disponibilidades":
-                enviar = usuario.isNotificacionesDisponibilidades();
-                break;
-            case "Productos":
-                enviar = usuario.isNotificacionesProductos();
-                break;
-            case "Citas":
-                enviar = usuario.isNotificacionesCitas();
-                break;
-            case "Ventas":
-                enviar = usuario.isNotificacionesVentas();
-                break;
-            case "Sistema":
-                enviar = usuario.isNotificacionesSistema();
-                break;
-        }
-        return enviar;
-    }
-
-    @Override
-    public void marcarComoLeida(Long idNotificacion) {
-        Notificacion notificacion = repository.findById(idNotificacion).orElseThrow(() -> new RuntimeException("Notificacion no encontrada"));
-
-        if(!notificacion.isLeido()){
-            notificacion.setLeido(true);
-        }else {
-            notificacion.setLeido(false);
-        }
-        repository.save(notificacion);
-    }
-
-    @Override
-    public void marcarTodasComoLeidas(Usuario usuario) {
-        List<Notificacion> notificaciones = repository.findByUsuarioAndLeidoFalseAndActivoOrderByFechaNotificacionDesc(usuario, true);
-        notificaciones.forEach(noti -> noti.setLeido(true));
-        repository.saveAll(notificaciones);
-    }
-
-    @Override
-    public List<Notificacion> obtenerPorUsuarioYActivo(Usuario usuario, boolean activo) {
-        return repository.findByUsuarioAndActivoOrderByFechaNotificacionDesc(usuario, activo);
-    }
-
-    @Override
-    public List<Notificacion> obtenerPorUsuarioYLeido(Usuario usuario, boolean leido) {
-        return repository.findByUsuarioAndLeidoFalseAndActivoOrderByFechaNotificacionDesc(usuario, true);
-    }
-
-    @Override
-    public int contarPorUsuarioYTipo(Usuario usuario, String tipo) {
-        return repository.countByUsuarioAndTipoAndActivo(usuario, tipo, true);
-    }
-
-    @Override
-    public List<Notificacion> obtenerPorUsuarioYTipo(Usuario usuario, String tipo) {
-        return repository.findByUsuarioAndTipoOrderByFechaNotificacionDesc(usuario, tipo);
-    }
-
-    @Override
-    public int contarNoLeidasPorUsuario(Usuario usuario, boolean leido) {
-        return repository.countByUsuarioAndLeidoAndActivo(usuario, false, true);
-    }
-
-    @Override
-    public void borrarNotificacion(Long idNotificacion) {
-        Notificacion notificacion = repository.findById(idNotificacion).orElseThrow();
-        notificacion.setActivo(false);
-        notificacion.setLeido(true);
-        repository.save(notificacion);
-    }
-
-    @Override
-    public void eliminarHistorial(Usuario usuario) {
-        List<Notificacion> notificacionesBorradas = repository.findByUsuarioAndActivoOrderByFechaNotificacionDesc(usuario, false);
-        for (Notificacion notificacion : notificacionesBorradas){
-            repository.delete(notificacion);
-        }
-    }
-
-    @Override
-    public void crearNotificacionAutomatica(NotificacionPeticion peticion) throws MessagingException, IOException {
-        Usuario usuario = peticion.getUsuarioNotificacion();
-
-        if (validarSiEnviarNotificacionONo(usuario, peticion.getTipoNotificacion())){
-            Notificacion notificacion = new Notificacion();
-            notificacion.setTitulo(peticion.getTituloNotificacion());
-            notificacion.setMensajeNotificacion(peticion.getMensajeNotificacion());
-            notificacion.setTipo(peticion.getTipoNotificacion());
-            notificacion.setLeido(false);
-            notificacion.setFechaNotificacion(LocalDateTime.now());
-            notificacion.setUsuario(usuario);
-            notificacion.setReferenciaId(peticion.getIdReferenciaNotificacion());
-            notificacion.setUrlAccion(peticion.getUrlAccionNotificacion());
-            repository.save(notificacion);
-        }
-        if(usuario.isRecibirCorreos()){
-            String html = emailService.generarHtmlParaCorreo(
-                    peticion.getNombreUsuarioCorreo(),
-                    peticion.getNombreTipoNotificacionCorreo(),
-                    peticion.getLinkAccionCorreo(),
-                    peticion.getNombreUsuarioContrarioCorreo(),
-                    peticion.getNombreTemplateHtmlCorreo()
-            );
-            emailService.enviarEmailConHtml(usuario.isRecibirCorreos(),usuario.getEmail(), peticion.getAsuntoCorreo(),html);
-        }
-    }
-
-    //HELPERS PARA CREAR NOTIFICACIONES
-    private NotificacionPeticion buildNotificacion(
-            Long idReferencia,
-            String mensaje,
-            String tipo,
-            String titulo,
-            Usuario usuario,
-            String urlAccion,
-            String asuntoCorreo,
-            String linkAccion,
-            String templateHtml,
-            String tipoCorreo,
-            String usuarioContrario,
-            String usuarioCorreo
-    ) {
-        return NotificacionPeticion.builder()
-                .idReferenciaNotificacion(idReferencia)
-                .mensajeNotificacion(mensaje)
-                .tipoNotificacion(tipo)
-                .tituloNotificacion(titulo)
-                .usuarioNotificacion(usuario)
-                .urlAccionNotificacion(urlAccion)
-                .asuntoCorreo(asuntoCorreo)
-                .linkAccionCorreo(linkAccion)
-                .nombreTemplateHtmlCorreo(templateHtml)
-                .nombreTipoNotificacionCorreo(tipoCorreo)
-                .nombreUsuarioContrarioCorreo(usuarioContrario)
-                .nombreUsuarioCorreo(usuarioCorreo)
-                .build();
-    }
+  //HELPERS PARA CREAR NOTIFICACIONES
+  private NotificacionPeticion buildNotificacion(
+          Long idReferencia,
+          String mensaje,
+          String tipo,
+          String titulo,
+          Usuario usuario,
+          String urlAccion,
+          String asuntoCorreo,
+          String linkAccion,
+          String templateHtml,
+          String tipoCorreo,
+          String usuarioContrario,
+          String usuarioCorreo
+  ) {
+    return NotificacionPeticion.builder()
+            .idReferenciaNotificacion(idReferencia)
+            .mensajeNotificacion(mensaje)
+            .tipoNotificacion(tipo)
+            .tituloNotificacion(titulo)
+            .usuarioNotificacion(usuario)
+            .urlAccionNotificacion(urlAccion)
+            .asuntoCorreo(asuntoCorreo)
+            .linkAccionCorreo(linkAccion)
+            .nombreTemplateHtmlCorreo(templateHtml)
+            .nombreTipoNotificacionCorreo(tipoCorreo)
+            .nombreUsuarioContrarioCorreo(usuarioContrario)
+            .nombreUsuarioCorreo(usuarioCorreo)
+            .build();
+  }
 
 
-    @Override
-    public void notificacionCitaCancelada(Cita cita, Usuario compradorOVendedor) throws MessagingException, IOException {
-        Usuario comprador = null;
-        Usuario vendedor = cita.getProducto().getVendedor();
-        String producto = cita.getProducto().getNombreProducto();
+  @Override
+  public void notificacionCitaCancelada(Cita cita, Usuario compradorOVendedor) throws MessagingException, IOException {
+    Usuario comprador = null;
+    Usuario vendedor = cita.getProducto().getVendedor();
+    String producto = cita.getProducto().getNombreProducto();
 
-        boolean fueComprador = compradorOVendedor.equals(comprador);
+    boolean fueComprador = compradorOVendedor.equals(comprador);
 
-        NotificacionPeticion notifComprador = buildNotificacion(
-                cita.getIdCita(),
-                fueComprador
-                        ? "Cancelaste tu cita para el producto: " + producto + " con el vendedor: " + vendedor.getNombres()
-                        : "Tu cita para el producto: " + producto + " ha sido cancelada por el vendedor: " + vendedor.getNombres(),
-                "Citas",
-                "Actualización en tu cita: Cancelación",
-                comprador,
-                "/comprador/citas",
-                (fueComprador ? "Cancelaste" : "Cancelaron") + " tu cita para el producto: " + producto,
-                "http://localhost:8080/comprador/citas",
-                "citaCancelada",
-                cita.getProducto().getNombreProducto(),
-                vendedor.getNombres(),
-                comprador.getNombres()
-        );
+    NotificacionPeticion notifComprador = buildNotificacion(
+            cita.getIdCita(),
+            fueComprador
+                    ? "Cancelaste tu cita para el producto: " + producto + " con el vendedor: " + vendedor.getNombres()
+                    : "Tu cita para el producto: " + producto + " ha sido cancelada por el vendedor: " + vendedor.getNombres(),
+            "Citas",
+            "Actualización en tu cita: Cancelación",
+            comprador,
+            "/comprador/citas",
+            (fueComprador ? "Cancelaste" : "Cancelaron") + " tu cita para el producto: " + producto,
+            "http://localhost:8080/comprador/citas",
+            "citaCancelada",
+            cita.getProducto().getNombreProducto(),
+            vendedor.getNombres(),
+            comprador.getNombres()
+    );
 
-        NotificacionPeticion notifVendedor = buildNotificacion(
-                cita.getIdCita(),
-                fueComprador
-                        ? "El comprador " + comprador.getNombres() + " canceló la cita para el producto: " + producto
-                        : "Cancelaste tu cita para el producto: " + producto + " con el comprador: " + comprador.getNombres(),
-                "Citas",
-                "Actualización en tu cita: Cancelación",
-                vendedor,
-                "/vendedor/citas",
-                (fueComprador ? "El comprador canceló" : "Cancelaste") + " tu cita para el producto: " + producto,
-                "http://localhost:8080/vendedor/citas",
-                "citaCancelada",
-                cita.getProducto().getNombreProducto(),
-                comprador.getNombres(),
-                vendedor.getNombres()
-        );
+    NotificacionPeticion notifVendedor = buildNotificacion(
+            cita.getIdCita(),
+            fueComprador
+                    ? "El comprador " + comprador.getNombres() + " canceló la cita para el producto: " + producto
+                    : "Cancelaste tu cita para el producto: " + producto + " con el comprador: " + comprador.getNombres(),
+            "Citas",
+            "Actualización en tu cita: Cancelación",
+            vendedor,
+            "/vendedor/citas",
+            (fueComprador ? "El comprador canceló" : "Cancelaste") + " tu cita para el producto: " + producto,
+            "http://localhost:8080/vendedor/citas",
+            "citaCancelada",
+            cita.getProducto().getNombreProducto(),
+            comprador.getNombres(),
+            vendedor.getNombres()
+    );
 
-        crearNotificacionAutomatica(notifComprador);
-        crearNotificacionAutomatica(notifVendedor);
-    }
+    crearNotificacionAutomatica(notifComprador);
+    crearNotificacionAutomatica(notifVendedor);
+  }
 
-    @Override
-    public void notificacionCitaFinalizada(Cita cita) throws MessagingException, IOException {
-        Usuario comprador = null;
-        Usuario vendedor = cita.getProducto().getVendedor();
-        String producto = cita.getProducto().getNombreProducto();
+  @Override
+  public void notificacionCitaFinalizada(Cita cita) throws MessagingException, IOException {
+    Usuario comprador = null;
+    Usuario vendedor = cita.getProducto().getVendedor();
+    String producto = cita.getProducto().getNombreProducto();
 
-        NotificacionPeticion notifComprador = buildNotificacion(
-                cita.getIdCita(),
-                "La cita para el producto " + producto + " ha finalizado exitosamente. Ahora puedes proceder a generar la compra desde tu panel.",
-                "Citas",
-                "Cita finalizada",
-                null,
-                "/comprador/citas",
-                "Tu cita para el producto " + producto + " ha sido marcada como finalizada.",
-                "http://localhost:8080/comprador/citas",
-                "citaFinalizada",
-                cita.getProducto().getNombreProducto(),
-                vendedor.getNombres(),
-                comprador.getNombres()
-        );
+    NotificacionPeticion notifComprador = buildNotificacion(
+            cita.getIdCita(),
+            "La cita para el producto " + producto + " ha finalizado exitosamente. Ahora puedes proceder a generar la compra desde tu panel.",
+            "Citas",
+            "Cita finalizada",
+            null,
+            "/comprador/citas",
+            "Tu cita para el producto " + producto + " ha sido marcada como finalizada.",
+            "http://localhost:8080/comprador/citas",
+            "citaFinalizada",
+            cita.getProducto().getNombreProducto(),
+            vendedor.getNombres(),
+            comprador.getNombres()
+    );
 
-        NotificacionPeticion notifVendedor = buildNotificacion(
-                cita.getIdCita(),
-                "La cita con el comprador " + comprador.getNombres() + " para tu producto " + producto + " ha finalizado.",
-                "Citas",
-                "Cita finalizada",
-                vendedor,
-                "/vendedor/citas",
-                "La cita para tu producto " + producto + " ha sido marcada como finalizada.",
-                "http://localhost:8080/vendedor/citas",
-                "citaFinalizadaVendedor",
-                cita.getProducto().getNombreProducto(),
-                comprador.getNombres(),
-                vendedor.getNombres()
-        );
-
-
-        crearNotificacionAutomatica(notifComprador);
-        crearNotificacionAutomatica(notifVendedor);
-    }
-
-    @Override
-    public void notificacionRecuperarContrasena(String email) throws MessagingException, IOException {
-        NotificacionPeticion notificacionPeticion = buildNotificacion(
-                null,
-                "Haz click en el siguente boton para restablecer tu contrasena, luego inicia sesion normalmente. ",
-                "Sistema",
-                "Recuperacion de contrasena",
-                null,
-                "/login/recuperar-password",
-                "Recuperacion de contrasena",
-                "http://localhost:8080/login/recuperar-password",
-                "recuperarContrasena",
-                null,
-                "ninguno",
-                null
-        );
-
-        crearNotificacionAutomatica(notificacionPeticion);
-    }
-
-    @Override
-    public void notificacionCitaReservada(Asistencia asistencia, Usuario nuevoAsistente) throws MessagingException, IOException {
-        Usuario vendedor = asistencia.getCita().getProducto().getVendedor();
-        String producto = asistencia.getCita().getProducto().getNombreProducto();
-
-        NotificacionPeticion notifComprador = buildNotificacion(
-                asistencia.getIdAsistencia(),
-                "Una persona cancelo su cita, como estabas en lista de espera ahora pueder ir a la cita para el producto: " + producto + ". Con el vendedor: "+vendedor.getNombres()+". Puedes ir a Mis Citas para mas detalles.",
-                "Citas",
-                "Ya pueder ir a la cita para: " + producto,
-                nuevoAsistente,
-                "/comprador/citas",
-                "Se te ha asignado un cupo en la cita para el producto: " + producto,
-                "http://localhost:8080/comprador/citas",
-                "citaReservada",
-                asistencia.getCita().getProducto().getNombreProducto(),
-                vendedor.getNombres(),
-                nuevoAsistente.getNombres()
-        );
-
-        NotificacionPeticion notifVendedor = buildNotificacion(
-                asistencia.getIdAsistencia(),
-                "El comprador " + nuevoAsistente.getNombres() + ". Ahora esta en la lista de personas que iran a tu cita para: " + producto + ".",
-                "Citas",
-                "Nuevo visitante",
-                vendedor,
-                "/vendedor/citas",
-                "Un nuevo comprador esta en tu lista de asistentes: " + producto + ".",
-                "http://localhost:8080/vendedor/citas",
-                "citaReservadaVendedor",
-                asistencia.getCita().getProducto().getNombreProducto(),
-                nuevoAsistente.getNombres(),
-                vendedor.getNombres()
-        );
+    NotificacionPeticion notifVendedor = buildNotificacion(
+            cita.getIdCita(),
+            "La cita con el comprador " + comprador.getNombres() + " para tu producto " + producto + " ha finalizado.",
+            "Citas",
+            "Cita finalizada",
+            vendedor,
+            "/vendedor/citas",
+            "La cita para tu producto " + producto + " ha sido marcada como finalizada.",
+            "http://localhost:8080/vendedor/citas",
+            "citaFinalizadaVendedor",
+            cita.getProducto().getNombreProducto(),
+            comprador.getNombres(),
+            vendedor.getNombres()
+    );
 
 
-        crearNotificacionAutomatica(notifComprador);
-        crearNotificacionAutomatica(notifVendedor);
-    }
+    crearNotificacionAutomatica(notifComprador);
+    crearNotificacionAutomatica(notifVendedor);
+  }
 
-    @Override
-    public void notificacionCitaReprogramada(Cita cita, Usuario compradorOVendedor) throws MessagingException, IOException {
-        Usuario vendedor = cita.getProducto().getVendedor();
-        String producto = cita.getProducto().getNombreProducto();
+  @Override
+  public void notificacionRecuperarContrasena(String email) throws MessagingException, IOException {
+    NotificacionPeticion notificacionPeticion = buildNotificacion(
+            null,
+            "Haz click en el siguente boton para restablecer tu contrasena, luego inicia sesion normalmente. ",
+            "Sistema",
+            "Recuperacion de contrasena",
+            null,
+            "/login/recuperar-password",
+            "Recuperacion de contrasena",
+            "http://localhost:8080/login/recuperar-password",
+            "recuperarContrasena",
+            null,
+            "ninguno",
+            null
+    );
+
+    crearNotificacionAutomatica(notificacionPeticion);
+  }
+
+  @Override
+  public void notificacionCitaReservada(Asistencia asistencia, Usuario nuevoAsistente) throws MessagingException, IOException {
+    Usuario vendedor = asistencia.getCita().getProducto().getVendedor();
+    String producto = asistencia.getCita().getProducto().getNombreProducto();
+
+    NotificacionPeticion notifComprador = buildNotificacion(
+            asistencia.getIdAsistencia(),
+            "Una persona cancelo su cita, como estabas en lista de espera ahora pueder ir a la cita para el producto: " + producto + ". Con el vendedor: " + vendedor.getNombres() + ". Puedes ir a Mis Citas para mas detalles.",
+            "Citas",
+            "Ya pueder ir a la cita para: " + producto,
+            nuevoAsistente,
+            "/comprador/citas",
+            "Se te ha asignado un cupo en la cita para el producto: " + producto,
+            "http://localhost:8080/comprador/citas",
+            "citaReservada",
+            asistencia.getCita().getProducto().getNombreProducto(),
+            vendedor.getNombres(),
+            nuevoAsistente.getNombres()
+    );
+
+    NotificacionPeticion notifVendedor = buildNotificacion(
+            asistencia.getIdAsistencia(),
+            "El comprador " + nuevoAsistente.getNombres() + ". Ahora esta en la lista de personas que iran a tu cita para: " + producto + ".",
+            "Citas",
+            "Nuevo visitante",
+            vendedor,
+            "/vendedor/citas",
+            "Un nuevo comprador esta en tu lista de asistentes: " + producto + ".",
+            "http://localhost:8080/vendedor/citas",
+            "citaReservadaVendedor",
+            asistencia.getCita().getProducto().getNombreProducto(),
+            nuevoAsistente.getNombres(),
+            vendedor.getNombres()
+    );
 
 
-        NotificacionPeticion notifComprador = buildNotificacion(
-                cita.getIdCita(),
-                "El vendedor: " +  vendedor.getNombres() + ". Reprogramo la cita para el producto: " + producto +  ". Para la fecha: " + cita.getFecha(),
-                "Citas",
-                "Actualización en tu cita: Reprogramacion",
-                compradorOVendedor,
-                "/comprador/citas",
-                "Reprogramaron tu cita para el producto: " + producto  + ". Para la fecha: " + cita.getFecha() + " y hora: " + cita.getHoraInicio(),
-                "http://localhost:8080/comprador/citas",
-                "reprogramacionCita",
-                cita.getProducto().getNombreProducto(),
-                vendedor.getNombres(),
-                compradorOVendedor.getNombres()
-        );
+    crearNotificacionAutomatica(notifComprador);
+    crearNotificacionAutomatica(notifVendedor);
+  }
 
-        crearNotificacionAutomatica(notifComprador);
-    }
+  @Override
+  public void notificacionCitaReprogramada(Cita cita, Usuario compradorOVendedor) throws MessagingException, IOException {
+    Usuario vendedor = cita.getProducto().getVendedor();
+    String producto = cita.getProducto().getNombreProducto();
 
-    @Override
-    public void notificacionReprogramarCitaHabilitado(Cita cita) throws MessagingException, IOException {
-        NotificacionPeticion notificacionPeticion = buildNotificacion(
-                cita.getIdCita(),
-                "Ya han pasado 24 horas desde tu ultima reprogramacion posible, ya puedes volver a reprogramar tu cita dos veces mas",
-                "Citas",
-                "Reprogramacion Disponible",
-                null,
-                "/comprador/citas",
-                "Reprogramacion Disponible",
-                "http://localhost:8080/comprador/citas",
-                "reprogramacionHabilitada",
-                cita.getProducto().getNombreProducto(),
-                cita.getProducto().getVendedor().getNombres(),
-                null
-        );
 
-        crearNotificacionAutomatica(notificacionPeticion);
-    }
+    NotificacionPeticion notifComprador = buildNotificacion(
+            cita.getIdCita(),
+            "El vendedor: " + vendedor.getNombres() + ". Reprogramo la cita para el producto: " + producto + ". Para la fecha: " + cita.getFecha(),
+            "Citas",
+            "Actualización en tu cita: Reprogramacion",
+            compradorOVendedor,
+            "/comprador/citas",
+            "Reprogramaron tu cita para el producto: " + producto + ". Para la fecha: " + cita.getFecha() + " y hora: " + cita.getHoraInicio(),
+            "http://localhost:8080/comprador/citas",
+            "reprogramacionCita",
+            cita.getProducto().getNombreProducto(),
+            vendedor.getNombres(),
+            compradorOVendedor.getNombres()
+    );
 
-    @Override
-    public void notificacionVentaGenerada(Venta venta) throws MessagingException, IOException {
-        Usuario comprador = venta.getComprador();
-        Usuario vendedor = venta.getProducto().getVendedor();
-        String producto = venta.getProducto().getNombreProducto();
+    crearNotificacionAutomatica(notifComprador);
+  }
 
-        NotificacionPeticion notifiComprador = buildNotificacion(
-                venta.getIdVenta(),
-                "Se ha creado una nueva compra para el producto: " + producto + ". Ve al panel de compras para mas detalles. Recuerda que tu debes confirmar los datos obligatorios de la venta para finalizarla.",
-                "Ventas",
-                "Creacion de compra",
-                venta.getComprador(),
-                "/comprador/compras",
-                "Creaste una compra para el producto: "+producto,
-                "http://localhost:8080/comprador/compras",
-                "ventaGenerada",
-                venta.getProducto().getNombreProducto(),
-                vendedor.getNombres(),
-                comprador.getNombres()
-        );
+  @Override
+  public void notificacionReprogramarCitaHabilitado(Cita cita) throws MessagingException, IOException {
+    NotificacionPeticion notificacionPeticion = buildNotificacion(
+            cita.getIdCita(),
+            "Ya han pasado 24 horas desde tu ultima reprogramacion posible, ya puedes volver a reprogramar tu cita dos veces mas",
+            "Citas",
+            "Reprogramacion Disponible",
+            null,
+            "/comprador/citas",
+            "Reprogramacion Disponible",
+            "http://localhost:8080/comprador/citas",
+            "reprogramacionHabilitada",
+            cita.getProducto().getNombreProducto(),
+            cita.getProducto().getVendedor().getNombres(),
+            null
+    );
 
-        NotificacionPeticion notifVendedor = buildNotificacion(
-                venta.getIdVenta(),
-                "El comprador " + comprador.getNombres() +
-                        " ha generado una venta para tu producto: " + producto +
-                        ". Recuerda que debes actualizar los datos obligatorios para finalizar la venta.",
-                "Ventas",
-                "Nueva venta generada",
-                vendedor,
-                "/vendedor/ventas",
-                "Se generó una venta para tu producto: " + producto,
-                "http://localhost:8080/vendedor/ventas",
-                "ventaGeneradaVendedor",
-                venta.getProducto().getNombreProducto(),
-                comprador.getNombres(),
-                vendedor.getNombres()
-        );
+    crearNotificacionAutomatica(notificacionPeticion);
+  }
 
-        crearNotificacionAutomatica(notifiComprador);
-        crearNotificacionAutomatica(notifVendedor);
-    }
+  @Override
+  public void notificacionVentaGenerada(Venta venta) throws MessagingException, IOException {
+    Usuario comprador = venta.getComprador();
+    Usuario vendedor = venta.getProducto().getVendedor();
+    String producto = venta.getProducto().getNombreProducto();
 
-    @Override
-    public void notificacionVentaModificada(Venta venta) throws MessagingException, IOException {
-        Usuario comprador = venta.getComprador();
-        Usuario vendedor = venta.getProducto().getVendedor();
-        String producto = venta.getProducto().getNombreProducto();
+    NotificacionPeticion notifiComprador = buildNotificacion(
+            venta.getIdVenta(),
+            "Se ha creado una nueva compra para el producto: " + producto + ". Ve al panel de compras para mas detalles. Recuerda que tu debes confirmar los datos obligatorios de la venta para finalizarla.",
+            "Ventas",
+            "Creacion de compra",
+            venta.getComprador(),
+            "/comprador/compras",
+            "Creaste una compra para el producto: " + producto,
+            "http://localhost:8080/comprador/compras",
+            "ventaGenerada",
+            venta.getProducto().getNombreProducto(),
+            vendedor.getNombres(),
+            comprador.getNombres()
+    );
 
-        NotificacionPeticion notifiComprador = buildNotificacion(
-                venta.getIdVenta(),
-                "El vendedor ha modificado los datos de tu compra para el producto: " + producto + ". Ve al panel de compras para mas detalles. Recuerda que tu debes confirmar los datos obligatorios de la venta para finalizarla.",
-                "Ventas",
-                "Modificacion de compra",
-                venta.getComprador(),
-                "/comprador/compras",
-                "Modificacion en datos de compra para el producto: "+producto,
-                "http://localhost:8080/comprador/compras",
-                "ventaModificadaComprador",
-                venta.getProducto().getNombreProducto(),
-                vendedor.getNombres(),
-                comprador.getNombres()
-        );
+    NotificacionPeticion notifVendedor = buildNotificacion(
+            venta.getIdVenta(),
+            "El comprador " + comprador.getNombres() +
+                    " ha generado una venta para tu producto: " + producto +
+                    ". Recuerda que debes actualizar los datos obligatorios para finalizar la venta.",
+            "Ventas",
+            "Nueva venta generada",
+            vendedor,
+            "/vendedor/ventas",
+            "Se generó una venta para tu producto: " + producto,
+            "http://localhost:8080/vendedor/ventas",
+            "ventaGeneradaVendedor",
+            venta.getProducto().getNombreProducto(),
+            comprador.getNombres(),
+            vendedor.getNombres()
+    );
 
-        NotificacionPeticion notifVendedor = buildNotificacion(
-                venta.getIdVenta(),
-                "Modificaste los datos de tu venta con el comprador: " + comprador.getNombres() +
-                        " para el producto: " + producto +
-                        ".",
-                "Ventas",
-                "Modificacion de datos de venta",
-                vendedor,
-                "/vendedor/ventas",
-                "Actualizaste los datos de una venta",
-                "http://localhost:8080/vendedor/ventas",
-                "ventaModificada",
-                venta.getProducto().getNombreProducto(),
-                comprador.getNombres(),
-                vendedor.getNombres()
-        );
+    crearNotificacionAutomatica(notifiComprador);
+    crearNotificacionAutomatica(notifVendedor);
+  }
 
-        crearNotificacionAutomatica(notifiComprador);
-        crearNotificacionAutomatica(notifVendedor);
-    }
+  @Override
+  public void notificacionVentaModificada(Venta venta) throws MessagingException, IOException {
+    Usuario comprador = venta.getComprador();
+    Usuario vendedor = venta.getProducto().getVendedor();
+    String producto = venta.getProducto().getNombreProducto();
 
-    @Override
-    public void notificacionPeticionFinalizacionVenta(Venta venta) throws MessagingException, IOException {
-        Usuario comprador = venta.getComprador();
-        Usuario vendedor = venta.getProducto().getVendedor();
-        String producto = venta.getProducto().getNombreProducto();
+    NotificacionPeticion notifiComprador = buildNotificacion(
+            venta.getIdVenta(),
+            "El vendedor ha modificado los datos de tu compra para el producto: " + producto + ". Ve al panel de compras para mas detalles. Recuerda que tu debes confirmar los datos obligatorios de la venta para finalizarla.",
+            "Ventas",
+            "Modificacion de compra",
+            venta.getComprador(),
+            "/comprador/compras",
+            "Modificacion en datos de compra para el producto: " + producto,
+            "http://localhost:8080/comprador/compras",
+            "ventaModificadaComprador",
+            venta.getProducto().getNombreProducto(),
+            vendedor.getNombres(),
+            comprador.getNombres()
+    );
 
-        NotificacionPeticion notifiComprador = buildNotificacion(
-                venta.getIdVenta(),
-                "El vendedor ha hecho una peticion para finalizar tu compra para el producto: " + producto + ". Ve al panel de compras para mas detalles. Recuerda que tu debes confirmar los datos obligatorios de la venta para finalizarla.",
-                "Ventas",
-                "Peticion de finalizacion de compra",
-                venta.getComprador(),
-                "/comprador/compras",
-                "Modificacion en datos de compra para el producto: "+producto,
-                "http://localhost:8080/comprador/compras",
-                "ventaFinalizacion",
-                venta.getProducto().getNombreProducto(),
-                vendedor.getNombres(),
-                comprador.getNombres()
-        );
+    NotificacionPeticion notifVendedor = buildNotificacion(
+            venta.getIdVenta(),
+            "Modificaste los datos de tu venta con el comprador: " + comprador.getNombres() +
+                    " para el producto: " + producto +
+                    ".",
+            "Ventas",
+            "Modificacion de datos de venta",
+            vendedor,
+            "/vendedor/ventas",
+            "Actualizaste los datos de una venta",
+            "http://localhost:8080/vendedor/ventas",
+            "ventaModificada",
+            venta.getProducto().getNombreProducto(),
+            comprador.getNombres(),
+            vendedor.getNombres()
+    );
 
-        NotificacionPeticion notifVendedor = buildNotificacion(
-                venta.getIdVenta(),
-                "Hiciste una peticion de finalizacion de venta con el comprador: " + comprador.getNombres() +
-                        " para el producto: " + producto +
-                        ". Espera a que el acepte o cancele la revision",
-                "Ventas",
-                "Peticion de finalizacion de venta",
-                vendedor,
-                "/vendedor/ventas",
-                "Hiciste la peticion para finalizar una venta",
-                "http://localhost:8080/vendedor/ventas",
-                "ventaFinalizacion",
-                venta.getProducto().getNombreProducto(),
-                comprador.getNombres(),
-                vendedor.getNombres()
-        );
+    crearNotificacionAutomatica(notifiComprador);
+    crearNotificacionAutomatica(notifVendedor);
+  }
 
-        crearNotificacionAutomatica(notifiComprador);
-        crearNotificacionAutomatica(notifVendedor);
-    }
+  @Override
+  public void notificacionPeticionFinalizacionVenta(Venta venta) throws MessagingException, IOException {
+    Usuario comprador = venta.getComprador();
+    Usuario vendedor = venta.getProducto().getVendedor();
+    String producto = venta.getProducto().getNombreProducto();
 
-    @Override
-    public void notificacionFotoPerfilCambiada(Usuario usuario) throws MessagingException, IOException {
-        NotificacionPeticion notificacionPeticion = buildNotificacion(
-                0L,
-                "Cambiaste tu foto de perfil exitosamente.",
-                "Sistema",
-                "Cambio de foto de datos personales",
-                usuario,
-                "/usuarios/mi-perfil?id=1",
-                "Cambiaste tu foto.",
-                "http://localhost:8080/usuarios/mi-perfil?id=1",
-                "fotoCambiada",
-                "ninguno",
-                "ninguno",
-                usuario.getNombres()
-        );
+    NotificacionPeticion notifiComprador = buildNotificacion(
+            venta.getIdVenta(),
+            "El vendedor ha hecho una peticion para finalizar tu compra para el producto: " + producto + ". Ve al panel de compras para mas detalles. Recuerda que tu debes confirmar los datos obligatorios de la venta para finalizarla.",
+            "Ventas",
+            "Peticion de finalizacion de compra",
+            venta.getComprador(),
+            "/comprador/compras",
+            "Modificacion en datos de compra para el producto: " + producto,
+            "http://localhost:8080/comprador/compras",
+            "ventaFinalizacion",
+            venta.getProducto().getNombreProducto(),
+            vendedor.getNombres(),
+            comprador.getNombres()
+    );
 
-        crearNotificacionAutomatica(notificacionPeticion);
-    }
+    NotificacionPeticion notifVendedor = buildNotificacion(
+            venta.getIdVenta(),
+            "Hiciste una peticion de finalizacion de venta con el comprador: " + comprador.getNombres() +
+                    " para el producto: " + producto +
+                    ". Espera a que el acepte o cancele la revision",
+            "Ventas",
+            "Peticion de finalizacion de venta",
+            vendedor,
+            "/vendedor/ventas",
+            "Hiciste la peticion para finalizar una venta",
+            "http://localhost:8080/vendedor/ventas",
+            "ventaFinalizacion",
+            venta.getProducto().getNombreProducto(),
+            comprador.getNombres(),
+            vendedor.getNombres()
+    );
 
-    @Override
-    public void notificacionDatosPersonalesActualizados(Usuario usuario) throws MessagingException, IOException {
-        NotificacionPeticion notificacionPeticion = buildNotificacion(
-                0L,
-                "Cambiaste datos de tu informacion personal, puedes ir a Mi Perfil para verlos reflejados.",
-                "Sistema",
-                "Cambio de datos personales",
-                usuario,
-                "/usuarios/mi-perfil?id=1",
-                "Cambiaste tu info personal.",
-                "http://localhost:8080/usuarios/mi-perfil?id=1",
-                "infoCambiada",
-                "ninguno",
-                "ninguno",
-                usuario.getNombres()
-        );
+    crearNotificacionAutomatica(notifiComprador);
+    crearNotificacionAutomatica(notifVendedor);
+  }
 
-        crearNotificacionAutomatica(notificacionPeticion);
-    }
+  @Override
+  public void notificacionFotoPerfilCambiada(Usuario usuario) throws MessagingException, IOException {
+    NotificacionPeticion notificacionPeticion = buildNotificacion(
+            0L,
+            "Cambiaste tu foto de perfil exitosamente.",
+            "Sistema",
+            "Cambio de foto de datos personales",
+            usuario,
+            "/usuarios/mi-perfil?id=1",
+            "Cambiaste tu foto.",
+            "http://localhost:8080/usuarios/mi-perfil?id=1",
+            "fotoCambiada",
+            "ninguno",
+            "ninguno",
+            usuario.getNombres()
+    );
 
-    @Override
-    public void notificacionPedirModificarVenta(Venta venta, String razon) throws MessagingException, IOException {
-        Usuario comprador = venta.getComprador();
-        Usuario vendedor = venta.getProducto().getVendedor();
-        String producto = venta.getProducto().getNombreProducto();
+    crearNotificacionAutomatica(notificacionPeticion);
+  }
 
-        NotificacionPeticion notifiComprador = buildNotificacion(
-                venta.getIdVenta(),
-                "Has hecho una peticion para actualizar los datos de la venta para el producto: " + producto + ". Con la siguiente razon: "+ razon,
-                "Ventas",
-                "Peticion modificacion de compra",
-                venta.getComprador(),
-                "/comprador/compras",
-                "Pediste una modificacion de compra para el producto: "+producto,
-                "http://localhost:8080/comprador/compras",
-                "pedirModificarVenta",
-                venta.getProducto().getNombreProducto(),
-                vendedor.getNombres(),
-                comprador.getNombres()
-        );
+  @Override
+  public void notificacionDatosPersonalesActualizados(Usuario usuario) throws MessagingException, IOException {
+    NotificacionPeticion notificacionPeticion = buildNotificacion(
+            0L,
+            "Cambiaste datos de tu informacion personal, puedes ir a Mi Perfil para verlos reflejados.",
+            "Sistema",
+            "Cambio de datos personales",
+            usuario,
+            "/usuarios/mi-perfil?id=1",
+            "Cambiaste tu info personal.",
+            "http://localhost:8080/usuarios/mi-perfil?id=1",
+            "infoCambiada",
+            "ninguno",
+            "ninguno",
+            usuario.getNombres()
+    );
 
-        NotificacionPeticion notifVendedor = buildNotificacion(
-                venta.getIdVenta(),
-                "El comprador: " + comprador.getNombres() +
-                        "ha pedido que modifiques la venta para el producto: " + producto +
-                        ". Razon: "+razon,
-                "Ventas",
-                "Peticion modificacion de datos de venta",
-                vendedor,
-                "/vendedor/ventas",
-                "Te pidieron que actualices los datos de tu venta para: "+producto,
-                "http://localhost:8080/vendedor/ventas",
-                "pedirModificarVentaVendedor",
-                venta.getProducto().getNombreProducto(),
-                comprador.getNombres(),
-                vendedor.getNombres()
-        );
+    crearNotificacionAutomatica(notificacionPeticion);
+  }
 
-        crearNotificacionAutomatica(notifiComprador);
-        crearNotificacionAutomatica(notifVendedor);
-    }
+  @Override
+  public void notificacionPedirModificarVenta(Venta venta, String razon) throws MessagingException, IOException {
+    Usuario comprador = venta.getComprador();
+    Usuario vendedor = venta.getProducto().getVendedor();
+    String producto = venta.getProducto().getNombreProducto();
+
+    NotificacionPeticion notifiComprador = buildNotificacion(
+            venta.getIdVenta(),
+            "Has hecho una peticion para actualizar los datos de la venta para el producto: " + producto + ". Con la siguiente razon: " + razon,
+            "Ventas",
+            "Peticion modificacion de compra",
+            venta.getComprador(),
+            "/comprador/compras",
+            "Pediste una modificacion de compra para el producto: " + producto,
+            "http://localhost:8080/comprador/compras",
+            "pedirModificarVenta",
+            venta.getProducto().getNombreProducto(),
+            vendedor.getNombres(),
+            comprador.getNombres()
+    );
+
+    NotificacionPeticion notifVendedor = buildNotificacion(
+            venta.getIdVenta(),
+            "El comprador: " + comprador.getNombres() +
+                    "ha pedido que modifiques la venta para el producto: " + producto +
+                    ". Razon: " + razon,
+            "Ventas",
+            "Peticion modificacion de datos de venta",
+            vendedor,
+            "/vendedor/ventas",
+            "Te pidieron que actualices los datos de tu venta para: " + producto,
+            "http://localhost:8080/vendedor/ventas",
+            "pedirModificarVentaVendedor",
+            venta.getProducto().getNombreProducto(),
+            comprador.getNombres(),
+            vendedor.getNombres()
+    );
+
+    crearNotificacionAutomatica(notifiComprador);
+    crearNotificacionAutomatica(notifVendedor);
+  }
 }
