@@ -74,24 +74,21 @@ public class VentaController {
         Venta ventaGeneral = ventaService.findById(id);
         String tipoProducto = ventaGeneral.getProducto().getClass().getSimpleName().toUpperCase();
 
-        Object ventaDetallada = null;
-        String fragment = null;
-
         switch (tipoProducto){
             case "GANADO" -> {
                 VentaGanado detalle = ventaGanadoRepository.findByVenta(ventaGeneral);
                 model.addAttribute("venta", detalle);
-                model.addAttribute("fragment", "fragments/ventaGanadoVendedor :: detalle");
+                model.addAttribute("fragment", "fragments/vendedor/ventaGanadoVendedor :: detalle");
             }
             case "TERRENO" -> {
                 VentaTerreno detalle = ventaTerrenoRepository.findByVenta(ventaGeneral);
                 model.addAttribute("venta", detalle);
-                model.addAttribute("fragment", "fragments/terreno :: detalle");
+                model.addAttribute("fragment", "fragments/vendedor/ventaTerrenoVendedor :: detalle");
             }
             case "FINCA" -> {
                 VentaFinca detalle = ventaFincaRepository.findByVenta(ventaGeneral);
                 model.addAttribute("venta", detalle);
-                model.addAttribute("fragment", "fragments/finca :: detalle");
+                model.addAttribute("fragment", "fragments/vendedor/ventaFincaVendedor :: detalle");
             }
         }
 
