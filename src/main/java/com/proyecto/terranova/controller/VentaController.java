@@ -2,8 +2,10 @@ package com.proyecto.terranova.controller;
 
 import com.proyecto.terranova.config.enums.EstadoAsistenciaEnum;
 import com.proyecto.terranova.config.enums.RolEnum;
-import com.proyecto.terranova.entity.Usuario;
-import com.proyecto.terranova.entity.Venta;
+import com.proyecto.terranova.entity.*;
+import com.proyecto.terranova.repository.VentaFincaRepository;
+import com.proyecto.terranova.repository.VentaGanadoRepository;
+import com.proyecto.terranova.repository.VentaTerrenoRepository;
 import com.proyecto.terranova.service.AsistenciaService;
 import com.proyecto.terranova.service.UsuarioService;
 import com.proyecto.terranova.service.VentaService;
@@ -26,6 +28,15 @@ public class VentaController {
 
     @Autowired
     AsistenciaService asistenciaService;
+
+    @Autowired
+    VentaGanadoRepository ventaGanadoRepository;
+
+    @Autowired
+    VentaTerrenoRepository ventaTerrenoRepository;
+
+    @Autowired
+    VentaFincaRepository ventaFincaRepository;
 
     @Autowired
     UsuarioService usuarioService;
@@ -60,11 +71,32 @@ public class VentaController {
 
     @GetMapping("/detalle-venta/{id}")
     public String procesoVenta(@PathVariable Long id, Model model) {
-        Venta venta = ventaService.findById(id);
+        Venta ventaGeneral = ventaService.findById(id);
+        String tipoProducto = ventaGeneral.getProducto().getClass().getSimpleName().toUpperCase();
 
-        model.addAttribute("tipoProducto", venta.getProducto().getClass().getSimpleName().toUpperCase());
-        model.addAttribute("venta", venta);
-        model.addAttribute("asistencias", asistenciaService.encontrarAsistenciasPorCitaYEstadoAsistencia(venta.getCita().getIdCita(), EstadoAsistenciaEnum.ASISTIO));
+        Object ventaDetallada = null;
+        String fragment = null;
+
+        switch (tipoProducto){
+            case "GANADO" -> {
+                VentaGanado detalle = ventaGanadoRepository.findByVenta(ventaGeneral);
+                model.addAttribute("venta", detalle);
+                model.addAttribute("fragment", "fragments/ventaGanadoVendedor :: detalle");
+            }
+            case "TERRENO" -> {
+                VentaTerreno detalle = ventaTerrenoRepository.findByVenta(ventaGeneral);
+                model.addAttribute("venta", detalle);
+                model.addAttribute("fragment", "fragments/terreno :: detalle");
+            }
+            case "FINCA" -> {
+                VentaFinca detalle = ventaFincaRepository.findByVenta(ventaGeneral);
+                model.addAttribute("venta", detalle);
+                model.addAttribute("fragment", "fragments/finca :: detalle");
+            }
+        }
+
+        model.addAttribute("tipoProducto", tipoProducto);
+        model.addAttribute("asistencias", asistenciaService.encontrarAsistenciasPorCitaYEstadoAsistencia(ventaGeneral.getCita().getIdCita(), EstadoAsistenciaEnum.ASISTIO));
         return "vistasTemporales/procesoVenta";
     }
 

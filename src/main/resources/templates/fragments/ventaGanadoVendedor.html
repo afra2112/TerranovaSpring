@@ -1,0 +1,433 @@
+<!-- FRAGMENT: Ganado - Vista Vendedor (Pasos 2-5 completos para GANADO) -->
+<div xmlns:th="http://www.thymeleaf.org" class="space-y-6">
+    <div th:fragment="detalle">
+        <!-- PASO 2: Documentación Sanitaria Obligatoria -->
+        <div th:if="${venta.pasoActual >= 2}" class="bg-white rounded-2xl shadow-lg p-8">
+            <h2 class="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+                <i class='bx bx-file-blank text-emerald-600'></i>
+                Paso 2: Documentación Sanitaria Obligatoria
+            </h2>
+            <p class="text-gray-600 mb-6">Asegúrese de que toda la documentación requerida esté vigente y disponible</p>
+
+            <div class="bg-blue-50 border-2 border-blue-300 rounded-xl p-6 mb-6">
+                <div class="flex gap-3">
+                    <i class='bx bx-info-circle text-2xl text-blue-600 flex-shrink-0'></i>
+                    <div>
+                        <p class="font-bold text-blue-900">Requisitos Legales Colombianos - ICA & Res. 6915/2022</p>
+                        <p class="text-sm text-blue-800 mt-2">La movilización de ganado está regulada por el ICA. Todos estos documentos son OBLIGATORIOS para trasladar el ganado legalmente. El incumplimiento conlleva sanciones.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <!-- GSMI -->
+                <div class="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-emerald-400 transition">
+                    <div class="flex items-start gap-4 mb-4">
+                        <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center">
+                            <i class='bx bx-shield-check text-2xl text-emerald-600'></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-gray-900 text-lg">GSMI Vigente</p>
+                            <p class="text-sm text-gray-600">Guía Sanitaria de Movilización Interna (ICA)</p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <p class="text-xs text-gray-700 space-y-1">
+                            <span class="block"><strong>Costo:</strong> $6,000 COP</span>
+                            <span class="block"><strong>Vigencia:</strong> Según expedición</span>
+                            <span class="block"><strong>Requisitos:</strong> Predio registrado en ICA (Form 3-101), certificado de vacunación vigente, cédula original</span>
+                            <span class="block"><strong>Incluye:</strong> Datos sanitarios de los animales en predio origen</span>
+                        </p>
+                    </div>
+                    <div th:if="${venta.documentoGSMI}" class="flex items-center gap-2 text-green-600 font-bold mb-2">
+                        <i class='bx bx-check-circle'></i> Cargado y Verificado
+                    </div>
+                    <div th:unless="${venta.documentoGSMI}">
+                        <label class="block border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:border-emerald-500 hover:bg-emerald-50 transition">
+                            <i class='bx bx-cloud-upload text-3xl text-emerald-600 mb-2'></i>
+                            <p class="text-sm font-semibold text-gray-700">Subir PDF o Foto del GSMI</p>
+                            <input type="file" name="gsmi" accept=".pdf,.jpg,.jpeg,.png" class="hidden" th:if="${venta.pasoActual == 2}">
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Certificados Sanitarios -->
+                <div class="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-emerald-400 transition">
+                    <div class="flex items-start gap-4 mb-4">
+                        <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center">
+                            <i class='bx bx-virus text-2xl text-emerald-600'></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-gray-900 text-lg">Certificados de Salud</p>
+                            <p class="text-sm text-gray-600">Libreta de salud, revisiones veterinarias, vacunas</p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <p class="text-xs text-gray-700 space-y-1">
+                            <span class="block"><strong>Incluye:</strong></span>
+                            <span class="block">• Fiebre Aftosa (vigencia 6 meses mínimo)</span>
+                            <span class="block">• Revisión veterinaria periódica</span>
+                            <span class="block">• Control parasitario</span>
+                            <span class="block">• Libreta de aplicaciones de medicamentos</span>
+                        </p>
+                    </div>
+                    <div th:if="${venta.documentoCertificados}" class="flex items-center gap-2 text-green-600 font-bold mb-2">
+                        <i class='bx bx-check-circle'></i> Cargado y Verificado
+                    </div>
+                    <div th:unless="${venta.documentoCertificados}">
+                        <label class="block border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:border-emerald-500 hover:bg-emerald-50 transition">
+                            <i class='bx bx-cloud-upload text-3xl text-emerald-600 mb-2'></i>
+                            <p class="text-sm font-semibold text-gray-700">Subir Archivo(s)</p>
+                            <input type="file" name="certificados" accept=".pdf,.jpg,.jpeg,.png" multiple class="hidden" th:if="${venta.pasoActual == 2}">
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Pruebas Serológicas -->
+                <div class="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-emerald-400 transition">
+                    <div class="flex items-start gap-4 mb-4">
+                        <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center">
+                            <i class='bx bx-test-tube text-2xl text-emerald-600'></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-gray-900 text-lg">Pruebas Serológicas</p>
+                            <p class="text-sm text-gray-600">Resultados negativos de laboratorio</p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <p class="text-xs text-gray-700 space-y-1">
+                            <span class="block"><strong>Requeridas según:</strong></span>
+                            <span class="block">• Brucelosis (bovinos > 4 meses)</span>
+                            <span class="block">• Tuberculosis (bovinos > 12 meses)</span>
+                            <span class="block">• En zonas de alta vigilancia (ZAV)</span>
+                            <span class="block">• Laboratorio acreditado por ICA</span>
+                        </p>
+                    </div>
+                    <div th:if="${venta.documentoPruebas}" class="flex items-center gap-2 text-green-600 font-bold mb-2">
+                        <i class='bx bx-check-circle'></i> Cargado y Verificado
+                    </div>
+                    <div th:unless="${venta.documentoPruebas}">
+                        <label class="block border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:border-emerald-500 hover:bg-emerald-50 transition">
+                            <i class='bx bx-cloud-upload text-3xl text-emerald-600 mb-2'></i>
+                            <p class="text-sm font-semibold text-gray-700">Subir Certificados Laboratorio</p>
+                            <input type="file" name="pruebas" accept=".pdf,.jpg,.jpeg,.png" class="hidden" th:if="${venta.pasoActual == 2}">
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Inventario de Animales -->
+                <div class="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-emerald-400 transition">
+                    <div class="flex items-start gap-4 mb-4">
+                        <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center">
+                            <i class='bx bx-list-ul text-2xl text-emerald-600'></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-gray-900 text-lg">Inventario Detallado</p>
+                            <p class="text-sm text-gray-600">Identificación de cada animal</p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <p class="text-xs text-gray-700 space-y-1">
+                            <span class="block"><strong>Datos de cada animal:</strong></span>
+                            <span class="block">• DIN (chapeta/número de identificación)</span>
+                            <span class="block">• Marca registrada</span>
+                            <span class="block">• Edad, peso, sexo, raza</span>
+                            <span class="block">• Características físicas distinguibles</span>
+                        </p>
+                    </div>
+                    <div th:if="${venta.documentoInventario}" class="flex items-center gap-2 text-green-600 font-bold mb-2">
+                        <i class='bx bx-check-circle'></i> Cargado y Verificado
+                    </div>
+                    <div th:unless="${venta.documentoInventario}">
+                        <label class="block border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:border-emerald-500 hover:bg-emerald-50 transition">
+                            <i class='bx bx-cloud-upload text-3xl text-emerald-600 mb-2'></i>
+                            <p class="text-sm font-semibold text-gray-700">Subir Inventario (Excel, PDF)</p>
+                            <input type="file" name="inventario" accept=".pdf,.xlsx,.xls,.csv" class="hidden" th:if="${venta.pasoActual == 2}">
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-orange-50 border-2 border-orange-300 rounded-xl p-6 mb-6">
+                <p class="font-bold text-orange-900 mb-4">Confirmaciones Legales Obligatorias</p>
+                <div class="space-y-3">
+                    <label class="flex items-start gap-3 cursor-pointer hover:bg-orange-100/50 p-2 rounded transition">
+                        <input type="checkbox" required class="mt-1 w-5 h-5 accent-orange-600">
+                        <span class="text-sm text-orange-900">Confirmo que toda la documentación es verídica, original y está actualizada</span>
+                    </label>
+                    <label class="flex items-start gap-3 cursor-pointer hover:bg-orange-100/50 p-2 rounded transition">
+                        <input type="checkbox" required class="mt-1 w-5 h-5 accent-orange-600">
+                        <span class="text-sm text-orange-900">Asumo responsabilidad legal sobre la veracidad de esta información</span>
+                    </label>
+                    <label class="flex items-start gap-3 cursor-pointer hover:bg-orange-100/50 p-2 rounded transition">
+                        <input type="checkbox" required class="mt-1 w-5 h-5 accent-orange-600">
+                        <span class="text-sm text-orange-900">Confirmo que los animales cumplen con requisitos sanitarios para exportación/transporte</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="flex gap-4">
+                <button class="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition flex items-center gap-2">
+                    <i class='bx bx-arrow-back'></i> Atrás
+                </button>
+                <button class="px-6 py-3 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white rounded-lg font-semibold hover:shadow-lg transition flex-1 flex items-center justify-center gap-2">
+                    <i class='bx bx-save'></i> Guardar Documentación y Continuar
+                </button>
+            </div>
+        </div>
+
+        <!-- PASO 3: Pago Total -->
+        <div th:if="${venta.pasoActual >= 3}" class="bg-white rounded-2xl shadow-lg p-8">
+            <h2 class="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+                <i class='bx bx-dollar-circle text-emerald-600'></i>
+                Paso 3: Pago Total Confirmado
+            </h2>
+
+            <div class="bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 border-2 border-emerald-300 rounded-xl p-8 mb-6">
+                <div class="text-center mb-8">
+                    <p class="text-sm text-emerald-700 font-semibold mb-2">💰 MONTO TOTAL A RECIBIR</p>
+                    <p class="text-7xl font-black text-gray-900 mb-4" th:text="'$' + ${#numbers.formatInteger(venta.precioTotal, 0, 'COMMA')}">$0</p>
+                    <div class="mb-6">
+                        <div class="flex justify-between mb-3">
+                            <span class="text-sm font-bold text-emerald-900">Progreso de Pago</span>
+                            <span class="text-sm font-bold text-emerald-700" th:text="${venta.pagado ? '100%' : '0%'}">0%</span>
+                        </div>
+                        <div class="w-full bg-white rounded-full h-4 overflow-hidden shadow-inner">
+                            <div class="bg-gradient-to-r from-emerald-400 to-emerald-600 h-full rounded-full transition-all duration-1000"
+                                 th:style="'width: ' + (${venta.pagado} ? '100%' : '0%')"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4 text-center">
+                    <div class="bg-white rounded-lg p-4">
+                        <p class="text-3xl font-bold text-emerald-600">1</p>
+                        <p class="text-xs text-gray-600 mt-2">Transacción(es)</p>
+                    </div>
+                    <div class="bg-white rounded-lg p-4">
+                        <p class="text-3xl font-bold text-emerald-600" th:text="${#temporals.format(venta.fechaPago, 'dd/MM')}">28/01</p>
+                        <p class="text-xs text-gray-600 mt-2">Fecha de Pago</p>
+                    </div>
+                    <div class="bg-white rounded-lg p-4">
+                        <p class="text-3xl font-bold text-emerald-600">✓</p>
+                        <p class="text-xs text-gray-600 mt-2">Verificado</p>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${venta.pagado}" class="bg-green-50 border-l-4 border-green-600 p-6 rounded-lg mb-6">
+                <div class="flex items-start gap-4">
+                    <i class='bx bx-check-circle text-4xl text-green-600 flex-shrink-0'></i>
+                    <div>
+                        <p class="font-bold text-green-900 text-lg mb-2">✓ Pago Completo Recibido y Verificado</p>
+                        <div class="grid grid-cols-3 gap-3 mt-4">
+                            <div class="bg-white rounded-lg p-3 border border-green-200">
+                                <p class="text-xs text-gray-600 mb-1"><strong>Método</strong></p>
+                                <p class="font-bold text-gray-900" th:text="${venta.metodoPago}">Transferencia</p>
+                            </div>
+                            <div class="bg-white rounded-lg p-3 border border-green-200">
+                                <p class="text-xs text-gray-600 mb-1"><strong>Fecha</strong></p>
+                                <p class="font-bold text-gray-900" th:text="${#temporals.format(venta.fechaPago, 'dd/MM/yyyy')}">28/01/2025</p>
+                            </div>
+                            <div class="bg-white rounded-lg p-3 border border-green-200">
+                                <p class="text-xs text-gray-600 mb-1"><strong>Referencia</strong></p>
+                                <p class="font-bold text-gray-900 text-sm" th:text="${venta.referenciaPago}">REF123456</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-4">
+                <button class="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition">
+                    <i class='bx bx-arrow-back'></i> Atrás
+                </button>
+                <button class="px-6 py-3 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white rounded-lg font-semibold hover:shadow-lg transition flex-1 flex items-center justify-center gap-2">
+                    <i class='bx bx-right-arrow-alt'></i> Continuar al Transporte
+                </button>
+            </div>
+        </div>
+
+        <!-- PASO 4: Movilización y Transporte -->
+        <div th:if="${venta.pasoActual >= 4}" class="bg-white rounded-2xl shadow-lg p-8">
+            <h2 class="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+                <i class='bx bx-truck text-emerald-600'></i>
+                Paso 4: Movilización y Transporte
+            </h2>
+            <p class="text-gray-600 mb-6">Información de trazabilidad completa del transporte del ganado</p>
+
+            <div class="bg-blue-50 border-2 border-blue-300 rounded-xl p-6 mb-6">
+                <p class="font-bold text-blue-900 mb-3 flex items-center gap-2">
+                    <i class='bx bx-info-circle'></i>
+                    Resolución 6915/2022 - Ministerio de Transporte
+                </p>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-blue-800">
+                    <div class="bg-white p-3 rounded">
+                        <p class="font-bold mb-1">Horario Permitido</p>
+                        <p>6:00 AM - 6:00 PM</p>
+                    </div>
+                    <div class="bg-white p-3 rounded">
+                        <p class="font-bold mb-1">Máx. Bovinos Adultos</p>
+                        <p>10 horas viaje</p>
+                    </div>
+                    <div class="bg-white p-3 rounded">
+                        <p class="font-bold mb-1">Máx. Terneros</p>
+                        <p>6 horas viaje</p>
+                    </div>
+                    <div class="bg-white p-3 rounded">
+                        <p class="font-bold mb-1">Registro ICA</p>
+                        <p>Obligatorio</p>
+                    </div>
+                </div>
+            </div>
+
+            <form th:action="@{/vendedor/ventas/paso-4-ganado}" method="post" class="space-y-6">
+                <input type="hidden" name="idVenta" th:value="${venta.idVenta}">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2"><i class='bx bx-building'></i> Empresa de Transporte</label>
+                        <input type="text" name="empresaTransporte" placeholder="Ej: Transportes Ganaderos SA" th:value="${venta.empresaTransporte}" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-emerald-600 focus:ring-2 focus:ring-emerald-200 transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2"><i class='bx bx-calendar'></i> Fecha de Transporte *</label>
+                        <input type="date" name="fechaTransporte" required th:value="${venta.fechaTransporte}" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-emerald-600 focus:ring-2 focus:ring-emerald-200 transition">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2"><i class='bx bx-time'></i> Hora Estimada</label>
+                        <input type="time" name="horaTransporte" th:value="${venta.horaTransporte}" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-emerald-600 focus:ring-2 focus:ring-emerald-200 transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2"><i class='bx bx-user-check'></i> Responsable del Transporte *</label>
+                        <select name="responsableTransporte" required class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-emerald-600 focus:ring-2 focus:ring-emerald-200 transition">
+                            <option value="">Selecciona...</option>
+                            <option value="VENDEDOR" th:selected="${venta.responsableTransporte == 'VENDEDOR'}">Yo Coordino (Vendedor)</option>
+                            <option value="COMPRADOR" th:selected="${venta.responsableTransporte == 'COMPRADOR'}">Comprador Coordina</option>
+                            <option value="EMPRESA" th:selected="${venta.responsableTransporte == 'EMPRESA'}">Empresa Tercera</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2"><i class='bx bx-map-pin'></i> Punto de Salida (Desde) *</label>
+                    <input type="text" name="puntoSalida" required placeholder="Dirección completa del predio de origen" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-emerald-600 focus:ring-2 focus:ring-emerald-200 transition">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2"><i class='bx bx-map-pin'></i> Punto de Entrega (Hasta) *</label>
+                    <textarea name="puntoEntrega" required rows="3" placeholder="Dirección completa donde se entregarán los animales" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-emerald-600 focus:ring-2 focus:ring-emerald-200 transition" th:text="${venta.puntoEntrega}"></textarea>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2"><i class='bx bx-phone'></i> Teléfono Contacto</label>
+                        <input type="tel" name="telefonoTransporte" placeholder="+57 300 123 4567" th:value="${venta.telefonoTransporte}" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-emerald-600 focus:ring-2 focus:ring-emerald-200 transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2"><i class='bx bx-car'></i> Placa del Vehículo (Reg. ICA) *</label>
+                        <input type="text" name="placaVehiculo" required placeholder="ABC-123" maxlength="10" th:value="${venta.placaVehiculo}" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-emerald-600 focus:ring-2 focus:ring-emerald-200 transition">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2"><i class='bx bx-note'></i> Observaciones del Transporte</label>
+                    <textarea name="observacionesTransporte" rows="4" placeholder="Detalles especiales: requisitos especiales del ganado, horarios preferidos, número de chofer, etc." class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-emerald-600 focus:ring-2 focus:ring-emerald-200 transition" th:text="${venta.observacionesTransporte}"></textarea>
+                </div>
+
+                <div class="bg-green-50 border-l-4 border-green-600 p-6 rounded-lg mb-6">
+                    <p class="font-bold text-green-900 mb-4">📄 Documentos que se Generarán Automáticamente</p>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-white rounded-lg p-4 border-2 border-green-200">
+                            <p class="font-bold text-gray-900">Guía de Transporte</p>
+                            <p class="text-xs text-gray-600 mt-1">Se solicita 48h antes de transportar</p>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 border-2 border-green-200">
+                            <p class="font-bold text-gray-900">Bono de Venta</p>
+                            <p class="text-xs text-gray-600 mt-1">Documento comercial obligatorio</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <button type="button" class="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition">
+                        <i class='bx bx-arrow-back'></i> Atrás
+                    </button>
+                    <button type="submit" class="px-6 py-3 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white rounded-lg font-semibold hover:shadow-lg transition flex-1 flex items-center justify-center gap-2">
+                        <i class='bx bx-check-circle'></i> Guardar Información de Transporte
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- PASO 5: Finalización -->
+        <div th:if="${venta.pasoActual >= 5}" class="bg-white rounded-2xl shadow-lg p-8">
+            <h2 class="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+                <i class='bx bx-check-double text-emerald-600'></i>
+                Paso 5: Finalización y Cierre
+            </h2>
+
+            <div class="bg-gradient-to-br from-emerald-50 to-teal-50 border-l-4 border-emerald-600 p-8 rounded-xl mb-6">
+                <div class="flex items-start gap-4">
+                    <i class='bx bx-check-circle text-5xl text-emerald-600 flex-shrink-0'></i>
+                    <div>
+                        <p class="text-2xl font-bold text-emerald-900 mb-2">🎉 ¡Venta Completada Exitosamente!</p>
+                        <p class="text-emerald-800">Todos los pasos del proceso han sido completados. La trazabilidad completa está registrada en el sistema y disponible para auditoría.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-4 mb-6">
+                <div class="bg-emerald-50 rounded-lg p-6 text-center border-2 border-emerald-300">
+                    <p class="text-4xl font-bold text-emerald-600">5/5</p>
+                    <p class="text-sm text-emerald-900 font-semibold mt-2">Pasos Completados</p>
+                </div>
+                <div class="bg-emerald-50 rounded-lg p-6 text-center border-2 border-emerald-300">
+                    <p class="text-4xl font-bold text-emerald-600" th:text="'$' + ${#numbers.formatInteger(venta.precioTotal, 0, 'COMMA')}">$0</p>
+                    <p class="text-sm text-emerald-900 font-semibold mt-2">Dinero Recibido</p>
+                </div>
+                <div class="bg-emerald-50 rounded-lg p-6 text-center border-2 border-emerald-300">
+                    <p class="text-xl font-bold text-emerald-600" th:text="${#temporals.format(venta.fechaVenta, 'dd/MMM')}">28/Ene</p>
+                    <p class="text-sm text-emerald-900 font-semibold mt-2">Fecha de Venta</p>
+                </div>
+            </div>
+
+            <div class="bg-white border-2 border-gray-200 rounded-xl p-6 mb-6">
+                <p class="font-bold text-gray-900 text-lg mb-4">✓ Trazabilidad Completa del Proceso</p>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between p-4 bg-emerald-50 rounded-lg border-l-4 border-emerald-600">
+                        <span class="flex items-center gap-3 font-semibold text-gray-900"><i class='bx bx-check-circle text-emerald-600 text-2xl'></i>Comprador Confirmado</span>
+                        <span class="text-xs font-bold text-emerald-600 bg-white px-3 py-1 rounded-full">✓ Completado</span>
+                    </div>
+                    <div class="flex items-center justify-between p-4 bg-emerald-50 rounded-lg border-l-4 border-emerald-600">
+                        <span class="flex items-center gap-3 font-semibold text-gray-900"><i class='bx bx-check-circle text-emerald-600 text-2xl'></i>Documentación Sanitaria (GSMI, Certificados, Pruebas, Inventario)</span>
+                        <span class="text-xs font-bold text-emerald-600 bg-white px-3 py-1 rounded-full">✓ Completado</span>
+                    </div>
+                    <div class="flex items-center justify-between p-4 bg-emerald-50 rounded-lg border-l-4 border-emerald-600">
+                        <span class="flex items-center gap-3 font-semibold text-gray-900"><i class='bx bx-check-circle text-emerald-600 text-2xl'></i>Pago 100% Recibido y Verificado</span>
+                        <span class="text-xs font-bold text-emerald-600 bg-white px-3 py-1 rounded-full">✓ Completado</span>
+                    </div>
+                    <div class="flex items-center justify-between p-4 bg-emerald-50 rounded-lg border-l-4 border-emerald-600">
+                        <span class="flex items-center gap-3 font-semibold text-gray-900"><i class='bx bx-check-circle text-emerald-600 text-2xl'></i>Información de Transporte y Trazabilidad</span>
+                        <span class="text-xs font-bold text-emerald-600 bg-white px-3 py-1 rounded-full">✓ Completado</span>
+                    </div>
+                    <div class="flex items-center justify-between p-4 bg-emerald-50 rounded-lg border-l-4 border-emerald-600">
+                        <span class="flex items-center gap-3 font-semibold text-gray-900"><i class='bx bx-check-circle text-emerald-600 text-2xl'></i>Documentos Generados: Guía de Transporte + Bono de Venta</span>
+                        <span class="text-xs font-bold text-emerald-600 bg-white px-3 py-1 rounded-full">✓ Completado</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-4">
+                <button onclick="window.print()" class="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition flex items-center gap-2">
+                    <i class='bx bx-printer'></i> Imprimir Resumen
+                </button>
+                <a href="#" class="px-6 py-3 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white rounded-lg font-semibold hover:shadow-lg transition flex-1 flex items-center justify-center gap-2">
+                    <i class='bx bx-download'></i> Descargar PDF Completo
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

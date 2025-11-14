@@ -2,6 +2,7 @@ package com.proyecto.terranova.controller;
 
 import com.proyecto.terranova.config.enums.EstadoAsistenciaEnum;
 import com.proyecto.terranova.config.enums.EstadoCitaEnum;
+import com.proyecto.terranova.config.enums.EstadoVentaEnum;
 import com.proyecto.terranova.config.enums.RolEnum;
 import com.proyecto.terranova.entity.*;
 import com.proyecto.terranova.repository.AsistenciaRepository;
@@ -170,11 +171,11 @@ public class VendedorController {
 
     @PostMapping("/venta/enviar-peticion-venta")
     public String enviarPeticionVenta(@ModelAttribute Venta venta, @RequestParam(name = "comprobantes") int comprobantes, RedirectAttributes redirectAttributes, Authentication authentication) throws MessagingException, IOException {
-        if(venta.getFechaVenta() == null || (venta.getMetodoPago() == null || venta.getMetodoPago().isBlank()) || comprobantes == 0){
+        if(venta.getFechaInicioVenta() == null || (venta.getMetodoPago() == null || venta.getMetodoPago().isBlank()) || comprobantes == 0){
             redirectAttributes.addFlashAttribute("ventaIncompleta", true);
             return "redirect:/vendedor/ventas";
         }
-        Venta ventaActual = ventaService.actualizarEstado(venta, "Pendiente Confirmacion");
+        Venta ventaActual = ventaService.actualizarEstado(venta, EstadoVentaEnum.EN_PROCESO); //AQUI ORIGINALMENTE IBA EL ESTADO "Pendiente Confirmacion"
 
         notificacionService.notificacionPeticionFinalizacionVenta(ventaActual);
 

@@ -2,6 +2,7 @@ package com.proyecto.terranova.controller;
 
 import com.proyecto.terranova.config.enums.EstadoAsistenciaEnum;
 import com.proyecto.terranova.config.enums.EstadoCitaEnum;
+import com.proyecto.terranova.config.enums.EstadoVentaEnum;
 import com.proyecto.terranova.config.enums.RolEnum;
 import com.proyecto.terranova.entity.*;
 import com.proyecto.terranova.repository.AsistenciaRepository;
@@ -185,16 +186,16 @@ public class CompradorController {
         switch (accion){
             case "cancelar":
                 venta.setGananciaNeta(0L);
-                ventaService.actualizarEstado(venta, "Cancelada");
+                ventaService.actualizarEstado(venta, EstadoVentaEnum.CANCELADA);
                 redirectAttributes.addFlashAttribute("modalCancelar", true);
                 break;
             case "finalizar":
-                ventaService.actualizarEstado(venta, "Finalizada");
+                ventaService.actualizarEstado(venta, EstadoVentaEnum.FINALIZADA);
                 redirectAttributes.addFlashAttribute("modalFinalizar", true);
                 break;
 
             case "modificar":
-                ventaService.actualizarEstado(venta, "En Proceso");
+                ventaService.actualizarEstado(venta, EstadoVentaEnum.EN_PROCESO);
                 redirectAttributes.addFlashAttribute("modalModificar", true);
 
                 notificacionService.notificacionPedirModificarVenta(venta, razon);
