@@ -62,7 +62,7 @@ public class MercadoPagoService {
         PreferenceRequest preferenceRequest = PreferenceRequest.builder()
                 .items(items)
                 .externalReference(String.valueOf(idVenta))
-                .notificationUrl("https://beckham-olden-squabblingly.ngrok-free.dev/api/mercadopago/webhook")
+                .notificationUrl("https://terranova.loca.lt/api/mercadopago/webhook")
                 .build();
 
         PreferenceClient client = new PreferenceClient();
