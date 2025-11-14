@@ -574,7 +574,7 @@
                         </form>
                     </div>
 
-                    <div th:replace="~{../fragments/vendedor/ventaGanadoVendedor :: detalle}"></div>
+                    <div th:insert="fragments/vendedor/ventaGanadoVendedor :: detalle"></div>
 
 <!--                    &lt;!&ndash; PASO 2: GANADO - Documentación Sanitaria &ndash;&gt;-->
 <!--                    <div th:if="${tipoProducto == 'GANADO' && venta.pasoActual >= 2}">-->
