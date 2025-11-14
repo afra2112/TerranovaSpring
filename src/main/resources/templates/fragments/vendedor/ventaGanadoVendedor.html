@@ -39,10 +39,10 @@
                             <span class="block"><strong>Incluye:</strong> Datos sanitarios de los animales en predio origen</span>
                         </p>
                     </div>
-                    <div th:if="${venta.documentoGSMI}" class="flex items-center gap-2 text-green-600 font-bold mb-2">
+                    <div th:if="${venta.archivoGSMI}" class="flex items-center gap-2 text-green-600 font-bold mb-2">
                         <i class='bx bx-check-circle'></i> Cargado y Verificado
                     </div>
-                    <div th:unless="${venta.documentoGSMI}">
+                    <div th:unless="${venta.archivoGSMI}">
                         <label class="block border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:border-emerald-500 hover:bg-emerald-50 transition">
                             <i class='bx bx-cloud-upload text-3xl text-emerald-600 mb-2'></i>
                             <p class="text-sm font-semibold text-gray-700">Subir PDF o Foto del GSMI</p>
@@ -71,10 +71,10 @@
                             <span class="block">• Libreta de aplicaciones de medicamentos</span>
                         </p>
                     </div>
-                    <div th:if="${venta.venta.documentoCertificados}" class="flex items-center gap-2 text-green-600 font-bold mb-2">
+                    <div th:if="${venta.archivoCertificadoSanitario}" class="flex items-center gap-2 text-green-600 font-bold mb-2">
                         <i class='bx bx-check-circle'></i> Cargado y Verificado
                     </div>
-                    <div th:unless="${venta.venta.documentoCertificados}">
+                    <div th:unless="${venta.archivoCertificadoSanitario}">
                         <label class="block border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:border-emerald-500 hover:bg-emerald-50 transition">
                             <i class='bx bx-cloud-upload text-3xl text-emerald-600 mb-2'></i>
                             <p class="text-sm font-semibold text-gray-700">Subir Archivo(s)</p>
@@ -103,10 +103,10 @@
                             <span class="block">• Laboratorio acreditado por ICA</span>
                         </p>
                     </div>
-                    <div th:if="${venta.venta.documentoPruebas}" class="flex items-center gap-2 text-green-600 font-bold mb-2">
+                    <div th:if="${venta.archivoPruebas}" class="flex items-center gap-2 text-green-600 font-bold mb-2">
                         <i class='bx bx-check-circle'></i> Cargado y Verificado
                     </div>
-                    <div th:unless="${venta.venta.documentoPruebas}">
+                    <div th:unless="${venta.archivoPruebas}">
                         <label class="block border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:border-emerald-500 hover:bg-emerald-50 transition">
                             <i class='bx bx-cloud-upload text-3xl text-emerald-600 mb-2'></i>
                             <p class="text-sm font-semibold text-gray-700">Subir Certificados Laboratorio</p>
@@ -135,10 +135,10 @@
                             <span class="block">• Características físicas distinguibles</span>
                         </p>
                     </div>
-                    <div th:if="${venta.venta.documentoInventario}" class="flex items-center gap-2 text-green-600 font-bold mb-2">
+                    <div th:if="${venta.archivoInventario}" class="flex items-center gap-2 text-green-600 font-bold mb-2">
                         <i class='bx bx-check-circle'></i> Cargado y Verificado
                     </div>
-                    <div th:unless="${venta.venta.documentoInventario}">
+                    <div th:unless="${venta.archivoInventario}">
                         <label class="block border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:border-emerald-500 hover:bg-emerald-50 transition">
                             <i class='bx bx-cloud-upload text-3xl text-emerald-600 mb-2'></i>
                             <p class="text-sm font-semibold text-gray-700">Subir Inventario (Excel, PDF)</p>
@@ -205,7 +205,7 @@
                         <p class="text-xs text-gray-600 mt-2">Transacción(es)</p>
                     </div>
                     <div class="bg-white rounded-lg p-4">
-                        <p class="text-3xl font-bold text-emerald-600" th:text="${#temporals.format(venta.venta.fechaPago, 'dd/MM')}">28/01</p>
+                        <p class="text-3xl font-bold text-emerald-600" th:text="${#temporals.format(venta.venta.pago.fechaRegistroPago, 'dd/MM')}">28/01</p>
                         <p class="text-xs text-gray-600 mt-2">Fecha de Pago</p>
                     </div>
                     <div class="bg-white rounded-lg p-4">

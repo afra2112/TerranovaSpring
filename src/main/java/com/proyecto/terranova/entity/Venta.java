@@ -47,6 +47,9 @@ public class Venta {
     @JoinColumn(name = "idProducto")
     private Producto producto;
 
+    @OneToOne(mappedBy = "venta")
+    private Pago pago;
+
     private Long gananciaNeta = 0L;
 
     @ManyToOne

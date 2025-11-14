@@ -32,4 +32,10 @@ public class VentaGanado {
     private String empresaTransporte;
 
     private String archivoGSMI;
+
+    private String archivoCertificadoSanitario;
+
+    private String archivoPruebas;
+
+    private String archivoInventario;
 }
