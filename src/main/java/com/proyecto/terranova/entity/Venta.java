@@ -1,5 +1,6 @@
 package com.proyecto.terranova.entity;
 
+import com.proyecto.terranova.config.enums.EstadoVentaEnum;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -18,18 +19,18 @@ public class Venta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idVenta;
 
-    private LocalDate fechaVenta;
+    private LocalDate fechaFinVenta;
 
-    //campos de prueba para el flujo de compra/venta xd
     private Long precioTotal;
+
     private boolean pagado = false;
+
     private LocalDate fechaLimitePago;
 
-    @Column(nullable = false)
     private LocalDateTime fechaInicioVenta;
 
-    @Column(nullable = false)
-    private String estado; //ENUM ('En Proceso', 'Finalizada', 'Cancelada', 'Pendiente Confirmacion')
+    @Enumerated(EnumType.STRING)
+    private EstadoVentaEnum estado;
 
     private String nota;
 

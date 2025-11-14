@@ -1,5 +1,6 @@
 package com.proyecto.terranova.implement;
 
+import com.proyecto.terranova.config.enums.EstadoProductoEnum;
 import com.proyecto.terranova.entity.*;
 import com.proyecto.terranova.repository.*;
 import com.proyecto.terranova.service.UsuarioService;
@@ -65,7 +66,7 @@ public class ProductoImplement implements ProductoService {
         Ciudad ciudad = ciudadRepository.findById(idciudad).orElseThrow();
         producto.setCiudad(ciudad);
         producto.setFechaPublicacion(LocalDate.now());
-        producto.setEstado("Disponible");
+        producto.setEstado(EstadoProductoEnum.DISPONIBLE);
 
 
         producto.setLatitud(datosForm.get("latitud"));

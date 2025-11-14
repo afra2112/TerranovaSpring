@@ -15,6 +15,10 @@ public class VentaGanado {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idVentaGanado;
 
+    @OneToOne
+    @JoinColumn(name = "id_venta")
+    private Venta venta;
+
     private String condicionesEntrega;
 
     private String observacionesSanitarias;
@@ -24,4 +28,8 @@ public class VentaGanado {
     private LocalTime horaTransporte;
 
     private String puntoEntrega;
+
+    private String empresaTransporte;
+
+    private String archivoGSMI;
 }

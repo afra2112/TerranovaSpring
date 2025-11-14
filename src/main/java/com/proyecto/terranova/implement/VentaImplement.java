@@ -1,5 +1,7 @@
 package com.proyecto.terranova.implement;
 
+import com.proyecto.terranova.config.enums.EstadoProductoEnum;
+import com.proyecto.terranova.config.enums.EstadoVentaEnum;
 import com.proyecto.terranova.entity.*;
 import com.proyecto.terranova.repository.*;
 import org.modelmapper.ModelMapper;
@@ -36,6 +38,12 @@ public class VentaImplement implements VentaService {
     private VentaGanadoRepository ventaGanadoRepository;
 
     @Autowired
+    private VentaTerrenoRepository ventaTerrenoRepository;
+
+    @Autowired
+    private VentaFincaRepository ventaFincaRepository;
+
+    @Autowired
     private GanadoRepository ganadoRepository;
 
     @Autowired
@@ -47,7 +55,7 @@ public class VentaImplement implements VentaService {
     @Override
     public Venta actualizarDatosVenta(Venta venta, List<Long> idsComprobantesEliminados, List<Long> idsGastosEliminados, List<MultipartFile> comprobantes) throws IOException {
         Venta ventaAcual = repository.findById(venta.getIdVenta()).orElseThrow();
-        ventaAcual.setFechaVenta(venta.getFechaVenta());
+        ventaAcual.setFechaInicioVenta(venta.getFechaInicioVenta());
         ventaAcual.setMetodoPago(venta.getMetodoPago());
         ventaAcual.setNota(venta.getNota());
 
@@ -89,7 +97,7 @@ public class VentaImplement implements VentaService {
     }
 
     @Override
-    public Venta actualizarEstado(Venta venta, String estado) {
+    public Venta actualizarEstado(Venta venta, EstadoVentaEnum estado) {
         Venta ventaActualizada = repository.findById(venta.getIdVenta()).orElseThrow();
         ventaActualizada.setEstado(estado);
         repository.save(ventaActualizada);
@@ -159,17 +167,36 @@ public class VentaImplement implements VentaService {
     public Venta generarVenta(Long idCita) {
         Cita cita = citaRepository.findById(idCita).orElseThrow();
         Producto producto = cita.getProducto();
-        producto.setEstado("NO_DISPONIBLE");
+        producto.setEstado(EstadoProductoEnum.NO_DISPONIBLE);
         productoRepository.save(producto);
 
         Venta venta = new Venta();
         venta.setCita(cita);
-        venta.setEstado("En Proceso");
+        venta.setEstado(EstadoVentaEnum.EN_PROCESO);
         venta.setFechaInicioVenta(LocalDateTime.now());
         venta.setProducto(producto);
         venta.setVendedor(producto.getVendedor());
 
-        return repository.save(venta);
+        Venta ventaGenerada = repository.save(venta);
+
+        String tipoProducto = producto.getClass().getSimpleName();
+
+        switch (tipoProducto) {
+            case "Ganado":
+                VentaGanado ventaGanado = new VentaGanado();
+                ventaGanado.setVenta(ventaGenerada);
+                ventaGanadoRepository.save(ventaGanado);
+            case "Terreno":
+                VentaTerreno ventaTerreno = new VentaTerreno();
+                ventaTerreno.setVenta(ventaGenerada);
+                ventaTerrenoRepository.save(ventaTerreno);
+            case "Finca":
+                VentaFinca ventaFinca = new VentaFinca();
+                ventaFinca.setVenta(ventaGenerada);
+                ventaFincaRepository.save(ventaFinca);
+        }
+
+        return ventaGenerada;
     }
 
     @Override

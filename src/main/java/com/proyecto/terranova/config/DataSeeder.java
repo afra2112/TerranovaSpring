@@ -1,5 +1,6 @@
 package com.proyecto.terranova.config;
 
+import com.proyecto.terranova.config.enums.EstadoProductoEnum;
 import com.proyecto.terranova.entity.*;
 import com.proyecto.terranova.config.enums.RolEnum;
 import com.proyecto.terranova.repository.*;
@@ -104,7 +105,7 @@ public class DataSeeder {
                         Terreno terreno = new Terreno();
                         terreno.setNombreProducto("Terreno " + tipo + " " + vendedor.getNombres());
                         terreno.setDescripcion("Terreno " + tipo.toLowerCase() + " con excelente ubicación, ideal para proyectos.");
-                        terreno.setEstado("DISPONIBLE");
+                        terreno.setEstado(EstadoProductoEnum.DISPONIBLE);
                         terreno.setFechaPublicacion(LocalDate.now().minusDays(random.nextInt(15)));
                         terreno.setLatitud(String.valueOf(4.0 + random.nextDouble() * 6.0));
                         terreno.setLongitud(String.valueOf(-77.0 + random.nextDouble() * 5.0));
@@ -127,7 +128,7 @@ public class DataSeeder {
                         Finca finca = new Finca();
                         finca.setNombreProducto("Finca " + tipo + " " + vendedor.getNombres());
                         finca.setDescripcion("Finca " + tipo.toLowerCase() + " completamente equipada y lista para uso inmediato.");
-                        finca.setEstado("DISPONIBLE");
+                        finca.setEstado(EstadoProductoEnum.DISPONIBLE);
                         finca.setFechaPublicacion(LocalDate.now().minusDays(random.nextInt(15)));
                         finca.setLatitud(String.valueOf(4.0 + random.nextDouble() * 6.0));
                         finca.setLongitud(String.valueOf(-77.0 + random.nextDouble() * 5.0));
@@ -150,7 +151,7 @@ public class DataSeeder {
                         Ganado ganado = new Ganado();
                         ganado.setNombreProducto("Ganado " + raza + " " + vendedor.getNombres() + " #" + (i + 1));
                         ganado.setDescripcion("Ejemplar de raza " + raza + " en excelente estado sanitario.");
-                        ganado.setEstado("DISPONIBLE");
+                        ganado.setEstado(EstadoProductoEnum.DISPONIBLE);
                         ganado.setFechaPublicacion(LocalDate.now().minusDays(random.nextInt(15)));
                         ganado.setLatitud(String.valueOf(4.0 + random.nextDouble() * 6.0));
                         ganado.setLongitud(String.valueOf(-77.0 + random.nextDouble() * 5.0));
