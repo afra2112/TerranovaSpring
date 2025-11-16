@@ -38,4 +38,8 @@ public class VentaGanado {
     private String archivoPruebas;
 
     private String archivoInventario;
+
+    private Long precioNegociado;
+
+    private int cantidadNegociada;
 }

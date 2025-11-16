@@ -499,45 +499,27 @@ public class NotificacionImplement implements NotificacionService {
   }
 
   @Override
-  public void notificacionPeticionFinalizacionVenta(Venta venta) throws MessagingException, IOException {
+  public void notificacionContraoferta(Venta venta) throws MessagingException, IOException {
     Usuario comprador = venta.getComprador();
     Usuario vendedor = venta.getProducto().getVendedor();
     String producto = venta.getProducto().getNombreProducto();
 
     NotificacionPeticion notifiComprador = buildNotificacion(
             venta.getIdVenta(),
-            "El vendedor ha hecho una peticion para finalizar tu compra para el producto: " + producto + ". Ve al panel de compras para mas detalles. Recuerda que tu debes confirmar los datos obligatorios de la venta para finalizarla.",
+            "El vendedor ha hecho una contraoferta para el producto: " + producto + ". Ve al panel de compras para mas detalles. Recuerda que tu debes confirmar los datos de la venta para seguir con el proceso.",
             "Ventas",
-            "Peticion de finalizacion de compra",
+            "Han hecho una contraoferta para tu compra.",
             venta.getComprador(),
-            "/comprador/compras",
+            "/comprador/compras/detalle/" + venta.getIdVenta(),
             "Modificacion en datos de compra para el producto: " + producto,
-            "http://localhost:8080/comprador/compras",
+            "http://localhost:8080/comprador/compras/detalle/" + venta.getIdVenta(),
             "ventaFinalizacion",
             venta.getProducto().getNombreProducto(),
             vendedor.getNombres(),
             comprador.getNombres()
     );
 
-    NotificacionPeticion notifVendedor = buildNotificacion(
-            venta.getIdVenta(),
-            "Hiciste una peticion de finalizacion de venta con el comprador: " + comprador.getNombres() +
-                    " para el producto: " + producto +
-                    ". Espera a que el acepte o cancele la revision",
-            "Ventas",
-            "Peticion de finalizacion de venta",
-            vendedor,
-            "/vendedor/ventas",
-            "Hiciste la peticion para finalizar una venta",
-            "http://localhost:8080/vendedor/ventas",
-            "ventaFinalizacion",
-            venta.getProducto().getNombreProducto(),
-            comprador.getNombres(),
-            vendedor.getNombres()
-    );
-
     crearNotificacionAutomatica(notifiComprador);
-    crearNotificacionAutomatica(notifVendedor);
   }
 
   @Override

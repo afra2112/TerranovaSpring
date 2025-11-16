@@ -78,51 +78,28 @@ public class VentaController {
             case "GANADO" -> {
                 VentaGanado detalle = ventaGanadoRepository.findByVenta(ventaGeneral);
                 model.addAttribute("venta", detalle);
-                model.addAttribute("fragment", "fragments/vendedor/ventaGanadoVendedor :: detalle");
+                model.addAttribute("fragment", "fragments/vendedor/ventaGanadoVendedor");
             }
             case "TERRENO" -> {
                 VentaTerreno detalle = ventaTerrenoRepository.findByVenta(ventaGeneral);
                 model.addAttribute("venta", detalle);
-                model.addAttribute("fragment", "fragments/vendedor/ventaTerrenoVendedor :: detalle");
+                model.addAttribute("fragment", "fragments/vendedor/ventaTerrenoVendedor");
             }
             case "FINCA" -> {
                 VentaFinca detalle = ventaFincaRepository.findByVenta(ventaGeneral);
                 model.addAttribute("venta", detalle);
-                model.addAttribute("fragment", "fragments/vendedor/ventaFincaVendedor :: detalle");
+                model.addAttribute("fragment", "fragments/vendedor/ventaFincaVendedor");
             }
         }
 
         model.addAttribute("tipoProducto", tipoProducto);
         model.addAttribute("asistencias", asistenciaService.encontrarAsistenciasPorCitaYEstadoAsistencia(ventaGeneral.getCita().getIdCita(), EstadoAsistenciaEnum.ASISTIO));
-        return "vistasTemporales/procesoVenta";
+        return "vendedor/procesoVenta";
     }
 
     @PostMapping("/seleccionar-comprador")
     public String actualizarVentaPasos(@RequestParam Long idVenta, @RequestParam String cedula) {
         ventaService.seleccionarComprador(idVenta, cedula);
-        return "redirect:/vendedor/ventas/detalle-venta/" + idVenta;
-    }
-
-    @PostMapping("/oferta")
-    public String actualizarVentaPaso2Ganado(
-            @RequestParam Long idVenta,
-            @RequestParam Long precioTotal,
-            @RequestParam int cantidad,
-            @RequestParam String condicionesEntrega,
-            @RequestParam(required = false) String observacionesSanitarias
-    ) {
-        ventaService.actualizarVentaPaso2Ganado(idVenta, precioTotal, cantidad, condicionesEntrega, observacionesSanitarias);
-        return "redirect:/vendedor/ventas/detalle-venta/" + idVenta;
-    }
-
-    @PostMapping("/documentacion-sanitaria")
-    public String actualizarVentaPaso3Ganado(
-            @RequestParam Long idVenta,
-            @RequestParam MultipartFile certificadosSanitarios,
-            @RequestParam MultipartFile registroProcedencia,
-            @RequestParam MultipartFile inventarioLote
-    ) throws IOException {
-        ventaService.actualizarVentaPaso3Ganado(idVenta, certificadosSanitarios, registroProcedencia, inventarioLote);
         return "redirect:/vendedor/ventas/detalle-venta/" + idVenta;
     }
 }

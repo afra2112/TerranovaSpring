@@ -63,23 +63,23 @@
                 <div class="relative z-10 flex items-center justify-between">
                     <div>
                         <div class="flex items-center gap-3 mb-3">
-                            <a th:href="@{/comprador/ventas}" class="text-white/80 hover:text-white transition">
+                            <a th:href="@{/comprador/compras}" class="text-white/80 hover:text-white transition">
                                 <i class='bx bx-arrow-back text-2xl'></i>
                             </a>
                             <h1 class="text-4xl font-bold">Detalle de Compra</h1>
                         </div>
                         <p class="text-xl font-semibold text-emerald-100" th:text="${venta.producto.nombreProducto}">Nombre del Producto</p>
-                        <p class="text-3xl font-bold mt-2" th:text="'$' + ${#numbers.formatInteger(venta.precioTotal, 0, 'COMMA')}">$1,200,000</p>
+                        <p class="text-3xl font-bold mt-2" th:text="'$' + ${#numbers.formatInteger(venta.producto.precioProducto, 0, 'COMMA')}">$1,200,000</p>
                     </div>
 
                     <!-- Estado -->
                     <div class="text-right">
                         <p class="text-emerald-100 text-sm mb-1">Estado del Proceso</p>
                         <div class="inline-flex items-center gap-2 bg-white/20 px-4 py-2 rounded-xl">
-                            <i th:if="${venta.estado == 'En Proceso'}" class='bx bx-time text-2xl'></i>
+                            <i th:if="${venta.estado == 'EN_PROCESO'}" class='bx bx-time text-2xl'></i>
                             <i th:if="${venta.estado == 'COMPLETADA'}" class='bx bx-check-circle text-2xl'></i>
                             <i th:if="${venta.estado == 'CANCELADA'}" class='bx bx-x-circle text-2xl'></i>
-                            <span class="font-bold text-lg" th:text="${venta.estado == 'En Proceso' ? 'En Proceso' : (venta.estado == 'COMPLETADA' ? 'Completada' : 'Cancelada')}">En Proceso</span>
+                            <span class="font-bold text-lg" th:text="${venta.estado == 'EN_PROCESO' ? (venta.estado == 'COMPLETADA' ? 'Cancelada' : 'Completada') : 'En Proceso'}">En Proceso</span>
                         </div>
                     </div>
                 </div>
@@ -121,7 +121,7 @@
                             </div>
 
                             <!-- Pasos según tipo de producto -->
-                            <div th:if="${tipoProducto == 'Ganado'}">
+                            <div th:if="${tipoProducto == 'GANADO'}">
                                 <div class="step-item" th:classappend="${venta.pasoActual == 2 ? 'step-active' : (venta.pasoActual > 2 ? 'step-completed' : 'step-pending')}">
                                     <div class="flex items-start gap-3">
                                         <div class="step-icon">
@@ -356,39 +356,10 @@
 
                 <!-- Información Detallada mejorada con trazabilidad completa -->
                 <div class="lg:col-span-2 space-y-6">
-
-                    <!-- Info del producto con imagen grande -->
-                    <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-0">
-                            <div class="relative h-80">
-                                <img th:if="${!#lists.isEmpty(venta.producto.imagenes)}"
-                                     th:src="${venta.producto.imagenes[0].nombreArchivo}"
-                                     class="w-full h-full object-cover"
-                                     th:alt="${venta.producto.nombreProducto}">
-                                <div th:if="${#lists.isEmpty(venta.producto.imagenes)}"
-                                     class="w-full h-full gradient-bg flex items-center justify-center">
-                                    <i class='bx bx-image text-white text-6xl'></i>
-                                </div>
-                            </div>
-                            <div class="p-6">
-                                <h3 class="text-xl font-bold text-gray-900 mb-3">Información del Producto</h3>
-                                <p class="text-sm font-semibold text-gray-700 mb-1">Nombre</p>
-                                <p class="text-lg text-gray-900 mb-3" th:text="${venta.producto.nombreProducto}">Producto</p>
-
-                                <p class="text-sm font-semibold text-gray-700 mb-1">Descripción</p>
-                                <p class="text-gray-800 leading-relaxed mb-3" th:text="${venta.producto.descripcion}">Descripción del producto</p>
-
-                                <p class="text-sm font-semibold text-gray-700 mb-1">Tipo</p>
-                                <span class="inline-flex items-center gap-2 px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-semibold">
-                                    <i class='bx bx-category'></i>
-                                    <span th:text="${tipoProducto}">GANADO</span>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
+                    <div th:replace="${fragment} :: detalle"></div>
 
                     <!-- Info del vendedor -->
-                    <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <div th:if="${venta.pasoActual == 2 && !venta.pendienteConfirmacion}" class="bg-white rounded-2xl shadow-lg p-6">
                         <h3 class="text-xl font-bold text-gray-900 mb-4">Información del Vendedor</h3>
                         <div class="flex items-center gap-4">
                             <img th:if="${venta.vendedor.foto != null}"

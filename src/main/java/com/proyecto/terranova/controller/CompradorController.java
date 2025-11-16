@@ -5,9 +5,7 @@ import com.proyecto.terranova.config.enums.EstadoCitaEnum;
 import com.proyecto.terranova.config.enums.EstadoVentaEnum;
 import com.proyecto.terranova.config.enums.RolEnum;
 import com.proyecto.terranova.entity.*;
-import com.proyecto.terranova.repository.AsistenciaRepository;
-import com.proyecto.terranova.repository.ProductoRepository;
-import com.proyecto.terranova.repository.UsuarioRepository;
+import com.proyecto.terranova.repository.*;
 import com.proyecto.terranova.service.*;
 import com.proyecto.terranova.specification.ProductoSpecification;
 import jakarta.mail.MessagingException;
@@ -64,6 +62,16 @@ public class CompradorController {
 
     @Autowired
     FavoritoService favoritoService;
+
+    @Autowired
+    VentaGanadoRepository ventaGanadoRepository;
+
+    @Autowired
+    VentaTerrenoRepository ventaTerrenoRepository;
+
+    @Autowired
+    VentaFincaRepository ventaFincaRepository;
+
     @Autowired
     private AsistenciaRepository asistenciaRepository;
 
@@ -149,7 +157,7 @@ public class CompradorController {
         model.addAttribute("asistencias", listaAsistencia);
         model.addAttribute("miAsistencia", asistencia);
         model.addAttribute("posicionEnEspera", posicion);
-        return "vistasTemporales/detalleCita";
+        return "comprador/detalleCita";
     }
 
     @PostMapping("/citas/inscribirse/{id}")
@@ -173,10 +181,31 @@ public class CompradorController {
 
     @GetMapping("/compras/detalle/{id}")
     public String compras(@PathVariable Long id, Model model){
-        Venta venta = ventaService.findById(id);
-        model.addAttribute("venta", venta);
-        model.addAttribute("tipoProducto", venta.getProducto().getClass().getSimpleName());
-        return "vistasTemporales/detalleVentaComprador";
+
+        Venta ventaGeneral = ventaService.findById(id);
+        String tipoProducto = ventaGeneral.getProducto().getClass().getSimpleName().toUpperCase();
+
+        switch (tipoProducto){
+            case "GANADO" -> {
+                VentaGanado detalle = ventaGanadoRepository.findByVenta(ventaGeneral);
+                model.addAttribute("ventaDetalle", detalle);
+                model.addAttribute("fragment", "fragments/comprador/compraGanado");
+            }
+            case "TERRENO" -> {
+                VentaTerreno detalle = ventaTerrenoRepository.findByVenta(ventaGeneral);
+                model.addAttribute("ventaDetalle", detalle);
+                model.addAttribute("fragment", "fragments/comprador/compraTerreno");
+            }
+            case "FINCA" -> {
+                VentaFinca detalle = ventaFincaRepository.findByVenta(ventaGeneral);
+                model.addAttribute("ventaDetalle", detalle);
+                model.addAttribute("fragment", "fragments/comprador/compraFinca");
+            }
+        }
+
+        model.addAttribute("venta", ventaGeneral);
+        model.addAttribute("tipoProducto", tipoProducto);
+        return "comprador/detalleVentaComprador";
     }
 
     @PostMapping("/compras/actualizar-compra")
@@ -242,32 +271,6 @@ public class CompradorController {
         return "redirect:/comprador/citas";
     }
 
-    /*@PostMapping("/citas/reprogramar-cita")
-    public String reprogramarCita(@RequestParam(name = "idCita") Long idCita, @RequestParam(name = "idDisponibilidad") Long idDisponibilidad, Authentication authentication, RedirectAttributes redirectAttributes) throws MessagingException, IOException {
-        Cita cita = citaService.findById(idCita);
-        if(disponibilidadService.validarSiPuedeReprogramar(cita)){
-            Usuario usuario = usuario(authentication);
-            Disponibilidad disponibilidad = disponibilidadService.findById(idDisponibilidad);
-            cita.setDisponibilidad(disponibilidad);
-            cita.setNumReprogramaciones(cita.getNumReprogramaciones() + 1);
-            cita.setUltimaReprogramacion(LocalDateTime.now());
-            citaService.save(cita);
-
-            notificacionService.notificacionCitaReprogramada(cita,usuario);
-        } else {
-            if(cita.getUltimaReprogramacionBloqueada() == null){
-                cita.setUltimaReprogramacionBloqueada(LocalDateTime.now());
-                cita.setFechaHabilitarReprogramacion(LocalDateTime.now().plusSeconds(15));
-                citaService.save(cita);
-            }
-            redirectAttributes.addFlashAttribute("esperar24Horas", true);
-        }
-
-        return "redirect:/comprador/citas";
-    }*/
-
-
-
     @PostMapping("/mi-perfil/ser-vendedor")
     public String serVendedor(Authentication authentication, RedirectAttributes redirectAttributes) {
         Usuario usuario = usuario(authentication);
@@ -313,6 +316,8 @@ public class CompradorController {
                 return "redirect:/comprador/explorar";
             case "productos":
                 return "redirect:/productos";
+            case "favoritos":
+                return "redirect:/comprador/Favorito";
         }
         return "";
     }
@@ -330,6 +335,8 @@ public class CompradorController {
                 return "redirect:/comprador/explorar";
             case "productos":
                 return "redirect:/productos";
+            case "favoritos":
+                return "redirect:/comprador/Favorito";
         }
         return "";
     }

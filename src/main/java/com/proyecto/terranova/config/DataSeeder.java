@@ -161,7 +161,6 @@ public class DataSeeder {
 
                         ganado.setCantidad(1 + random.nextInt(5));
                         ganado.setEdadGanado(12 + random.nextInt(24));
-                        ganado.setEstadoSanitario(estadosSanitarios[random.nextInt(estadosSanitarios.length)]);
                         ganado.setGeneroGanado(random.nextBoolean() ? "Macho" : "Hembra");
                         ganado.setPesoGanado(300 + random.nextInt(200));
                         ganado.setRazaGanado(raza);

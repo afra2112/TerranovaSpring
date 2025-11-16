@@ -177,7 +177,6 @@ public class VendedorController {
         }
         Venta ventaActual = ventaService.actualizarEstado(venta, EstadoVentaEnum.EN_PROCESO); //AQUI ORIGINALMENTE IBA EL ESTADO "Pendiente Confirmacion"
 
-        notificacionService.notificacionPeticionFinalizacionVenta(ventaActual);
 
         redirectAttributes.addFlashAttribute("peticionHecha", true);
         return "redirect:/vendedor/ventas";
@@ -214,6 +213,6 @@ public class VendedorController {
         model.addAttribute("esDueno", true);
         model.addAttribute("asistentesConfirmados", asistenciaService.encontrarAsistenciasPorCitaYEstadoAsistencia(id, EstadoAsistenciaEnum.INSCRITO));
         model.addAttribute("asistentesEspera", asistenciaService.encontrarAsistenciasPorCitaYEstadoAsistencia(id, EstadoAsistenciaEnum.EN_ESPERA));
-        return "vistasTemporales/detalleCita";
+        return "comprador/detalleCita";
     }
 }

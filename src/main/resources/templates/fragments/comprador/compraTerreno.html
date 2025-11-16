@@ -1,0 +1,124 @@
+<!-- FRAGMENT: Terreno - Vista Comprador (Trazabilidad de documentación legal) -->
+<div xmlns:th="http://www.thymeleaf.org" class="space-y-6">
+
+    <!-- Documentación Legal del Terreno - Trazabilidad -->
+    <div th:if="${tipoProducto == 'TERRENO' && venta.pasoActual >= 2}" class="bg-white rounded-2xl shadow-lg p-8">
+        <h3 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+            <i class='bx bx-file-blank text-emerald-600'></i>
+            Documentación Legal del Terreno
+        </h3>
+
+        <div class="bg-blue-50 border-2 border-blue-300 rounded-xl p-6 mb-6">
+            <p class="font-bold text-blue-900 mb-3">🛡️ Garantía Legal Verificada</p>
+            <p class="text-sm text-blue-800">Todos los documentos han sido verificados por nuestro sistema. El terreno tiene garantía legal de propiedad clara y sin gravámenes.</p>
+        </div>
+
+        <div class="space-y-4">
+            <!-- Escritura Pública -->
+            <div class="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-emerald-400 transition">
+                <div class="flex items-start justify-between">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <i class='bx bx-file-blank text-2xl text-emerald-600'></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-gray-900 text-lg">Escritura Pública</p>
+                            <p class="text-sm text-gray-600">Documento original emitido por notaría</p>
+                            <p class="text-xs text-gray-500 mt-2">Garantiza la propiedad legal del terreno</p>
+                        </div>
+                    </div>
+                    <span th:if="${venta.documentoEscritura}" class="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-bold whitespace-nowrap flex-shrink-0">
+                        <i class='bx bx-check-circle'></i> Verificado
+                    </span>
+                    <span th:unless="${venta.documentoEscritura}" class="text-xs text-orange-600 font-bold bg-orange-100 px-3 py-1 rounded-full whitespace-nowrap flex-shrink-0">Pendiente</span>
+                </div>
+            </div>
+
+            <!-- Libertad y Tradición -->
+            <div class="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-emerald-400 transition">
+                <div class="flex items-start justify-between">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <i class='bx bx-certification text-2xl text-emerald-600'></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-gray-900 text-lg">Libertad y Tradición</p>
+                            <p class="text-sm text-gray-600">Certificado catastral vigente (máx. 30 días)</p>
+                            <p class="text-xs text-gray-500 mt-2">Certifica que no hay gravámenes ni embargos</p>
+                        </div>
+                    </div>
+                    <span th:if="${venta.documentoLibertad}" class="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-bold whitespace-nowrap flex-shrink-0">
+                        <i class='bx bx-check-circle'></i> Verificado
+                    </span>
+                    <span th:unless="${venta.documentoLibertad}" class="text-xs text-orange-600 font-bold bg-orange-100 px-3 py-1 rounded-full whitespace-nowrap flex-shrink-0">Pendiente</span>
+                </div>
+            </div>
+
+            <!-- Certificado Catastral -->
+            <div class="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-emerald-400 transition">
+                <div class="flex items-start justify-between">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <i class='bx bx-map-pin text-2xl text-emerald-600'></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-gray-900 text-lg">Certificado Catastral</p>
+                            <p class="text-sm text-gray-600">Datos IGAC (Instituto Geográfico Agustín Codazzi)</p>
+                            <p class="text-xs text-gray-500 mt-2">Confirma área exacta, linderos, número de catastro</p>
+                        </div>
+                    </div>
+                    <span th:if="${venta.documentoCatastral}" class="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-bold whitespace-nowrap flex-shrink-0">
+                        <i class='bx bx-check-circle'></i> Verificado
+                    </span>
+                    <span th:unless="${venta.documentoCatastral}" class="text-xs text-orange-600 font-bold bg-orange-100 px-3 py-1 rounded-full whitespace-nowrap flex-shrink-0">Pendiente</span>
+                </div>
+            </div>
+
+            <!-- Certificado de No Deudas -->
+            <div class="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-emerald-400 transition">
+                <div class="flex items-start justify-between">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <i class='bx bx-badge-check text-2xl text-emerald-600'></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-gray-900 text-lg">Certificado de No Deudas</p>
+                            <p class="text-sm text-gray-600">Impuesto predial, embargos y otros gravámenes</p>
+                            <p class="text-xs text-gray-500 mt-2">Certifica que el terreno está libre de deudas tributarias</p>
+                        </div>
+                    </div>
+                    <span th:if="${venta.documentoNoDeudas}" class="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-bold whitespace-nowrap flex-shrink-0">
+                        <i class='bx bx-check-circle'></i> Verificado
+                    </span>
+                    <span th:unless="${venta.documentoNoDeudas}" class="text-xs text-orange-600 font-bold bg-orange-100 px-3 py-1 rounded-full whitespace-nowrap flex-shrink-0">Pendiente</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-green-50 border-l-4 border-green-600 p-6 rounded-lg mt-6">
+            <p class="font-bold text-green-900 mb-2 flex items-center gap-2">
+                <i class='bx bx-shield-alt text-2xl'></i>
+                Estado de Garantía Legal
+            </p>
+            <div class="grid grid-cols-4 gap-3 mt-4">
+                <div class="bg-white rounded-lg p-3 text-center border border-green-200">
+                    <p class="text-2xl font-bold text-green-600" th:text="${venta.documentoEscritura && venta.documentoLibertad && venta.documentoCatastral && venta.documentoNoDeudas ? '✓' : '✗'}">✗</p>
+                    <p class="text-xs text-gray-600 mt-1">Completo</p>
+                </div>
+                <div class="bg-white rounded-lg p-3 text-center border border-green-200">
+                    <p class="text-sm font-bold text-gray-900">Legal</p>
+                    <p class="text-xs text-gray-600 mt-1">Verificado</p>
+                </div>
+                <div class="bg-white rounded-lg p-3 text-center border border-green-200">
+                    <p class="text-sm font-bold text-gray-900">Limpio</p>
+                    <p class="text-xs text-gray-600 mt-1">Sin deudas</p>
+                </div>
+                <div class="bg-white rounded-lg p-3 text-center border border-green-200">
+                    <p class="text-sm font-bold text-gray-900">Tuyo</p>
+                    <p class="text-xs text-gray-600 mt-1">100% propio</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

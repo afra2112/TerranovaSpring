@@ -1,0 +1,279 @@
+<!-- FRAGMENT: Terreno - Vista Vendedor (Pasos 2-7 completos para TERRENO) -->
+<div xmlns:th="http://www.thymeleaf.org" class="space-y-6">
+
+    <!-- PASO 2: Oferta y Aceptación (TERRENO) -->
+    <div th:if="${venta.pasoActual >= 2}" class="bg-white rounded-2xl shadow-lg p-8">
+        <h2 class="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+            <i class='bx bx-handshake text-emerald-600'></i>
+            Paso 2: Oferta y Aceptación del Terreno
+        </h2>
+        <p class="text-gray-600 mb-6">Define los términos completos de venta del terreno</p>
+
+        <form th:action="@{/vendedor/ventas/oferta-terreno}" method="post" class="space-y-6">
+            <input type="hidden" name="idVenta" th:value="${venta.idVenta}">
+
+            <div class="bg-blue-50 border-2 border-blue-300 rounded-xl p-6 mb-6">
+                <p class="font-bold text-blue-900 mb-3">📍 Información de Ubicación</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-blue-800">
+                    <div class="bg-white p-3 rounded">
+                        <p class="font-bold mb-1">Municipio/Vereda</p>
+                        <p>Lugar exacto del terreno</p>
+                    </div>
+                    <div class="bg-white p-3 rounded">
+                        <p class="font-bold mb-1">Accesibilidad</p>
+                        <p>Vías principales, distancias</p>
+                    </div>
+                    <div class="bg-white p-3 rounded">
+                        <p class="font-bold mb-1">Servicios Públicos</p>
+                        <p>Agua, energía, telefonía</p>
+                    </div>
+                    <div class="bg-white p-3 rounded">
+                        <p class="font-bold mb-1">Linderos</p>
+                        <p>Vecinos, límites exactos</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2"><i class='bx bx-map-pin'></i> Ubicación Completa del Terreno *</label>
+                    <input type="text" name="ubicacion" required placeholder="Municipio, Vereda, Dirección exacta o coordenadas GPS" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-emerald-600 focus:ring-2 focus:ring-emerald-200 transition">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2"><i class='bx bx-ruler'></i> Área del Terreno (m²) *</label>
+                    <input type="number" name="areaMts2" required min="1" placeholder="10000" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-emerald-600 focus:ring-2 focus:ring-emerald-200 transition">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2"><i class='bx bx-dollar-circle'></i> Precio Total *</label>
+                    <input type="number" name="precioTotal" required th:value="${venta.precioTotal}" placeholder="100000000" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-emerald-600 focus:ring-2 focus:ring-emerald-200 transition">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2"><i class='bx bx-tag'></i> Precio por m² (Automático)</label>
+                    <input type="number" name="precioMts2" readonly placeholder="Calculado automáticamente" class="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-lg cursor-not-allowed">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-2"><i class='bx bx-note'></i> Descripción Detallada del Terreno *</label>
+                <textarea name="descripcion" required rows="6" placeholder="Incluir: tipo de terreno (plano, montañoso), topografía, servicios disponibles, vías de acceso, usos permitidos, linderos, estado general, etc." class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-emerald-600 focus:ring-2 focus:ring-emerald-200 transition"></textarea>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2"><i class='bx bx-map'></i> Municipio *</label>
+                    <input type="text" name="municipio" required placeholder="Municipio" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-emerald-600 focus:ring-2 focus:ring-emerald-200 transition">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2"><i class='bx bx-map'></i> Departamento *</label>
+                    <input type="text" name="departamento" required placeholder="Departamento" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-emerald-600 focus:ring-2 focus:ring-emerald-200 transition">
+                </div>
+            </div>
+
+            <div class="bg-orange-50 border-2 border-orange-300 rounded-xl p-6 mb-6">
+                <p class="font-bold text-orange-900 mb-3">⚠️ Información Importante para Comprador</p>
+                <p class="text-sm text-orange-800">El comprador recibirá esta oferta completa para revisión y puede aceptarla o negociar los términos. Solo podrán continuar cuando ambas partes acuerden los términos finales.</p>
+            </div>
+
+            <div class="flex gap-4">
+                <button type="button" class="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition">Cancelar</button>
+                <button type="submit" class="px-6 py-3 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white rounded-lg font-semibold hover:shadow-lg transition flex-1 flex items-center justify-center gap-2">
+                    <i class='bx bx-send'></i> Enviar Oferta al Comprador
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- PASO 3: Documentos Previos (TERRENO) -->
+    <div th:if="${venta.pasoActual >= 3}" class="bg-white rounded-2xl shadow-lg p-8">
+        <h2 class="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+            <i class='bx bx-file-blank text-emerald-600'></i>
+            Paso 3: Documentación Legal Obligatoria
+        </h2>
+        <p class="text-gray-600 mb-6">Sube todos los documentos legales requeridos para la venta del terreno</p>
+
+        <div class="bg-blue-50 border-2 border-blue-300 rounded-xl p-6 mb-6">
+            <p class="font-bold text-blue-900 mb-3">📋 Documentos Obligatorios en Colombia</p>
+            <ul class="text-sm text-blue-800 space-y-2">
+                <li class="flex items-start gap-2"><i class='bx bx-check text-blue-600'></i> <span><strong>Escritura Pública:</strong> Original del terreno emitida por notaría</span></li>
+                <li class="flex items-start gap-2"><i class='bx bx-check text-blue-600'></i> <span><strong>Libertad y Tradición:</strong> Certificado catastral vigente (no mayor a 30 días)</span></li>
+                <li class="flex items-start gap-2"><i class='bx bx-check text-blue-600'></i> <span><strong>Certificado Catastral:</strong> Datos actualizados del IGAC</span></li>
+                <li class="flex items-start gap-2"><i class='bx bx-check text-blue-600'></i> <span><strong>No Deudas:</strong> Certificado de impuesto predial y otros gravámenes</span></li>
+            </ul>
+        </div>
+
+        <form th:action="@{/vendedor/ventas/documentos-terreno}" method="post" enctype="multipart/form-data" class="space-y-6">
+            <input type="hidden" name="idVenta" th:value="${venta.idVenta}">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Escritura Pública -->
+                <div class="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-emerald-400 transition">
+                    <div class="flex items-start gap-4 mb-4">
+                        <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center">
+                            <i class='bx bx-file-blank text-2xl text-emerald-600'></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-gray-900 text-lg">Escritura Pública</p>
+                            <p class="text-sm text-gray-600">Documento original del terreno</p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4 text-xs text-gray-700">
+                        <p class="font-bold mb-2">Requisitos:</p>
+                        <ul class="space-y-1">
+                            <li>• Emitida por notaría pública</li>
+                            <li>• Con los datos completos del terreno</li>
+                            <li>• Con identificación de propietario</li>
+                            <li>• En formato PDF o scaneada</li>
+                        </ul>
+                    </div>
+                    <div th:if="${venta.documentoEscritura}" class="flex items-center gap-2 text-green-600 font-bold mb-2">
+                        <i class='bx bx-check-circle'></i> Cargado y Verificado
+                    </div>
+                    <div th:unless="${venta.documentoEscritura}">
+                        <label class="block border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:border-emerald-500 hover:bg-emerald-50 transition">
+                            <i class='bx bx-cloud-upload text-3xl text-emerald-600 mb-2'></i>
+                            <p class="text-sm font-semibold text-gray-700">Subir Escritura (PDF)</p>
+                            <input type="file" name="escritura" accept=".pdf" required class="hidden" th:if="${venta.pasoActual == 3}">
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Libertad y Tradición -->
+                <div class="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-emerald-400 transition">
+                    <div class="flex items-start gap-4 mb-4">
+                        <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center">
+                            <i class='bx bx-certification text-2xl text-emerald-600'></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-gray-900 text-lg">Libertad y Tradición</p>
+                            <p class="text-sm text-gray-600">Certificado catastral vigente</p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4 text-xs text-gray-700">
+                        <p class="font-bold mb-2">Requisitos:</p>
+                        <ul class="space-y-1">
+                            <li>• No mayor a 30 días de expedición</li>
+                            <li>• Del Registro de Propiedad Inmueble</li>
+                            <li>• Con datos del propietario</li>
+                            <li>• Que conste sin gravámenes</li>
+                        </ul>
+                    </div>
+                    <div th:if="${venta.documentoLibertad}" class="flex items-center gap-2 text-green-600 font-bold mb-2">
+                        <i class='bx bx-check-circle'></i> Cargado y Verificado
+                    </div>
+                    <div th:unless="${venta.documentoLibertad}">
+                        <label class="block border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:border-emerald-500 hover:bg-emerald-50 transition">
+                            <i class='bx bx-cloud-upload text-3xl text-emerald-600 mb-2'></i>
+                            <p class="text-sm font-semibold text-gray-700">Subir Certificado (PDF)</p>
+                            <input type="file" name="libertadTradicion" accept=".pdf" required class="hidden" th:if="${venta.pasoActual == 3}">
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Certificado Catastral -->
+                <div class="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-emerald-400 transition">
+                    <div class="flex items-start gap-4 mb-4">
+                        <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center">
+                            <i class='bx bx-map-pin text-2xl text-emerald-600'></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-gray-900 text-lg">Certificado Catastral</p>
+                            <p class="text-sm text-gray-600">Datos IGAC actualizados</p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4 text-xs text-gray-700">
+                        <p class="font-bold mb-2">Requisitos:</p>
+                        <ul class="space-y-1">
+                            <li>• Del Instituto Geográfico Agustín Codazzi (IGAC)</li>
+                            <li>• Con número de catastro</li>
+                            <li>• Área y linderos exactos</li>
+                            <li>• Datos de propietario actualizado</li>
+                        </ul>
+                    </div>
+                    <div th:if="${venta.documentoCatastral}" class="flex items-center gap-2 text-green-600 font-bold mb-2">
+                        <i class='bx bx-check-circle'></i> Cargado y Verificado
+                    </div>
+                    <div th:unless="${venta.documentoCatastral}">
+                        <label class="block border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:border-emerald-500 hover:bg-emerald-50 transition">
+                            <i class='bx bx-cloud-upload text-3xl text-emerald-600 mb-2'></i>
+                            <p class="text-sm font-semibold text-gray-700">Subir Certificado (PDF)</p>
+                            <input type="file" name="catastral" accept=".pdf" required class="hidden" th:if="${venta.pasoActual == 3}">
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Certificado de No Deudas -->
+                <div class="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-emerald-400 transition">
+                    <div class="flex items-start gap-4 mb-4">
+                        <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center">
+                            <i class='bx bx-badge-check text-2xl text-emerald-600'></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-gray-900 text-lg">Certificado de No Deudas</p>
+                            <p class="text-sm text-gray-600">Impuesto predial y gravámenes</p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4 text-xs text-gray-700">
+                        <p class="font-bold mb-2">Requisitos:</p>
+                        <ul class="space-y-1">
+                            <li>• Impuesto predial pagado</li>
+                            <li>• Sin deudas tributarias</li>
+                            <li>• Sin embargos o gravámenes</li>
+                            <li>• Certificado de la municipalidad</li>
+                        </ul>
+                    </div>
+                    <div th:if="${venta.documentoNoDeudas}" class="flex items-center gap-2 text-green-600 font-bold mb-2">
+                        <i class='bx bx-check-circle'></i> Cargado y Verificado
+                    </div>
+                    <div th:unless="${venta.documentoNoDeudas}">
+                        <label class="block border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:border-emerald-500 hover:bg-emerald-50 transition">
+                            <i class='bx bx-cloud-upload text-3xl text-emerald-600 mb-2'></i>
+                            <p class="text-sm font-semibold text-gray-700">Subir Certificado (PDF)</p>
+                            <input type="file" name="noDeudas" accept=".pdf" required class="hidden" th:if="${venta.pasoActual == 3}">
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-orange-50 border-2 border-orange-300 rounded-xl p-6 mb-6">
+                <p class="font-bold text-orange-900 mb-4">✓ Confirmaciones Legales Obligatorias</p>
+                <div class="space-y-3">
+                    <label class="flex items-start gap-3 cursor-pointer hover:bg-orange-100/50 p-2 rounded transition">
+                        <input type="checkbox" required class="mt-1 w-5 h-5 accent-orange-600">
+                        <span class="text-sm text-orange-900">Confirmo que toda la documentación es ORIGINAL y verídica</span>
+                    </label>
+                    <label class="flex items-start gap-3 cursor-pointer hover:bg-orange-100/50 p-2 rounded transition">
+                        <input type="checkbox" required class="mt-1 w-5 h-5 accent-orange-600">
+                        <span class="text-sm text-orange-900">Asumo responsabilidad legal sobre la autenticidad de estos documentos</span>
+                    </label>
+                    <label class="flex items-start gap-3 cursor-pointer hover:bg-orange-100/50 p-2 rounded transition">
+                        <input type="checkbox" required class="mt-1 w-5 h-5 accent-orange-600">
+                        <span class="text-sm text-orange-900">El terreno está libre de gravámenes y deudas tributarias</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="flex gap-4">
+                <button type="button" class="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition">
+                    <i class='bx bx-arrow-back'></i> Atrás
+                </button>
+                <button type="submit" class="px-6 py-3 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white rounded-lg font-semibold hover:shadow-lg transition flex-1 flex items-center justify-center gap-2">
+                    <i class='bx bx-save'></i> Guardar Documentación y Continuar
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- PASOS 4-7: Placeholders para expansión futura -->
+    <div th:if="${venta.pasoActual > 3 && venta.pasoActual <= 7}" class="bg-white rounded-2xl shadow-lg p-8 text-center py-12">
+        <i class='bx bx-map text-7xl text-gray-300 mb-6'></i>
+        <p class="text-2xl font-bold text-gray-700 mb-3">Paso <span th:text="${venta.pasoActual}">0</span>: Proceso en Desarrollo</p>
+        <p class="text-gray-600 mb-6">Este paso será completado próximamente con formulario específico para terrenos</p>
+        <div class="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-full font-semibold">
+            <i class='bx bx-info-circle'></i> Implementación en progreso
+        </div>
+    </div>
+
+</div>

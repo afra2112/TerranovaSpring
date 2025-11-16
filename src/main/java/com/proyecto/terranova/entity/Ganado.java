@@ -27,9 +27,6 @@ public class Ganado extends Producto {
     private String tipoGanado;
 
     @Column(nullable = false)
-    private String estadoSanitario;
-
-    @Column(nullable = false)
     private int cantidad;
 
 }

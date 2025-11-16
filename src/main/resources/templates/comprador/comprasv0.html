@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Compras - Terranova</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #059669;
+            --secondary: #ffcf00;
+            --light: #f3f4f6;
+            --dark: #111827;
+        }
+
+        * {
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .gradient-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, #047857 100%);
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-completada { background-color: #dcfce7; color: #166534; }
+        .status-transito { background-color: #dbeafe; color: #1e40af; }
+        .status-recibida { background-color: #fce7f3; color: #831843; }
+        .status-pagada { background-color: #fef3c7; color: #92400e; }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 8px;
+            width: 12px;
+            height: 12px;
+            background: #059669;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 0 0 2px #059669;
+        }
+
+        .timeline-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 20px;
+            width: 0px;
+            height: calc(100% + 8px);
+            border-left: 1px dashed #d1d5db;
+        }
+
+        .timeline-item.pending::before {
+            background: #d1d5db;
+            box-shadow: 0 0 0 2px #d1d5db;
+        }
+
+        .timeline-item.pending::after {
+            border-left-color: #d1d5db;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+<!-- Header -->
+<header class="gradient-primary text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <i class="fas fa-shopping-bag text-2xl"></i>
+            <h1 class="text-2xl font-bold">Panel de Compras</h1>
+        </div>
+        <div class="flex items-center space-x-4">
+            <div class="bg-white/20 px-4 py-2 rounded-lg">
+                <p class="text-sm">Bienvenido, Comprador</p>
+            </div>
+            <button class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition">
+                <i class="fas fa-bell"></i>
+            </button>
+        </div>
+    </div>
+</header>
+
+<main class="max-w-7xl mx-auto px-6 py-8">
+    <!-- KPIs Section -->
+    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Compras Totales -->
+        <div class="bg-white rounded-lg p-6 shadow card-hover">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <p class="text-gray-600 text-sm font-medium">Compras Totales</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-2">8</p>
+                </div>
+                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-box text-blue-600 text-lg"></i>
+                </div>
+            </div>
+            <div class="flex items-center text-green-600 text-sm">
+                <i class="fas fa-arrow-up mr-1"></i>
+                <span>+2 este mes</span>
+            </div>
+        </div>
+
+        <!-- Inversión Total -->
+        <div class="bg-white rounded-lg p-6 shadow card-hover">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <p class="text-gray-600 text-sm font-medium">Inversión Total</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-2">$82.7M</p>
+                </div>
+                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-wallet text-green-600 text-lg"></i>
+                </div>
+            </div>
+            <div class="flex items-center text-green-600 text-sm">
+                <i class="fas fa-arrow-up mr-1"></i>
+                <span>+15% vs mes anterior</span>
+            </div>
+        </div>
+
+        <!-- Compras Completadas -->
+        <div class="bg-white rounded-lg p-6 shadow card-hover">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <p class="text-gray-600 text-sm font-medium">Compras Completadas</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-2">6</p>
+                </div>
+                <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-check-circle text-emerald-600 text-lg"></i>
+                </div>
+            </div>
+            <div class="flex items-center text-emerald-600 text-sm">
+                <i class="fas fa-arrow-up mr-1"></i>
+                <span>75% de compras</span>
+            </div>
+        </div>
+
+        <!-- Presupuesto Disponible -->
+        <div class="bg-white rounded-lg p-6 shadow card-hover">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <p class="text-gray-600 text-sm font-medium">Presupuesto Disponible</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-2">$17.3M</p>
+                </div>
+                <div class="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-piggy-bank text-amber-600 text-lg"></i>
+                </div>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2 mt-3">
+                <div class="bg-primary h-2 rounded-full" style="width: 83%;"></div>
+            </div>
+            <p class="text-xs text-gray-600 mt-2">Presupuesto: $100M</p>
+        </div>
+    </section>
+
+    <!-- Charts Section -->
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <!-- Compras por Tipo -->
+        <div class="bg-white rounded-lg p-6 shadow">
+            <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                <i class="fas fa-chart-pie text-primary mr-2"></i>
+                Compras por Tipo de Producto
+            </h2>
+            <canvas id="comprasTipoChart"></canvas>
+        </div>
+
+        <!-- Inversión por Mes -->
+        <div class="bg-white rounded-lg p-6 shadow">
+            <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                <i class="fas fa-chart-line text-primary mr-2"></i>
+                Inversión por Mes
+            </h2>
+            <canvas id="inversionMesChart"></canvas>
+        </div>
+
+        <!-- Estado de Compras -->
+        <div class="bg-white rounded-lg p-6 shadow">
+            <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                <i class="fas fa-tasks text-primary mr-2"></i>
+                Estado de Compras
+            </h2>
+            <canvas id="estadoComprasChart"></canvas>
+        </div>
+
+        <!-- Calificación de Vendedores -->
+        <div class="bg-white rounded-lg p-6 shadow">
+            <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                <i class="fas fa-star text-primary mr-2"></i>
+                Vendedores Principales
+            </h2>
+            <div class="space-y-3">
+                <div class="flex items-center justify-between pb-3 border-b">
+                    <div>
+                        <p class="font-medium text-gray-900">Juan Pérez</p>
+                        <p class="text-xs text-gray-600">3 compras</p>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-gray-300"></i>
+                        <span class="ml-2 text-sm font-medium">4.5</span>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between pb-3 border-b">
+                    <div>
+                        <p class="font-medium text-gray-900">Carlos López</p>
+                        <p class="text-xs text-gray-600">2 compras</p>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <span class="ml-2 text-sm font-medium">5.0</span>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="font-medium text-gray-900">María Rodríguez</p>
+                        <p class="text-xs text-gray-600">2 compras</p>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-gray-300"></i>
+                        <i class="fas fa-star text-gray-300"></i>
+                        <span class="ml-2 text-sm font-medium">3.5</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Compras Recientes -->
+    <section class="bg-white rounded-lg shadow p-6 mb-8">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-lg font-bold text-gray-900 flex items-center">
+                <i class="fas fa-list text-primary mr-2"></i>
+                Mis Compras
+            </h2>
+            <button class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition">
+                <i class="fas fa-plus mr-2"></i>Nueva Compra
+            </button>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gray-50 border-b">
+                <tr>
+                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Producto</th>
+                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Vendedor</th>
+                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Inversión</th>
+                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Estado</th>
+                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Progreso</th>
+                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Compra 1 -->
+                <tr class="border-b hover:bg-gray-50">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-cow text-2xl text-amber-600"></i>
+                            <span class="font-medium">10 Bovinos</span>
+                        </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div>
+                            <p class="font-medium">Juan Pérez</p>
+                            <p class="text-xs text-gray-600">⭐ 4.5</p>
+                        </div>
+                    </td>
+                    <td class="px-4 py-3 font-semibold text-gray-900">$12.5M</td>
+                    <td class="px-4 py-3"><span class="status-badge status-recibida">Recibida</span></td>
+                    <td class="px-4 py-3">
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-green-600 h-2 rounded-full" style="width: 100%;"></div>
+                        </div>
+                        <p class="text-xs text-gray-600 mt-1">100%</p>
+                    </td>
+                    <td class="px-4 py-3">
+                        <button class="text-primary hover:text-opacity-80 transition" onclick="expandirCompra(1)">
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </td>
+                </tr>
+
+                <!-- Detalle Compra 1 (Expandido) -->
+                <tr id="detalle-compra-1" class="hidden bg-gray-50 border-b">
+                    <td colspan="6" class="px-4 py-4">
+                        <div class="space-y-4">
+                            <!-- Timeline de Trazabilidad -->
+                            <div class="bg-white p-4 rounded-lg border border-gray-200">
+                                <h3 class="font-bold text-gray-900 mb-4 flex items-center">
+                                    <i class="fas fa-history text-primary mr-2"></i>
+                                    Trazabilidad Completa de la Compra
+                                </h3>
+                                <div class="space-y-4">
+                                    <div class="timeline-item">
+                                        <div>
+                                            <p class="font-medium text-gray-900">Oferta Aceptada</p>
+                                            <p class="text-sm text-gray-600">10/10/2024 - 09:30 AM</p>
+                                            <p class="text-xs text-gray-500 mt-1">Has aceptado la oferta de 10 bovinos a $12.5M</p>
+                                        </div>
+                                    </div>
+                                    <div class="timeline-item">
+                                        <div>
+                                            <p class="font-medium text-gray-900">Documentación Recibida</p>
+                                            <p class="text-sm text-gray-600">11/10/2024 - 14:00 PM</p>
+                                            <p class="text-xs text-gray-500 mt-1">GSMI, Certificados sanitarios y pruebas serológicas validadas</p>
+                                        </div>
+                                    </div>
+                                    <div class="timeline-item">
+                                        <div>
+                                            <p class="font-medium text-gray-900">Pago Completado</p>
+                                            <p class="text-sm text-gray-600">12/10/2024 - 11:15 AM</p>
+                                            <p class="text-xs text-gray-500 mt-1">Transferencia de $12.5M confirmada</p>
+                                        </div>
+                                    </div>
+                                    <div class="timeline-item">
+                                        <div>
+                                            <p class="font-medium text-gray-900">Movilización Confirmada</p>
+                                            <p class="text-sm text-gray-600">13/10/2024 - 10:00 AM</p>
+                                            <p class="text-xs text-gray-500 mt-1">Transporte iniciado por el vendedor - Placa AAA-123</p>
+                                        </div>
+                                    </div>
+                                    <div class="timeline-item">
+                                        <div>
+                                            <p class="font-medium text-gray-900">En Tránsito</p>
+                                            <p class="text-sm text-gray-600">13/10/2024 - 10:30 AM</p>
+                                            <p class="text-xs text-gray-500 mt-1">Ganado en camino a tu ubicación</p>
+                                        </div>
+                                    </div>
+                                    <div class="timeline-item">
+                                        <div>
+                                            <p class="font-medium text-gray-900">Entrega Completada</p>
+                                            <p class="text-sm text-gray-600">15/10/2024 - 15:30 PM</p>
+                                            <p class="text-xs text-gray-500 mt-1">Ganado recibido y verificado correctamente</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Información del Vendedor -->
+                            <div class="bg-white p-4 rounded-lg border border-gray-200">
+                                <h3 class="font-bold text-gray-900 mb-3 flex items-center">
+                                    <i class="fas fa-user text-primary mr-2"></i>
+                                    Información del Vendedor
+                                </h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="p-3 bg-blue-50 rounded border border-blue-200">
+                                        <p class="text-sm font-medium text-gray-900">Vendedor</p>
+                                        <p class="text-gray-700 mt-1">Juan Pérez López</p>
+                                        <p class="text-xs text-gray-600 mt-1">Cédula: 15.245.236</p>
+                                    </div>
+                                    <div class="p-3 bg-blue-50 rounded border border-blue-200">
+                                        <p class="text-sm font-medium text-gray-900">Contacto</p>
+                                        <p class="text-gray-700 mt-1">📞 +57 315 4567890</p>
+                                        <p class="text-gray-700">📧 juan@email.com</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Documentación GSMI -->
+                            <div class="bg-white p-4 rounded-lg border border-gray-200">
+                                <h3 class="font-bold text-gray-900 mb-3 flex items-center">
+                                    <i class="fas fa-file-contract text-primary mr-2"></i>
+                                    Documentación Sanitaria (GSMI)
+                                </h3>
+                                <div class="space-y-2">
+                                    <div class="flex items-center justify-between p-3 bg-green-50 rounded border border-green-200">
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-900">Guía Sanitaria GSMI</p>
+                                            <p class="text-xs text-gray-600 mt-1">Código: GSMI-2024-001523 | ICA Válido</p>
+                                        </div>
+                                        <button class="text-primary hover:text-opacity-80">
+                                            <i class="fas fa-download"></i>
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3 bg-green-50 rounded border border-green-200">
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-900">Certificado Sanitario</p>
+                                            <p class="text-xs text-gray-600 mt-1">Expedido: 10/10/2024 | Estado: Válido</p>
+                                        </div>
+                                        <button class="text-primary hover:text-opacity-80">
+                                            <i class="fas fa-download"></i>
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3 bg-green-50 rounded border border-green-200">
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-900">Pruebas Serológicas</p>
+                                            <p class="text-xs text-gray-600 mt-1">Brucelosis y TB negativo | Validado</p>
+                                        </div>
+                                        <button class="text-primary hover:text-opacity-80">
+                                            <i class="fas fa-download"></i>
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3 bg-green-50 rounded border border-green-200">
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-900">Inventario de Animales</p>
+                                            <p class="text-xs text-gray-600 mt-1">10 bovinos con DIN verificados</p>
+                                        </div>
+                                        <button class="text-primary hover:text-opacity-80">
+                                            <i class="fas fa-download"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Información de Transporte -->
+                            <div class="bg-white p-4 rounded-lg border border-gray-200">
+                                <h3 class="font-bold text-gray-900 mb-3 flex items-center">
+                                    <i class="fas fa-truck text-primary mr-2"></i>
+                                    Información de Transporte
+                                </h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <div class="p-3 bg-blue-50 rounded border border-blue-200">
+                                        <p class="text-sm font-medium text-gray-900">Placa del Vehículo</p>
+                                        <p class="text-lg font-bold text-gray-900 mt-1">AAA-123</p>
+                                        <p class="text-xs text-gray-600 mt-1">Registrado ante ICA</p>
+                                    </div>
+                                    <div class="p-3 bg-blue-50 rounded border border-blue-200">
+                                        <p class="text-sm font-medium text-gray-900">Responsable del Transporte</p>
+                                        <p class="text-gray-700 mt-1">Vendedor (Juan Pérez)</p>
+                                        <p class="text-xs text-gray-600 mt-1">Transporte asumido por vendedor</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Resumen Financiero -->
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                <div class="bg-gradient-primary text-white p-4 rounded-lg">
+                                    <p class="text-sm font-medium opacity-90">Inversión Total</p>
+                                    <p class="text-2xl font-bold mt-2">$12.5M</p>
+                                </div>
+                                <div class="bg-blue-600 text-white p-4 rounded-lg">
+                                    <p class="text-sm font-medium opacity-90">Cantidad</p>
+                                    <p class="text-2xl font-bold mt-2">10 Bovinos</p>
+                                </div>
+                                <div class="bg-green-600 text-white p-4 rounded-lg">
+                                    <p class="text-sm font-medium opacity-90">Estado</p>
+                                    <p class="text-2xl font-bold mt-2">Recibida</p>
+                                </div>
+                            </div>
+
+                            <!-- Calificar Vendedor -->
+                            <div class="bg-white p-4 rounded-lg border border-gray-200">
+                                <h3 class="font-bold text-gray-900 mb-3">Calificar Vendedor</h3>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-700">Tu Calificación</label>
+                                        <div class="flex items-center space-x-2 mt-2">
+                                            <i class="fas fa-star text-2xl text-gray-300 cursor-pointer hover:text-yellow-400 transition"></i>
+                                            <i class="fas fa-star text-2xl text-gray-300 cursor-pointer hover:text-yellow-400 transition"></i>
+                                            <i class="fas fa-star text-2xl text-gray-300 cursor-pointer hover:text-yellow-400 transition"></i>
+                                            <i class="fas fa-star text-2xl text-gray-300 cursor-pointer hover:text-yellow-400 transition"></i>
+                                            <i class="fas fa-star text-2xl text-gray-300 cursor-pointer hover:text-yellow-400 transition"></i>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <textarea placeholder="Cuéntanos tu experiencia con esta compra..." class="w-full p-3 border border-gray-300 rounded-lg text-sm focus:border-primary focus:ring-1 focus:ring-primary resize-none" rows="3"></textarea>
+                                    </div>
+                                    <button class="w-full bg-primary text-white py-2 rounded-lg hover:bg-opacity-90 transition font-medium">
+                                        <i class="fas fa-star mr-2"></i>Enviar Calificación
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Compra 2 -->
+                <tr class="border-b hover:bg-gray-50">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-map text-2xl text-yellow-600"></i>
+                            <span class="font-medium">Terreno 8 Ha</span>
+                        </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div>
+                            <p class="font-medium">Carlos López</p>
+                            <p class="text-xs text-gray-600">⭐ 5.0</p>
+                        </div>
+                    </td>
+                    <td class="px-4 py-3 font-semibold text-gray-900">$35.0M</td>
+                    <td class="px-4 py-3"><span class="status-badge status-completada">Completada</span></td>
+                    <td class="px-4 py-3">
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-green-600 h-2 rounded-full" style="width: 100%;"></div>
+                        </div>
+                        <p class="text-xs text-gray-600 mt-1">100%</p>
+                    </td>
+                    <td class="px-4 py-3">
+                        <button class="text-primary hover:text-opacity-80 transition" onclick="expandirCompra(2)">
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </td>
+                </tr>
+
+                <!-- Compra 3 -->
+                <tr class="hover:bg-gray-50">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-home text-2xl text-orange-600"></i>
+                            <span class="font-medium">Finca con Ganado</span>
+                        </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div>
+                            <p class="font-medium">María Rodríguez</p>
+                            <p class="text-xs text-gray-600">⭐ 3.5</p>
+                        </div>
+                    </td>
+                    <td class="px-4 py-3 font-semibold text-gray-900">$35.2M</td>
+                    <td class="px-4 py-3"><span class="status-badge status-transito">En Tránsito</span></td>
+                    <td class="px-4 py-3">
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-blue-600 h-2 rounded-full" style="width: 60%;"></div>
+                        </div>
+                        <p class="text-xs text-gray-600 mt-1">60%</p>
+                    </td>
+                    <td class="px-4 py-3">
+                        <button class="text-primary hover:text-opacity-80 transition" onclick="expandirCompra(3)">
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<script>
+    // Gráfica Compras por Tipo
+    const tipoCtx = document.getElementById('comprasTipoChart').getContext('2d');
+    new Chart(tipoCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Ganado', 'Terrenos', 'Fincas'],
+            datasets: [{
+                data: [3, 3, 2],
+                backgroundColor: ['#fbbf24', '#059669', '#f97316']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+
+    // Gráfica Inversión por Mes
+    const mesCtx = document.getElementById('inversionMesChart').getContext('2d');
+    new Chart(mesCtx, {
+        type: 'line',
+        data: {
+            labels: ['Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre'],
+            datasets: [{
+                label: 'Inversión ($M)',
+                data: [12, 18, 25, 32, 82.7],
+                borderColor: '#059669',
+                backgroundColor: 'rgba(5, 150, 105, 0.1)',
+                tension: 0.4,
+                fill: true,
+                pointBackgroundColor: '#059669',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                }
+            }
+        }
+    });
+
+    // Gráfica Estado de Compras
+    const estadoCtx = document.getElementById('estadoComprasChart').getContext('2d');
+    new Chart(estadoCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Recibidas', 'Completadas', 'En Tránsito'],
+            datasets: [{
+                label: 'Compras',
+                data: [1, 6, 1],
+                backgroundColor: ['#ec4899', '#10b981', '#3b82f6']
+            }]
+        },
+        options: {
+            responsive: true,
+            indexAxis: 'y',
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                }
+            }
+        }
+    });
+
+    // Funciones
+    function expandirCompra(id) {
+        const detalle = document.getElementById(`detalle-compra-${id}`);
+        detalle.classList.toggle('hidden');
+    }
+</script>
+</body>
+</html>

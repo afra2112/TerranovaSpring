@@ -21,6 +21,10 @@ public class Venta {
 
     private LocalDate fechaFinVenta;
 
+    private boolean pendienteConfirmacion = false;
+
+    private String razonRechazo;
+
     private Long precioTotal;
 
     private boolean pagado = false;

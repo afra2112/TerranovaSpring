@@ -157,7 +157,6 @@ public class ProductoImplement implements ProductoService {
             ganadoOriginal.setEdadGanado(ganadoNuevo.getEdadGanado());
             ganadoOriginal.setGeneroGanado(ganadoNuevo.getGeneroGanado());
             ganadoOriginal.setTipoGanado(ganadoNuevo.getTipoGanado());
-            ganadoOriginal.setEstadoSanitario(ganadoNuevo.getEstadoSanitario());
             ganadoOriginal.setCantidad(ganadoNuevo.getCantidad());
         }
         productoRepository.save(original);

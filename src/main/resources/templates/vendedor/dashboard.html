@@ -60,6 +60,249 @@
             height: 400px;
             width: 100%;
         }
+
+        .carousel-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .carousel-header {
+            padding: 24px 32px;
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .carousel-header-content {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .carousel-header-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        .carousel-header h2 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .carousel-header p {
+            font-size: 13px;
+            opacity: 0.9;
+            margin-top: 4px;
+        }
+
+        .carousel-slide {
+            display: none;
+            animation: slideIn 0.4s ease-in-out;
+        }
+
+        .carousel-slide.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .slide-content {
+            padding: 40px 32px;
+            min-height: 420px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slide-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 12px;
+        }
+
+        .slide-subtitle {
+            font-size: 15px;
+            color: #6b7280;
+            margin-bottom: 32px;
+        }
+
+        .tips-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .tip-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
+            background: #f3f4f6;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .tip-item:hover {
+            background: #e5e7eb;
+            transform: translateX(4px);
+        }
+
+        .tip-icon {
+            width: 40px;
+            height: 40px;
+            background: #059669;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .tip-content h4 {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 4px;
+        }
+
+        .tip-content p {
+            font-size: 13px;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+
+        .carousel-controls {
+            padding: 24px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f9fafb;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .carousel-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .carousel-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #6b7280;
+            transition: all 0.3s ease;
+        }
+
+        .carousel-btn:hover:not(:disabled) {
+            background: #059669;
+            border-color: #059669;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .carousel-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .carousel-indicators {
+            display: flex;
+            gap: 8px;
+        }
+
+        .indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #d1d5db;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .indicator.active {
+            background: #059669;
+            width: 24px;
+            border-radius: 4px;
+        }
+
+        .carousel-info {
+            font-size: 13px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .carousel-header {
+                padding: 16px 20px;
+            }
+
+            .carousel-header-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 24px;
+            }
+
+            .carousel-header h2 {
+                font-size: 20px;
+            }
+
+            .slide-content {
+                padding: 24px 20px;
+                min-height: 380px;
+            }
+
+            .slide-title {
+                font-size: 22px;
+            }
+
+            .carousel-controls {
+                padding: 16px 20px;
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+
+            .carousel-buttons {
+                order: 2;
+                width: 100%;
+                justify-content: center;
+            }
+
+            .carousel-info {
+                order: 1;
+                width: 100%;
+                text-align: center;
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -191,26 +434,170 @@
 
             </div>
 
-            <!-- Notifications & Messages -->
-            <div class="bg-white rounded-2xl p-6 border border-gray-200">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-xl font-semibold text-gray-900">Notificaciones</h3>
-                    <form th:action="@{/usuarios/notificaciones/marcar-todas-leidas}" method="post" class="relative z-10">
-                        <button class="text-[#059669] font-medium hover:text-[#10b981] transition-colors">Marcar como leídas</button>
-                    </form>
+            <div class="carousel-container">
+                <!-- Header -->
+                <div class="carousel-header">
+                    <div class="carousel-header-content">
+                        <div class="carousel-header-icon">
+                            <i class='bx bx-bulb'></i>
+                        </div>
+                        <div>
+                            <h2>Consejos para Vendedores</h2>
+                            <p>Aprende cómo vender mejor en Terranova</p>
+                        </div>
+                    </div>
                 </div>
 
-                <div th:each="notificacion : ${notificaciones}" class="space-y-4 mb-4">
-                    <div class="flex items-start space-x-4 p-4 bg-blue-50 rounded-xl border-l-4 border-blue-400">
-                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                            </svg>
+                <!-- Slide 1 -->
+                <div class="carousel-slide active">
+                    <div class="slide-content">
+                        <h3 class="slide-title">
+                            Cómo Subir Productos Efectivamente
+                        </h3>
+                        <p class="slide-subtitle">Sigue estos consejos para que tus productos destaquen y atraigan más compradores</p>
+
+                        <div class="tips-list">
+                            <div class="tip-item">
+                                <div class="tip-icon"><i class='bx bx-image-alt'></i></div>
+                                <div class="tip-content">
+                                    <h4>Fotos de alta calidad</h4>
+                                    <p>Usa fotos claras, bien iluminadas y desde múltiples ángulos. Los compradores prefieren ver el producto completo.</p>
+                                </div>
+                            </div>
+
+                            <div class="tip-item">
+                                <div class="tip-icon"><i class='bx bx-edit'></i></div>
+                                <div class="tip-content">
+                                    <h4>Descripción detallada y precisa</h4>
+                                    <p>Incluye raza, edad, peso, estado de salud, vacunas, ubicación y detalles importantes.</p>
+                                </div>
+                            </div>
+
+                            <div class="tip-item">
+                                <div class="tip-icon"><i class='bx bx-purchase-tag'></i></div>
+                                <div class="tip-content">
+                                    <h4>Precio competitivo y realista</h4>
+                                    <p>Investiga precios similares. Un buen precio genera confianza y acelera las ventas.</p>
+                                </div>
+                            </div>
+
+                            <div class="tip-item">
+                                <div class="tip-icon"><i class='bx bx-category'></i></div>
+                                <div class="tip-content">
+                                    <h4>Sé específico con categorías</h4>
+                                    <p>Selecciona correctamente la categoría: Ganado, Terreno o Finca. Esto mejora la visibilidad en búsquedas.</p>
+                                </div>
+                            </div>
                         </div>
-                        <div class="flex-1">
-                            <h4 class="font-semibold text-gray-900" th:text="${notificacion.titulo}"></h4>
-                            <p class="text-gray-600 text-sm" th:text="${notificacion.mensajeNotificacion}"></p>
+                    </div>
+                </div>
+
+                <!-- Slide 2 -->
+                <div class="carousel-slide">
+                    <div class="slide-content">
+                        <h3 class="slide-title">
+                            Crea Citas Efectivas con Compradores
+                        </h3>
+                        <p class="slide-subtitle">Organiza reuniones productivas que cierren negocios más rápido</p>
+
+                        <div class="tips-list">
+                            <div class="tip-item">
+                                <div class="tip-icon"><i class='bx bx-time-five'></i></div>
+                                <div class="tip-content">
+                                    <h4>Horarios claros y respetables</h4>
+                                    <p>Define horarios específicos y cumple siempre a tiempo. La puntualidad genera confianza.</p>
+                                </div>
+                            </div>
+
+                            <div class="tip-item">
+                                <div class="tip-icon"><i class='bx bx-group'></i></div>
+                                <div class="tip-content">
+                                    <h4>Cupos realistas</h4>
+                                    <p>No sobrecargues las citas. Atiende a cada comprador con dedicación.</p>
+                                </div>
+                            </div>
+
+                            <div class="tip-item">
+                                <div class="tip-icon"><i class='bx bx-map'></i></div>
+                                <div class="tip-content">
+                                    <h4>Ubicación clara y accesible</h4>
+                                    <p>Proporciona dirección exacta, referencias y zonas de fácil acceso.</p>
+                                </div>
+                            </div>
+
+                            <div class="tip-item">
+                                <div class="tip-icon"><i class='bx bx-info-circle'></i></div>
+                                <div class="tip-content">
+                                    <h4>Información útil</h4>
+                                    <p>Indica qué llevar, recomendaciones y detalles importantes antes de la cita.</p>
+                                </div>
+                            </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Slide 3 -->
+                <div class="carousel-slide">
+                    <div class="slide-content">
+                        <h3 class="slide-title">
+                            Domina Terranova como Profesional
+                        </h3>
+                        <p class="slide-subtitle">Maximiza tus ventas con estas prácticas recomendadas</p>
+
+                        <div class="tips-list">
+
+                            <div class="tip-item">
+                                <div class="tip-icon"><i class='bx bx-user-circle'></i></div>
+                                <div class="tip-content">
+                                    <h4>Sube una foto de perfil clara</h4>
+                                    <p>Una foto nítida y profesional aumenta la confianza de los compradores al ver tus productos.</p>
+                                </div>
+                            </div>
+
+                            <div class="tip-item">
+                                <div class="tip-icon"><i class='bx bx-calendar-event'></i></div>
+                                <div class="tip-content">
+                                    <h4>Usa tu calendario para guiar tus citas</h4>
+                                    <p>Consulta tu calendario con frecuencia para recordar tus próximas citas, evitar choques de horarios y atender mejor a tus compradores.</p>
+                                </div>
+                            </div>
+
+                            <div class="tip-item">
+                                <div class="tip-icon"><i class='bx bx-shield-alt-2'></i></div>
+                                <div class="tip-content">
+                                    <h4>Cumple requisitos legales</h4>
+                                    <p>Documentos como GSMI, certificados sanitarios o escrituras aumentan la confianza.</p>
+                                </div>
+                            </div>
+
+                            <div class="tip-item">
+                                <div class="tip-icon"><i class='bx bx-line-chart'></i></div>
+                                <div class="tip-content">
+                                    <h4>Usa el seguimiento de trazabilidad</h4>
+                                    <p>Mantén tus procesos claros: documentos, entregas, actualizaciones.</p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div class="carousel-controls">
+                    <div class="carousel-info">
+                        <span id="currentSlide">1</span> de <span id="totalSlides">3</span>
+                    </div>
+
+                    <div class="carousel-buttons">
+                        <button class="carousel-btn" id="prevBtn" onclick="previousSlide()">
+                            <i class='bx bx-chevron-left'></i>
+                        </button>
+
+                        <div class="carousel-indicators" id="indicators"></div>
+
+                        <button class="carousel-btn" id="nextBtn" onclick="nextSlide()">
+                            <i class='bx bx-chevron-right'></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -296,6 +683,55 @@
 
 
 <script>
+    let currentSlide = 0;
+        const slides = document.querySelectorAll('.carousel-slide');
+        const totalSlides = slides.length;
+        const indicatorsContainer = document.getElementById('indicators');
+
+        // Crear indicadores
+        for (let i = 0; i < totalSlides; i++) {
+            const indicator = document.createElement('div');
+            indicator.className = 'indicator' + (i === 0 ? ' active' : '');
+            indicator.onclick = () => goToSlide(i);
+            indicatorsContainer.appendChild(indicator);
+        }
+
+        function showSlide(n) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            document.querySelectorAll('.indicator').forEach(ind => ind.classList.remove('active'));
+
+            slides[n].classList.add('active');
+            document.querySelectorAll('.indicator')[n].classList.add('active');
+            document.getElementById('currentSlide').textContent = n + 1;
+
+            // Actualizar estado de botones
+            document.getElementById('prevBtn').disabled = n === 0;
+            document.getElementById('nextBtn').disabled = n === totalSlides - 1;
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            showSlide(currentSlide);
+        }
+
+        function previousSlide() {
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            showSlide(currentSlide);
+        }
+
+        function goToSlide(n) {
+            currentSlide = n;
+            showSlide(currentSlide);
+        }
+
+        // Inicializar
+        showSlide(0);
+        document.getElementById('totalSlides').textContent = totalSlides;
+
+        setInterval(() => {
+            if (currentSlide < totalSlides - 1) nextSlide();
+        }, 8000);
+
     document.addEventListener('DOMContentLoaded', function () {
         // Dropdown de usuario
         function toggleUserDropdown() {
@@ -562,19 +998,6 @@
         <option value="carne">🍖 Carne</option>
         <option value="mixto">🔀 Mixto</option>
         <option value="reproductor">🐃 Reproductor</option>
-      </select>
-    </div>
-
-    <!-- Estado Sanitario -->
-    <div class="space-y-2">
-      <label class="block text-sm font-semibold text-gray-700">Estado Sanitario</label>
-      <select name="estadoSanitario" required
-              class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm hover:shadow-md appearance-none cursor-pointer">
-        <option value="">Seleccione el estado...</option>
-        <option value="saludable">✅ Saludable</option>
-        <option value="en tratamiento">💊 En tratamiento</option>
-        <option value="en observación">🔍 En observación</option>
-        <option value="enfermo">⚠️ Enfermo</option>
       </select>
     </div>
 

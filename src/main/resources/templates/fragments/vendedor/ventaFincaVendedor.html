@@ -1,0 +1,248 @@
+<!-- FRAGMENT: Finca - Vista Vendedor (Pasos 2-8 completos para FINCA) -->
+<div xmlns:th="http://www.thymeleaf.org" class="space-y-6">
+
+    <!-- PASO 2: Oferta y Aceptación (FINCA) -->
+    <div th:if="${venta.pasoActual >= 2}" class="bg-white rounded-2xl shadow-lg p-8">
+        <h2 class="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+            <i class='bx bx-home text-emerald-600'></i>
+            Paso 2: Oferta y Aceptación de la Finca
+        </h2>
+        <p class="text-gray-600 mb-6">Define todos los términos de venta de la finca incluido el inventario</p>
+
+        <form th:action="@{/vendedor/ventas/oferta-finca}" method="post" class="space-y-6">
+            <input type="hidden" name="idVenta" th:value="${venta.idVenta}">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2"><i class='bx bx-home'></i> Nombre de la Finca *</label>
+                    <input type="text" name="nombreFinca" required placeholder="Ej: Finca La Esperanza del Llano" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-emerald-600 focus:ring-2 focus:ring-emerald-200 transition">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2"><i class='bx bx-ruler'></i> Área Total (hectáreas) *</label>
+                    <input type="number" name="areaHectareas" required min="0.1" step="0.1" placeholder="50" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-emerald-600 focus:ring-2 focus:ring-emerald-200 transition">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2"><i class='bx bx-dollar-circle'></i> Precio Total *</label>
+                    <input type="number" name="precioTotal" required th:value="${venta.precioTotal}" placeholder="500000000" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-emerald-600 focus:ring-2 focus:ring-emerald-200 transition">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2"><i class='bx bx-tag'></i> Precio por Hectárea (Automático)</label>
+                    <input type="number" name="precioHectarea" readonly placeholder="Calculado automáticamente" class="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-lg cursor-not-allowed">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-2"><i class='bx bx-note'></i> Descripción Completa de la Finca *</label>
+                <textarea name="descripcion" required rows="6" placeholder="Detallar: ubicación exacta, topografía, infraestructura existente (casa, establos, potreros), servicios disponibles (agua, energía), accesibilidad, vías de acceso, potencial productivo, etc." class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-emerald-600 focus:ring-2 focus:ring-emerald-200 transition"></textarea>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2"><i class='bx bx-map'></i> Municipio *</label>
+                    <input type="text" name="municipio" required placeholder="Municipio" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-emerald-600 focus:ring-2 focus:ring-emerald-200 transition">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2"><i class='bx bx-map'></i> Departamento *</label>
+                    <input type="text" name="departamento" required placeholder="Departamento" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-emerald-600 focus:ring-2 focus:ring-emerald-200 transition">
+                </div>
+            </div>
+
+            <div class="bg-orange-50 border-2 border-orange-300 rounded-xl p-6 mb-6">
+                <p class="font-bold text-orange-900 mb-3">⚠️ Importante para el Comprador</p>
+                <p class="text-sm text-orange-800">El comprador recibirá esta oferta completa. Solo podrán continuar cuando ambas partes acuerden los términos finales, incluyendo el inventario de activos incluidos.</p>
+            </div>
+
+            <div class="flex gap-4">
+                <button type="button" class="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition">Cancelar</button>
+                <button type="submit" class="px-6 py-3 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white rounded-lg font-semibold hover:shadow-lg transition flex-1 flex items-center justify-center gap-2">
+                    <i class='bx bx-send'></i> Enviar Oferta al Comprador
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- PASO 3: Inventario Detallado (FINCA) -->
+    <div th:if="${venta.pasoActual >= 3}" class="bg-white rounded-2xl shadow-lg p-8">
+        <h2 class="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+            <i class='bx bx-list-ul text-emerald-600'></i>
+            Paso 3: Inventario Detallado de Activos
+        </h2>
+        <p class="text-gray-600 mb-6">Lista completa y detallada de todo lo incluido en la venta de la finca</p>
+
+        <form th:action="@{/vendedor/ventas/inventario-finca}" method="post" enctype="multipart/form-data" class="space-y-6">
+            <input type="hidden" name="idVenta" th:value="${venta.idVenta}">
+
+            <!-- Infraestructura Física -->
+            <div class="bg-blue-50 border-2 border-blue-300 rounded-xl p-6">
+                <p class="font-bold text-blue-900 text-lg mb-4 flex items-center gap-2">
+                    <i class='bx bx-home-alt'></i>
+                    Infraestructura Física
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Casa Principal (m²)</label>
+                        <input type="number" name="casaPrincipalMts2" min="0" placeholder="350" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Cantidad de Habitaciones</label>
+                        <input type="number" name="habitaciones" min="0" placeholder="4" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Establos/Corrales (m²)</label>
+                        <input type="number" name="establosMts2" min="0" placeholder="500" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Bodegas/Almacenes (m²)</label>
+                        <input type="number" name="almacenMts2" min="0" placeholder="200" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Otras Construcciones (m²)</label>
+                        <input type="number" name="otrasConstMts2" min="0" placeholder="100" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Estado General</label>
+                        <select name="estadoInfraestructura" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 transition">
+                            <option value="">Selecciona...</option>
+                            <option value="EXCELENTE">Excelente</option>
+                            <option value="BUENO">Bueno</option>
+                            <option value="REGULAR">Regular</option>
+                            <option value="REQUIERE_REPARACION">Requiere Reparación</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recursos y Servicios -->
+            <div class="bg-green-50 border-2 border-green-300 rounded-xl p-6">
+                <p class="font-bold text-green-900 text-lg mb-4 flex items-center gap-2">
+                    <i class='bx bx-water'></i>
+                    Recursos y Servicios
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <label class="flex items-center gap-3 cursor-pointer hover:bg-green-100/50 p-3 rounded transition">
+                        <input type="checkbox" name="tieneAgua" class="w-5 h-5 accent-green-600">
+                        <span class="text-sm font-semibold text-green-900">Acceso a Agua Permanente</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer hover:bg-green-100/50 p-3 rounded transition">
+                        <input type="checkbox" name="tieneEnergia" class="w-5 h-5 accent-green-600">
+                        <span class="text-sm font-semibold text-green-900">Energía Eléctrica</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer hover:bg-green-100/50 p-3 rounded transition">
+                        <input type="checkbox" name="tienePozo" class="w-5 h-5 accent-green-600">
+                        <span class="text-sm font-semibold text-green-900">Pozo de Agua Profunda</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer hover:bg-green-100/50 p-3 rounded transition">
+                        <input type="checkbox" name="tieneRiego" class="w-5 h-5 accent-green-600">
+                        <span class="text-sm font-semibold text-green-900">Sistema de Riego</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer hover:bg-green-100/50 p-3 rounded transition">
+                        <input type="checkbox" name="tieneViaAcceso" class="w-5 h-5 accent-green-600">
+                        <span class="text-sm font-semibold text-green-900">Vía de Acceso Principal</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer hover:bg-green-100/50 p-3 rounded transition">
+                        <input type="checkbox" name="tieneInternet" class="w-5 h-5 accent-green-600">
+                        <span class="text-sm font-semibold text-green-900">Internet/Telefonía</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Equipos y Maquinaria -->
+            <div class="bg-purple-50 border-2 border-purple-300 rounded-xl p-6">
+                <p class="font-bold text-purple-900 text-lg mb-4 flex items-center gap-2">
+                    <i class='bx bx-wrench'></i>
+                    Equipos y Maquinaria Incluida
+                </p>
+                <textarea name="equipos" required rows="4" placeholder="Detalle cada equipo: Tractor (marca, año, estado), Arado, Rastra, Sembradora, Cosechadora, ATV, Motocicleta, Herramientas, Etc." class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-purple-600 focus:ring-2 focus:ring-purple-200 transition"></textarea>
+            </div>
+
+            <!-- Potreros y Áreas -->
+            <div class="bg-amber-50 border-2 border-amber-300 rounded-xl p-6">
+                <p class="font-bold text-amber-900 text-lg mb-4 flex items-center gap-2">
+                    <i class='bx bx-landscape'></i>
+                    Distribución de Potreros y Áreas
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Potreros de Pastura (hectáreas)</label>
+                        <input type="number" name="potrerosHectareas" min="0" step="0.1" placeholder="30" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-amber-600 focus:ring-2 focus:ring-amber-200 transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Área Cultivable (hectáreas)</label>
+                        <input type="number" name="areaCultivableHectareas" min="0" step="0.1" placeholder="10" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-amber-600 focus:ring-2 focus:ring-amber-200 transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Área Forestal (hectáreas)</label>
+                        <input type="number" name="areaForestalHectareas" min="0" step="0.1" placeholder="5" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-amber-600 focus:ring-2 focus:ring-amber-200 transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Otras Áreas (hectáreas)</label>
+                        <input type="number" name="otrasAreasHectareas" min="0" step="0.1" placeholder="5" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-amber-600 focus:ring-2 focus:ring-amber-200 transition">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Producción Actual -->
+            <div class="bg-red-50 border-2 border-red-300 rounded-xl p-6">
+                <p class="font-bold text-red-900 text-lg mb-4 flex items-center gap-2">
+                    <i class='bx bx-trending-up'></i>
+                    Producción Actual y Ganado
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Tipo de Ganado Actual</label>
+                        <input type="text" name="tipoGanado" placeholder="Ej: Bovinos lecheros, Ganado de carne, Ovinos, etc." class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-red-600 focus:ring-2 focus:ring-red-200 transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Cantidad de Cabezas</label>
+                        <input type="number" name="cantidadCabezas" min="0" placeholder="50" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-red-600 focus:ring-2 focus:ring-red-200 transition">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Archivo de Inventario Completo -->
+            <div class="bg-gray-50 border-2 border-dashed border-gray-300 rounded-xl p-6">
+                <p class="font-bold text-gray-900 mb-3 flex items-center gap-2">
+                    <i class='bx bx-file-import'></i>
+                    Inventario Detallado (Archivo)
+                </p>
+                <p class="text-sm text-gray-600 mb-4">Opcionalmente, sube un archivo con un inventario más detallado en Excel o PDF</p>
+                <label class="block border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-gray-500 hover:bg-white transition">
+                    <i class='bx bx-cloud-upload text-3xl text-gray-600 mb-2'></i>
+                    <p class="text-sm font-semibold text-gray-700">Subir Inventario (Excel, PDF)</p>
+                    <input type="file" name="inventarioArchivo" accept=".pdf,.xlsx,.xls,.csv" class="hidden">
+                </label>
+            </div>
+
+            <div class="bg-orange-50 border-2 border-orange-300 rounded-xl p-6 mb-6">
+                <p class="font-bold text-orange-900 mb-4">✓ Confirmación de Inventario</p>
+                <label class="flex items-start gap-3 cursor-pointer hover:bg-orange-100/50 p-2 rounded transition">
+                    <input type="checkbox" required class="mt-1 w-5 h-5 accent-orange-600">
+                    <span class="text-sm text-orange-900">Confirmo que el inventario es completo, verídico y representa exactamente lo incluido en la venta</span>
+                </label>
+            </div>
+
+            <div class="flex gap-4">
+                <button type="button" class="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition">
+                    <i class='bx bx-arrow-back'></i> Atrás
+                </button>
+                <button type="submit" class="px-6 py-3 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white rounded-lg font-semibold hover:shadow-lg transition flex-1 flex items-center justify-center gap-2">
+                    <i class='bx bx-save'></i> Guardar Inventario y Continuar
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- PASOS 4-8: Placeholders para expansión futura -->
+    <div th:if="${venta.pasoActual > 3 && venta.pasoActual <= 8}" class="bg-white rounded-2xl shadow-lg p-8 text-center py-12">
+        <i class='bx bx-home-heart text-7xl text-gray-300 mb-6'></i>
+        <p class="text-2xl font-bold text-gray-700 mb-3">Paso <span th:text="${venta.pasoActual}">0</span>: Proceso en Desarrollo</p>
+        <p class="text-gray-600 mb-6">Este paso será completado próximamente con formulario específico para fincas</p>
+        <div class="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-full font-semibold">
+            <i class='bx bx-info-circle'></i> Implementación en progreso
+        </div>
+    </div>
+
+</div>

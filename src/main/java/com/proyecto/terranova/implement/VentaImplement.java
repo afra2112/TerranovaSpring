@@ -4,6 +4,8 @@ import com.proyecto.terranova.config.enums.EstadoProductoEnum;
 import com.proyecto.terranova.config.enums.EstadoVentaEnum;
 import com.proyecto.terranova.entity.*;
 import com.proyecto.terranova.repository.*;
+import com.proyecto.terranova.service.NotificacionService;
+import jakarta.mail.MessagingException;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -51,6 +54,9 @@ public class VentaImplement implements VentaService {
 
     @Autowired
     private ProductoRepository productoRepository;
+
+    @Autowired
+    private NotificacionService notificacionService;
 
     @Override
     public Venta actualizarDatosVenta(Venta venta, List<Long> idsComprobantesEliminados, List<Long> idsGastosEliminados, List<MultipartFile> comprobantes) throws IOException {
@@ -186,14 +192,17 @@ public class VentaImplement implements VentaService {
                 VentaGanado ventaGanado = new VentaGanado();
                 ventaGanado.setVenta(ventaGenerada);
                 ventaGanadoRepository.save(ventaGanado);
+                break;
             case "Terreno":
                 VentaTerreno ventaTerreno = new VentaTerreno();
                 ventaTerreno.setVenta(ventaGenerada);
                 ventaTerrenoRepository.save(ventaTerreno);
+                break;
             case "Finca":
                 VentaFinca ventaFinca = new VentaFinca();
                 ventaFinca.setVenta(ventaGenerada);
                 ventaFincaRepository.save(ventaFinca);
+                break;
         }
 
         return ventaGenerada;
@@ -208,19 +217,44 @@ public class VentaImplement implements VentaService {
     }
 
     @Override
-    public void actualizarVentaPaso2Ganado(Long idVenta, Long precioTotal, int cantidad, String condicionesEntrega, String observaciones) {
+    public void actualizarVentaPaso2Ganado(Long idVenta, Long precioTotal, int cantidad, String observaciones) throws MessagingException, IOException {
         Venta venta = repository.findById(idVenta).orElseThrow();
         Ganado ganado = ganadoRepository.findById(venta.getProducto().getIdProducto()).orElseThrow();
-        ganado.setCantidad(cantidad);
-        productoRepository.save(ganado);
 
-        VentaGanado ventaGanado = new VentaGanado();
-        ventaGanado.setCondicionesEntrega(condicionesEntrega);
+        VentaGanado ventaGanado = ventaGanadoRepository.findByVenta(venta);
         ventaGanado.setObservacionesSanitarias(observaciones);
-        ventaGanadoRepository.save(ventaGanado);
+        ventaGanado.setVenta(venta);
 
-        venta.setPrecioTotal(precioTotal);
-        venta.setPasoActual(3);
+        if(!Objects.equals(precioTotal, venta.getPrecioTotal()) || cantidad != ganado.getCantidad()){
+            ventaGanado.setCantidadNegociada(cantidad);
+            ventaGanado.setPrecioNegociado(precioTotal);
+            venta.setPendienteConfirmacion(true);
+            repository.save(venta);
+
+            notificacionService.notificacionContraoferta(venta);
+        }
+
+        ventaGanadoRepository.save(ventaGanado);
+    }
+
+    @Override
+    public void aceptarNegociacion(Long idVenta, String respuesta, String razonRechazo, int cantidad, Long precio) {
+        Venta venta = repository.findById(idVenta).orElseThrow();
+
+        if (respuesta.equals("RECHAZA")){
+            venta.setPendienteConfirmacion(false);
+            venta.setRazonRechazo(razonRechazo);
+        }
+
+        if (respuesta.equals("ACEPTA")){
+            Ganado ganado = ganadoRepository.findById(venta.getProducto().getIdProducto()).orElseThrow();
+            ganado.setCantidad(cantidad);
+            venta.getProducto().setPrecioProducto(precio);
+            venta.setPasoActual(3);
+
+            ganadoRepository.save(ganado);
+        }
+
         repository.save(venta);
     }
 

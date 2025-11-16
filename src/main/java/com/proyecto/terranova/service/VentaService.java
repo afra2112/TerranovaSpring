@@ -7,6 +7,7 @@ import com.proyecto.terranova.config.enums.EstadoVentaEnum;
 import com.proyecto.terranova.dto.VentaDTO;
 import com.proyecto.terranova.entity.Usuario;
 import com.proyecto.terranova.entity.Venta;
+import jakarta.mail.MessagingException;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface VentaService {
@@ -23,6 +24,7 @@ public interface VentaService {
     long count(); // Contar registros
     Venta generarVenta(Long idCita);
     void seleccionarComprador(Long idVenta, String cedulaComprador);
-    void actualizarVentaPaso2Ganado(Long idVenta, Long precioTotal, int cantidad, String condicionesEntrega, String observaciones);
+    void actualizarVentaPaso2Ganado(Long idVenta, Long precioTotal, int cantidad, String observaciones) throws MessagingException, IOException;
+    void aceptarNegociacion(Long idVenta, String respuesta, String razonRechazo, int cantidad, Long precio);
     void actualizarVentaPaso3Ganado(Long idVenta, MultipartFile certificadoSanitario, MultipartFile registroProcedencia, MultipartFile inventario) throws IOException;
 }
