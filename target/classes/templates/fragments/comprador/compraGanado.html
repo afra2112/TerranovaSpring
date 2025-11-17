@@ -1,9 +1,8 @@
-<!-- FRAGMENT: Ganado - Vista Comprador con PASO 2 (Negociación Final) y Transporte -->
 <div xmlns:th="http://www.thymeleaf.org" class="space-y-6">
     <div th:fragment="detalle">
 
         <!-- PASO 2: CONFIRMACIÓN DE NEGOCIACIÓN FINAL   -->
-        <div th:if="${!venta.pendienteConfirmacion}">
+        <div th:if="${!venta.pendienteConfirmacion and venta.pasoActual == 2}">
             <div class="bg-white rounded-2xl shadow-lg p-8">
 
                 <!-- ENCABEZADO -->
@@ -69,7 +68,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
 
         <div th:if="${tipoProducto == 'GANADO' && venta.pasoActual == 2 && venta.pendienteConfirmacion}" class="bg-white rounded-2xl shadow-lg p-8">
