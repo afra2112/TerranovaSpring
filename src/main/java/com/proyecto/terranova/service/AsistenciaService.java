@@ -1,6 +1,7 @@
 package com.proyecto.terranova.service;
 
 import com.proyecto.terranova.config.enums.EstadoAsistenciaEnum;
+import com.proyecto.terranova.config.enums.EstadoCitaEnum;
 import com.proyecto.terranova.entity.Asistencia;
 import com.proyecto.terranova.entity.Cita;
 import com.proyecto.terranova.entity.Usuario;
@@ -17,6 +18,8 @@ public interface AsistenciaService {
     List<Asistencia> encontrarPorCompradorYEstado(Usuario comprador, EstadoAsistenciaEnum estadoAsistenciaEnum);
 
     boolean existeAsistenciaPorEstado(Usuario comprador, Long idProducto, EstadoAsistenciaEnum estadoAsistenciaEnum);
+
+    boolean existeAsistenciaPorCitaEnEstadoProgramada(Usuario comprador, Long idProducto, EstadoCitaEnum estadoCitaEnum);
 
     List<Asistencia> encontrarAsistenciasPorCita(Long idCita);
 

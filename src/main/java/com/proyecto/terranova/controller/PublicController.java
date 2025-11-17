@@ -81,7 +81,7 @@ public class PublicController {
 
             List<Long> favoritosIds = favoritoService.obtenerIdsFavoritosPorUsuario(usuario);
             productos = productos.stream().filter(producto -> !producto.getVendedor().equals(usuario)).toList();
-            productos.forEach(producto -> producto.setCitasDisponibles(citaRepository.countByProducto(producto)));
+            productos.forEach(producto -> producto.setCitasDisponibles(citaRepository.countByProductoAndEstadoCita(producto, EstadoCitaEnum.PROGRAMADA)));
             model.addAttribute("favoritosIds", favoritosIds);
             model.addAttribute("nombreMostrar", usuario.getNombres() + ". " + usuario.getApellidos().charAt(0));
             model.addAttribute("esVendedor", esVendedor);
@@ -111,7 +111,7 @@ public class PublicController {
 
             List<Long> favoritosIds = favoritoService.obtenerIdsFavoritosPorUsuario(usuario);
 
-            model.addAttribute("usuarioInscrito", asistenciaService.existeAsistenciaPorEstado(usuario, id, EstadoAsistenciaEnum.INSCRITO));
+            model.addAttribute("usuarioInscrito", asistenciaService.existeAsistenciaPorCitaEnEstadoProgramada(usuario, id, EstadoCitaEnum.PROGRAMADA));
             model.addAttribute("usuarioEnEspera", asistenciaService.existeAsistenciaPorEstado(usuario, id, EstadoAsistenciaEnum.EN_ESPERA));
             model.addAttribute("favoritosIds", favoritosIds);
             model.addAttribute("nombreMostrar", usuario.getNombres() + ". " + usuario.getApellidos().charAt(0));

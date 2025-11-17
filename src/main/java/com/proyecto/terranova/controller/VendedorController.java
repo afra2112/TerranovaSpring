@@ -1,9 +1,6 @@
 package com.proyecto.terranova.controller;
 
-import com.proyecto.terranova.config.enums.EstadoAsistenciaEnum;
-import com.proyecto.terranova.config.enums.EstadoCitaEnum;
-import com.proyecto.terranova.config.enums.EstadoVentaEnum;
-import com.proyecto.terranova.config.enums.RolEnum;
+import com.proyecto.terranova.config.enums.*;
 import com.proyecto.terranova.entity.*;
 import com.proyecto.terranova.repository.AsistenciaRepository;
 import com.proyecto.terranova.repository.CiudadRepository;
@@ -102,7 +99,7 @@ public class VendedorController {
     @GetMapping("/mi-calendario")
     public String calendario(Model model, Authentication authentication){
         model.addAttribute("calendario", true);
-        model.addAttribute("productos", productoService.obtenerTodosPorVendedor(usuario(authentication)));
+        model.addAttribute( "productos", productoService.obtenerTodosPorVendedorYEstado(usuario(authentication), EstadoProductoEnum.DISPONIBLE));
         model.addAttribute("cedula", usuario(authentication).getCedula());
         return "vendedor/calendario";
     }

@@ -1,924 +1,658 @@
-<!DOCTYPE html>
-<html xmlns:th="www.thymeleaf.org">
+¡<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Panel de Ventas | Terranova</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Ventas - Vendedor</title>
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'DM Sans', sans-serif; }
+        * { font-family: 'DM Sans', sans-serif; }
 
-        .card-hover {
-            transition: all 0.4s ease;
+        body { background: #f8fafc; }
+
+        /* Gradientes */
+        .gradient-emerald { background: linear-gradient(135deg, #059669 0%, #10b981 100%); }
+        .gradient-hero { background: linear-gradient(135deg, #064e3b 0%, #059669 50%, #10b981 100%); }
+        .gradient-blue { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); }
+        .gradient-orange { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+        .gradient-red { background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%); }
+        .gradient-purple { background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%); }
+
+        /* Sidebar */
+        .sidebar {
+            width: 256px;
+            background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+            border-right: 1px solid rgba(148, 163, 184, 0.2);
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
         }
-        .card-hover:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
-        }
 
-        .status-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 6px;
-        }
-
-        .status-en-proceso { background-color: #f59e0b; }
-        .status-finalizada { background-color: #10b981; }
-        .status-cancelada { background-color: #ef4444; }
-        .status-pendiente { background-color: #3b82f6; }
-
-        .file-icon {
-            width: 32px;
-            height: 32px;
+        .sidebar-item {
+            padding: 12px 20px;
+            margin: 8px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
             display: flex;
             align-items: center;
-            justify-content: center;
-            border-radius: 6px;
+            gap: 12px;
+            color: #64748b;
+            font-weight: 500;
             font-size: 14px;
         }
 
-        .gradient-bg { background: linear-gradient(135deg, #059669 0%, #10b981 100%); }
-        .gradient-hero { background: linear-gradient(135deg, #064e3b 0%, #059669 50%, #10b981 100%); }
+        .sidebar-item:hover {
+            background: #e2e8f0;
+            color: #059669;
+        }
 
-        .venta-card {
+        .sidebar-item.active {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            color: white;
+        }
+
+        .main-content {
+            margin-left: 256px;
+            padding: 32px;
+        }
+
+        /* Cards */
+        .card-venta {
             background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
             border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 16px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+
+        .card-venta:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+            border-color: rgba(5, 150, 105, 0.3);
+        }
+
+        /* Stats Cards */
+        .stat-card {
+            background: white;
+            border: 1px solid rgba(148, 163, 184, 0.15);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-en-proceso { background: #fef3c7; color: #92400e; }
+        .status-finalizada { background: #d1fae5; color: #065f46; }
+        .status-cancelada { background: #fee2e2; color: #7f1d1d; }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            display: inline-flex;
+            align-items: center;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .toggle-option {
+            padding: 8px 16px;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .toggle-option.active {
+            background: white;
+            color: #059669;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Modal */
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 50;
+        }
+
+        .modal-backdrop.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        /* Charts */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 20px 0;
         }
 
         .section-card {
             background: linear-gradient(145deg, #ffffff 0%, #f1f5f9 100%);
             border: 1px solid rgba(148, 163, 184, 0.15);
+            border-radius: 12px;
+            padding: 16px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
 
-        .accent-green { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
-        .accent-blue { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); }
-        .accent-red { background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%); }
-        .accent-yellow { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
-        .accent-purple { background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%); }
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 0; }
+            .main-content { margin-left: 0; padding: 16px; }
+        }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="min-h-screen">
 
-<div class="min-h-screen">
-    <div th:replace="fragments/vendedor/navbarVendedor :: navbarVendedor"></div>
+<div th:replace="fragments/vendedor/navbarVendedor :: navbarVendedor"></div>
 
-    <div class="ml-64 flex flex-col min-h-screen">
-        <main class="w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- MAIN CONTENT -->
+<div class="main-content">
 
-            <!-- Hero Section con Estadísticas -->
-            <div class="gradient-hero rounded-3xl p-8 mb-8 text-white flex justify-between items-center relative overflow-hidden">
-                <div class="absolute inset-0 bg-black/10"></div>
-                <div class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full"></div>
-                <div class="absolute -bottom-5 -left-5 w-32 h-32 bg-white/5 rounded-full"></div>
+    <!-- HEADER HERO -->
+    <div class="gradient-hero rounded-3xl p-8 mb-8 text-white flex justify-between items-center relative overflow-hidden">
+        <div class="absolute inset-0 bg-black/10"></div>
+        <div class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full"></div>
+        <div class="relative z-10">
+            <h1 class="text-4xl font-bold mb-2">Panel de Ventas</h1>
+            <p class="text-emerald-100 text-lg">Gestiona tus ventas de manera profesional</p>
+        </div>
+    </div>
 
-                <div class="relative z-10 text-left max-w-xl">
-                    <h1 class="text-4xl font-bold mb-2">Mis Ventas</h1>
-                    <p class="text-emerald-100 text-lg">Gestiona tus ventas con compradores de manera eficiente</p>
+    <!--    &lt;!&ndash; KPI STATISTICS &ndash;&gt;-->
+    <!--    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">-->
+    <!--        <div class="stat-card">-->
+    <!--            <div class="flex items-center justify-between">-->
+    <!--                <div>-->
+    <!--                    <p class="text-sm text-gray-600 font-medium">Total de Ventas</p>-->
+    <!--                    <p class="text-3xl font-bold text-gray-900 mt-2" th:text="${totalVentas}">0</p>-->
+    <!--                </div>-->
+    <!--                <div class="w-12 h-12 gradient-emerald rounded-lg flex items-center justify-center">-->
+    <!--                    <i class='bx bx-shopping-bag text-white text-2xl'></i>-->
+    <!--                </div>-->
+    <!--            </div>-->
+    <!--        </div>-->
+
+    <!--        <div class="stat-card">-->
+    <!--            <div class="flex items-center justify-between">-->
+    <!--                <div>-->
+    <!--                    <p class="text-sm text-gray-600 font-medium">En Proceso</p>-->
+    <!--                    <p class="text-3xl font-bold text-orange-600 mt-2" th:text="${ventasEnProceso}">0</p>-->
+    <!--                </div>-->
+    <!--                <div class="w-12 h-12 gradient-orange rounded-lg flex items-center justify-center">-->
+    <!--                    <i class='bx bx-time text-white text-2xl'></i>-->
+    <!--                </div>-->
+    <!--            </div>-->
+    <!--        </div>-->
+
+    <!--        <div class="stat-card">-->
+    <!--            <div class="flex items-center justify-between">-->
+    <!--                <div>-->
+    <!--                    <p class="text-sm text-gray-600 font-medium">Finalizadas</p>-->
+    <!--                    <p class="text-3xl font-bold text-green-600 mt-2" th:text="${ventasFinalizadas}">0</p>-->
+    <!--                </div>-->
+    <!--                <div class="w-12 h-12 gradient-emerald rounded-lg flex items-center justify-center">-->
+    <!--                    <i class='bx bx-check-circle text-white text-2xl'></i>-->
+    <!--                </div>-->
+    <!--            </div>-->
+    <!--        </div>-->
+
+    <!--        <div class="stat-card">-->
+    <!--            <div class="flex items-center justify-between">-->
+    <!--                <div>-->
+    <!--                    <p class="text-sm text-gray-600 font-medium">Ingresos Totales</p>-->
+    <!--                    <p class="text-3xl font-bold text-blue-600 mt-2" th:text="'$' + ${#numbers.formatInteger(ingresoTotal, 0, 'COMMA')}">$0</p>-->
+    <!--                </div>-->
+    <!--                <div class="w-12 h-12 gradient-blue rounded-lg flex items-center justify-center">-->
+    <!--                    <i class='bx bx-dollar-circle text-white text-2xl'></i>-->
+    <!--                </div>-->
+    <!--            </div>-->
+    <!--        </div>-->
+    <!--    </div>-->
+
+    <!-- CONTROLES -->
+    <div class="flex items-center justify-center mb-8 flex-wrap gap-4">
+
+        <div class="flex items-center gap-4">
+            <!-- Toggle Vista -->
+            <div class="toggle-switch" id="vistaToggle">
+                <div class="toggle-option active" onclick="cambiarVista('cards', event)">
+                    <i class='bx bx-grid-alt'></i>
+                    <span>Cards</span>
+                </div>
+                <div class="toggle-option" onclick="cambiarVista('graficas', event)">
+                    <i class='bx bx-bar-chart'></i>
+                    <span>Gráficas</span>
+                </div>
+            </div>
+
+            <!-- Exportar PDF -->
+            <a th:href="@{/api/reportes/ventas/{nombre}(nombre=${nombres})}">
+                <button class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 font-medium text-sm transition">
+                    <i class='bx bx-download'></i> Exportar PDF
+                </button>
+            </a>
+        </div>
+    </div>
+
+    <!-- VISTA: CARDS -->
+    <div id="vistaCards" class="space-y-6 fade-in">
+        <div th:if="${#lists.isEmpty(ventas)}" class="text-center py-20">
+            <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class='bx bx-inbox text-gray-400 text-3xl'></i>
+            </div>
+            <p class="text-gray-600 font-medium">No hay ventas registradas</p>
+            <p class="text-sm text-gray-500 mt-1">Las ventas aparecerán aquí una vez se registren</p>
+        </div>
+
+        <div th:each="venta : ${ventas}" class="card-venta">
+            <!-- Header Card -->
+            <div class="px-6 py-4 gradient-emerald text-white flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                        <i class='bx bx-briefcase text-2xl'></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg" th:text="${venta.producto.nombreProducto}">Producto</h3>
+                        <p class="text-sm text-white/80" th:text="'ID: ' + ${venta.idVenta}">ID: 0</p>
+                    </div>
+                </div>
+                <span th:switch="${venta.estado}" class="status-badge">
+                        <i th:case="'EN_PROCESO'" class='bx bx-time-five text-lg'></i>
+                        <i th:case="'FINALIZADA'" class='bx bx-check-circle text-lg'></i>
+                        <i th:case="'CANCELADA'" class='bx bx-x-circle text-lg'></i>
+                        <span th:text="${venta.estado == 'EN_PROCESO' ? 'En Proceso' : (venta.estado == 'FINALIZADA' ? 'Finalizada' : 'Cancelada')}"></span>
+                    </span>
+            </div>
+
+            <!-- Body Card -->
+            <div class="px-6 py-5 space-y-4">
+                <!-- Grid de Información -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Comprador -->
+                    <div class="section-card">
+                        <p class="text-xs font-semibold text-gray-600 uppercase mb-2">Comprador</p>
+                        <p class="font-bold text-gray-900" th:text="${venta.comprador.nombres + ' ' + venta.comprador.apellidos}">Nombre</p>
+                        <p class="text-sm text-gray-600 mt-1" th:text="${venta.comprador.email}">email@example.com</p>
+                    </div>
+
+                    <!-- Precio -->
+                    <div class="section-card bg-green-50">
+                        <p class="text-xs font-semibold text-green-600 uppercase mb-2">Precio</p>
+                        <p class="text-2xl font-bold text-green-700" th:text="'$' + ${#numbers.formatInteger(venta.producto.precioProducto, 0, 'COMMA')}">$0</p>
+                    </div>
+
+                    <!-- Fechas -->
+                    <div class="section-card">
+                        <p class="text-xs font-semibold text-gray-600 uppercase mb-2">Iniciada</p>
+                        <p class="font-bold text-gray-900" th:text="${#temporals.format(venta.fechaInicioVenta, 'dd/MM/yyyy')}">Fecha</p>
+                        <p class="text-sm text-gray-600" th:text="${#temporals.format(venta.fechaInicioVenta, 'HH:mm')}">Hora</p>
+                    </div>
                 </div>
 
-                <a th:href="@{/api/reportes/ventas/{nombre}(nombre=${nombres})}" class="relative z-10">
-                    <button class="bg-white/25 text-white border border-white px-6 py-3 rounded-lg font-semibold shadow-md hover:bg-emerald-800 hover:border-emerald-600 transition transform duration-200 flex items-center gap-2">
-                        <i class="fas fa-file-pdf"></i>
-                        Generar Reporte
+                <!-- GASTOS -->
+                <div class="section-card bg-red-50 border border-red-200">
+                    <h4 class="font-semibold text-gray-800 mb-3 flex items-center text-sm">
+                        <i class='bx bx-receipt mr-2 text-lg'></i>
+                        Gastos Registrados
+                    </h4>
+                    <div class="space-y-2">
+                        <div th:if="${not #lists.isEmpty(venta.listaGastos)}">
+                            <div th:each="gasto : ${venta.listaGastos}" class="flex justify-between text-sm py-1 border-b border-red-100">
+                                <span class="text-gray-700" th:text="${gasto.nombreGasto}">Concepto</span>
+                                <span class="font-bold text-red-600" th:text="'$' + ${#numbers.formatInteger(gasto.valorGasto, 0, 'COMMA')}">$0</span>
+                            </div>
+                            <div class="flex justify-between font-bold text-red-700 mt-2 pt-2 border-t border-red-200">
+                                <span>Total Gastos:</span>
+                                <span th:text="'$' + ${#numbers.formatInteger(venta.totalGastos, 0, 'COMMA')}">$0</span>
+                            </div>
+                        </div>
+                        <div th:unless="${not #lists.isEmpty(venta.listaGastos)}" class="text-sm text-gray-600">
+                            Sin gastos registrados
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NOTAS -->
+                <div class="section-card bg-gray-50">
+                    <h4 class="font-semibold text-gray-800 mb-3 flex items-center text-sm">
+                        <i class='bx bx-note mr-2 text-lg'></i>
+                        Notas
+                    </h4>
+                    <div th:if="${venta.nota != null and !#strings.isEmpty(venta.nota)}" class="text-sm text-gray-700 p-3 bg-white rounded border border-gray-200" th:text="${venta.nota}">
+                        Nota...
+                    </div>
+                    <div th:unless="${venta.nota != null and !#strings.isEmpty(venta.nota)}" class="text-sm text-gray-500">
+                        Sin notas
+                    </div>
+                </div>
+
+                <!-- GANANCIA NETA -->
+                <div class="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-300 rounded-lg p-4">
+                    <div class="flex justify-between items-center">
+                        <span class="font-semibold text-gray-800">Ganancia Neta:</span>
+                        <span class="text-2xl font-bold text-green-700" th:text="'$' + ${#numbers.formatInteger(venta.gananciaNeta, 0, 'COMMA')}">$0</span>
+                    </div>
+                    <p class="text-xs text-green-600 mt-1">Precio - Gastos</p>
+                </div>
+
+                <!-- ACCIONES -->
+                <div class="flex gap-3 pt-4 border-t border-gray-200">
+                    <form th:action="@{/vendedor/ventas/detalle-venta/{id}(id=${venta.idVenta})}">
+                        <button type="submit" class="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg font-medium transition">
+                            <i class='bx bx-show'></i> Ver Detalles
+                        </button>
+                    </form>
+
+                    <button th:if="${venta.estado == 'EN_PROCESO' && !venta.pagado}"
+                            onclick="abrirModalCancelar(this)" th:attr="data-id=${venta.idVenta}"
+                            class="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-red-50 hover:bg-red-100 text-red-700 rounded-lg font-medium transition">
+                        <i class='bx bx-x-circle'></i> Cancelar
                     </button>
-                </a>
-            </div>
 
-            <!-- Lista de Ventas -->
-            <div class="space-y-4">
-                <div th:each="venta : ${ventas}">
-                    <div class="card-hover venta-card rounded-xl shadow-lg overflow-hidden">
-                        <!-- Header con Producto e Imagen -->
-                        <div class="px-6 py-3 gradient-bg border-gray-100">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center space-x-3">
-                                    <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-md">
-                                        <i th:if="${venta.producto instanceof T(com.proyecto.terranova.entity.Ganado)}" class="fas fa-cow text-emerald-600 text-sm"></i>
-                                        <i th:if="${venta.producto instanceof T(com.proyecto.terranova.entity.Terreno)}" class="fas fa-mountain text-emerald-600 text-sm"></i>
-                                        <i th:if="${venta.producto instanceof T(com.proyecto.terranova.entity.Finca)}" class="fas fa-house text-emerald-600 text-sm"></i>
-                                    </div>
-                                    <div>
-                                        <h3 class="text-lg font-bold text-white" th:text="${venta.producto.nombreProducto}">NombreProducto</h3>
-                                        <p class="text-xs text-white" th:text="'ID: ' + ${venta.idVenta} + ' • ' + 'Iniciado el ' + ${#temporals.format(venta.fechaInicioVenta, 'dd/MM/yyyy')}"></p>
-                                    </div>
-                                </div>
-                                <div class="flex items-center bg-white px-3 py-1 rounded-full shadow-sm">
-                                    <span th:switch="${venta.estado}">
-                                        <span th:case="'Finalizada'" class="status-dot status-finalizada"></span>
-                                        <span th:case="'Cancelada'" class="status-dot status-cancelada"></span>
-                                        <span th:case="'En Proceso'" class="status-dot status-en-proceso"></span>
-                                        <span th:case="'Pendiente Confirmacion'" class="status-dot status-pendiente"></span>
-                                    </span>
-                                    <span class="text-xs font-semibold text-gray-700" th:text="${venta.estado}"></span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="p-5">
-                            <!-- Layout Principal: Imagen Grande + Info -->
-                            <div th:classappend="${venta.estado == 'En Proceso' ? 'opacity-100' : 'opacity-75'}" class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-
-                                <!-- COLUMNA IZQUIERDA: Imagen Grande + Info Principal -->
-                                <div class="space-y-4">
-                                    <!-- Producto Info -->
-                                    <div class="section-card rounded-lg p-4">
-                                        <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
-                                            <div class="w-6 h-6 accent-green rounded-md flex items-center justify-center mr-2">
-                                                <i class="fas fa-box text-white text-xs"></i>
-                                            </div>
-                                            Producto
-                                        </h4>
-                                        <div class="space-y-2">
-                                            <div class="flex justify-between py-1 border-b border-gray-100">
-                                                <span class="text-gray-600 text-sm">Tipo:</span>
-                                                <span class="font-medium text-gray-800 text-sm">
-                                                    <span th:if="${venta.producto instanceof T(com.proyecto.terranova.entity.Ganado)}">Ganado</span>
-                                                    <span th:if="${venta.producto instanceof T(com.proyecto.terranova.entity.Terreno)}">Terreno</span>
-                                                    <span th:if="${venta.producto instanceof T(com.proyecto.terranova.entity.Finca)}">Finca</span>
-                                                </span>
-                                            </div>
-                                            <div class="flex justify-between py-1 border-b border-gray-100">
-                                                <span class="text-gray-600 text-sm">Ubicación:</span>
-                                                <span class="font-medium text-gray-800 text-sm" th:text="${venta.producto.ciudad.nombreCiudad}"></span>
-                                            </div>
-                                            <div class="flex justify-between py-1 border-b border-gray-100">
-                                                <span class="text-gray-600 text-sm">Fecha De Publicación:</span>
-                                                <span class="font-medium text-gray-800 text-sm" th:text="${#strings.capitalize(#temporals.format(venta.producto.fechaPublicacion, 'EEEE d MMMM', T(java.util.Locale).forLanguageTag('es-ES')))}"></span>
-                                            </div>
-                                            <div class="flex justify-between py-1">
-                                                <span class="text-gray-600 text-sm">Detalle del producto: </span>
-                                                <a th:href="@{'/vendedor/productos/Detalle/' + ${venta.producto.idProducto}}"
-                                                   class="font-medium text-blue-600 underline text-sm hover:text-blue-800">Ver detalle de producto</a>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Comprador Info -->
-                                    <div class="section-card rounded-lg p-4">
-                                        <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
-                                            <div class="w-6 h-6 accent-blue rounded-md flex items-center justify-center mr-2">
-                                                <i class="fas fa-user text-white text-xs"></i>
-                                            </div>
-                                            Comprador
-                                        </h4>
-                                        <div class="space-y-2">
-                                            <div class="flex justify-between py-1 border-b border-gray-100">
-                                                <span class="text-gray-600 text-sm">Nombres:</span>
-                                                <span class="font-medium text-gray-800 text-sm" th:text="${venta.comprador.nombres}"></span>
-                                            </div>
-                                            <div class="flex justify-between py-1 border-b border-gray-100">
-                                                <span class="text-gray-600 text-sm">Apellidos:</span>
-                                                <span class="font-medium text-gray-800 text-sm" th:text="${venta.comprador.apellidos}"></span>
-                                            </div>
-                                            <div class="flex justify-between py-1 border-b border-gray-100">
-                                                <span class="text-gray-600 text-sm">Teléfono:</span>
-                                                <span class="font-medium text-gray-800 text-sm" th:text="'+57 ' + ${venta.comprador.telefono}"></span>
-                                            </div>
-                                            <div class="flex justify-between py-1">
-                                                <span class="text-gray-600 text-sm">Email:</span>
-                                                <span class="font-medium text-gray-800 text-xs" th:text="${venta.comprador.email}"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Venta Info -->
-                                    <div class="section-card rounded-lg p-4">
-                                        <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
-                                            <div class="w-6 h-6 accent-yellow rounded-md flex items-center justify-center mr-2">
-                                                <i class="fas fa-dollar-sign text-white text-xs"></i>
-                                            </div>
-                                            Venta
-                                        </h4>
-
-                                        <!-- Modo Visión -->
-                                        <div th:id="'modo-vision-ventas-' + ${venta.idVenta}">
-                                            <div class="space-y-2">
-                                                <div class="flex justify-between py-1 border-b border-gray-100">
-                                                    <span class="text-gray-600 text-sm">Precio:</span>
-                                                    <span class="font-bold text-green-700" th:text="'$' + ${#numbers.formatInteger(venta.producto.precioProducto, 0, 'COMMA')}"></span>
-                                                </div>
-                                                <div class="flex justify-between py-1 border-b border-gray-100">
-                                                    <span class="text-gray-600 text-sm">Estado:</span>
-                                                    <span class="font-medium text-sm"
-                                                          th:classappend="${venta.estado == 'En Proceso' ? 'text-yellow-600' : (venta.estado == 'Finalizada' ? 'text-green-600' : 'text-gray-600')}"
-                                                          th:text="${venta.estado}"></span>
-                                                </div>
-                                                <div class="flex justify-between py-1 border-b border-gray-100">
-                                                    <span class="text-gray-600 text-sm">Fecha:</span>
-                                                    <span class="font-medium text-gray-800 text-sm">
-                                                        <span th:if="${venta.fechaVenta != null and venta.fechaVenta != ''}"
-                                                              th:text="${#strings.capitalize(#temporals.format(venta.fechaVenta, 'EEEE d MMMM - h:mm a', T(java.util.Locale).forLanguageTag('es-ES')))}"></span>
-                                                        <span th:unless="${venta.fechaVenta != null and venta.fechaVenta != ''}">Aún no se ha finalizado</span>
-                                                    </span>
-                                                </div>
-                                                <div class="flex justify-between py-1">
-                                                    <span class="text-gray-600 text-sm">Método De Pago:</span>
-                                                    <span class="font-medium text-gray-800 text-sm">
-                                                        <span th:if="${venta.metodoPago != null and venta.metodoPago != ''}" th:text="${venta.metodoPago}"></span>
-                                                        <span th:unless="${venta.metodoPago != null and venta.metodoPago != ''}">Aún no se ha finalizado</span>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- Modo Edición -->
-                                        <div th:id="'modo-edicion-ventas-' + ${venta.idVenta}" class="hidden">
-                                            <div class="space-y-3">
-                                                <!-- Precio (Solo lectura) -->
-                                                <div class="p-3 bg-white rounded-lg shadow-sm border border-gray-100">
-                                                    <label class="block text-sm font-medium text-gray-600 mb-1">Precio del producto</label>
-                                                    <div class="font-bold text-green-700 text-lg" th:text="'$' + ${#numbers.formatInteger(venta.producto.precioProducto, 0, 'COMMA')}"></div>
-                                                </div>
-
-                                                <!-- Fecha - Editable -->
-                                                <div class="p-3 bg-white rounded-lg shadow-sm border border-gray-100">
-                                                    <label class="block text-sm font-medium text-gray-600 mb-2">Fecha de venta</label>
-                                                    <input type="datetime-local" th:id="'fecha-input-' + ${venta.idVenta}"
-                                                           name="fechaVenta"
-                                                           th:value="${venta.fechaVenta}"
-                                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-gray-500 focus:ring-1 focus:ring-gray-500 shadow-sm"
-                                                           placeholder="Selecciona la fecha de venta">
-                                                </div>
-
-                                                <!-- Método de Pago - Editable -->
-                                                <div class="p-3 bg-white rounded-lg shadow-sm border border-gray-100">
-                                                    <label th:for="'metodo-input-' + ${venta.idVenta}" class="block text-sm font-medium text-gray-600 mb-2">
-                                                        Método de pago
-                                                    </label>
-                                                    <select th:id="'metodo-input-' + ${venta.idVenta}"
-                                                            name="metodoPago"
-                                                            class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-gray-500 focus:ring-1 focus:ring-gray-500 shadow-sm">
-                                                        <option value="">Seleccionar método de pago</option>
-                                                        <option th:each="metodo : ${T(java.util.List).of('Efectivo','Transferencia','Cheque','Credito','Consignacion')}"
-                                                                th:value="${metodo}"
-                                                                th:text="${metodo == 'Credito' ? 'Crédito' : (metodo == 'Consignacion' ? 'Consignación' : metodo)}"
-                                                                th:selected="${venta.metodoPago != null and venta.metodoPago.equals(metodo)}">
-                                                        </option>
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                            <!-- Información adicional -->
-                                            <div class="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-100 shadow-sm">
-                                                <div class="flex items-center text-sm text-gray-600">
-                                                    <i class="fas fa-info-circle text-blue-500 mr-2"></i>
-                                                    <span>Estos campos son opcionales hasta que finalices la venta</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- COLUMNA DERECHA: Detalles Adicionales -->
-                                <div>
-                                    <!-- Modo Visión -->
-                                    <div th:id="'modo-vision-resto-' + ${venta.idVenta}">
-                                        <div class="space-y-4">
-
-                                            <!-- Gastos Adicionales -->
-                                            <div class="section-card rounded-lg p-4">
-                                                <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
-                                                    <div class="w-6 h-6 bg-gradient-to-r from-red-500 to-red-600 rounded-md flex items-center justify-center mr-2">
-                                                        <i class="fas fa-receipt text-white text-xs"></i>
-                                                    </div>
-                                                    Gastos
-                                                </h4>
-                                                <div class="space-y-2">
-                                                    <div th:if="${not #lists.isEmpty(venta.listaGastos) or venta.estado == 'Finalizada'}">
-                                                        <div th:each="gasto : ${venta.listaGastos}">
-                                                            <div class="flex justify-between items-center py-1 border-b border-gray-100">
-                                                                <span class="text-gray-700 text-sm" th:text="${gasto.nombreGasto}"></span>
-                                                                <span class="font-semibold text-gray-900 text-sm" th:text="'$' + ${#numbers.formatDecimal(gasto.valorGasto, 0, 'POINT', 0, 'COMMA')}"></span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="mt-5 flex justify-between items-center py-2 bg-gradient-to-r from-red-50 to-red-100 rounded px-3 border border-red-200">
-                                                            <span class="font-semibold text-gray-800 text-sm">Total:</span>
-                                                            <span class="font-bold text-red-600" th:text="'$' + ${#numbers.formatDecimal(venta.totalGastos, 0, 'POINT', 0, 'COMMA')}"></span>
-                                                        </div>
-                                                    </div>
-                                                    <div th:unless="${not #lists.isEmpty(venta.listaGastos) or venta.estado == 'Finalizada'}">
-                                                        <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
-                                                            <div class="flex">
-                                                                <div class="flex-shrink-0">
-                                                                    <i class="fas fa-info-circle text-blue-400 text-lg"></i>
-                                                                </div>
-                                                                <div class="ml-3">
-                                                                    <p class="text-sm text-blue-700 leading-relaxed">
-                                                                        Aún no has registrado gastos para esta venta. Estos gastos son solo visibles para ti.
-                                                                    </p>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <!-- Comprobantes -->
-                                            <div class="section-card rounded-lg p-4">
-                                                <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
-                                                    <div class="w-6 h-6 accent-purple rounded-md flex items-center justify-center mr-2">
-                                                        <i class="fas fa-paperclip text-white text-xs"></i>
-                                                    </div>
-                                                    <span th:text="'Archivos (' + ${#lists.size(venta.listaComprobantes)} + ')'">Archivos (0)</span>
-                                                </h4>
-                                                <div class="space-y-2">
-                                                    <div th:if="${not #lists.isEmpty(venta.listaComprobantes)}">
-                                                        <div th:each="comprobante : ${venta.listaComprobantes}">
-                                                            <a th:href="@{'/archivos/' + ${comprobante.rutaArchivo}}" target="_blank"
-                                                               class="hover:bg-gray-200 cursor-pointer block">
-                                                                <div class="flex items-center space-x-3 p-2 bg-gradient-to-r from-gray-50 to-gray-100 rounded border border-gray-200">
-                                                                    <div class="file-icon bg-red-100 text-red-600">
-                                                                        <i class="fas fa-file-pdf"></i>
-                                                                    </div>
-                                                                    <div class="flex-1">
-                                                                        <p class="font-medium text-gray-800 text-sm" th:text="${comprobante.nombreComprobante}"></p>
-                                                                    </div>
-                                                                </div>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                    <div th:unless="${not #lists.isEmpty(venta.listaComprobantes)}">
-                                                        <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
-                                                            <div class="flex">
-                                                                <div class="flex-shrink-0">
-                                                                    <i class="fas fa-info-circle text-blue-400 text-lg"></i>
-                                                                </div>
-                                                                <div class="ml-3">
-                                                                    <p class="text-sm text-blue-700 leading-relaxed">
-                                                                        Aún no has subido comprobantes para esta venta. Debes subir al menos un archivo para finalizarla.
-                                                                    </p>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <!-- Notas -->
-                                            <div class="section-card rounded-lg p-4">
-                                                <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
-                                                    <div class="w-6 h-6 bg-gradient-to-r from-gray-500 to-gray-600 rounded-md flex items-center justify-center mr-2">
-                                                        <i class="fas fa-sticky-note text-white text-xs"></i>
-                                                    </div>
-                                                    Notas
-                                                </h4>
-                                                <div th:if="${venta.nota != null and !#strings.isEmpty(venta.nota)}">
-                                                    <p class="text-gray-700 text-sm leading-relaxed bg-gradient-to-r from-gray-50 to-gray-100 p-3 rounded" th:text="${venta.nota}"></p>
-                                                </div>
-                                                <div th:unless="${venta.nota != null and !#strings.isEmpty(venta.nota)}">
-                                                    <p class="text-gray-700 text-sm leading-relaxed bg-gradient-to-r from-gray-50 to-gray-100 p-3 rounded">
-                                                        Puedes hacer click en <strong>"Editar"</strong> para escribir detalles privados sobre esta venta.
-                                                    </p>
-                                                </div>
-                                            </div>
-
-                                            <!-- Ganancia Neta -->
-                                            <div class="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-300 rounded-lg p-4 shadow-md">
-                                                <div class="flex justify-between items-center">
-                                                    <span class="font-semibold text-gray-800 flex items-center text-sm">
-                                                        <div class="w-6 h-6 accent-green rounded-md flex items-center justify-center mr-2">
-                                                            <i class="fas fa-coins text-white text-xs"></i>
-                                                        </div>
-                                                        Ganancia Neta:
-                                                    </span>
-                                                    <span class="text-xl font-bold text-green-700" th:text="'$' + ${#numbers.formatInteger(venta.gananciaNeta, 0, 'COMMA')}"></span>
-                                                </div>
-                                                <p class="text-xs text-green-600 mt-1 ml-8">Precio - Gastos</p>
-                                            </div>
-
-                                        </div>
-                                    </div>
-
-                                    <!-- Modo Edición -->
-                                    <div th:id="'modo-edicion-resto-' + ${venta.idVenta}" class="hidden">
-                                        <div class="space-y-4">
-
-                                            <!-- Gastos Adicionales EDICION -->
-                                            <div class="section-card rounded-lg p-4 bg-red-50 border border-red-200">
-                                                <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
-                                                    <div class="w-6 h-6 bg-gradient-to-r from-red-500 to-red-600 rounded-md flex items-center justify-center mr-2">
-                                                        <i class="fas fa-receipt text-white text-xs"></i>
-                                                    </div>
-                                                    Editar gastos
-                                                    <button class="ml-auto px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition"
-                                                            th:onclick="|agregarGasto(${venta.idVenta})|">
-                                                        <i class="fas fa-plus mr-1"></i>Agregar
-                                                    </button>
-                                                </h4>
-
-                                                <!-- Lista de gastos existentes -->
-                                                <div class="space-y-2">
-                                                    <div th:if="${venta.listaGastos != null and !#lists.isEmpty(venta.listaGastos)}">
-                                                        <div th:each="g : ${venta.listaGastos}"
-                                                             class="gasto-editable flex items-center space-x-3 p-2 bg-gradient-to-r from-gray-50 to-gray-100 rounded border border-gray-200 gasto-item">
-                                                            <div class="file-icon bg-red-100 text-red-600">
-                                                                <i class="fas fa-receipt"></i>
-                                                            </div>
-                                                            <div class="flex-1 space-y-1">
-                                                                <input type="text" name="nombreGasto" th:value="${g.nombreGasto}" placeholder="Concepto del gasto"
-                                                                       class="nombreGasto w-full px-2 py-1 border border-gray-300 rounded text-sm focus:border-red-500 focus:ring-1 focus:ring-red-500">
-                                                                <input type="number" name="valorGasto" th:value="${g.valorGasto}" placeholder="0.00"
-                                                                       class="valorGasto w-full px-2 py-1 border border-gray-300 rounded text-sm focus:border-red-500 focus:ring-1 focus:ring-red-500"
-                                                                       min="0" step="0.01">
-                                                            </div>
-                                                            <button type="button" class="text-red-600 hover:text-red-800 px-2 py-1 rounded hover:bg-red-100 transition-colors"
-                                                                    th:onclick="|eliminarGasto(this, ${g.idGasto})|" title="Eliminar gasto">
-                                                                <i class="fas fa-trash text-xs"></i>
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                    <div th:unless="${venta.listaGastos != null and !#lists.isEmpty(venta.listaGastos)}"
-                                                         class="bg-blue-50 border-l-4 border-blue-400 p-4">
-                                                        <div class="flex">
-                                                            <i class="fas fa-info-circle text-blue-400 mr-3"></i>
-                                                            <p class="text-sm text-blue-700">
-                                                                Aún no has registrado gastos. Usa el botón "Agregar" para crear uno.
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Contenedor para nuevos gastos -->
-                                                <div class="space-y-2 mt-3" th:id="'lista-gastos-' + ${venta.idVenta}"></div>
-                                            </div>
-
-                                            <!-- Comprobantes EDICION -->
-                                            <div class="section-card rounded-lg p-4 bg-purple-50 border border-purple-200"
-                                                 th:id="'formulario-comprobantes-' + ${venta.idVenta}">
-                                                <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
-                                                    <div class="w-6 h-6 accent-purple rounded-md flex items-center justify-center mr-2">
-                                                        <i class="fas fa-paperclip text-white text-xs"></i>
-                                                    </div>
-                                                    Editar archivos (<span th:id="'contador-archivos-' + ${venta.idVenta}">0</span>)
-                                                </h4>
-
-                                                <!-- Archivos existentes -->
-                                                <div class="space-y-2 mb-4" th:id="'archivos-existentes-' + ${venta.idVenta}">
-                                                    <div th:if="${venta.listaComprobantes != null and !#lists.isEmpty(venta.listaComprobantes)}">
-                                                        <div th:each="c : ${venta.listaComprobantes}"
-                                                             class="comprobante-editable flex items-center space-x-3 p-2 bg-white rounded archivo-existente"
-                                                             th:attr="data-archivo-id=${c.idComprobante}">
-                                                            <div class="file-icon bg-red-100 text-red-600">
-                                                                <i class="fas fa-file-pdf"></i>
-                                                            </div>
-                                                            <div class="flex-1">
-                                                                <p class="font-medium text-gray-800 text-sm" th:text="${c.nombreComprobante}">Archivo.pdf</p>
-                                                                <p class="text-xs text-gray-500">Archivo existente</p>
-                                                            </div>
-                                                            <button type="button"
-                                                                    class="text-red-600 hover:text-red-800 px-2 py-1 rounded hover:bg-red-100 transition-colors"
-                                                                    th:onclick="|eliminarComprobante(this, ${c.idComprobante})|"
-                                                                    title="Eliminar archivo">
-                                                                <i class="fas fa-trash text-xs"></i>
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                    <div th:unless="${venta.listaComprobantes != null and !#lists.isEmpty(venta.listaComprobantes)}"
-                                                         class="bg-blue-50 border-l-4 border-blue-400 p-3 rounded">
-                                                        <div class="flex">
-                                                            <i class="fas fa-info-circle text-blue-400 mr-3"></i>
-                                                            <p class="text-sm text-blue-700">
-                                                                No hay archivos subidos. Usa el botón de abajo para agregar.
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Nuevos archivos seleccionados -->
-                                                <div class="space-y-2 mb-4" th:id="'archivos-nuevos-' + ${venta.idVenta}"></div>
-
-                                                <!-- Input para subir archivos -->
-                                                <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center bg-white">
-                                                    <input type="file" name="comprobantes[]"
-                                                           th:id="'input-archivos-' + ${venta.idVenta}"
-                                                           class="hidden input-comprobantes"
-                                                           th:attr="data-id=${venta.idVenta}"
-                                                           multiple
-                                                           accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.txt"
-                                                           onchange="manejarArchivosSeleccionados(this)">
-                                                    <button type="button"
-                                                            th:onclick="|document.getElementById('input-archivos-${venta.idVenta}').click()|"
-                                                            class="text-sm px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded transition-colors flex items-center gap-2 mx-auto">
-                                                        <i class="fas fa-upload"></i>
-                                                        Seleccionar archivos
-                                                    </button>
-                                                    <p class="text-xs text-gray-500 mt-2">
-                                                        Formatos: PDF, JPG, PNG, DOC, DOCX, TXT (Máx. 10MB)
-                                                    </p>
-                                                </div>
-                                            </div>
-
-                                            <!-- Notas EDICION -->
-                                            <div class="section-card rounded-lg p-4 bg-gray-50 border border-gray-200">
-                                                <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
-                                                    <div class="w-6 h-6 bg-gradient-to-r from-gray-500 to-gray-600 rounded-md flex items-center justify-center mr-2">
-                                                        <i class="fas fa-sticky-note text-white text-xs"></i>
-                                                    </div>
-                                                    Editar notas
-                                                </h4>
-                                                <div class="space-y-2">
-                                                    <textarea th:id="'nota-input-' + ${venta.idVenta}"
-                                                              name="nota"
-                                                              rows="4"
-                                                              class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-gray-500 focus:ring-1 focus:ring-gray-500 resize-vertical"
-                                                              placeholder="Escribe aquí tus notas privadas sobre esta venta..."
-                                                              th:text="${venta.nota}"></textarea>
-                                                    <div class="flex justify-between text-xs text-gray-500">
-                                                        <span>Notas privadas - Solo visibles para ti</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Botones de Acción según Estado -->
-                            <div th:switch="${venta.estado}">
-
-                                <!-- Estado: Finalizada -->
-                                <div th:case="'Finalizada'" class="mt-4 bg-green-50 border-l-4 border-green-400 p-3 rounded">
-                                    <div class="flex">
-                                        <i class="fas fa-check-circle text-green-400 mt-1 mr-3"></i>
-                                        <div>
-                                            <p class="text-sm font-semibold text-green-700">Venta finalizada con éxito</p>
-                                            <p class="text-xs text-green-600 mt-1">Esta venta ha sido completada y el producto ya no está disponible.</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Estado: En Proceso -->
-                                <div th:case="'En Proceso'">
-                                    <!-- Modo Visión Botones -->
-                                    <div th:id="'modo-vision-botones-' + ${venta.idVenta}"
-                                         class="mt-5 flex justify-end space-x-3 pt-4 border-t border-gray-200">
-                                        <button type="button"
-                                                th:onclick="'activarEdicion(' + ${venta.idVenta} + ')'"
-                                                class="px-4 py-2 bg-gradient-to-r from-gray-100 to-gray-200 hover:from-gray-200 hover:to-gray-300 text-gray-700 rounded-lg font-medium transition-all duration-200 flex items-center shadow-sm text-sm">
-                                            <i class="fas fa-edit mr-2"></i> Editar
-                                        </button>
-
-                                        <form th:action="@{/vendedor/venta/enviar-peticion-venta}" method="post">
-                                            <input type="hidden" name="cedulaComprador" th:value="${venta.comprador.cedula}">
-                                            <input type="hidden" name="nombreProducto" th:value="${venta.producto.nombreProducto}">
-                                            <input type="hidden" name="fechaVenta" th:value="${venta.fechaVenta}">
-                                            <input type="hidden" name="metodoPago" th:value="${venta.metodoPago}">
-                                            <input type="hidden" name="idVenta" th:value="${venta.idVenta}">
-                                            <input type="hidden" name="comprobantes" th:value="${#lists.size(venta.listaComprobantes)}">
-
-                                            <button class="px-4 py-2 accent-green hover:from-green-600 hover:to-green-700 text-white rounded-lg font-medium transition-all duration-200 flex items-center shadow-md text-sm">
-                                                <i class="fas fa-check-circle mr-2"></i> Finalizar Venta
-                                            </button>
-                                        </form>
-
-                                        <form th:action="@{/vendedor/ventas/detalle-venta/{id}(id=${venta.idVenta})}" method="get">
-                                            <button class="px-4 py-2 accent-green hover:from-green-600 hover:to-green-700 text-white rounded-lg font-medium transition-all duration-200 flex items-center shadow-md text-sm">
-                                                <i class="fas fa-check-circle mr-2"></i> Ver Proceso
-                                            </button>
-                                        </form>
-                                    </div>
-
-                                    <!-- Modo Edición Botones -->
-                                    <div th:id="'modo-edicion-botones-' + ${venta.idVenta}"
-                                         class="mt-5 flex justify-end space-x-3 pt-4 border-t border-gray-200 hidden">
-                                        <button th:onclick="'cancelarEdicion(' + ${venta.idVenta} + ')'"
-                                                class="px-4 py-2 accent-red hover:from-red-600 hover:to-red-700 text-white rounded-lg font-medium transition-all duration-200 flex items-center shadow-md text-sm">
-                                            <i class="fas fa-times mr-2"></i> Cancelar
-                                        </button>
-
-                                        <button th:onclick="'guardarCambios(' + ${venta.idVenta} + ')'"
-                                                class="px-4 py-2 accent-green hover:from-green-600 hover:to-green-700 text-white rounded-lg font-medium transition-all duration-200 flex items-center shadow-md text-sm">
-                                            <i class="fas fa-save mr-2"></i> Guardar Cambios
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <!-- Estado: Pendiente Confirmación -->
-                                <div th:case="'Pendiente Confirmacion'" class="mt-4 bg-blue-50 border-l-4 border-blue-400 p-3 rounded">
-                                    <div class="flex">
-                                        <i class="fas fa-clock text-blue-400 mt-1 mr-3"></i>
-                                        <div>
-                                            <p class="text-sm font-semibold text-blue-700">Esperando confirmación del comprador</p>
-                                            <p class="text-xs text-blue-600 mt-1">Tu solicitud de finalización fue enviada. El comprador debe aceptarla para completar la venta.</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Estado: Cancelada -->
-                                <div th:case="'Cancelada'" class="mt-4 bg-red-50 border-l-4 border-red-400 p-3 rounded">
-                                    <div class="flex justify-between items-center">
-                                        <div class="flex items-start">
-                                            <i class="fas fa-times-circle text-red-400 mt-1 mr-3"></i>
-                                            <div>
-                                                <p class="text-sm font-semibold text-red-700">Venta cancelada</p>
-                                                <p class="text-xs text-red-600 mt-1">Esta venta fue cancelada por el comprador.</p>
-                                            </div>
-                                        </div>
-                                        <button th:onclick="'eliminarVenta(' + ${venta.idVenta} + ')'"
-                                                class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-all duration-200 flex items-center shadow-md text-sm">
-                                            <i class="fas fa-trash mr-2"></i> Eliminar
-                                        </button>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
+                    <div th:if="${venta.pagado && venta.estado == 'EN_PROCESO'}" class="flex-1 px-4 py-2 bg-gray-100 text-gray-500 rounded-lg font-medium text-center flex items-center justify-center gap-2">
+                        <i class='bx bx-lock'></i> Bloqueado
                     </div>
                 </div>
-
-                <!-- Estado Vacío -->
-                <div th:if="${#lists.isEmpty(ventas)}" class="text-center py-12 fade-in">
-                    <div class="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-shopping-cart text-gray-400 text-3xl"></i>
-                    </div>
-                    <h3 class="text-lg font-medium text-gray-900 mb-2">No tienes ventas registradas</h3>
-                    <p class="text-gray-600 mb-6">Las ventas se inician después de finalizar una cita con un comprador.</p>
-                    <a th:href="@{/vendedor/citas}"
-                       class="inline-flex items-center px-6 py-3 gradient-bg text-white rounded-xl hover:opacity-90 transition">
-                        <i class="fas fa-calendar mr-2"></i>
-                        Ir a Mis Citas
-                    </a>
-                </div>
             </div>
-
-        </main>
+        </div>
     </div>
+
+    <!-- VISTA: GRÁFICAS -->
+    <div id="vistaGraficas" class="hidden space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="bg-white rounded-2xl p-6 shadow-md border border-gray-200">
+                <h3 class="text-lg font-bold text-gray-900 mb-4">Estado de Ventas</h3>
+                <div class="chart-container" style="height: 250px;">
+                    <canvas id="chartEstados"></canvas>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 shadow-md border border-gray-200">
+                <h3 class="text-lg font-bold text-gray-900 mb-4">Productos Vendidos</h3>
+                <div class="chart-container" style="height: 250px;">
+                    <canvas id="chartProductos"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-6 shadow-md border border-gray-200">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">Ingresos Mensual</h3>
+            <div class="chart-container">
+                <canvas id="chartIngresos"></canvas>
+            </div>
+        </div>
+    </div>
+
 </div>
 
-<!-- Modales -->
-<div id="modalPeticionVenta"
-     class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 hidden">
-    <div id="modalContentPeticionVenta"
-         class="bg-white rounded-2xl shadow-xl p-10 transform scale-75 opacity-0 transition duration-300 ease-out max-w-md">
-        <div class="text-center">
-            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i class="fas fa-check-circle text-green-600 text-3xl"></i>
-            </div>
-            <h2 class="text-xl font-bold text-gray-800 mb-2">Petición realizada con éxito</h2>
-            <p class="text-gray-600 mb-6">
-                Esta acción notificará al comprador que la venta ha sido finalizada.
-            </p>
-            <button onclick="cerrarModalPeticionVenta()"
-                    class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition">
-                Entendido
+<!-- MODAL: Detalles -->
+<div class="modal-backdrop" id="modalDetalles">
+    <div class="modal-content">
+        <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between bg-gradient-emerald text-white rounded-t-2xl">
+            <h2 class="text-xl font-bold">Detalles de la Venta</h2>
+            <button onclick="cerrarModalDetalles()" class="text-white/80 hover:text-white">
+                <i class='bx bx-x text-2xl'></i>
+            </button>
+        </div>
+        <div class="px-6 py-6 space-y-4" id="contenidoDetalles"></div>
+        <div class="px-6 py-4 border-t border-gray-200">
+            <button onclick="cerrarModalDetalles()" class="w-full px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-medium transition">
+                Cerrar
             </button>
         </div>
     </div>
 </div>
 
-<div id="modalDatosIncompletos"
-     class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 hidden">
-    <div id="modalContentDatosIncompletos"
-         class="bg-white rounded-2xl shadow-xl p-10 transform scale-75 opacity-0 transition duration-300 ease-out max-w-md">
-        <div class="text-center">
-            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i class="fas fa-exclamation-triangle text-red-600 text-3xl"></i>
+<!-- MODAL: Cancelar -->
+<div class="modal-backdrop" id="modalCancelar">
+    <div class="modal-content">
+        <div class="px-6 py-4 bg-red-50 border-b border-red-200 rounded-t-2xl">
+            <h2 class="text-xl font-bold text-red-700 flex items-center gap-2">
+                <i class='bx bx-error-circle'></i> Cancelar Venta
+            </h2>
+        </div>
+        <div class="px-6 py-6 space-y-4">
+            <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded">
+                <p class="text-sm font-semibold text-red-700 mb-2">Advertencia</p>
+                <p class="text-sm text-red-600">Al cancelar, se notificará al comprador y se reversa el proceso.</p>
             </div>
-            <h2 class="text-xl font-bold text-red-600 mb-2">Datos incompletos</h2>
-            <p class="text-gray-600 mb-2">
-                No has completado los datos necesarios de la venta.
-            </p>
-            <p class="text-gray-600 mb-6">
-                Recuerda subir al menos un comprobante y completar los campos de "Método de pago" y "Fecha de Venta".
-            </p>
-            <button onclick="cerrarModalDatosIncompletos()"
-                    class="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition">
-                Rellenar Datos
+
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Razón de Cancelación *</label>
+                <textarea id="razonCancelacion" placeholder="Explica brevemente por qué se cancela esta venta..."
+                          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 resize-none"
+                          rows="4"></textarea>
+            </div>
+
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <p class="text-sm font-semibold text-yellow-800 mb-2">Consecuencias:</p>
+                <ul class="text-sm text-yellow-700 space-y-1">
+                    <li class="flex items-start gap-2"><i class='bx bx-check'></i> <span>La venta se marcará como CANCELADA</span></li>
+                    <li class="flex items-start gap-2"><i class='bx bx-check'></i> <span>El comprador será notificado</span></li>
+                    <li class="flex items-start gap-2"><i class='bx bx-check'></i> <span>El producto volverá a estar disponible</span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="px-6 py-4 border-t border-gray-200 flex gap-3">
+            <button onclick="cerrarModalCancelar()" class="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-medium transition">
+                Volver
+            </button>
+            <button onclick="confirmarCancelacion()" class="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition">
+                Cancelar Venta
             </button>
         </div>
     </div>
 </div>
-
-<!-- Scripts -->
-<script th:if="${peticionHecha}">
-    document.addEventListener('DOMContentLoaded', function () {
-        const modal = document.getElementById('modalPeticionVenta');
-        const modalContent = document.getElementById('modalContentPeticionVenta');
-        modal.classList.remove('hidden');
-        requestAnimationFrame(() => {
-            modalContent.classList.remove('scale-75', 'opacity-0');
-            modalContent.classList.add('scale-100', 'opacity-100');
-        });
-    });
-</script>
-
-<script th:if="${ventaIncompleta}">
-    document.addEventListener('DOMContentLoaded', function () {
-        const modal = document.getElementById('modalDatosIncompletos');
-        const modalContent = document.getElementById('modalContentDatosIncompletos');
-        modal.classList.remove('hidden');
-        requestAnimationFrame(() => {
-            modalContent.classList.remove('scale-75', 'opacity-0');
-            modalContent.classList.add('scale-100', 'opacity-100');
-        });
-    });
-</script>
 
 <script>
-    function cerrarModalPeticionVenta() {
-        const modal = document.getElementById('modalPeticionVenta');
-        const modalContent = document.getElementById('modalContentPeticionVenta');
-        modalContent.classList.remove('scale-100', 'opacity-100');
-        modalContent.classList.add('scale-75', 'opacity-0');
-        setTimeout(() => modal.classList.add('hidden'), 300);
-    }
+    let ventasGlobales = /*[[${ventas}]]*/ [];
+    let idVentaACancelar = null;
+    let chartsInstanciados = {};
 
-    function cerrarModalDatosIncompletos() {
-        const modal = document.getElementById('modalDatosIncompletos');
-        const modalContent = document.getElementById('modalContentDatosIncompletos');
-        modalContent.classList.remove('scale-100', 'opacity-100');
-        modalContent.classList.add('scale-75', 'opacity-0');
-        setTimeout(() => {
-            modal.classList.add('hidden');
-            const url = new URL(window.location.href);
-            url.searchParams.delete("modal");
-            window.location.href = url.pathname + '?' + url.searchParams.toString();
-        }, 300);
-    }
-
-    let idsGastosEliminados = [];
-    let idsComprobantesEliminados = [];
-    const archivosSeleccionados = {};
-
-    function activarEdicion(id) {
-        document.getElementById("modo-vision-ventas-" + id).style.display = "none";
-        document.getElementById("modo-edicion-ventas-" + id).style.display = "block";
-        document.getElementById("modo-vision-resto-" + id).style.display = "none";
-        document.getElementById("modo-edicion-resto-" + id).style.display = "block";
-        document.getElementById("modo-vision-botones-" + id).style.display = "none";
-        document.getElementById("modo-edicion-botones-" + id).style.display = "flex";
-    }
-
-    function cancelarEdicion(id) {
-        document.getElementById("modo-vision-ventas-" + id).style.display = "block";
-        document.getElementById("modo-edicion-ventas-" + id).style.display = "none";
-        document.getElementById("modo-vision-resto-" + id).style.display = "block";
-        document.getElementById("modo-edicion-resto-" + id).style.display = "none";
-        document.getElementById("modo-vision-botones-" + id).style.display = "flex";
-        document.getElementById("modo-edicion-botones-" + id).style.display = "none";
-    }
-
-    document.addEventListener("keydown", function (event) {
-        if (event.key === "Enter") {
-            const target = event.target;
-            if (target.tagName === "INPUT" || target.tagName === "TEXTAREA") {
-                event.preventDefault();
-            }
+    // Cambiar Vista
+    function cambiarVista(vista, event) {
+        if (event) {
+            document.querySelectorAll('#vistaToggle .toggle-option').forEach(el => el.classList.remove('active'));
+            event.target.closest('.toggle-option').classList.add('active');
         }
-    });
 
-    function guardarCambios(id) {
-        const datos = new FormData();
-        datos.append("idVenta", id);
-        datos.append("fechaVenta", document.getElementById('fecha-input-' + id).value);
-        datos.append("metodoPago", document.getElementById('metodo-input-' + id).value);
-        datos.append("nota", document.getElementById('nota-input-' + id).value);
+        document.getElementById('vistaCards').classList.toggle('hidden', vista !== 'cards');
+        document.getElementById('vistaGraficas').classList.toggle('hidden', vista !== 'graficas');
 
-        document.querySelectorAll(".gasto-editable").forEach((div, index) => {
-            const nombre = div.querySelector(".nombreGasto").value.trim();
-            const valor = div.querySelector(".valorGasto").value.trim();
-            if (nombre !== "" && valor !== "") {
-                datos.append(`listaGastos[${index}].nombreGasto`, nombre);
-                datos.append(`listaGastos[${index}].valorGasto`, valor);
-            }
-        });
-
-        idsGastosEliminados.forEach(idGasto => datos.append("idsGastosEliminados", idGasto));
-        idsComprobantesEliminados.forEach(idComprobante => datos.append("idsComprobantesEliminados", idComprobante));
-
-        if (archivosSeleccionados[id]) {
-            archivosSeleccionados[id].forEach(archivo => {
-                if (archivo !== null) datos.append("comprobantes", archivo);
-            });
+        if (vista === 'graficas' && !chartsInstanciados.estados) {
+            inicializarGraficas();
         }
+    }
+
+    function abrirModalCancelar(btn) {
+        idVentaACancelar = btn.dataset.id;
+        document.getElementById('modalCancelar').classList.add('active');
+    }
+
+    function cerrarModalCancelar() {
+        document.getElementById('modalCancelar').classList.remove('active');
+        document.getElementById('razonCancelacion').value = '';
+        idVentaACancelar = null;
+    }
+
+    function confirmarCancelacion() {
+        const razon = document.getElementById('razonCancelacion').value.trim();
+        if (!razon) {
+            alert('Por favor escribe una razón para cancelar');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('idVenta', idVentaACancelar);
+        formData.append('razon', razon);
 
         const token = document.querySelector('meta[name="_csrf"]').content;
         const header = document.querySelector('meta[name="_csrf_header"]').content;
 
-        fetch("/vendedor/ventas/actualizar-datos", {
-            method: "POST",
-            body: datos,
-            credentials: "same-origin",
+        fetch('/vendedor/ventas/cancelar', {
+            method: 'POST',
+            body: formData,
             headers: { [header]: token }
         })
-            .then(response => response.text())
-            .then(responseText => {
-                if (responseText === "ok") {
-                    location.reload();
-                } else {
-                    alert("Error: " + responseText);
+        .then(response => response.text())
+        .then(data => {
+            if (data === 'ok') {
+                cerrarModalCancelar();
+                location.reload();
+            } else {
+                alert('Error al cancelar la venta');
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Error al procesar la cancelación');
+        });
+    }
+
+    // Gráficas
+    function inicializarGraficas() {
+        // Gráfica 1: Estados
+        const ctxEstados = document.getElementById('chartEstados').getContext('2d');
+        chartsInstanciados.estados = new Chart(ctxEstados, {
+            type: 'doughnut',
+            data: {
+                labels: ['En Proceso', 'Finalizadas', 'Canceladas'],
+                datasets: [{
+                    data: [
+                        ventasGlobales.filter(v => v.estado === 'EN_PROCESO').length,
+                        ventasGlobales.filter(v => v.estado === 'FINALIZADA').length,
+                        ventasGlobales.filter(v => v.estado === 'CANCELADA').length
+                    ],
+                    backgroundColor: ['#f59e0b', '#10b981', '#ef4444'],
+                    borderColor: '#fff',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { font: { size: 12 }, color: '#6b7280' } }
                 }
-            })
-            .catch(err => {
-                console.error(err);
-                alert("Error al guardar");
-            });
-    }
-
-    function eliminarGasto(btn, idGasto) {
-        if (idGasto && !idsGastosEliminados.includes(idGasto)) {
-            idsGastosEliminados.push(idGasto);
-        }
-        btn.closest(".gasto-editable").remove();
-    }
-
-    function eliminarComprobante(btn, idComprobante) {
-        if (idComprobante && !idsComprobantesEliminados.includes(idComprobante)) {
-            idsComprobantesEliminados.push(idComprobante);
-        }
-        btn.closest(".comprobante-editable").remove();
-    }
-
-    function agregarGasto(idVenta) {
-        const contenedor = document.getElementById("lista-gastos-" + idVenta);
-        const nuevaFila = document.createElement("div");
-        nuevaFila.className = "flex items-center space-x-3 p-2 bg-gradient-to-r from-gray-50 to-gray-100 rounded border border-gray-200 gasto-item mt-2 gasto-editable";
-        nuevaFila.innerHTML = `
-            <div class="file-icon bg-red-100 text-red-600">
-                <i class="fas fa-receipt"></i>
-            </div>
-            <div class="flex-1 space-y-1 gasto">
-                <input type="text" name="nombreGasto" placeholder="Concepto del gasto"
-                    class="nombreGasto w-full px-2 py-1 border border-gray-300 rounded text-sm focus:border-red-500 focus:ring-1 focus:ring-red-500">
-                <input type="number" name="valorGasto" placeholder="0"
-                    class="valorGasto w-full px-2 py-1 border border-gray-300 rounded text-sm focus:border-red-500 focus:ring-1 focus:ring-red-500"
-                    min="0">
-            </div>
-            <button type="button" class="text-red-600 hover:text-red-800 px-2 py-1 rounded hover:bg-red-100 transition-colors"
-                onclick="eliminarGasto(this, 0)" title="Eliminar gasto">
-                <i class="fas fa-trash text-xs"></i>
-            </button>
-        `;
-        contenedor.appendChild(nuevaFila);
-    }
-
-    function manejarArchivosSeleccionados(input) {
-        const idVenta = input.dataset.id;
-        const contenedor = document.getElementById("archivos-nuevos-" + idVenta);
-        const archivos = Array.from(input.files);
-
-        if (!archivosSeleccionados[idVenta]) {
-            archivosSeleccionados[idVenta] = [];
-        }
-
-        archivos.forEach(archivo => {
-            archivosSeleccionados[idVenta].push(archivo);
-            const indice = archivosSeleccionados[idVenta].length - 1;
-            const tamaño = (archivo.size / 1024).toFixed(2);
-
-            const div = document.createElement("div");
-            div.className = "flex items-center space-x-3 p-2 bg-white rounded comprobante-editable";
-            div.setAttribute("data-idVenta", idVenta);
-            div.setAttribute("data-indice", indice);
-
-            const icono = document.createElement("div");
-            icono.className = "file-icon bg-red-100 text-red-600";
-            icono.innerHTML = `<i class="fas fa-file-pdf"></i>`;
-
-            const info = document.createElement("div");
-            info.className = "flex-1";
-            const nombreArchivo = document.createElement("p");
-            nombreArchivo.className = "font-medium text-gray-800 text-sm";
-            nombreArchivo.textContent = archivo.name;
-            const detallesArchivo = document.createElement("p");
-            detallesArchivo.className = "text-xs text-gray-500";
-            detallesArchivo.textContent = `Tamaño: ${tamaño}KB`;
-            info.appendChild(nombreArchivo);
-            info.appendChild(detallesArchivo);
-
-            const btn = document.createElement("button");
-            btn.type = "button";
-            btn.className = "text-red-600 hover:text-red-800 px-2 py-1 rounded hover:bg-red-100 transition-colors";
-            btn.innerHTML = `<i class="fas fa-trash text-xs"></i>`;
-            btn.addEventListener("click", () => eliminarComprobanteNuevo(idVenta, indice, div));
-
-            div.appendChild(icono);
-            div.appendChild(info);
-            div.appendChild(btn);
-            contenedor.appendChild(div);
+            }
         });
 
-        input.value = '';
+        // Gráfica 2: Productos
+        const ctxProductos = document.getElementById('chartProductos').getContext('2d');
+        chartsInstanciados.productos = new Chart(ctxProductos, {
+            type: 'bar',
+            data: {
+                labels: ['Ganado', 'Terreno', 'Finca'],
+                datasets: [{
+                    label: 'Ventas',
+                    data: [
+                        ventasGlobales.filter(v => v.producto.tipo === 'GANADO').length,
+                        ventasGlobales.filter(v => v.producto.tipo === 'TERRENO').length,
+                        ventasGlobales.filter(v => v.producto.tipo === 'FINCA').length
+                    ],
+                    backgroundColor: ['#3b82f6', '#8b5cf6', '#10b981'],
+                    borderRadius: 8,
+                    borderSkipped: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: true, labels: { font: { size: 12 } } } },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+
+        // Gráfica 3: Ingresos
+        const ctxIngresos = document.getElementById('chartIngresos').getContext('2d');
+        chartsInstanciados.ingresos = new Chart(ctxIngresos, {
+            type: 'line',
+            data: {
+                labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Ingresos',
+                    data: [0, 0, 0, 0, 0, 0],
+                    borderColor: '#059669',
+                    backgroundColor: 'rgba(5, 150, 105, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { labels: { font: { size: 12 } } } },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
     }
 
-    function eliminarComprobanteNuevo(idVenta, index, elemento) {
-        archivosSeleccionados[idVenta][index] = null;
-        elemento.remove();
-    }
-
-    function eliminarVenta(idVenta) {
-        if (confirm("¿Estás seguro de que deseas eliminar esta venta cancelada?")) {
-            window.location.href = "/vendedor/ventas/eliminar/" + idVenta;
+    // Cerrar modales con ESC
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            cerrarModalDetalles();
+            cerrarModalCancelar();
         }
-    }
+    });
+
+    // Cerrar modales al hacer click fuera
+    document.getElementById('modalDetalles').addEventListener('click', (e) => {
+        if (e.target.id === 'modalDetalles') cerrarModalDetalles();
+    });
+
+    document.getElementById('modalCancelar').addEventListener('click', (e) => {
+        if (e.target.id === 'modalCancelar') cerrarModalCancelar();
+    });
 
     function toggleUserDropdown() {
         const dropdown = document.getElementById('userDropdown');

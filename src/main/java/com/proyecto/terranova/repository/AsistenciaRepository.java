@@ -1,6 +1,7 @@
 package com.proyecto.terranova.repository;
 
 import com.proyecto.terranova.config.enums.EstadoAsistenciaEnum;
+import com.proyecto.terranova.config.enums.EstadoCitaEnum;
 import com.proyecto.terranova.entity.Asistencia;
 import com.proyecto.terranova.entity.Cita;
 import com.proyecto.terranova.entity.Producto;
@@ -29,6 +30,19 @@ public interface AsistenciaRepository extends JpaRepository<Asistencia, Long> {
     List<Asistencia> findByCitaAndEstado(Cita cita, EstadoAsistenciaEnum estadoAsistenciaEnum);
 
     boolean existsByCita_ProductoAndUsuarioAndEstado(Producto citaProducto, Usuario usuario, EstadoAsistenciaEnum estadoAsistenciaEnum);
+
+    @Query("SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END " +
+            "FROM Asistencia a " +
+            "WHERE a.usuario = :usuario " +
+            "AND a.cita.producto.idProducto = :idProducto " +
+            "AND a.estado = :estado " +
+            "AND a.cita.estadoCita = :estadoCita")
+    boolean existeAsistenciaActivaEnCita(
+            @Param("usuario") Usuario usuario,
+            @Param("idProducto") Long idProducto,
+            @Param("estado") EstadoAsistenciaEnum estado,
+            @Param("estadoCita") EstadoCitaEnum estadoCita
+    );
 
     boolean existsByCita_ProductoAndUsuario(Producto citaProducto, Usuario usuario);
 

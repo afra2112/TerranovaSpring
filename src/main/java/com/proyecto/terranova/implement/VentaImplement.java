@@ -232,8 +232,9 @@ public class VentaImplement implements VentaService {
             repository.save(venta);
 
             notificacionService.notificacionContraoferta(venta);
+        }else {
+            venta.setPasoActual(3);
         }
-        venta.setPasoActual(3);
         repository.save(venta);
 
         ventaGanadoRepository.save(ventaGanado);

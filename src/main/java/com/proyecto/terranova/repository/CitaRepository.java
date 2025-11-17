@@ -26,5 +26,5 @@ public interface CitaRepository extends JpaRepository<Cita, Long> {
 
     List<Cita> findByProducto_VendedorAndActivoOrderByFechaDescHoraInicioDesc(Usuario productoVendedor, boolean activo);
 
-    Long countByProducto(Producto producto);
+    Long countByProductoAndEstadoCita(Producto producto, EstadoCitaEnum estadoCitaEnum);
 }
