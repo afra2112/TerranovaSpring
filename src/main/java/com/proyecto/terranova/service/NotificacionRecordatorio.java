@@ -26,29 +26,22 @@ public class NotificacionRecordatorio {
         List<Cita> programadas = citaRepository.findByEstadoCita(EstadoCitaEnum.PROGRAMADA);
         for (Cita cita : programadas) {
             LocalDateTime inicio = LocalDateTime.of(cita.getFecha(), cita.getHoraInicio());
-            LocalDateTime fin = LocalDateTime.of(cita.getFecha(), cita.getHoraFin());
 
-            if (!ahora.isBefore(inicio) && !ahora.isAfter(fin)) {
+            if (!ahora.isBefore(inicio)) { // ahora >= inicio
                 cita.setEstadoCita(EstadoCitaEnum.EN_CURSO);
                 citaRepository.save(cita);
             }
         }
 
-        List<Cita> enProceso = citaRepository.findByEstadoCita(EstadoCitaEnum.EN_CURSO);
-        for (Cita cita : enProceso) {
+        List<Cita> enCurso = citaRepository.findByEstadoCita(EstadoCitaEnum.EN_CURSO);
+        for (Cita cita : enCurso) {
             LocalDateTime fin = LocalDateTime.of(cita.getFecha(), cita.getHoraFin());
+
             if (ahora.isAfter(fin)) {
                 cita.setEstadoCita(EstadoCitaEnum.FINALIZADA);
                 citaRepository.save(cita);
             }
         }
 
-        for (Cita cita : programadas) {
-            LocalDateTime fin = LocalDateTime.of(cita.getFecha(), cita.getHoraFin());
-            if (ahora.isAfter(fin)) {
-                cita.setEstadoCita(EstadoCitaEnum.FINALIZADA);
-                citaRepository.save(cita);
-            }
-        }
     }
 }
