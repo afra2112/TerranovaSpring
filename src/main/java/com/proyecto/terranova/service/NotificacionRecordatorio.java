@@ -8,7 +8,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,46 +20,52 @@ public class NotificacionRecordatorio {
     @Autowired
     private CitaRepository citaRepository;
 
-    @Scheduled(cron = "*/30 * * * * *") // Cada 30 segundos
-    @Transactional
+    private static final ZoneId COLOMBIA_ZONE = ZoneId.of("America/Bogota");
+
+    @Scheduled(cron = "*/30 * * * * *")    @Transactional
     public void actualizarEstadosCitas() {
-        LocalDateTime ahora = LocalDateTime.now();
+        LocalDateTime ahora = LocalDateTime.now(COLOMBIA_ZONE);
+        LocalDate hoy = LocalDate.now(COLOMBIA_ZONE);
+
         List<Cita> citasActualizadas = new ArrayList<>();
 
-        // 1. PROGRAMADA -> EN_CURSO
         List<Cita> programadas = citaRepository.findByEstadoCita(EstadoCitaEnum.PROGRAMADA);
+
         for (Cita cita : programadas) {
             LocalDateTime inicio = LocalDateTime.of(cita.getFecha(), cita.getHoraInicio());
             LocalDateTime fin = LocalDateTime.of(cita.getFecha(), cita.getHoraFin());
 
-            // ✅ Cita ya finalizó (nunca se marcó como EN_CURSO)
+            if (cita.getFecha().isAfter(hoy)) {
+                continue;
+            }
+
             if (ahora.isAfter(fin)) {
                 cita.setEstadoCita(EstadoCitaEnum.FINALIZADA);
                 citasActualizadas.add(cita);
             }
-            // ✅ Cita está en curso (entre inicio y fin)
+
             else if (!ahora.isBefore(inicio) && ahora.isBefore(fin)) {
                 cita.setEstadoCita(EstadoCitaEnum.EN_CURSO);
                 citasActualizadas.add(cita);
             }
         }
 
-        // 2. EN_CURSO -> FINALIZADA
         List<Cita> enCurso = citaRepository.findByEstadoCita(EstadoCitaEnum.EN_CURSO);
+
         for (Cita cita : enCurso) {
             LocalDateTime fin = LocalDateTime.of(cita.getFecha(), cita.getHoraFin());
 
-            // ✅ Cita terminó
-            if (ahora.isAfter(fin) || ahora.isEqual(fin)) {
+            if (ahora.isAfter(fin)) {
                 cita.setEstadoCita(EstadoCitaEnum.FINALIZADA);
                 citasActualizadas.add(cita);
             }
         }
 
-        // ✅ Guardar todos los cambios de una vez
         if (!citasActualizadas.isEmpty()) {
             citaRepository.saveAll(citasActualizadas);
-            System.out.println("✅ Actualizadas " + citasActualizadas.size() + " citas");
+            System.out.println("Total de citas actualizadas: " + citasActualizadas.size());
+        } else {
+            System.out.println("No hay citas para actualizar en este momento");
         }
     }
 }

@@ -10,9 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
@@ -51,8 +53,42 @@ public class CitaController {
             @RequestParam(name = "idProducto") Long idProducto,
             @RequestParam(name = "vieneDe", required = false) String vieneDe,
             @RequestParam(name = "cupoMaximo") int cupoMaximo,
-            Authentication authentication
+            Authentication authentication,
+            RedirectAttributes redirectAttributes
     ) {
+        LocalDateTime ahora = LocalDateTime.now();
+        LocalDateTime fechaHoraInicio = LocalDateTime.of(fecha, horaInicio);
+        LocalDateTime fechaHoraFin = LocalDateTime.of(fecha, horaFin);
+
+        // Validar que no sea en el pasado
+        if (fechaHoraInicio.isBefore(ahora)) {
+            redirectAttributes.addFlashAttribute("error", "No puedes crear una cita en el pasado");
+            if (vieneDe != null && vieneDe.equals("calendario")) {
+                return "redirect:/vendedor/mi-calendario";
+            }
+            return "redirect:/vendedor/productos?idProducto=" + idProducto;
+        }
+
+        // Validar que hora fin sea después de hora inicio
+        if (!horaFin.isAfter(horaInicio)) {
+            redirectAttributes.addFlashAttribute("error", "La hora de fin debe ser posterior a la hora de inicio");
+            if (vieneDe != null && vieneDe.equals("calendario")) {
+                return "redirect:/vendedor/mi-calendario";
+            }
+            return "redirect:/vendedor/productos?idProducto=" + idProducto;
+        }
+
+        // Validar duración mínima
+        long duracionMinutos = java.time.Duration.between(horaInicio, horaFin).toMinutes();
+        if (duracionMinutos < 30) {
+            redirectAttributes.addFlashAttribute("error", "La cita debe durar al menos 30 minutos");
+            if (vieneDe != null && vieneDe.equals("calendario")) {
+                return "redirect:/vendedor/mi-calendario";
+            }
+            return "redirect:/vendedor/productos?idProducto=" + idProducto;
+        }
+
+        //CREAR CITA
         Cita cita = new Cita();
         cita.setFecha(fecha);
         cita.setHoraFin(horaFin);
@@ -61,12 +97,20 @@ public class CitaController {
         cita.setProducto(productoService.findById(idProducto));
         cita.setCupoMaximo(cupoMaximo);
         cita.setDescripcion(descripcion);
-        cita.setOcupados(cita.getAsistencias().size());
+
+        //Inicializar asistencias si es null
+        if (cita.getAsistencias() == null) {
+            cita.setOcupados(0);
+        } else {
+            cita.setOcupados(cita.getAsistencias().size());
+        }
         cita.setDisponibles(cita.getCupoMaximo() - cita.getOcupados());
 
         citaService.save(cita);
 
-        if(vieneDe != null && vieneDe.equals("calendario")){
+        redirectAttributes.addFlashAttribute("success", "✅ Cita creada exitosamente");
+
+        if (vieneDe != null && vieneDe.equals("calendario")) {
             return "redirect:/vendedor/mi-calendario";
         }
         return "redirect:/vendedor/productos?idProducto=" + idProducto;

@@ -350,6 +350,14 @@
             </button>
         </div>
 
+        <div th:if="${error}" class="bg-red-50 border-l-4 border-red-400 p-4 rounded-lg mb-6">
+            <p class="text-sm font-semibold text-red-700" th:text="${error}"></p>
+        </div>
+
+        <div th:if="${success}" class="bg-green-50 border-l-4 border-green-400 p-4 rounded-lg mb-6">
+            <p class="text-sm font-semibold text-green-700" th:text="${success}"></p>
+        </div>
+
         <form id="disponibilidadForm" th:action="@{/vendedor/citas/mi-calendario/registrar-cita}" method="post">
             <input type="hidden" name="vieneDe" value="calendario">
             <div class="space-y-4">
@@ -576,6 +584,50 @@
         calendar.addEventSource(events);
         updateStats(citasFiltradas);
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('disponibilidadForm');
+        const fechaInput = document.getElementById('disponibilidadFecha');
+        const horaInicioInput = document.getElementById('disponibilidadHoraInicio');
+        const horaFinInput = document.getElementById('disponibilidadHoraFin');
+
+        //Establecer fecha mínima como hoy
+        const hoy = new Date().toISOString().split('T')[0];
+        fechaInput.setAttribute('min', hoy);
+
+        form.addEventListener('submit', function(e) {
+            const fecha = new Date(fechaInput.value);
+            const horaInicio = horaInicioInput.value;
+            const horaFin = horaFinInput.value;
+            const ahora = new Date();
+
+            //Validar que hora fin sea mayor que hora inicio
+            if (horaInicio >= horaFin) {
+                e.preventDefault();
+                alert('La hora de fin debe ser posterior a la hora de inicio');
+                return;
+            }
+
+            //Validar que la cita no sea en el pasado
+            const fechaHoraInicio = new Date(fecha.toDateString() + ' ' + horaInicio);
+            if (fechaHoraInicio < ahora) {
+                e.preventDefault();
+                alert('No puedes crear una cita en el pasado');
+                return;
+            }
+
+            //Validar duración mínima (ejemplo: 30 minutos)
+            const [horaIni, minIni] = horaInicio.split(':').map(Number);
+            const [horaFn, minFn] = horaFin.split(':').map(Number);
+            const duracionMinutos = (horaFn * 60 + minFn) - (horaIni * 60 + minIni);
+
+            if (duracionMinutos < 30) {
+                e.preventDefault();
+                alert('La cita debe durar al menos 30 minutos');
+                return;
+            }
+        });
+    });
 
     function resetFilters() {
         document.getElementById('filterEstado').value = '';

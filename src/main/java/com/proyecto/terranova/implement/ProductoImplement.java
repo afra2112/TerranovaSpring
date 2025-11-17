@@ -127,6 +127,7 @@ public class ProductoImplement implements ProductoService {
         original.setPrecioProducto(prodForm.getPrecioProducto());
         original.setEstado(prodForm.getEstado());
         original.setDescripcion(prodForm.getDescripcion());
+        original.setEstado(EstadoProductoEnum.DISPONIBLE);
 
 
         if (prodForm.getCiudad() != null && prodForm.getCiudad().getIdCiudad() != null) {
