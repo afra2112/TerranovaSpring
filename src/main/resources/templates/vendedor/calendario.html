@@ -350,14 +350,6 @@
             </button>
         </div>
 
-        <div th:if="${error}" class="bg-red-50 border-l-4 border-red-400 p-4 rounded-lg mb-6">
-            <p class="text-sm font-semibold text-red-700" th:text="${error}"></p>
-        </div>
-
-        <div th:if="${success}" class="bg-green-50 border-l-4 border-green-400 p-4 rounded-lg mb-6">
-            <p class="text-sm font-semibold text-green-700" th:text="${success}"></p>
-        </div>
-
         <form id="disponibilidadForm" th:action="@{/vendedor/citas/mi-calendario/registrar-cita}" method="post">
             <input type="hidden" name="vieneDe" value="calendario">
             <div class="space-y-4">

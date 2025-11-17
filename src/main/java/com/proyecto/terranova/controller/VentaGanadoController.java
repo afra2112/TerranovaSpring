@@ -31,7 +31,7 @@ public class VentaGanadoController {
         return "redirect:/vendedor/ventas/detalle-venta/" + idVenta;
     }
 
-    @PostMapping("/vendedor/documentacion-sanitaria")
+    @PostMapping("/vendedor/ventas/documentacion-sanitaria")
     public String actualizarVentaPaso3Ganado(
             @RequestParam Long idVenta,
             @RequestParam MultipartFile certificadosSanitarios,
