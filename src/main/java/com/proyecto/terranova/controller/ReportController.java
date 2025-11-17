@@ -28,7 +28,6 @@ public class ReportController {
     @GetMapping("/ventas/{nombre}")
     public ResponseEntity<byte[]> generarReporteVentas(@PathVariable(name = "nombre") String nombre) {
         try {
-            System.out.println("nombre: " + nombre);
             List<Venta> ventas = ventaRepository.findAll();
 
             byte[] pdfBytes = reportService.generarReporteVentas(ventas);

@@ -4,24 +4,24 @@
 	<parameter name="totalIngresos" class="java.math.BigDecimal"/>
 	<parameter name="totalGastos" class="java.math.BigDecimal"/>
 	<parameter name="balance" class="java.math.BigDecimal"/>
-	<parameter name="logoPath" class="java.lang.String"/>
+<!--	<parameter name="logoPath" class="java.lang.String"/>-->
 	<parameter name="chartIngresos" class="java.awt.Image"/>
 	<parameter name="chartPastel" class="java.awt.Image"/>
-	<field name="fechaVenta" class="java.time.LocalDate"/>
+	<field name="fechaInicioVenta" class="java.time.LocalDateTime"/>
 	<field name="producto.nombreProducto" class="java.lang.String"/>
 	<field name="comprador.nombres" class="java.lang.String"/>
 	<field name="comprador.apellidos" class="java.lang.String"/>
 	<field name="producto.precioProducto" class="java.lang.Long"/>
 	<field name="metodoPago" class="java.lang.String"/>
-	<field name="estado" class="java.lang.String"/>
+<!--	<field name="estado" class="java.lang.Estad"/>-->
 	<field name="gananciaNeta" class="java.lang.Long"/>
 	<variable name="totalGeneral" calculation="Sum" class="java.lang.Long">
 		<expression><![CDATA[$F{producto.precioProducto}]]></expression>
 	</variable>
 	<title height="200" splitType="Stretch">
-		<element kind="image" uuid="a671bd71-e947-4a42-b253-689036fb2daf" x="0" y="0" width="555" height="150" scaleImage="FillFrame" hImageAlign="Center">
-			<expression><![CDATA[$P{logoPath}]]></expression>
-		</element>
+<!--		<element kind="image" uuid="a671bd71-e947-4a42-b253-689036fb2daf" x="0" y="0" width="555" height="150" scaleImage="FillFrame" hImageAlign="Center">-->
+<!--			<expression><![CDATA[$P{logoPath}]]></expression>-->
+<!--		</element>-->
 		<element kind="staticText" uuid="29a272d9-e080-40ad-bc6f-9b96b5199f4b" x="0" y="40" width="555" height="40" forecolor="#FFFFFF" fontName="Arial" fontSize="24.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
 			<text><![CDATA[REPORTE DE VENTAS]]></text>
 		</element>
@@ -108,9 +108,9 @@
 		<element kind="staticText" uuid="f993494a-31c7-4d3c-921d-d63db7caa815" x="205" y="30" width="100" height="20" forecolor="#FFFFFF" fontName="Arial" fontSize="10.0" bold="true" vTextAlign="Middle">
 			<text><![CDATA[COMPRADOR]]></text>
 		</element>
-		<element kind="staticText" uuid="ce2ee0b5-2d13-4a9e-871f-16b8f858ba79" x="310" y="30" width="70" height="20" forecolor="#FFFFFF" fontName="Arial" fontSize="10.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
-			<text><![CDATA[ESTADO]]></text>
-		</element>
+<!--		<element kind="staticText" uuid="ce2ee0b5-2d13-4a9e-871f-16b8f858ba79" x="310" y="30" width="70" height="20" forecolor="#FFFFFF" fontName="Arial" fontSize="10.0" bold="true" hTextAlign="Center" vTextAlign="Middle">-->
+<!--			<text><![CDATA[ESTADO]]></text>-->
+<!--		</element>-->
 		<element kind="staticText" uuid="a1dfcfd8-0052-46cf-b4e3-14a724d8d8f7" x="385" y="30" width="70" height="20" forecolor="#FFFFFF" fontName="Arial" fontSize="10.0" bold="true" hTextAlign="Right" vTextAlign="Middle">
 			<text><![CDATA[PRECIO]]></text>
 		</element>
@@ -132,7 +132,7 @@
 				<pen lineWidth="0.0"/>
 			</element>
 			<element kind="textField" uuid="1ce248f9-126b-4f2f-aabb-710620299190" x="5" y="5" width="70" height="15" fontName="Arial" fontSize="9.0" pattern="dd/MM/yyyy" vTextAlign="Middle">
-				<expression><![CDATA[$F{fechaVenta}]]></expression>
+				<expression><![CDATA[$F{fechaInicioVenta}]]></expression>
 			</element>
 			<element kind="textField" uuid="9ace1ece-8431-47b4-824f-6fd7aa2b1188" x="80" y="5" width="120" height="15" fontName="Arial" fontSize="9.0" vTextAlign="Middle">
 				<expression><![CDATA[$F{producto.nombreProducto}]]></expression>
@@ -140,9 +140,9 @@
 			<element kind="textField" uuid="db192e1a-986c-4c8e-8626-bbc27e182753" x="205" y="5" width="100" height="15" fontName="Arial" fontSize="9.0" vTextAlign="Middle">
 				<expression><![CDATA[$F{comprador.nombres} + " " + $F{comprador.apellidos}]]></expression>
 			</element>
-			<element kind="textField" uuid="ac00934c-ca0f-4bb7-98ab-5c54e11027ba" x="310" y="5" width="70" height="15" fontName="Arial" fontSize="9.0" hTextAlign="Center" vTextAlign="Middle">
-				<expression><![CDATA[$F{estado}]]></expression>
-			</element>
+<!--			<element kind="textField" uuid="ac00934c-ca0f-4bb7-98ab-5c54e11027ba" x="310" y="5" width="70" height="15" fontName="Arial" fontSize="9.0" hTextAlign="Center" vTextAlign="Middle">-->
+<!--				<expression><![CDATA[$F{estado}]]></expression>-->
+<!--			</element>-->
 			<element kind="textField" uuid="c9f70095-9495-46ea-84c0-0159541f33aa" x="385" y="5" width="70" height="15" fontName="Arial" fontSize="9.0" pattern="¤#,##0" hTextAlign="Right" vTextAlign="Middle">
 				<expression><![CDATA[$F{producto.precioProducto}]]></expression>
 			</element>

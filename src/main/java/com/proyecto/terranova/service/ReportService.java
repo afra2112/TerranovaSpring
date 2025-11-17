@@ -46,8 +46,8 @@ public class ReportService {
         parameters.put("totalIngresos", new BigDecimal(totalIngresos));
         parameters.put("totalGastos", new BigDecimal(totalGastos));
         parameters.put("balance", new BigDecimal(balance));
-        InputStream logoStream = getClass().getResourceAsStream("/static/images/logo.jpg");
-        parameters.put("logoPath", logoStream);
+//        InputStream logoStream = getClass().getResourceAsStream("/static/images/logo.jpg");
+//        parameters.put("logoPath", logoStream);
 
         parameters.put("chartIngresos", generarGraficoLinea(ventas));
         parameters.put("chartPastel", generarGraficoPastel(ventas));
