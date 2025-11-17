@@ -13,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -38,37 +39,44 @@ public class ImagenImplement implements ImagenService {
     @Autowired
     private ImagenRepository imagenRepository;
 
-    public void  guardarImagen(Long IdProducto , List<MultipartFile> archivo){
-        Producto producto = productoRepository.findById(IdProducto).orElseThrow();
+    public void guardarImagen(Long idProducto, List<MultipartFile> archivos) {
+        Producto producto = productoRepository.findById(idProducto)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado con ID: " + idProducto));
 
-        List<Imagen> imagenes = archivo.stream().map(file -> {
-            String url = guardarImagen(file);
+        List<Imagen> imagenes = archivos.stream().map(file -> {
+            String url = guardarImagenProducto(file);
             Imagen img = new Imagen();
             img.setNombreArchivo(url);
             img.setProducto(producto);
             return img;
         }).collect(Collectors.toList());
+
         imagenRepository.saveAll(imagenes);
-
     }
-    private String guardarImagen(MultipartFile file){
 
-        String original = file.getOriginalFilename();
+    private String guardarImagenProducto(MultipartFile file) {
+        try {
+            Path directorio = Paths.get(directorioImagenes);
+            Files.createDirectories(directorio);
 
-        String limpio = original.replaceAll("[^a-zA-Z0-9\\.\\-_]", "_");
+            String nombreOriginal = file.getOriginalFilename();
+            String extension = nombreOriginal != null && nombreOriginal.contains(".")
+                    ? nombreOriginal.substring(nombreOriginal.lastIndexOf("."))
+                    : "";
+            String nombreLimpio = nombreOriginal != null
+                    ? nombreOriginal.replaceAll("[^a-zA-Z0-9\\.\\-_]", "_")
+                    : "imagen";
 
-        String nombre = UUID.randomUUID() + "_" + limpio;
+            String nombreArchivo = UUID.randomUUID().toString() + "_" + nombreLimpio;
 
-        // Codificar el nombre para URL
-        String nombreCodificado = URLEncoder.encode(nombre, StandardCharsets.UTF_8);
+            Path rutaCompleta = directorio.resolve(nombreArchivo);
+            Files.copy(file.getInputStream(), rutaCompleta, StandardCopyOption.REPLACE_EXISTING);
 
-        Path ruta =  Paths.get(directorioImagenes + nombreCodificado); // nombre de la tuta
-        try{
-            Files.copy(file.getInputStream(), ruta);
-        }catch (IOException q){
-            throw new RuntimeException("Error al guardar el archivo",q);
+            return "/imagenes/" + nombreArchivo;
+
+        } catch (IOException e) {
+            throw new RuntimeException("Error al guardar la imagen del producto", e);
         }
-        return "/imagenes/" + nombre;
     }
 
     @Override
