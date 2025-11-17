@@ -11,5 +11,6 @@ public class ZonaHorariaConfig {
     @PostConstruct
     public void init() {
         TimeZone.setDefault(TimeZone.getTimeZone("America/Bogota"));
+        System.out.println("Zona horaria configurada: " + TimeZone.getDefault().getID());
     }
 }

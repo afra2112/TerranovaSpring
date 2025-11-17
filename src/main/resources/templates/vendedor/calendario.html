@@ -586,48 +586,58 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-        const form = document.getElementById('disponibilidadForm');
-        const fechaInput = document.getElementById('disponibilidadFecha');
-        const horaInicioInput = document.getElementById('disponibilidadHoraInicio');
-        const horaFinInput = document.getElementById('disponibilidadHoraFin');
+    const form = document.getElementById('disponibilidadForm');
+    const fechaInput = document.getElementById('disponibilidadFecha');
+    const horaInicioInput = document.getElementById('disponibilidadHoraInicio');
+    const horaFinInput = document.getElementById('disponibilidadHoraFin');
 
-        //Establecer fecha mínima como hoy
-        const hoy = new Date().toISOString().split('T')[0];
-        fechaInput.setAttribute('min', hoy);
+    // ✅ Establecer fecha mínima como hoy
+    const hoy = new Date().toISOString().split('T')[0];
+    fechaInput.setAttribute('min', hoy);
 
-        form.addEventListener('submit', function(e) {
-            const fecha = new Date(fechaInput.value);
-            const horaInicio = horaInicioInput.value;
-            const horaFin = horaFinInput.value;
-            const ahora = new Date();
+    form.addEventListener('submit', function(e) {
+        const fecha = fechaInput.value; //Usar el valor directo (formato YYYY-MM-DD)
+        const horaInicio = horaInicioInput.value;
+        const horaFin = horaFinInput.value;
+        const ahora = new Date();
 
-            //Validar que hora fin sea mayor que hora inicio
-            if (horaInicio >= horaFin) {
-                e.preventDefault();
-                alert('La hora de fin debe ser posterior a la hora de inicio');
-                return;
-            }
+        // ✅ Validar que hora fin sea mayor que hora inicio
+        if (horaInicio >= horaFin) {
+            e.preventDefault();
+            alert('La hora de fin debe ser posterior a la hora de inicio');
+            return;
+        }
 
-            //Validar que la cita no sea en el pasado
-            const fechaHoraInicio = new Date(fecha.toDateString() + ' ' + horaInicio);
-            if (fechaHoraInicio < ahora) {
-                e.preventDefault();
-                alert('No puedes crear una cita en el pasado');
-                return;
-            }
+        // ✅ Crear fecha correctamente en formato ISO
+        const fechaHoraInicio = new Date(`${fecha}T${horaInicio}:00`);
 
-            //Validar duración mínima (ejemplo: 30 minutos)
-            const [horaIni, minIni] = horaInicio.split(':').map(Number);
-            const [horaFn, minFn] = horaFin.split(':').map(Number);
-            const duracionMinutos = (horaFn * 60 + minFn) - (horaIni * 60 + minIni);
+        console.log('Debug:');
+        console.log('- Fecha input:', fecha);
+        console.log('- Hora inicio:', horaInicio);
+        console.log('- DateTime construido:', fechaHoraInicio);
+        console.log('- Ahora:', ahora);
+        console.log('- ¿Es pasado?', fechaHoraInicio < ahora);
 
-            if (duracionMinutos < 30) {
-                e.preventDefault();
-                alert('La cita debe durar al menos 30 minutos');
-                return;
-            }
-        });
+        // ✅ Validar que la cita no sea en el pasado (con margen de 1 minuto)
+        const unMinutoAntes = new Date(ahora.getTime() - 60000); // 1 minuto de margen
+        if (fechaHoraInicio < unMinutoAntes) {
+            e.preventDefault();
+            alert('No puedes crear una cita en el pasado');
+            return;
+        }
+
+        // ✅ Validar duración mínima (30 minutos)
+        const [horaIni, minIni] = horaInicio.split(':').map(Number);
+        const [horaFn, minFn] = horaFin.split(':').map(Number);
+        const duracionMinutos = (horaFn * 60 + minFn) - (horaIni * 60 + minIni);
+
+        if (duracionMinutos < 30) {
+            e.preventDefault();
+            alert('La cita debe durar al menos 30 minutos');
+            return;
+        }
     });
+});
 
     function resetFilters() {
         document.getElementById('filterEstado').value = '';
