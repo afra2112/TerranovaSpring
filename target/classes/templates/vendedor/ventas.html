@@ -204,6 +204,13 @@
         <div class="relative z-10">
             <h1 class="text-4xl font-bold mb-2">Panel de Ventas</h1>
             <p class="text-emerald-100 text-lg">Gestiona tus ventas de manera profesional</p>
+            <a th:href="@{/api/reportes/ventas/{nombre}(nombre=${nombres})}" class="relative z-10">
+                <button
+                        class="bg-white/25 text-white border border-white px-6 py-3 rounded-lg font-semibold shadow-md hover:bg-emerald-800 hover:border-emerald-600 transition transform duration-200 flex items-center gap-2">
+                    <i class="fas fa-file-pdf"></i>
+                    Generar Reporte
+                </button>
+            </a>
         </div>
     </div>
 
@@ -652,6 +659,32 @@
 
     document.getElementById('modalCancelar').addEventListener('click', (e) => {
         if (e.target.id === 'modalCancelar') cerrarModalCancelar();
+    });
+
+    function toggleUserDropdown() {
+        const dropdown = document.getElementById('userDropdown');
+        const arrow = document.getElementById('dropdownArrow');
+
+        if (dropdown.classList.contains('opacity-0')) {
+            dropdown.classList.remove('opacity-0', 'invisible', 'scale-95');
+            dropdown.classList.add('opacity-100', 'visible', 'scale-100');
+            arrow.style.transform = 'rotate(180deg)';
+        } else {
+            dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
+            dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
+            arrow.style.transform = 'rotate(0deg)';
+        }
+    }
+
+    document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('userDropdown');
+        const userButton = event.target.closest('[onclick="toggleUserDropdown()"]');
+
+        if (!userButton && !dropdown.contains(event.target)) {
+            dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
+            dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
+            document.getElementById('dropdownArrow').style.transform = 'rotate(0deg)';
+        }
     });
 </script>
 

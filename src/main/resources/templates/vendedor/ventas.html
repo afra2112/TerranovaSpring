@@ -275,7 +275,7 @@
             </div>
 
             <!-- Exportar PDF -->
-            <a th:href="@{/reportes/ventas(fecha=${#dates.format(#dates.createNow(), 'dd-MM-yyyy')},tipo='completo',incluirGastos=true,incluirNotas=true)}" target="_blank">
+            <a th:href="@{/api/reportes/ventas/{nombre}(nombre=${nombres})}">
                 <button class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 font-medium text-sm transition">
                     <i class='bx bx-download'></i> Exportar PDF
                 </button>
@@ -652,6 +652,32 @@
 
     document.getElementById('modalCancelar').addEventListener('click', (e) => {
         if (e.target.id === 'modalCancelar') cerrarModalCancelar();
+    });
+
+    function toggleUserDropdown() {
+        const dropdown = document.getElementById('userDropdown');
+        const arrow = document.getElementById('dropdownArrow');
+
+        if (dropdown.classList.contains('opacity-0')) {
+            dropdown.classList.remove('opacity-0', 'invisible', 'scale-95');
+            dropdown.classList.add('opacity-100', 'visible', 'scale-100');
+            arrow.style.transform = 'rotate(180deg)';
+        } else {
+            dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
+            dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
+            arrow.style.transform = 'rotate(0deg)';
+        }
+    }
+
+    document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('userDropdown');
+        const userButton = event.target.closest('[onclick="toggleUserDropdown()"]');
+
+        if (!userButton && !dropdown.contains(event.target)) {
+            dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
+            dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
+            document.getElementById('dropdownArrow').style.transform = 'rotate(0deg)';
+        }
     });
 </script>
 
