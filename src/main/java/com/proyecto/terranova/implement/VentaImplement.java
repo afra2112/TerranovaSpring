@@ -225,7 +225,7 @@ public class VentaImplement implements VentaService {
         ventaGanado.setObservacionesSanitarias(observaciones);
         ventaGanado.setVenta(venta);
 
-        if(!Objects.equals(precioTotal, venta.getPrecioTotal()) || cantidad != ganado.getCantidad()){
+        if(!Objects.equals(precioTotal, venta.getProducto().getPrecioProducto()) || cantidad != ganado.getCantidad()){
             ventaGanado.setCantidadNegociada(cantidad);
             ventaGanado.setPrecioNegociado(precioTotal);
             venta.setPendienteConfirmacion(true);
@@ -233,6 +233,8 @@ public class VentaImplement implements VentaService {
 
             notificacionService.notificacionContraoferta(venta);
         }
+        venta.setPasoActual(3);
+        repository.save(venta);
 
         ventaGanadoRepository.save(ventaGanado);
     }
