@@ -87,7 +87,7 @@ public class UsuarioController {
         Files.createDirectories(directorio);
 
         String nombreArchivo = UUID.randomUUID().toString() + "_" + foto.getOriginalFilename();
-        Path rutaImagen = Paths.get("imagenes").resolve(nombreArchivo);
+        Path rutaImagen = Paths.get(directorioImagenes).resolve(nombreArchivo);
 
         Files.copy(foto.getInputStream(), rutaImagen, StandardCopyOption.REPLACE_EXISTING);
         Usuario usuario = usuario(authentication);
