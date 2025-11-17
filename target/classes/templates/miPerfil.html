@@ -184,9 +184,11 @@
                         </div>
                         <h3 class="text-lg font-semibold mb-2">¿Quieres vender?</h3>
                         <p class="text-white/90 text-sm mb-4">Conviértete en vendedor y publica tus propiedades, ganado y terrenos</p>
-                        <button onclick="openSellerInfoModal()" class="bg-secondary hover:bg-secondary-dark text-gray-800 font-semibold px-4 py-2 rounded-lg transition-colors w-full">
-                            Ser Vendedor
-                        </button>
+                        <form th:action="@{/comprador/mi-perfil/ser-vendedor}" method="post">
+                            <button type="submit" class="bg-secondary hover:bg-secondary-dark text-gray-800 font-semibold px-4 py-2 rounded-lg transition-colors w-full">
+                                Ser Vendedor
+                            </button>
+                        </form>
                     </div>
                 </div>
 

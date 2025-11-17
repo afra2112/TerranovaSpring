@@ -26,7 +26,9 @@ public class EmailService {
 
     public String generarHtmlParaCorreo(String nombreUsuario, String nombreTipoNotificacion, String linkAccion, String nombreUsuarioContrario, String nombreTemplateHtml) throws IOException {
         Context context = new Context();
-        String css = Files.readString(Paths.get("src/main/resources/templates/correos/email.css"));
+        String css = new String(
+                getClass().getClassLoader().getResourceAsStream("templates/correos/email.css").readAllBytes()
+        );
         context.setVariable("css", css);
         context.setVariable("nombreUsuario", nombreUsuario);
         context.setVariable("nombreTipoNotificacion", nombreTipoNotificacion);
