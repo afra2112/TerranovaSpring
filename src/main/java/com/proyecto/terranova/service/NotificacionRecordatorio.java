@@ -63,9 +63,6 @@ public class NotificacionRecordatorio {
 
         if (!citasActualizadas.isEmpty()) {
             citaRepository.saveAll(citasActualizadas);
-            System.out.println("Total de citas actualizadas: " + citasActualizadas.size());
-        } else {
-            System.out.println("No hay citas para actualizar en este momento");
-        }
+            }
     }
 }

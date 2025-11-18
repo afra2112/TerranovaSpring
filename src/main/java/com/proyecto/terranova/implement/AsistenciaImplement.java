@@ -47,6 +47,11 @@ public class AsistenciaImplement implements AsistenciaService {
     }
 
     @Override
+    public List<Asistencia> encontrarPorCompradorYEstadoYEstadoCita(Usuario comprador, EstadoAsistenciaEnum estadoAsistenciaEnum, EstadoCitaEnum estadoCitaEnum) {
+        return asistenciaRepository.findByUsuarioAndEstadoAndCita_EstadoCitaOrderByCita_FechaAscCita_HoraInicioAsc(comprador, estadoAsistenciaEnum, estadoCitaEnum);
+    }
+
+    @Override
     public boolean existeAsistenciaPorEstado(Usuario comprador, Long idProducto, EstadoAsistenciaEnum estadoAsistenciaEnum) {
         return asistenciaRepository.existsByCita_ProductoAndUsuarioAndEstado(productoRepository.findById(idProducto).orElseThrow(), comprador, estadoAsistenciaEnum);
     }

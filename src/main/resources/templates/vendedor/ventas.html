@@ -49,7 +49,7 @@
         }
 
         .custom-scrollbar::-webkit-scrollbar-track {
-            background: #f1f1f1;
+            background: #f1f5f9;
             border-radius: 10px;
         }
 
@@ -68,12 +68,11 @@
             font-weight: 600;
         }
 
-        .badge-pendiente { background: #fef3c7; color: #b45309; }
-        .badge-procesando { background: #dbeafe; color: #1e40af; }
-        .badge-completada { background: #d1fae5; color: #047857; }
-        .badge-rechazada { background: #fee2e2; color: #b91c1c; }
-        .badge-pagada { background: #d1fae5; color: #047857; }
-        .badge-no-pagada { background: #fef3c7; color: #b45309; }
+        .badge-completada { background: #dcfce7; color: #166534; border: 2px solid #86efac; }
+        .badge-procesando { background: #dbeafe; color: #1e40af; border: 2px solid #93c5fd; }
+        .badge-rechazada { background: #fee2e2; color: #991b1b; border: 2px solid #fca5a5; }
+        .badge-pagada { background: #d1fae5; color: #065f46; border: 2px solid #6ee7b7; }
+        .badge-no-pagada { background: #fef3c7; color: #92400e; border: 2px solid #fcd34d; }
 
         .toggle-switch {
             display: inline-flex;
@@ -124,42 +123,6 @@
             margin-bottom: 20px;
         }
 
-        .gasto-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px;
-            background: #f9fafb;
-            border-radius: 8px;
-            border: 1px solid #e5e7eb;
-            margin-bottom: 8px;
-            transition: all 0.2s;
-        }
-
-        .gasto-item:hover {
-            background: #f3f4f6;
-            border-color: #d1d5db;
-        }
-
-        .documento-btn {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 12px;
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            border-radius: 8px;
-            color: #047857;
-            text-decoration: none;
-            transition: all 0.2s;
-            font-weight: 500;
-        }
-
-        .documento-btn:hover {
-            background: #bbf7d0;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
         .empty-chart {
             display: flex;
             flex-direction: column;
@@ -170,80 +133,238 @@
             border-radius: 8px;
             color: #6b7280;
         }
+
+        /* Añadido mejor efecto de expansión más suave */
+        .detalle-expandido {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .detalle-expandido.activo {
+            max-height: 5000px;
+        }
+
+        /* Añadido bordes y hovers suaves para mejorar contraste */
+        .venta-item {
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .venta-item:hover {
+            border-color: #10b981;
+        }
+
+        .venta-item.expandida {
+            background: #fafbfc;
+            box-shadow: 0 10px 40px -10px rgba(16, 185, 129, 0.2);
+            border-color: #10b981;
+        }
+
+        .rotate-180 {
+            transform: rotate(180deg);
+        }
+
+        /* Cards con hover más visible y bordes */
+        .info-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            border: 2px solid #e5e7eb;
+        }
+
+        .info-card:hover {
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.15);
+            border-color: #10b981;
+            transform: translateY(-2px);
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            border: 2px solid #86efac;
+        }
+
+        .stat-box.red {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            border: 2px solid #fca5a5;
+        }
+
+        .stat-box.blue {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border: 2px solid #93c5fd;
+        }
+
+        .modal-open {
+            opacity: 1 !important;
+            visibility: visible !important;
+            transform: scale(1) !important;
+        }
+
+        /* Gasto items con bordes y mejor hover */
+        .gasto-item {
+            transition: all 0.2s ease;
+            padding: 12px;
+            background: #f9fafb;
+            border-radius: 8px;
+            border: 2px solid #e5e7eb;
+        }
+
+        .gasto-item:hover {
+            background: #fef2f2;
+            transform: translateX(4px);
+            border-color: #fca5a5;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.1);
+        }
+
+        /* Documento items con bordes y mejor hover */
+        .doc-item {
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background: #f0fdf4;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #047857;
+            gap: 12px;
+            border: 2px solid #86efac;
+        }
+
+        .doc-item:hover {
+            background: #d1fae5;
+            transform: translateX(4px);
+            border-color: #10b981;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);
+        }
+
+        .doc-name {
+            flex: 1;
+            min-width: 0;
+            word-break: break-word;
+        }
+
+        .doc-name-text {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: #047857;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+
+        /* Responsive breakpoints mejorados */
+        @media (max-width: 1024px) {
+            .ml-64 {
+                margin-left: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .toggle-switch {
+                width: 100%;
+                justify-content: stretch;
+            }
+
+            .toggle-option {
+                flex: 1;
+                justify-content: center;
+            }
+
+            .stat-box {
+                padding: 12px;
+            }
+
+            .stat-box p {
+                font-size: 0.75rem;
+            }
+
+            .stat-box .text-lg {
+                font-size: 1rem;
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-50">
 
 <div th:replace="fragments/vendedor/navbarVendedor :: navbarVendedor"></div>
 
-<div class="ml-64 flex flex-col min-h-screen">
-    <main class="py-10 px-8">
+<!-- Contenedor responsive -->
+<div class="lg:ml-64 flex flex-col min-h-screen">
+    <main class="py-6 lg:py-10 px-4 lg:px-8">
 
         <!-- Hero section con estadísticas -->
-        <div class="gradient-hero rounded-3xl p-8 mb-8 text-white relative overflow-hidden">
+        <div class="gradient-hero rounded-3xl p-6 lg:p-8 mb-6 lg:mb-8 text-white relative overflow-hidden">
             <div class="absolute inset-0 bg-black/10"></div>
             <div class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full"></div>
             <div class="absolute -bottom-5 -left-5 w-32 h-32 bg-white/5 rounded-full"></div>
 
             <div class="relative z-10">
-                <div class="flex justify-between items-start mb-8">
+                <!-- Header responsive con mejor layout móvil -->
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6 lg:mb-8">
                     <div>
-                        <h1 class="text-4xl font-bold mb-2">Panel de Ventas</h1>
-                        <p class="text-emerald-100 text-lg">Bienvenido <span th:text="${nombres}"></span></p>
+                        <h1 class="text-3xl lg:text-4xl font-bold mb-2">Panel de Ventas</h1>
+                        <p class="text-emerald-100 text-base lg:text-lg">Bienvenido <span th:text="${nombres}"></span></p>
                     </div>
                     <button onclick="descargarPDF()"
-                            class="bg-white/20 backdrop-blur-sm text-white border-2 border-white/40 px-6 py-3 rounded-xl font-semibold shadow-lg hover:bg-white hover:text-emerald-600 transition-all duration-300 flex items-center gap-2 transform hover:scale-105">
+                            class="w-full lg:w-auto bg-white/20 backdrop-blur-sm text-white border-2 border-white/40 px-6 py-3 rounded-xl font-semibold shadow-lg hover:bg-white hover:text-emerald-600 transition-all duration-300 flex items-center justify-center gap-2 transform hover:scale-105">
                         <i class='bx bx-download text-xl'></i>
                         <span>Descargar PDF</span>
                     </button>
                 </div>
 
-                <!-- Estadísticas rápidas -->
-                <div class="grid grid-cols-4 gap-4">
-                    <div class="bg-white/15 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                        <div class="flex items-center gap-3">
-                            <div class="bg-emerald-500/30 p-3 rounded-lg">
-                                <i class='bx bx-shopping-bag text-2xl'></i>
+                <!-- Grid responsive para estadísticas -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
+                    <div class="bg-white/15 backdrop-blur-sm rounded-xl p-3 lg:p-4 border border-white/20">
+                        <div class="flex items-center gap-2 lg:gap-3">
+                            <div class="bg-emerald-500/30 p-2 lg:p-3 rounded-lg">
+                                <i class='bx bx-shopping-bag text-xl lg:text-2xl'></i>
                             </div>
                             <div>
-                                <p class="text-emerald-100 text-sm">Total Ventas</p>
-                                <p class="text-2xl font-bold" th:text="${ventas.size()}">0</p>
+                                <p class="text-emerald-100 text-xs lg:text-sm">Total Ventas</p>
+                                <p class="text-xl lg:text-2xl font-bold" th:text="${ventas.size()}">0</p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-white/15 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                        <div class="flex items-center gap-3">
-                            <div class="bg-blue-500/30 p-3 rounded-lg">
-                                <i class='bx bx-money text-2xl'></i>
+                    <div class="bg-white/15 backdrop-blur-sm rounded-xl p-3 lg:p-4 border border-white/20">
+                        <div class="flex items-center gap-2 lg:gap-3">
+                            <div class="bg-blue-500/30 p-2 lg:p-3 rounded-lg">
+                                <i class='bx bx-money text-xl lg:text-2xl'></i>
                             </div>
                             <div>
-                                <p class="text-emerald-100 text-sm">Ingresos</p>
-                                <p class="text-2xl font-bold" th:text="'$' + ${ingresosTotales}">$0</p>
+                                <p class="text-emerald-100 text-xs lg:text-sm">Ingresos</p>
+                                <!-- Formato moneda colombiano aplicado -->
+                                <p class="text-xl lg:text-2xl font-bold" th:text="${#numbers.formatDecimal(ingresosTotales, 0, 'POINT', 0, 'COMMA')}">$0</p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-white/15 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                        <div class="flex items-center gap-3">
-                            <div class="bg-red-500/30 p-3 rounded-lg">
-                                <i class='bx bx-credit-card text-2xl'></i>
+                    <div class="bg-white/15 backdrop-blur-sm rounded-xl p-3 lg:p-4 border border-white/20">
+                        <div class="flex items-center gap-2 lg:gap-3">
+                            <div class="bg-red-500/30 p-2 lg:p-3 rounded-lg">
+                                <i class='bx bx-credit-card text-xl lg:text-2xl'></i>
                             </div>
                             <div>
-                                <p class="text-emerald-100 text-sm">Gastos</p>
-                                <p class="text-2xl font-bold" th:text="'$' + ${gastosTotales}">$0</p>
+                                <p class="text-emerald-100 text-xs lg:text-sm">Gastos</p>
+                                <!-- Formato moneda colombiano aplicado -->
+                                <p class="text-xl lg:text-2xl font-bold" th:text="${#numbers.formatDecimal(gastosTotales, 0, 'POINT', 0, 'COMMA')}">$0</p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-white/15 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                        <div class="flex items-center gap-3">
-                            <div class="bg-yellow-500/30 p-3 rounded-lg">
-                                <i class='bx bx-bar-chart-alt-2 text-2xl'></i>
+                    <div class="bg-white/15 backdrop-blur-sm rounded-xl p-3 lg:p-4 border border-white/20">
+                        <div class="flex items-center gap-2 lg:gap-3">
+                            <div class="bg-yellow-500/30 p-2 lg:p-3 rounded-lg">
+                                <i class='bx bx-bar-chart-alt-2 text-xl lg:text-2xl'></i>
                             </div>
                             <div>
-                                <p class="text-emerald-100 text-sm">Ganancia Neta</p>
-                                <p class="text-2xl font-bold" th:text="'$' + ${balanceFinal}">$0</p>
+                                <p class="text-emerald-100 text-xs lg:text-sm">Ganancia Neta</p>
+                                <!-- Formato moneda colombiano aplicado -->
+                                <p class="text-xl lg:text-2xl font-bold" th:text="${#numbers.formatDecimal(balanceFinal, 0, 'POINT', 0, 'COMMA')}">$0</p>
                             </div>
                         </div>
                     </div>
@@ -252,8 +373,8 @@
         </div>
 
         <!-- Toggle Vista -->
-        <div class="flex items-center justify-center mb-8">
-            <div class="toggle-switch">
+        <div class="flex items-center justify-center mb-6 lg:mb-8 px-2">
+            <div class="toggle-switch w-full lg:w-auto">
                 <div class="toggle-option active" id="btnVistas" onclick="cambiarVista('ventas')">
                     <i class='bx bx-grid-alt'></i>
                     <span>Ventas</span>
@@ -267,29 +388,29 @@
 
         <!-- VISTA VENTAS - Cards de ventas -->
         <div id="vistaVentas" class="view-section active">
-            <!-- Filtros y búsqueda -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+            <!-- Filtros responsive -->
+            <div class="bg-white rounded-xl shadow-sm p-4 lg:p-6 mb-6 lg:mb-8 border-2 border-gray-200">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="font-semibold text-gray-800 flex items-center gap-2">
-                        <i class='bx bx-filter-alt text-xl'></i>
+                    <h3 class="font-semibold text-gray-800 flex items-center gap-2 text-sm lg:text-base">
+                        <i class='bx bx-filter-alt text-lg lg:text-xl'></i>
                         Filtros
                     </h3>
-                    <button onclick="resetearFiltros()" class="text-sm text-emerald-600 hover:text-emerald-700 font-medium flex items-center gap-1">
+                    <button onclick="resetearFiltros()" class="text-xs lg:text-sm text-emerald-600 hover:text-emerald-700 font-medium flex items-center gap-1">
                         <i class='bx bx-refresh'></i>
                         Resetear
                     </button>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 lg:gap-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Búsqueda</label>
+                        <label class="block text-xs lg:text-sm font-medium text-gray-700 mb-2">Búsqueda</label>
                         <input type="text" id="busqueda" placeholder="Buscar comprador..."
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                               class="w-full px-3 lg:px-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Estado</label>
-                        <select id="filterEstado" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                        <label class="block text-xs lg:text-sm font-medium text-gray-700 mb-2">Estado</label>
+                        <select id="filterEstado" class="w-full px-3 lg:px-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
                             <option value="">Todos</option>
                             <option value="EN_PROCESO">En Proceso</option>
                             <option value="FINALIZADA">Finalizada</option>
@@ -298,8 +419,8 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Pago</label>
-                        <select id="filterPago" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                        <label class="block text-xs lg:text-sm font-medium text-gray-700 mb-2">Pago</label>
+                        <select id="filterPago" class="w-full px-3 lg:px-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
                             <option value="">Todos</option>
                             <option value="pagada">Pagadas</option>
                             <option value="no-pagada">No Pagadas</option>
@@ -307,105 +428,33 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Desde</label>
-                        <input type="date" id="filterFechaDesde" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                        <label class="block text-xs lg:text-sm font-medium text-gray-700 mb-2">Desde</label>
+                        <input type="date" id="filterFechaDesde" class="w-full px-3 lg:px-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Hasta</label>
-                        <input type="date" id="filterFechaHasta" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                        <label class="block text-xs lg:text-sm font-medium text-gray-700 mb-2">Hasta</label>
+                        <input type="date" id="filterFechaHasta" class="w-full px-3 lg:px-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
                     </div>
                 </div>
             </div>
 
-            <!-- Grid de cards de ventas - MEJORADO -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="ventasContainer">
-                <th:block th:each="venta, iterStat : ${ventasOriginales}">
-                    <div class="sale-card bg-white rounded-2xl shadow-md border border-gray-200 p-6 overflow-hidden relative cursor-pointer" th:onclick="|abrirDetalleVenta(${iterStat.index})|">
-                        <div class="absolute top-0 right-0 w-40 h-40 bg-emerald-100/30 rounded-full -mr-20 -mt-20"></div>
-
-                        <div class="relative z-10">
-                            <!-- Header Card mejorado -->
-                            <div class="flex justify-between items-start mb-6">
-                                <div>
-                                    <p class="text-xs text-gray-600 font-medium uppercase tracking-wide">Venta #<span th:text="${venta.idVenta}"></span></p>
-                                    <h3 class="text-2xl font-bold text-gray-900 mt-2" th:text="${venta.comprador.nombres}"></h3>
-                                    <p class="text-sm text-gray-500 mt-1" th:text="${venta.comprador.apellidos}"></p>
-                                </div>
-                                <div class="text-right">
-                                    <p class="text-xs text-gray-500 font-medium" th:text="${#temporals.format(venta.fechaInicioVenta, 'dd/MM/yyyy')}"></p>
-                                </div>
-                            </div>
-
-                            <!-- Producto destacado -->
-                            <div class="mb-6 pb-6 border-b-2 border-gray-200">
-                                <p class="text-xs text-gray-600 mb-2 uppercase tracking-wide font-semibold">Producto</p>
-                                <p class="font-bold text-gray-800 text-lg" th:text="${venta.producto.nombreProducto}"></p>
-                                <p class="text-sm text-gray-600 mt-1" th:if="${venta.producto.descripcion}" th:text="${venta.producto.descripcion}"></p>
-                            </div>
-
-                            <!-- Montos grandes y claros -->
-                            <div class="grid grid-cols-3 gap-3 mb-6">
-                                <div class="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl p-4 text-center border border-emerald-200">
-                                    <p class="text-xs text-emerald-700 mb-2 font-semibold">MONTO</p>
-                                    <p class="font-bold text-emerald-600 text-xl" th:text="'$' + ${venta.producto.precioProducto}"></p>
-                                </div>
-                                <div class="bg-gradient-to-br from-red-50 to-red-100 rounded-xl p-4 text-center border border-red-200">
-                                    <p class="text-xs text-red-700 mb-2 font-semibold">GASTOS</p>
-                                    <p class="font-bold text-red-600 text-xl" th:text="'$' + ${venta.totalGastos}"></p>
-                                </div>
-                                <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 text-center border border-blue-200">
-                                    <p class="text-xs text-blue-700 mb-2 font-semibold">GANANCIA</p>
-                                    <p class="font-bold text-blue-600 text-xl" th:text="'$' + ${venta.producto.precioProducto - venta.totalGastos}"></p>
-                                </div>
-                            </div>
-
-                            <!-- Badges de estado -->
-                            <div class="flex gap-2 mb-6 flex-wrap">
-                                <span th:if="${venta.estado.name() == 'FINALIZADA'}" class="badge badge-completada"><i class='bx bx-check-circle'></i> Finalizada</span>
-                                <span th:if="${venta.estado.name() == 'EN_PROCESO'}" class="badge badge-procesando"><i class='bx bx-loader'></i> En Proceso</span>
-                                <span th:if="${venta.estado.name() == 'CANCELADA'}" class="badge badge-rechazada"><i class='bx bx-x-circle'></i> Cancelada</span>
-
-                                <span th:if="${venta.pagado}" class="badge badge-pagada"><i class='bx bx-check'></i> Pagada</span>
-                                <span th:unless="${venta.pagado}" class="badge badge-no-pagada"><i class='bx bx-x'></i> No Pagada</span>
-                            </div>
-
-                            <!-- Botones de acción -->
-                            <div class="flex gap-2">
-                                <button th:onclick="|abrirDetalleVenta(${iterStat.index}); event.stopPropagation();|"
-                                        class="flex-1 gradient-bg text-white px-4 py-3 rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all flex items-center justify-center gap-2">
-                                    <i class='bx bx-detail'></i>
-                                    Ver Detalle
-                                </button>
-                                <a th:if="${venta.estado.name() == 'EN_PROCESO'}" th:href="@{/vendedor/ventas/detalle-venta/{id}(id=${venta.idVenta})}"
-                                   class="flex-1 border-2 border-emerald-600 text-emerald-600 px-4 py-3 rounded-xl font-semibold hover:bg-emerald-50 transition-all text-center flex items-center justify-center gap-2">
-                                    Ver Proceso
-                                    <svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                          fill="currentColor" viewBox="0 0 24 24" >
-                                        <!--Boxicons v3.0.3 https://boxicons.com | License  https://docs.boxicons.com/free-->
-                                        <path d="M6 13h8.09l-3.3 3.29 1.42 1.42 5.7-5.71-5.7-5.71-1.42 1.42 3.3 3.29H6z"></path>
-                                    </svg>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </th:block>
-            </div>
+            <!-- Grid de cards de ventas -->
+            <div id="ventasContainer" class="space-y-4"></div>
 
             <!-- Mensaje cuando no hay ventas -->
-            <div th:if="${ventas.isEmpty()}" class="bg-white rounded-2xl shadow-md border border-gray-200 p-12 text-center">
-                <i class='bx bx-inbox text-6xl text-gray-300 mb-4'></i>
-                <p class="text-2xl font-semibold text-gray-600 mb-2">No hay ventas aún</p>
-                <p class="text-gray-500">Comienza a registrar tus primeras ventas</p>
+            <div th:if="${ventas.isEmpty()}" class="bg-white rounded-2xl shadow-sm p-8 lg:p-12 text-center border-2 border-gray-200">
+                <i class='bx bx-inbox text-5xl lg:text-6xl text-gray-300 mb-4'></i>
+                <p class="text-xl lg:text-2xl font-semibold text-gray-600 mb-2">No hay ventas aún</p>
+                <p class="text-sm lg:text-base text-gray-500">Comienza a registrar tus primeras ventas</p>
             </div>
         </div>
 
         <!-- VISTA GRÁFICOS -->
         <div id="vistaGraficos" class="view-section">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Gráfica de Ingresos vs Gastos -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+                <div class="bg-white rounded-xl shadow-sm p-4 lg:p-6 border-2 border-gray-200">
+                    <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2 text-sm lg:text-base">
                         <i class='bx bx-chart-line text-emerald-600'></i>
                         Ingresos vs Gastos
                     </h3>
@@ -414,9 +463,8 @@
                     </div>
                 </div>
 
-                <!-- Gráfica de Estados -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <div class="bg-white rounded-xl shadow-sm p-4 lg:p-6 border-2 border-gray-200">
+                    <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2 text-sm lg:text-base">
                         <i class='bx bx-pie-chart-alt text-emerald-600'></i>
                         Distribución de Estados
                     </h3>
@@ -425,9 +473,8 @@
                     </div>
                 </div>
 
-                <!-- Gráfica de Ganancia Neta -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <div class="bg-white rounded-xl shadow-sm p-4 lg:p-6 border-2 border-gray-200">
+                    <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2 text-sm lg:text-base">
                         <i class='bx bx-bar-chart text-emerald-600'></i>
                         Ganancia Neta por Venta
                     </h3>
@@ -436,9 +483,8 @@
                     </div>
                 </div>
 
-                <!-- Gráfica de Métodos de Pago -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <div class="bg-white rounded-xl shadow-sm p-4 lg:p-6 border-2 border-gray-200">
+                    <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2 text-sm lg:text-base">
                         <i class='bx bx-wallet text-emerald-600'></i>
                         Métodos de Pago
                     </h3>
@@ -454,104 +500,73 @@
     </main>
 </div>
 
-<!-- Modal para detalles de venta - MEJORADO Y COMPLETO -->
-<div id="detalleVentaModal" class="fixed inset-0 modal-backdrop flex items-center justify-center z-50 opacity-0 invisible transition-all duration-300">
-    <div class="bg-white rounded-2xl max-w-5xl w-full mx-4 transform scale-95 transition-transform duration-300 shadow-2xl max-h-[95vh] overflow-y-auto custom-scrollbar">
-
-        <!-- Header -->
-        <div class="sticky top-0 bg-gradient-bg text-white p-6 flex justify-between items-center z-10">
-            <h3 class="text-2xl font-bold flex items-center gap-2">
-                <i class='bx bx-receipt text-2xl'></i>
-                <span>Detalle de Venta #<span id="detalleVentaId">-</span></span>
+<!-- Modal para agregar gasto -->
+<div id="modalGasto" class="fixed inset-0 modal-backdrop flex items-center justify-center z-50 opacity-0 invisible transition-all duration-300 px-4" style="transform: scale(0.9);">
+    <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl">
+        <div class="gradient-bg text-white p-4 lg:p-6 rounded-t-2xl">
+            <h3 class="text-xl lg:text-2xl font-bold flex items-center gap-2">
+                <i class='bx bx-plus-circle text-xl lg:text-2xl'></i>
+                Agregar Gasto
             </h3>
-            <button onclick="cerrarDetalleVenta()" class="text-white/80 hover:text-white hover:bg-white/20 p-2 rounded-lg transition-colors">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-            </button>
         </div>
-
-        <div class="p-6 space-y-6">
-            <!-- Info básica en grid -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 border border-blue-200">
-                    <p class="text-xs text-blue-700 font-semibold mb-1 uppercase">Comprador</p>
-                    <p class="text-lg font-bold text-blue-900" id="detalleComrador">-</p>
-                </div>
-                <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4 border border-purple-200">
-                    <p class="text-xs text-purple-700 font-semibold mb-1 uppercase">Producto</p>
-                    <p class="text-lg font-bold text-purple-900" id="detalleProducto">-</p>
-                </div>
-                <div class="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-lg p-4 border border-emerald-200">
-                    <p class="text-xs text-emerald-700 font-semibold mb-1 uppercase">Monto Total</p>
-                    <p class="text-lg font-bold text-emerald-700" id="detalleMonto">$0</p>
-                </div>
-                <div class="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg p-4 border border-yellow-200">
-                    <p class="text-xs text-yellow-700 font-semibold mb-1 uppercase">Ganancia Neta</p>
-                    <p class="text-lg font-bold text-yellow-700" id="detalleGanancia">$0</p>
-                </div>
+        <form id="formGasto" class="p-4 lg:p-6 space-y-4">
+            <input type="hidden" id="ventaIdGasto">
+            <input type="hidden" id="ventaIndexGasto">
+            <div>
+                <label class="block text-xs lg:text-sm font-semibold text-gray-700 mb-2">Descripción</label>
+                <input type="text" id="descripcionGasto" required
+                       class="w-full px-3 lg:px-4 py-2 lg:py-3 text-sm border-2 border-gray-300 rounded-xl focus:border-emerald-500 focus:outline-none transition-colors"
+                       placeholder="Ej: Transporte, comisión, etc.">
             </div>
-
-            <!-- Notas -->
-            <div class="bg-white border-2 border-gray-200 rounded-lg p-4">
-                <h4 class="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                    <i class='bx bx-note text-emerald-600 text-xl'></i>
-                    Notas de la Venta
-                </h4>
-                <div id="detalleNotas" class="bg-gray-50 rounded p-3 text-gray-700 min-h-16 text-sm leading-relaxed border-l-4 border-emerald-600">
-                    No hay notas registradas
-                </div>
+            <div>
+                <label class="block text-xs lg:text-sm font-semibold text-gray-700 mb-2">Monto ($)</label>
+                <input type="number" id="montoGasto" required min="0" step="1"
+                       class="w-full px-3 lg:px-4 py-2 lg:py-3 text-sm border-2 border-gray-300 rounded-xl focus:border-emerald-500 focus:outline-none transition-colors"
+                       placeholder="0">
             </div>
-
-            <!-- Gastos de Venta -->
-            <div class="bg-white border-2 border-gray-200 rounded-lg p-4">
-                <div class="flex justify-between items-center mb-4">
-                    <h4 class="font-semibold text-gray-800 flex items-center gap-2">
-                        <i class='bx bx-credit-card text-emerald-600 text-xl'></i>
-                        Gastos de Venta
-                    </h4>
-                    <button id="btnAgregarGasto" onclick="abrirModalGasto()" class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition text-sm flex items-center gap-2 font-medium">
-                        <i class='bx bx-plus'></i>
-                        Agregar Gasto
-                    </button>
-                </div>
-                <div id="listaGastos" class="space-y-2">
-                    <p class="text-gray-500 text-sm">No hay gastos registrados</p>
-                </div>
-                <div id="resumenGastos" class="mt-4 pt-4 border-t-2 border-gray-200 text-right">
-                    <p class="text-sm text-gray-600">Total Gastos: <span class="font-bold text-red-600 text-lg" id="totalGastosDetalle">$0</span></p>
-                </div>
-            </div>
-
-            <!-- Documentos -->
-            <div class="bg-white border-2 border-gray-200 rounded-lg p-4">
-                <h4 class="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                    <i class='bx bx-file text-emerald-600 text-xl'></i>
-                    Documentos Adjuntos
-                </h4>
-                <div id="listaDocumentos" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <p class="text-gray-500 text-sm col-span-full">No hay documentos disponibles</p>
-                </div>
-            </div>
-
-            <!-- Botones de acción -->
-            <div class="flex gap-3 pt-6 border-t-2 border-gray-200">
-                <a id="btnDetalleLink" href="#"
-                   class="flex-1 gradient-bg text-white px-4 py-3 rounded-xl font-semibold text-center hover:shadow-lg transform hover:scale-105 transition-all flex items-center justify-center gap-2">
-                    <i class='bx bx-arrow-back'></i>
-                    Ir a Detalle Completo
-                </a>
-                <button onclick="cerrarDetalleVenta()"
-                        class="flex-1 px-4 py-3 bg-gray-200 text-gray-800 rounded-xl font-semibold hover:bg-gray-300 transition-all flex items-center justify-center gap-2">
-                    <i class='bx bx-x'></i>
-                    Cerrar
+            <div class="flex gap-3 pt-4">
+                <button type="submit" class="flex-1 gradient-bg text-white px-4 py-2 lg:py-3 text-sm rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all">
+                    <i class='bx bx-check'></i> Guardar
+                </button>
+                <button type="button" onclick="cerrarModalGasto()" class="flex-1 bg-gray-200 text-gray-800 px-4 py-2 lg:py-3 text-sm rounded-xl font-semibold hover:bg-gray-300 transition-all">
+                    <i class='bx bx-x'></i> Cancelar
                 </button>
             </div>
-        </div>
+        </form>
     </div>
 </div>
 
-<!-- Contenedor oculto para PDF -->
+<!-- Modal Editar Nota -->
+<div id="modalNota" class="fixed inset-0 modal-backdrop flex items-center justify-center z-50 opacity-0 invisible transition-all duration-300 px-4" style="transform: scale(0.9);">
+    <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl">
+        <div class="gradient-bg text-white p-4 lg:p-6 rounded-t-2xl">
+            <h3 class="text-xl lg:text-2xl font-bold flex items-center gap-2">
+                <i class='bx bx-edit text-xl lg:text-2xl'></i>
+                Editar Notas
+            </h3>
+        </div>
+        <form id="formNota" class="p-4 lg:p-6 space-y-4">
+            <input type="hidden" id="ventaIdNota">
+            <input type="hidden" id="ventaIndexNota">
+            <div>
+                <label class="block text-xs lg:text-sm font-semibold text-gray-700 mb-2">Notas de la venta</label>
+                <textarea id="textoNota" rows="6"
+                          class="w-full px-3 lg:px-4 py-2 lg:py-3 text-sm border-2 border-gray-300 rounded-xl focus:border-emerald-500 focus:outline-none transition-colors resize-none"
+                          placeholder="Escribe aquí las notas, observaciones o detalles importantes de esta venta..."></textarea>
+            </div>
+            <div class="flex gap-3">
+                <button type="submit" class="flex-1 gradient-bg text-white px-4 py-2 lg:py-3 text-sm rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all">
+                    <i class='bx bx-save'></i> Guardar Cambios
+                </button>
+                <button type="button" onclick="cerrarModalNota()" class="flex-1 bg-gray-200 text-gray-800 px-4 py-2 lg:py-3 text-sm rounded-xl font-semibold hover:bg-gray-300 transition-all">
+                    <i class='bx bx-x'></i> Cancelar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Contenedor oculto para PDF - NO TOCADO -->
 <div id="pdfContent" style="display:none;">
     <div style="text-align: center; margin-bottom: 30px;">
         <h1 style="color: #059669; font-size: 28px; margin-bottom: 10px;">REPORTE DE VENTAS</h1>
@@ -604,20 +619,23 @@
     let ingresosTotales = [[${ingresosTotales}]];
     let gastosTotales = [[${gastosTotales}]];
     let balanceFinal = [[${balanceFinal}]];
-    let ventaActual = null;
 
     let chartIngresosGastos, chartEstados, chartGanancia, chartMetodosPago;
 
     const formatoMoneda = (valor) => {
-    if (valor === null || valor === undefined) return '$0';
-    return '$' + new Intl.NumberFormat('es-CO', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0
-    }).format(valor);
-};
+        if (valor === null || valor === undefined) return '$0';
+        return new Intl.NumberFormat('es-CO', {
+            style: 'currency',
+            currency: 'COP',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        }).format(valor);
+    };
 
-    const formatoFecha = (fecha) => {
-        return new Date(fecha).toLocaleDateString('es-ES', { year: 'numeric', month: 'short', day: 'numeric' });
+    const formatFecha = (fecha) => {
+        if (!fecha) return 'N/A';
+        const date = new Date(fecha);
+        return date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
     };
 
     function cambiarVista(vista) {
@@ -636,81 +654,10 @@
             vistaGraficos.classList.add('active');
             btnVistas.classList.remove('active');
             btnGraficos.classList.add('active');
-
             setTimeout(() => {
                 if (!chartIngresosGastos) inicializarGraficas();
             }, 300);
         }
-    }
-
-    function abrirDetalleVenta(index) {
-    if (index < 0 || index >= allSales.length) {
-        console.error('Índice de venta inválido:', index);
-        return;
-    }
-
-    const venta = allSales[index];
-    ventaActual = venta;
-
-    document.getElementById('detalleVentaId').textContent = venta.idVenta || '-';
-    document.getElementById('detalleComrador').textContent = venta.nombreComprador || 'Desconocido';
-    document.getElementById('detalleProducto').textContent = venta.nombreProducto || 'Sin producto';
-    document.getElementById('detalleMonto').textContent = formatoMoneda(venta.precioProducto);
-    document.getElementById('detalleGanancia').textContent = formatoMoneda(venta.gananciaNeta);
-
-    // Notas
-    const notas = venta.nota && venta.nota.trim() !== '' ? venta.nota : 'No hay notas registradas';
-    document.getElementById('detalleNotas').textContent = notas;
-
-    // Gastos
-    const listaGastos = document.getElementById('listaGastos');
-    if (venta.listaGastos && venta.listaGastos.length > 0) {
-        listaGastos.innerHTML = venta.listaGastos.map(gasto => `
-            <div class="gasto-item">
-                <div class="flex-1">
-                    <p class="font-semibold text-gray-800">${gasto.nombreGasto || 'Sin nombre'}</p>
-                    <p class="text-sm text-gray-600">ID: ${gasto.idGasto || '-'}</p>
-                </div>
-                <div class="text-right">
-                    <p class="font-bold text-red-600 text-lg">${formatoMoneda(gasto.valorGasto)}</p>
-                </div>
-            </div>
-        `).join('');
-        document.getElementById('totalGastosDetalle').textContent = formatoMoneda(venta.totalGastos);
-    } else {
-        listaGastos.innerHTML = '<p class="text-gray-500 text-sm">No hay gastos registrados</p>';
-        document.getElementById('totalGastosDetalle').textContent = formatoMoneda(0);
-    }
-
-    // Documentos
-    const listaDocumentos = document.getElementById('listaDocumentos');
-    if (venta.documentos && venta.documentos.length > 0) {
-        listaDocumentos.innerHTML = venta.documentos.map(doc => `
-            <a href="/descargar/${doc.id}" class="documento-btn" target="_blank">
-                <i class='bx bx-file text-2xl'></i>
-                <div>
-                    <p class="font-semibold">${doc.nombre}</p>
-                    <p class="text-xs">${formatoFecha(doc.fechaCreacion)}</p>
-                </div>
-            </a>
-        `).join('');
-    } else {
-        listaDocumentos.innerHTML = '<p class="text-gray-500 text-sm col-span-full">No hay documentos disponibles</p>';
-    }
-
-    // Link al detalle completo
-    document.getElementById('btnDetalleLink').href = `/vendedor/ventas/detalle-venta/${venta.idVenta}`;
-
-    // Mostrar modal
-    const modal = document.getElementById('detalleVentaModal');
-    modal.classList.remove('opacity-0', 'invisible');
-    modal.classList.add('opacity-100', 'visible');
-}
-
-    function cerrarDetalleVenta() {
-        const modal = document.getElementById('detalleVentaModal');
-        modal.classList.add('opacity-0', 'invisible');
-        modal.classList.remove('opacity-100', 'visible');
     }
 
     function inicializarGraficas() {
@@ -821,8 +768,26 @@
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { position: 'top' } },
-                scales: { y: { beginAtZero: true } }
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return 'Ganancia: ' + formatoMoneda(context.parsed.y);
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return formatoMoneda(value);
+                            }
+                        }
+                    }
+                }
             }
         });
 
@@ -911,22 +876,525 @@
         document.getElementById('filterPago').value = '';
         document.getElementById('filterFechaDesde').value = '';
         document.getElementById('filterFechaHasta').value = '';
+        aplicarFiltros();
     }
 
+    function aplicarFiltros() {
+        const busqueda = document.getElementById('busqueda').value.toLowerCase();
+        const estado = document.getElementById('filterEstado').value;
+        const pago = document.getElementById('filterPago').value;
+        const fechaDesde = document.getElementById('filterFechaDesde').value;
+        const fechaHasta = document.getElementById('filterFechaHasta').value;
+
+        const ventasFiltradas = allSales.filter(venta => {
+            const nombreComprador = `${venta.comprador.nombres} ${venta.comprador.apellidos}`.toLowerCase();
+            const cumpleBusqueda = !busqueda || nombreComprador.includes(busqueda);
+            const cumpleEstado = !estado || venta.estado === estado;
+            const cumplePago = !pago || (pago === 'pagada' ? venta.pagado : !venta.pagado);
+
+            let cumpleFecha = true;
+            if (fechaDesde && venta.fechaInicioVenta) {
+                cumpleFecha = cumpleFecha && venta.fechaInicioVenta >= fechaDesde;
+            }
+            if (fechaHasta && venta.fechaInicioVenta) {
+                cumpleFecha = cumpleFecha && venta.fechaInicioVenta <= fechaHasta;
+            }
+
+            return cumpleBusqueda && cumpleEstado && cumplePago && cumpleFecha;
+        });
+
+        renderVentas(ventasFiltradas);
+    }
+
+    function renderVentas(ventas = allSales) {
+        const container = document.getElementById('ventasContainer');
+
+        if (ventas.length === 0) {
+            container.innerHTML = `
+                <div class="bg-white rounded-2xl shadow-sm p-8 lg:p-12 text-center border-2 border-gray-200">
+                    <i class='bx bx-filter-alt text-5xl lg:text-6xl text-gray-300 mb-4'></i>
+                    <p class="text-xl lg:text-2xl font-semibold text-gray-600 mb-2">No hay ventas que coincidan</p>
+                    <p class="text-sm lg:text-base text-gray-500">Intenta ajustar los filtros</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = ventas.map((venta, index) => {
+            const ganancia = (venta.producto?.precioProducto || 0) - (venta.totalGastos || 0);
+            const realIndex = allSales.findIndex(v => v.idVenta === venta.idVenta);
+
+            return `
+                <div class="venta-item bg-white rounded-2xl shadow-md overflow-hidden relative" id="venta-${realIndex}">
+                    <!-- Fondo decorativo -->
+                    <div class="absolute top-0 right-0 w-20 lg:w-32 h-20 lg:h-32 bg-emerald-100/30 rounded-full -mr-10 lg:-mr-16 -mt-10 lg:-mt-16 pointer-events-none"></div>
+
+                    <!-- Header mejorado con estructura similar al calendario -->
+                    <div class="p-4 lg:p-8 cursor-pointer hover:bg-gray-50/50 transition-colors relative z-10" onclick="toggleDetalle(${realIndex})">
+                        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 lg:gap-6">
+                            <!-- Info principal -->
+                            <div class="flex items-center gap-3 lg:gap-6 flex-1 min-w-0 w-full lg:w-auto">
+                                <div class="w-12 h-12 lg:w-16 lg:h-16 bg-gradient-bg rounded-xl lg:rounded-2xl flex items-center justify-center flex-shrink-0">
+                                    <i class='bx bx-shopping-bag text-white text-2xl lg:text-3xl'></i>
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <div class="flex items-center gap-2 lg:gap-3 mb-2 flex-wrap">
+                                        <p class="text-xs font-bold uppercase tracking-wide bg-emerald-50 text-emerald-700 px-2 py-1 rounded">Venta #${venta.idVenta}</p>
+                                        ${getEstadoBadge(venta.estado)}
+                                        ${getPagadoBadge(venta.pagado)}
+                                    </div>
+                                    <h3 class="text-lg lg:text-xl font-bold text-gray-900 mb-1">${venta.comprador.nombres} ${venta.comprador.apellidos}</h3>
+                                    <p class="text-xs lg:text-sm text-emerald-600 font-semibold flex items-center gap-2">
+                                        <i class='bx bx-package'></i>
+                                        <span class="truncate">${venta.producto.nombreProducto}</span>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Montos con mejor contraste y bordes -->
+                            <div class="flex items-center gap-2 lg:gap-3 flex-wrap justify-start lg:justify-end w-full lg:w-auto">
+                                <div class="stat-box text-center flex-1 lg:flex-none min-w-[100px]">
+                                    <p class="text-xs text-emerald-800 font-bold mb-1">PRECIO</p>
+                                    <p class="text-base lg:text-lg font-black text-emerald-700">${formatoMoneda(venta.producto?.precioProducto || 0)}</p>
+                                </div>
+                                <div class="stat-box red text-center flex-1 lg:flex-none min-w-[100px]">
+                                    <p class="text-xs text-red-800 font-bold mb-1">GASTOS</p>
+                                    <p class="text-base lg:text-lg font-black text-red-700">${formatoMoneda(venta.totalGastos || 0)}</p>
+                                </div>
+                                <div class="stat-box blue text-center flex-1 lg:flex-none min-w-[100px]">
+                                    <p class="text-xs text-blue-800 font-bold mb-1">GANANCIA</p>
+                                    <p class="text-base lg:text-lg font-black text-blue-700">${formatoMoneda(ganancia)}</p>
+                                </div>
+                            </div>
+
+                            <!-- Fecha y toggle -->
+                            <div class="flex items-center justify-between lg:justify-end gap-4 w-full lg:w-auto">
+                                <div class="text-left lg:text-right">
+                                    <p class="text-xs text-gray-500 font-semibold">FECHA INICIO</p>
+                                    <p class="text-sm font-bold text-gray-700">${formatFecha(venta.fechaInicioVenta)}</p>
+                                </div>
+                                <div class="w-10 h-10 lg:w-12 lg:h-12 bg-emerald-100 rounded-full flex items-center justify-center cursor-pointer hover:bg-emerald-200 transition-colors flex-shrink-0">
+                                    <i class='bx bx-chevron-down text-xl lg:text-2xl text-emerald-600 transition-transform duration-300' id="icon-${realIndex}"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detalle expandible con mejor estructura inspirada en calendario -->
+                    <div class="detalle-expandido" id="detalle-${realIndex}">
+                        <div class="border-t-2 border-gray-200 p-4 lg:p-8 bg-gradient-to-b from-gray-50/50 to-white relative z-10">
+                            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
+                                <!-- Columna 1: Información General -->
+                                <div class="space-y-4 lg:space-y-6">
+                                    <!-- Info Comprador -->
+                                    <div class="info-card">
+                                        <h4 class="font-bold text-gray-900 text-base lg:text-lg mb-3 lg:mb-4 flex items-center gap-2">
+                                            <div class="bg-emerald-100 p-2 rounded-lg">
+                                                <i class='bx bx-user text-emerald-600 text-lg'></i>
+                                            </div>
+                                            <span>Comprador</span>
+                                        </h4>
+                                        <div class="space-y-3 text-sm">
+                                            <div class="bg-gray-50 rounded-lg p-3 border-l-4 border-emerald-500">
+                                                <p class="text-xs text-gray-500 font-semibold mb-1">NOMBRE COMPLETO</p>
+                                                <p class="font-bold text-gray-900">${venta.comprador.nombres} ${venta.comprador.apellidos}</p>
+                                            </div>
+                                            <div class="bg-gray-50 rounded-lg p-3 border-l-4 border-blue-500">
+                                                <p class="text-xs text-gray-500 font-semibold mb-1">CÉDULA</p>
+                                                <p class="text-gray-700">${venta.comprador.cedula}</p>
+                                            </div>
+                                            <div class="bg-gray-50 rounded-lg p-3 border-l-4 border-purple-500">
+                                                <p class="text-xs text-gray-500 font-semibold mb-1">CONTACTO</p>
+                                                <p class="text-gray-700 flex items-center gap-2 mb-1">
+                                                    <i class='bx bx-phone text-emerald-600'></i>
+                                                    <span class="break-all">${venta.comprador.telefono}</span>
+                                                </p>
+                                                <p class="text-gray-700 flex items-center gap-2">
+                                                    <i class='bx bx-envelope text-emerald-600'></i>
+                                                    <span class="break-all text-xs lg:text-sm">${venta.comprador.email}</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Info Producto -->
+                                    <div class="info-card">
+                                        <h4 class="font-bold text-gray-900 text-base lg:text-lg mb-3 lg:mb-4 flex items-center gap-2">
+                                            <div class="bg-blue-100 p-2 rounded-lg">
+                                                <i class='bx bx-package text-blue-600 text-lg'></i>
+                                            </div>
+                                            <span>Producto</span>
+                                        </h4>
+                                        <div class="space-y-3 text-sm">
+                                            <div class="bg-blue-50 rounded-lg p-3 border-l-4 border-blue-500">
+                                                <p class="text-xs text-blue-600 font-semibold mb-1">NOMBRE</p>
+                                                <p class="font-bold text-gray-900">${venta.producto.nombreProducto}</p>
+                                            </div>
+                                            <div class="bg-gray-50 rounded-lg p-3 border-l-4 border-gray-400">
+                                                <p class="text-xs text-gray-500 font-semibold mb-1">DESCRIPCIÓN</p>
+                                                <p class="text-gray-700 leading-relaxed text-xs lg:text-sm">${venta.producto.descripcion || 'Sin descripción'}</p>
+                                            </div>
+                                            <div class="bg-emerald-50 rounded-lg p-4 border-l-4 border-emerald-500">
+                                                <p class="text-xs text-emerald-600 font-semibold mb-1">PRECIO</p>
+                                                <p class="text-xl lg:text-2xl font-black text-emerald-600">${formatoMoneda(venta.producto?.precioProducto || 0)}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Información de cita si existe -->
+                                    ${venta.cita ? `
+                                    <div class="info-card">
+                                        <h4 class="font-bold text-gray-900 text-base lg:text-lg mb-3 lg:mb-4 flex items-center gap-2">
+                                            <div class="bg-purple-100 p-2 rounded-lg">
+                                                <i class='bx bx-calendar text-purple-600 text-lg'></i>
+                                            </div>
+                                            <span>Cita Asociada</span>
+                                        </h4>
+                                        <div class="space-y-3 text-sm">
+                                            <div class="bg-purple-50 rounded-lg p-3 border-l-4 border-purple-500">
+                                                <p class="text-xs text-purple-600 font-semibold mb-1">FECHA</p>
+                                                <p class="font-bold text-gray-900">${formatFecha(venta.cita.fecha)}</p>
+                                            </div>
+                                            <div class="bg-purple-50 rounded-lg p-3 border-l-4 border-purple-500">
+                                                <p class="text-xs text-purple-600 font-semibold mb-1">HORARIO</p>
+                                                <p class="text-gray-700">${venta.cita.horaInicio} - ${venta.cita.horaFin}</p>
+                                            </div>
+                                            <div class="bg-gray-50 rounded-lg p-3">
+                                                <p class="text-xs text-gray-500 font-semibold mb-1">ESTADO</p>
+                                                <span class="badge ${venta.cita.estadoCita === 'FINALIZADA' ? 'badge-completada' : venta.cita.estadoCita === 'EN_CURSO' ? 'badge-procesando' : 'badge-no-pagada'}">
+                                                    ${venta.cita.estadoCita}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    ` : ''}
+                                </div>
+
+                                <!-- Columna 2: Notas y Gastos -->
+                                <div class="space-y-4 lg:space-y-6">
+                                    <!-- Notas -->
+                                    <div class="info-card">
+                                        <div class="flex items-center justify-between mb-3 lg:mb-4">
+                                            <h4 class="font-bold text-gray-900 text-base lg:text-lg flex items-center gap-2">
+                                                <div class="bg-yellow-100 p-2 rounded-lg">
+                                                    <i class='bx bx-note text-yellow-600 text-lg'></i>
+                                                </div>
+                                                <span>Notas</span>
+                                            </h4>
+                                            <button onclick="abrirModalNota(${realIndex}); event.stopPropagation();"
+                                                    class="text-emerald-600 hover:text-emerald-700 font-bold text-xs lg:text-sm flex items-center gap-1 bg-emerald-50 px-2 py-1 rounded-lg hover:bg-emerald-100 transition-all border-2 border-emerald-200">
+                                                <i class='bx bx-edit'></i> <span class="hidden sm:inline">Editar</span>
+                                            </button>
+                                        </div>
+                                        <div class="bg-yellow-50 rounded-lg p-3 lg:p-4 text-xs lg:text-sm text-gray-700 leading-relaxed min-h-24 border-2 border-yellow-200">
+                                            ${venta.nota || '<span class="text-gray-500 italic">Sin notas registradas</span>'}
+                                        </div>
+                                    </div>
+
+                                    <!-- Gastos -->
+                                    <div class="info-card">
+                                        <div class="flex items-center justify-between mb-3 lg:mb-4">
+                                            <h4 class="font-bold text-gray-900 text-base lg:text-lg flex items-center gap-2">
+                                                <div class="bg-red-100 p-2 rounded-lg">
+                                                    <i class='bx bx-credit-card text-red-600 text-lg'></i>
+                                                </div>
+                                                <span>Gastos</span>
+                                            </h4>
+                                            <button onclick="abrirModalGasto(${realIndex}); event.stopPropagation();"
+                                                    class="gradient-bg text-white px-2 lg:px-3 py-1 rounded-lg hover:shadow-md transition-all text-xs lg:text-sm font-bold flex items-center gap-1 border-2 border-emerald-600">
+                                                <i class='bx bx-plus'></i> <span class="hidden sm:inline">Agregar</span>
+                                            </button>
+                                        </div>
+                                        <div class="space-y-2 mb-4 max-h-64 overflow-y-auto custom-scrollbar" id="listaGastos-${realIndex}">
+                                            ${venta.listaGastos && venta.listaGastos.length > 0 ? venta.listaGastos.map(gasto => `
+                                                <div class="gasto-item flex justify-between items-center gap-2" id="gasto-${gasto.idGasto}">
+                                                    <div class="flex-1 min-w-0">
+                                                        <span class="text-xs lg:text-sm font-semibold text-gray-800 break-words">${gasto.nombreGasto || gasto.descripcion}</span>
+                                                    </div>
+                                                    <div class="flex items-center gap-2 lg:gap-3 flex-shrink-0">
+                                                        <span class="font-black text-red-700 text-sm lg:text-base whitespace-nowrap">${formatoMoneda(gasto.valorGasto || gasto.monto)}</span>
+                                                        <button onclick="eliminarGasto(${realIndex}, ${gasto.idGasto}); event.stopPropagation();"
+                                                                class="text-red-500 hover:text-red-700 transition-colors hover:bg-red-50 p-1 rounded">
+                                                            <i class='bx bx-trash text-base lg:text-lg'></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            `).join('') : '<p class="text-gray-500 text-xs lg:text-sm italic py-4 text-center">No hay gastos registrados</p>'}
+                                        </div>
+                                        <div class="pt-3 lg:pt-4 border-t-2 border-gray-200 bg-red-50 rounded-lg p-3 border-2 border-red-200">
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-xs lg:text-sm font-bold text-gray-800">Total Gastos</span>
+                                                <span class="text-base lg:text-lg font-black text-red-700">${formatoMoneda(venta.totalGastos || 0)}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Columna 3: Documentos y Resumen -->
+                                <div class="space-y-4 lg:space-y-6">
+                                    <!-- Botón ver proceso si está EN_PROCESO -->
+                                    ${venta.estado === 'EN_PROCESO' && venta.pasoActual ? `
+                                    <div class="info-card bg-gradient-to-br from-blue-50 to-blue-100 border-blue-300">
+                                        <div class="flex items-center justify-between mb-4">
+                                            <h4 class="font-bold text-gray-900 text-base lg:text-lg flex items-center gap-2">
+                                                <span>Venta en Proceso</span>
+                                            </h4>
+                                        </div>
+                                        <div class="space-y-3">
+                                            <div class="bg-white rounded-lg p-3 border-2 border-blue-300">
+                                                <p class="text-xs text-blue-700 font-semibold mb-1">PASO ACTUAL</p>
+                                                <p class="text-2xl font-black text-blue-700">${venta.pasoActual}</p>
+                                            </div>
+                                            <a href="/vendedor/ventas/detalle-venta/${venta.idVenta}"
+                                               class="block w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-3 rounded-xl font-bold text-center hover:shadow-lg transform hover:scale-105 transition-all flex items-center justify-center gap-2 border-2 border-blue-800">
+                                                <i class='bx bx-right-arrow-circle text-xl'></i>
+                                                <span>Ver Proceso de Venta</span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    ` : ''}
+
+                                    <!-- Documentos -->
+                                    <div class="info-card">
+                                        <h4 class="font-bold text-gray-900 text-base lg:text-lg mb-3 lg:mb-4 flex items-center gap-2">
+                                            <div class="bg-green-100 p-2 rounded-lg">
+                                                <i class='bx bx-file text-green-600 text-lg'></i>
+                                            </div>
+                                            <span>Comprobantes</span>
+                                        </h4>
+                                        <div class="space-y-2 mb-4 lg:mb-6 max-h-64 overflow-y-auto custom-scrollbar">
+                                            ${venta.listaComprobantes && venta.listaComprobantes.length > 0 ? venta.listaComprobantes.map(doc => `
+                                                <a href="/descargar/comprobante/${doc.idComprobante}" class="doc-item" target="_blank">
+                                                    <div class="flex items-center gap-2 flex-1 min-w-0">
+                                                        <i class='bx bxs-file-pdf text-red-600 text-lg lg:text-xl flex-shrink-0'></i>
+                                                        <div class="doc-name min-w-0">
+                                                            <p class="doc-name-text text-xs lg:text-sm break-all">${doc.nombreComprobante}</p>
+                                                            <p class="text-xs text-emerald-700">${formatFecha(doc.fechaSubida)}</p>
+                                                        </div>
+                                                    </div>
+                                                    <i class='bx bx-download text-base lg:text-lg text-emerald-600 flex-shrink-0'></i>
+                                                </a>
+                                            `).join('') : '<p class="text-gray-500 text-xs lg:text-sm italic py-4 text-center">No hay comprobantes adjuntos</p>'}
+                                        </div>
+                                    </div>
+
+                                    <!-- Resumen Financiero -->
+                                    <div class="gradient-bg text-white rounded-xl p-4 lg:p-5 border-2 border-emerald-600 shadow-lg">
+                                        <h5 class="text-sm lg:text-base font-bold mb-3 lg:mb-4 opacity-90 flex items-center gap-2">
+                                            <i class='bx bx-calculator text-lg'></i>
+                                            Resumen Financiero
+                                        </h5>
+                                        <div class="space-y-2 lg:space-y-3 text-xs lg:text-sm">
+                                            <div class="flex justify-between pb-2 border-b border-white/20">
+                                                <span class="opacity-90">Precio Producto</span>
+                                                <span class="font-bold">${formatoMoneda(venta.producto?.precioProducto || 0)}</span>
+                                            </div>
+                                            <div class="flex justify-between pb-2 border-b border-white/20">
+                                                <span class="opacity-90">Total Gastos</span>
+                                                <span class="font-bold">- ${formatoMoneda(venta.totalGastos || 0)}</span>
+                                            </div>
+                                            <div class="flex justify-between pt-2 bg-white/10 rounded-lg p-2 lg:p-3">
+                                                <span class="font-bold text-sm lg:text-base">Ganancia Neta</span>
+                                                <span class="text-lg lg:text-xl font-black">${formatoMoneda(ganancia)}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function toggleDetalle(index) {
+        const detalle = document.getElementById(`detalle-${index}`);
+        const icon = document.getElementById(`icon-${index}`);
+        const ventaItem = document.getElementById(`venta-${index}`);
+
+        detalle.classList.toggle('activo');
+        icon.classList.toggle('rotate-180');
+        ventaItem.classList.toggle('expandida');
+    }
+
+    function getEstadoBadge(estado) {
+        const badges = {
+            'FINALIZADA': '<span class="badge badge-completada"><i class="bx bx-check-circle"></i> Finalizada</span>',
+            'EN_PROCESO': '<span class="badge badge-procesando"><i class="bx bx-loader"></i> En Proceso</span>',
+            'CANCELADA': '<span class="badge badge-rechazada"><i class="bx bx-x-circle"></i> Cancelada</span>'
+        };
+        return badges[estado] || '';
+    }
+
+    function getPagadoBadge(pagado) {
+        return pagado
+            ? '<span class="badge badge-pagada"><i class="bx bx-check"></i> Pagada</span>'
+            : '<span class="badge badge-no-pagada"><i class="bx bx-x"></i> No Pagada</span>';
+    }
+
+    function eliminarGasto(ventaIndex, gastoId) {
+        if (!confirm('¿Estás seguro de eliminar este gasto?')) return;
+
+        const venta = allSales[ventaIndex];
+
+        fetch(`/vendedor/ventas/gasto/eliminar/${gastoId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                venta.listaGastos = venta.listaGastos.filter(g => g.idGasto !== gastoId);
+                venta.totalGastos = venta.listaGastos.reduce((sum, g) => sum + (g.valorGasto || g.monto), 0);
+
+                const container = document.getElementById(`listaGastos-${ventaIndex}`);
+                if (container) {
+                    container.innerHTML = venta.listaGastos.length > 0 ? venta.listaGastos.map(gasto => `
+                        <div class="gasto-item flex justify-between items-center gap-2" id="gasto-${gasto.idGasto}">
+                            <div class="flex-1 min-w-0">
+                                <span class="text-xs lg:text-sm font-semibold text-gray-800 break-words">${gasto.nombreGasto || gasto.descripcion}</span>
+                            </div>
+                            <div class="flex items-center gap-2 lg:gap-3 flex-shrink-0">
+                                <span class="font-black text-red-700 text-sm lg:text-base whitespace-nowrap">${formatoMoneda(gasto.valorGasto || gasto.monto)}</span>
+                                <button onclick="eliminarGasto(${ventaIndex}, ${gasto.idGasto}); event.stopPropagation();"
+                                        class="text-red-500 hover:text-red-700 transition-colors hover:bg-red-50 p-1 rounded">
+                                    <i class='bx bx-trash text-base lg:text-lg'></i>
+                                </button>
+                            </div>
+                        </div>
+                    `).join('') : '<p class="text-gray-500 text-xs lg:text-sm italic py-4 text-center">No hay gastos registrados</p>';
+                }
+            }
+        })
+        .catch(error => console.error('Error eliminando gasto:', error));
+    }
+
+    function abrirModalGasto(index) {
+        document.getElementById('ventaIdGasto').value = allSales[index].idVenta;
+        document.getElementById('ventaIndexGasto').value = index;
+        document.getElementById('modalGasto').classList.add('modal-open');
+    }
+
+    function cerrarModalGasto() {
+        document.getElementById('modalGasto').classList.remove('modal-open');
+        document.getElementById('formGasto').reset();
+    }
+
+    function abrirModalNota(index) {
+        const venta = allSales[index];
+        document.getElementById('ventaIdNota').value = venta.idVenta;
+        document.getElementById('ventaIndexNota').value = index;
+        document.getElementById('textoNota').value = venta.nota || '';
+        document.getElementById('modalNota').classList.add('modal-open');
+    }
+
+    function cerrarModalNota() {
+        document.getElementById('modalNota').classList.remove('modal-open');
+        document.getElementById('formNota').reset();
+    }
+
+    document.getElementById('formGasto').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const idVenta = document.getElementById('ventaIdGasto').value;
+        const ventaIndex = parseInt(document.getElementById('ventaIndexGasto').value);
+        const descripcion = document.getElementById('descripcionGasto').value;
+        const monto = parseFloat(document.getElementById('montoGasto').value);
+
+        fetch('/vendedor/ventas/gasto/agregar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                idVenta: idVenta,
+                nombreGasto: descripcion,
+                valorGasto: monto
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const venta = allSales[ventaIndex];
+                venta.listaGastos.push({
+                    idGasto: data.idGasto,
+                    nombreGasto: descripcion,
+                    valorGasto: monto
+                });
+                venta.totalGastos = (venta.totalGastos || 0) + monto;
+
+                const container = document.getElementById(`listaGastos-${ventaIndex}`);
+                if (container) {
+                    container.innerHTML = venta.listaGastos.map(gasto => `
+                        <div class="gasto-item flex justify-between items-center gap-2" id="gasto-${gasto.idGasto}">
+                            <div class="flex-1 min-w-0">
+                                <span class="text-xs lg:text-sm font-semibold text-gray-800 break-words">${gasto.nombreGasto}</span>
+                            </div>
+                            <div class="flex items-center gap-2 lg:gap-3 flex-shrink-0">
+                                <span class="font-black text-red-700 text-sm lg:text-base whitespace-nowrap">${formatoMoneda(gasto.valorGasto)}</span>
+                                <button onclick="eliminarGasto(${ventaIndex}, ${gasto.idGasto}); event.stopPropagation();"
+                                        class="text-red-500 hover:text-red-700 transition-colors hover:bg-red-50 p-1 rounded">
+                                    <i class='bx bx-trash text-base lg:text-lg'></i>
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }
+        })
+        .catch(error => console.error('Error agregando gasto:', error));
+
+        cerrarModalGasto();
+    });
+
+    document.getElementById('formNota').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const idVenta = document.getElementById('ventaIdNota').value;
+        const ventaIndex = parseInt(document.getElementById('ventaIndexNota').value);
+        const nota = document.getElementById('textoNota').value;
+
+        fetch('/vendedor/ventas/nota/actualizar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                idVenta: idVenta,
+                nota: nota
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const venta = allSales[ventaIndex];
+                venta.nota = nota;
+
+                const ventaDetailElement = document.getElementById(`venta-${ventaIndex}`);
+                if (ventaDetailElement) {
+                    const notaElement = ventaDetailElement.querySelector('.bg-yellow-50');
+                    if (notaElement) {
+                        notaElement.innerHTML = nota || '<span class="text-gray-500 italic">Sin notas registradas</span>';
+                    }
+                }
+            }
+        })
+        .catch(error => console.error('Error actualizando nota:', error));
+
+        cerrarModalNota();
+    });
+
+    document.getElementById('modalGasto').addEventListener('click', function(e) {
+        if (e.target === this) cerrarModalGasto();
+    });
+
+    document.getElementById('modalNota').addEventListener('click', function(e) {
+        if (e.target === this) cerrarModalNota();
+    });
+
+    document.getElementById('busqueda').addEventListener('input', aplicarFiltros);
+    document.getElementById('filterEstado').addEventListener('change', aplicarFiltros);
+    document.getElementById('filterPago').addEventListener('change', aplicarFiltros);
+    document.getElementById('filterFechaDesde').addEventListener('change', aplicarFiltros);
+    document.getElementById('filterFechaHasta').addEventListener('change', aplicarFiltros);
+
     document.addEventListener('DOMContentLoaded', () => {
-        document.getElementById('busqueda')?.addEventListener('keyup', () => {});
-        document.getElementById('filterEstado')?.addEventListener('change', () => {});
-        document.getElementById('filterPago')?.addEventListener('change', () => {});
-    });
-
-    // Cerrar modal con ESC
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') cerrarDetalleVenta();
-    });
-
-    // Cerrar modal al hacer click fuera
-    document.getElementById('detalleVentaModal')?.addEventListener('click', (e) => {
-        if (e.target.id === 'detalleVentaModal') cerrarDetalleVenta();
+        renderVentas();
     });
 </script>
 

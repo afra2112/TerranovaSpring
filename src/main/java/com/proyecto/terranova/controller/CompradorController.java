@@ -102,7 +102,7 @@ public class CompradorController {
         model.addAttribute("explorar", true);
 
         Map<String, Integer> estadisticas = compradorService.prepararIndex(usuario(authentication).getCedula());
-        List<Asistencia> asistencias = asistenciaService.encontrarPorCompradorYEstado(usuario(authentication), EstadoAsistenciaEnum.INSCRITO);
+        List<Asistencia> asistencias = asistenciaService.encontrarPorCompradorYEstadoYEstadoCita(usuario(authentication), EstadoAsistenciaEnum.INSCRITO, EstadoCitaEnum.PROGRAMADA);
         List<Long> favoritosIds = favoritoService.obtenerIdsFavoritosPorUsuario(usuario(authentication));
 
         model.addAttribute("favoritosIds", favoritosIds);

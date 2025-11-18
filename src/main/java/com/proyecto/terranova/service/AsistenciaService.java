@@ -17,6 +17,8 @@ public interface AsistenciaService {
 
     List<Asistencia> encontrarPorCompradorYEstado(Usuario comprador, EstadoAsistenciaEnum estadoAsistenciaEnum);
 
+    List<Asistencia> encontrarPorCompradorYEstadoYEstadoCita(Usuario comprador, EstadoAsistenciaEnum estadoAsistenciaEnum, EstadoCitaEnum estadoCitaEnum);
+
     boolean existeAsistenciaPorEstado(Usuario comprador, Long idProducto, EstadoAsistenciaEnum estadoAsistenciaEnum);
 
     boolean existeAsistenciaPorCitaEnEstadoProgramada(Usuario comprador, Long idProducto, EstadoCitaEnum estadoCitaEnum);

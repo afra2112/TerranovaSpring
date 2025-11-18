@@ -21,6 +21,8 @@ public interface AsistenciaRepository extends JpaRepository<Asistencia, Long> {
 
     List<Asistencia> findByUsuarioAndEstadoOrderByCita_FechaAscCita_HoraInicioAsc(Usuario usuario, EstadoAsistenciaEnum estadoAsistenciaEnum);
 
+    List<Asistencia> findByUsuarioAndEstadoAndCita_EstadoCitaOrderByCita_FechaAscCita_HoraInicioAsc(Usuario usuario, EstadoAsistenciaEnum estadoAsistenciaEnum, EstadoCitaEnum estadoCitaEnum);
+
     @Query("SELECT a FROM Asistencia a WHERE a.cita.idCita = :idCita AND a.estado = 'EN_ESPERA' ORDER BY a.usuario.puntuacionUsuario DESC")
     List<Asistencia> encontrarListaEsperaOrdenada(@Param("idCita") Long idCita);
 

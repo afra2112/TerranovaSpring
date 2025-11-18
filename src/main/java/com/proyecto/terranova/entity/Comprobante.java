@@ -14,12 +14,10 @@ public class Comprobante {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idComprobante;
 
-    @Column(nullable = false, length = 100)
     private String nombreComprobante;
 
     private String rutaArchivo;
 
-    @Column(nullable = false)
     private LocalDateTime fechaSubida;
 
     @ManyToOne
