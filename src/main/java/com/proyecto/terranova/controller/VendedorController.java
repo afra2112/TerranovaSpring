@@ -1,12 +1,14 @@
 package com.proyecto.terranova.controller;
 
 import com.proyecto.terranova.config.enums.*;
+import com.proyecto.terranova.dto.VentaDTO;
 import com.proyecto.terranova.entity.*;
 import com.proyecto.terranova.repository.AsistenciaRepository;
 import com.proyecto.terranova.repository.CiudadRepository;
 import com.proyecto.terranova.repository.VentaRepository;
 import com.proyecto.terranova.service.*;
 import jakarta.mail.MessagingException;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.Local;
 import org.springframework.security.core.Authentication;
@@ -29,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/vendedor")
@@ -57,6 +60,9 @@ public class VendedorController {
 
     @Autowired
     NotificacionService notificacionService;
+
+    @Autowired
+    ModelMapper modelMapper;
 
     @ModelAttribute("esVendedor")
     public boolean esVendedor(Authentication authentication){
@@ -121,14 +127,16 @@ public class VendedorController {
 
 
     @GetMapping("/ventas")
-    public String ventas(Model model, Authentication authentication){
-        List<Venta> ventas = ventaService.encontrarPorVendedor(usuarioService.findByEmail(authentication.getName()));
+    public String ventas(Model model, Authentication authentication) {
+        List<Venta> ventas = ventaService.encontrarPorVendedor(
+                usuarioService.findByEmail(authentication.getName())
+        );
 
         Long ingresosTotales = 0L;
         Long gastosTotales = 0L;
         Long balanceFinal = 0L;
 
-        for (Venta venta : ventas){
+        for (Venta venta : ventas) {
             ingresosTotales += venta.getProducto().getPrecioProducto();
             gastosTotales += venta.getTotalGastos();
             balanceFinal = ingresosTotales - gastosTotales;
@@ -136,11 +144,16 @@ public class VendedorController {
 
         String nombreCompleto = usuario(authentication).getNombres() + " " + usuario(authentication).getApellidos();
 
+        List<VentaDTO> ventasDTO = ventas.stream()
+                .map(venta -> modelMapper.map(venta, VentaDTO.class))
+                .collect(Collectors.toList());
+
         model.addAttribute("posicionVentas", true);
         model.addAttribute("ingresosTotales", ingresosTotales);
         model.addAttribute("gastosTotales", gastosTotales);
         model.addAttribute("balanceFinal", balanceFinal);
-        model.addAttribute("ventas", ventas);
+        model.addAttribute("ventas", ventasDTO);
+        model.addAttribute("ventasOriginales", ventas);
         model.addAttribute("nombres", nombreCompleto);
 
         return "vendedor/ventas";
