@@ -62,6 +62,8 @@ public class UsuarioController {
 
     @GetMapping("/mi-perfil")
     public String miPerfil(@RequestParam(name = "id") Long id,Model model, Authentication authentication){
+        Usuario usuario = serviceUsuario.findByEmail(authentication.getName());
+        String email = usuario.getEmail();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d 'de' MMMM',' yyyy",  new Locale("es", "ES"));
         String lugar = null;
         if(id == 1){
@@ -73,6 +75,8 @@ public class UsuarioController {
         model.addAttribute("miPerfil", true);
         model.addAttribute("lugar", lugar);
         model.addAttribute("fechaRegistro", usuario(authentication).getFechaRegistro().format(formatter));
+        model.addAttribute("emailV", email);
+
 
         return "miPerfil";
     }

@@ -345,43 +345,40 @@ public class CompradorController {
         String email = usuario.getEmail();
         usuarioService.generarCodigoVerificacionYEnviarCorreo(email);
         redirectAttributes.addFlashAttribute("mostrarModal", true);
-        redirectAttributes.addFlashAttribute("email", email);
-
-
         return "redirect:/usuarios/mi-perfil?id=1";
 
     }
 
     @PostMapping("/Vcodigo")
-    public String vcodigo(RedirectAttributes redirectAttributes,@RequestParam String codigo, Authentication authentication) throws MessagingException, IOException{
+    @ResponseBody
+    public Map<String, Object> vcodigo(@RequestParam String codigo, Authentication authentication){
+        Map<String, Object> response = new HashMap<>();
         Usuario usuario = usuarioService.findByEmail(authentication.getName());
-        String email = usuario.getEmail();
 
         if (usuario == null || usuario.getCodigoVerificacion() == null){
-            redirectAttributes.addFlashAttribute("error", "Usuario no encontrado o código no generado.");
-            redirectAttributes.addFlashAttribute("mostrarModal", true);
-            redirectAttributes.addFlashAttribute("email", email);
-            return "redirect:/usuarios/mi-perfil?id=1";
+            response.put("success", false);
+            response.put("error", "Usuario no encontrado o código no generado.");
+            return response;
 
         }
         if(usuario.getCodigoVerificacionExpiracion().isBefore(LocalDateTime.now())){
-            redirectAttributes.addFlashAttribute("error", "Codigo de Verificacion Expirado");
-            redirectAttributes.addFlashAttribute("mostrarModal", true);
-            redirectAttributes.addFlashAttribute("email", email);
-            return "redirect:/usuarios/mi-perfil?id=1";
+            response.put("success", false);
+            response.put("error", "Código de verificación expirado.");
+            return response;
         }
         if (!usuario.getCodigoVerificacion().equals(codigo)) {
-            redirectAttributes.addFlashAttribute("error", "Código incorrecto.");
-            redirectAttributes.addFlashAttribute("mostrarModal", true);
-            redirectAttributes.addFlashAttribute("email", email);
-            return "redirect:/usuarios/mi-perfil?id=1";
+            response.put("success", false);
+            response.put("error", "Código incorrecto.");
+            return response;
         }
 
         // Limpieza del código
         usuario.setCodigoVerificacion(null);
         usuario.setCodigoVerificacionExpiracion(null);
         usuarioRepository.save(usuario);
-        return "";
+        response.put("success", true);
+        response.put("redirect", "/mi-perfil/ser-vendedor");
+        return response;
     }
 
 }
