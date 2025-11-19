@@ -41,7 +41,7 @@ public class EmailService {
     @Async
     public void enviarEmailConHtml(boolean enviar, String email, String asunto, String mensajeHtml) throws IOException {
         if(enviar){
-            Email from = new Email("terranova.avisos@gmail.com");
+            Email from = new Email("notif.terranova@gmail.com");
             Email to = new Email(email);
             Content content = new Content("text/html", mensajeHtml);
             Mail mail = new Mail(from, asunto, to, content);
