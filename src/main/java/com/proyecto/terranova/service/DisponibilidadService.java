@@ -1,10 +1,5 @@
 package com.proyecto.terranova.service;
 
-import java.util.List;
-import com.proyecto.terranova.dto.DisponibilidadDTO;
-import com.proyecto.terranova.entity.Cita;
-import com.proyecto.terranova.entity.Usuario;
-
 public interface DisponibilidadService {
     /*Disponibilidad save(Disponibilidad disponibilidad);
     DisponibilidadDTO update(Long id, DisponibilidadDTO dto); // Actualizar

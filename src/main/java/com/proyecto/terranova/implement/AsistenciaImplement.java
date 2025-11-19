@@ -3,22 +3,17 @@ package com.proyecto.terranova.implement;
 import com.proyecto.terranova.config.enums.EstadoAsistenciaEnum;
 import com.proyecto.terranova.config.enums.EstadoCitaEnum;
 import com.proyecto.terranova.entity.Asistencia;
-import com.proyecto.terranova.entity.Cita;
 import com.proyecto.terranova.entity.Usuario;
 import com.proyecto.terranova.repository.AsistenciaRepository;
 import com.proyecto.terranova.repository.CitaRepository;
 import com.proyecto.terranova.repository.ProductoRepository;
 import com.proyecto.terranova.service.AsistenciaService;
 import com.proyecto.terranova.service.NotificacionService;
-import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -104,7 +99,7 @@ public class AsistenciaImplement implements AsistenciaService {
 
     @Transactional
     @Override
-    public void cancelarAsistencia(Long idAsistencia) throws MessagingException, IOException {
+    public void cancelarAsistencia(Long idAsistencia) throws IOException {
         Asistencia asistencia = asistenciaRepository.findById(idAsistencia).orElseThrow();
 
         asistencia.setEstado(EstadoAsistenciaEnum.CANCELADO);

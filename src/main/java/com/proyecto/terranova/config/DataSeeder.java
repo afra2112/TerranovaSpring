@@ -1,6 +1,7 @@
 package com.proyecto.terranova.config;
 
 import com.proyecto.terranova.config.enums.EstadoProductoEnum;
+import com.proyecto.terranova.config.enums.NombreComprobanteEnum;
 import com.proyecto.terranova.entity.*;
 import com.proyecto.terranova.config.enums.RolEnum;
 import com.proyecto.terranova.repository.*;
@@ -25,7 +26,8 @@ public class DataSeeder {
             TerrenoRepository terrenoRepository,
             FincaRepository fincaRepository,
             GanadoRepository ganadoRepository,
-            ProductoRepository productoRepository) {
+            ProductoRepository productoRepository,
+            InfoComprobanteRepository infoComprobanteRepository) {
 
         return args -> {
             Random random = new Random();
@@ -173,7 +175,91 @@ public class DataSeeder {
 
                 System.out.println("Base de datos inicializada correctamente (6 productos por vendedor).");
             }
+
+            if (infoComprobanteRepository.count() == 0) {
+
+                List<InfoComprobante> infos = new ArrayList<>();
+
+                // ===== OBLIGATORIOS GANADO =====
+
+                infos.add(crearInfoComprobante(
+                        NombreComprobanteEnum.GSMI,
+                        "GSMI - Guía Sanitaria de Movilización Interna",
+                        "Documento expedido por el ICA que autoriza el transporte del ganado.",
+                        "bx-file",
+                        true
+                ));
+
+                infos.add(crearInfoComprobante(
+                        NombreComprobanteEnum.CERTIFICADO_SANITARIO,
+                        "Certificados Sanitarios y Vacunación",
+                        "Libreta sanitaria con vacunas actualizadas (Fiebre Aftosa, Brucelosis) certificadas por ICA.",
+                        "bx-shield-plus",
+                        true
+                ));
+
+                infos.add(crearInfoComprobante(
+                        NombreComprobanteEnum.FACTURA_PROPIEDAD,
+                        "Factura o Documento de Propiedad",
+                        "Documento que demuestra la propiedad legal del ganado.",
+                        "bx-receipt",
+                        true
+                ));
+
+
+                // ===== OPCIONALES GANADO =====
+
+                infos.add(crearInfoComprobante(
+                        NombreComprobanteEnum.INVENTARIO_LOTE,
+                        "Inventario Individual del Lote",
+                        "Listado detallado con ID, marcas, edad, peso y características.",
+                        "bx-list-ul",
+                        false
+                ));
+
+                infos.add(crearInfoComprobante(
+                        NombreComprobanteEnum.CERTIFICADO_SINIGAN,
+                        "Certificado SINIGAN",
+                        "Registro individual del bovino en el Sistema Nacional de Identificación.",
+                        "bx-barcode",
+                        false
+                ));
+
+                infos.add(crearInfoComprobante(
+                        NombreComprobanteEnum.CERTIFICADO_HIERRO,
+                        "Certificado de Hierro o Marca Registrada",
+                        "Certifica que el ganado pertenece al hierro registrado.",
+                        "bx-customize",
+                        false
+                ));
+
+                infos.add(crearInfoComprobante(
+                        NombreComprobanteEnum.CERTIFICADO_PESAJE,
+                        "Certificado de Pesaje Reciente",
+                        "Documento oficial de pesaje con fecha reciente.",
+                        "bx-trending-up",
+                        false
+                ));
+
+                infoComprobanteRepository.saveAll(infos);
+            }
         };
+    }
+
+    private InfoComprobante crearInfoComprobante(
+            NombreComprobanteEnum nombre,
+            String mostrar,
+            String descripcion,
+            String icono,
+            boolean obligatorio
+    ) {
+        InfoComprobante i = new InfoComprobante();
+        i.setNombreComprobante(nombre);
+        i.setNombreMostrar(mostrar);
+        i.setDescripcion(descripcion);
+        i.setIcono(icono);
+        i.setObligatorio(obligatorio);
+        return i;
     }
 
     private void crearUsuarioSiNoExiste(UsuarioRepository usuarioRepository,

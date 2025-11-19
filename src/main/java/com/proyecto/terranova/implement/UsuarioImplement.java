@@ -1,12 +1,10 @@
 package com.proyecto.terranova.implement;
 
 import com.proyecto.terranova.config.enums.RolEnum;
-import com.proyecto.terranova.dto.NotificacionPeticion;
 import com.proyecto.terranova.entity.Rol;
 import com.proyecto.terranova.repository.RolRepository;
 import com.proyecto.terranova.service.EmailService;
 import com.proyecto.terranova.service.NotificacionService;
-import jakarta.mail.MessagingException;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -157,7 +155,7 @@ public class UsuarioImplement implements UsuarioService {
     }
 
     @Override
-    public void generarTokenYEnviarCorreoRecuperarContrasena(String email) throws MessagingException, IOException {
+    public void generarTokenYEnviarCorreoRecuperarContrasena(String email) throws IOException {
         Usuario usuario = repository.findByEmail(email);
 
         String token = UUID.randomUUID().toString();

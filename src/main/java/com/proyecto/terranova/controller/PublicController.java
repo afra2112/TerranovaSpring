@@ -9,7 +9,6 @@ import com.proyecto.terranova.repository.CitaRepository;
 import com.proyecto.terranova.repository.CiudadRepository;
 import com.proyecto.terranova.repository.ProductoRepository;
 import com.proyecto.terranova.service.*;
-import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -18,10 +17,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 public class PublicController {
@@ -158,7 +155,7 @@ public class PublicController {
     }
 
     @PostMapping("/password-olvidada")
-    public String procesarFormulario(@RequestParam String email, Model model) throws MessagingException, IOException {
+    public String procesarFormulario(@RequestParam String email, Model model) throws IOException {
         usuarioService.generarTokenYEnviarCorreoRecuperarContrasena(email);
         model.addAttribute("mensaje", "Se ha enviado un enlace a tu correo.");
         return "passwordOlvidada";

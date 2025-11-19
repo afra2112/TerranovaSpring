@@ -3,9 +3,7 @@ package com.proyecto.terranova.service;
 import com.proyecto.terranova.config.enums.EstadoAsistenciaEnum;
 import com.proyecto.terranova.config.enums.EstadoCitaEnum;
 import com.proyecto.terranova.entity.Asistencia;
-import com.proyecto.terranova.entity.Cita;
 import com.proyecto.terranova.entity.Usuario;
-import jakarta.mail.MessagingException;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -31,7 +29,7 @@ public interface AsistenciaService {
 
     void crearAsistencia(Usuario usuario, Long idCita, EstadoAsistenciaEnum estadoAsistenciaEnum);
 
-    void cancelarAsistencia(Long idAsistencia) throws MessagingException, IOException;
+    void cancelarAsistencia(Long idAsistencia) throws IOException;
 
     Integer obtenerPosicionDeUsuarioEnListaDeEspera(Long idCita, String cedulaUsuario);
 

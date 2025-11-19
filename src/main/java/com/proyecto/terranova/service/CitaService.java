@@ -10,7 +10,6 @@ import com.proyecto.terranova.config.enums.EstadoCitaEnum;
 import com.proyecto.terranova.dto.CitaDTO;
 import com.proyecto.terranova.entity.Cita;
 import com.proyecto.terranova.entity.Usuario;
-import jakarta.mail.MessagingException;
 
 public interface CitaService {
     Cita save(Cita dto);
@@ -27,7 +26,7 @@ public interface CitaService {
     long contarPorVendedor(Usuario vendedor);
     void cambiarEstado(Cita cita, EstadoCitaEnum estado);
     void borrarCita(Long idCita);
-    void reprogramarCita(Long idCita, LocalDate nuevaFecha, LocalTime nuevaHoraInicio, LocalTime nuevaHoraFin) throws MessagingException, IOException;
+    void reprogramarCita(Long idCita, LocalDate nuevaFecha, LocalTime nuevaHoraInicio, LocalTime nuevaHoraFin) throws IOException;
     void cancelarCita(Long idCita);
     void finalizarCita(Long idCita, Map<String, String> params);
 }

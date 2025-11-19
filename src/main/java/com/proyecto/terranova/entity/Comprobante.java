@@ -14,13 +14,11 @@ public class Comprobante {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idComprobante;
 
-    private String nombreComprobante;
-
     private String rutaArchivo;
 
     private LocalDateTime fechaSubida;
 
-    @ManyToOne
-    @JoinColumn(name = "idVenta")
-    private Venta venta;
+    @OneToOne
+    @JoinColumn(name = "id_info_comprobante")
+    private InfoComprobante infoComprobante;
 }

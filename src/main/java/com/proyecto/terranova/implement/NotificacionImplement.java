@@ -3,16 +3,13 @@ package com.proyecto.terranova.implement;
 import com.proyecto.terranova.dto.NotificacionPeticion;
 import com.proyecto.terranova.entity.*;
 import com.proyecto.terranova.service.EmailService;
-import jakarta.mail.MessagingException;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import com.proyecto.terranova.service.NotificacionService;
 import com.proyecto.terranova.repository.NotificacionRepository;
 import com.proyecto.terranova.dto.NotificacionDTO;
@@ -164,7 +161,7 @@ public class NotificacionImplement implements NotificacionService {
   }
 
   @Override
-  public void crearNotificacionAutomatica(NotificacionPeticion peticion) throws MessagingException, IOException {
+  public void crearNotificacionAutomatica(NotificacionPeticion peticion) throws IOException {
     Usuario usuario = peticion.getUsuarioNotificacion();
 
     if (validarSiEnviarNotificacionONo(usuario, peticion.getTipoNotificacion())) {
@@ -224,7 +221,7 @@ public class NotificacionImplement implements NotificacionService {
 
 
   @Override
-  public void notificacionCitaCancelada(Cita cita, Usuario compradorOVendedor) throws MessagingException, IOException {
+  public void notificacionCitaCancelada(Cita cita, Usuario compradorOVendedor) throws IOException {
     Usuario comprador = null;
     Usuario vendedor = cita.getProducto().getVendedor();
     String producto = cita.getProducto().getNombreProducto();
@@ -270,7 +267,7 @@ public class NotificacionImplement implements NotificacionService {
   }
 
   @Override
-  public void notificacionCitaFinalizada(Cita cita) throws MessagingException, IOException {
+  public void notificacionCitaFinalizada(Cita cita) throws IOException {
     Usuario comprador = null;
     Usuario vendedor = cita.getProducto().getVendedor();
     String producto = cita.getProducto().getNombreProducto();
@@ -311,7 +308,7 @@ public class NotificacionImplement implements NotificacionService {
   }
 
   @Override
-  public void notificacionRecuperarContrasena(String email) throws MessagingException, IOException {
+  public void notificacionRecuperarContrasena(String email) throws IOException {
     NotificacionPeticion notificacionPeticion = buildNotificacion(
             null,
             "Haz click en el siguente boton para restablecer tu contrasena, luego inicia sesion normalmente. ",
@@ -331,7 +328,7 @@ public class NotificacionImplement implements NotificacionService {
   }
 
   @Override
-  public void notificacionCitaReservada(Asistencia asistencia, Usuario nuevoAsistente) throws MessagingException, IOException {
+  public void notificacionCitaReservada(Asistencia asistencia, Usuario nuevoAsistente) throws IOException {
     Usuario vendedor = asistencia.getCita().getProducto().getVendedor();
     String producto = asistencia.getCita().getProducto().getNombreProducto();
 
@@ -371,7 +368,7 @@ public class NotificacionImplement implements NotificacionService {
   }
 
   @Override
-  public void notificacionCitaReprogramada(Cita cita, Usuario compradorOVendedor) throws MessagingException, IOException {
+  public void notificacionCitaReprogramada(Cita cita, Usuario compradorOVendedor) throws IOException {
     Usuario vendedor = cita.getProducto().getVendedor();
     String producto = cita.getProducto().getNombreProducto();
 
@@ -395,7 +392,7 @@ public class NotificacionImplement implements NotificacionService {
   }
 
   @Override
-  public void notificacionReprogramarCitaHabilitado(Cita cita) throws MessagingException, IOException {
+  public void notificacionReprogramarCitaHabilitado(Cita cita) throws IOException {
     NotificacionPeticion notificacionPeticion = buildNotificacion(
             cita.getIdCita(),
             "Ya han pasado 24 horas desde tu ultima reprogramacion posible, ya puedes volver a reprogramar tu cita dos veces mas",
@@ -415,7 +412,7 @@ public class NotificacionImplement implements NotificacionService {
   }
 
   @Override
-  public void notificacionVentaGenerada(Venta venta) throws MessagingException, IOException {
+  public void notificacionVentaGenerada(Venta venta) throws IOException {
     Usuario comprador = venta.getComprador();
     Usuario vendedor = venta.getProducto().getVendedor();
     String producto = venta.getProducto().getNombreProducto();
@@ -457,7 +454,7 @@ public class NotificacionImplement implements NotificacionService {
   }
 
   @Override
-  public void notificacionVentaModificada(Venta venta) throws MessagingException, IOException {
+  public void notificacionVentaModificada(Venta venta) throws IOException {
     Usuario comprador = venta.getComprador();
     Usuario vendedor = venta.getProducto().getVendedor();
     String producto = venta.getProducto().getNombreProducto();
@@ -499,7 +496,7 @@ public class NotificacionImplement implements NotificacionService {
   }
 
   @Override
-  public void notificacionContraoferta(Venta venta) throws MessagingException, IOException {
+  public void notificacionContraoferta(Venta venta) throws IOException {
     Usuario comprador = venta.getComprador();
     Usuario vendedor = venta.getProducto().getVendedor();
     String producto = venta.getProducto().getNombreProducto();
@@ -523,7 +520,7 @@ public class NotificacionImplement implements NotificacionService {
   }
 
   @Override
-  public void notificacionFotoPerfilCambiada(Usuario usuario) throws MessagingException, IOException {
+  public void notificacionFotoPerfilCambiada(Usuario usuario) throws IOException {
     NotificacionPeticion notificacionPeticion = buildNotificacion(
             0L,
             "Cambiaste tu foto de perfil exitosamente.",
@@ -543,7 +540,7 @@ public class NotificacionImplement implements NotificacionService {
   }
 
   @Override
-  public void notificacionDatosPersonalesActualizados(Usuario usuario) throws MessagingException, IOException {
+  public void notificacionDatosPersonalesActualizados(Usuario usuario) throws IOException {
     NotificacionPeticion notificacionPeticion = buildNotificacion(
             0L,
             "Cambiaste datos de tu informacion personal, puedes ir a Mi Perfil para verlos reflejados.",
@@ -563,7 +560,7 @@ public class NotificacionImplement implements NotificacionService {
   }
 
   @Override
-  public void notificacionPedirModificarVenta(Venta venta, String razon) throws MessagingException, IOException {
+  public void notificacionPedirModificarVenta(Venta venta, String razon) throws IOException {
     Usuario comprador = venta.getComprador();
     Usuario vendedor = venta.getProducto().getVendedor();
     String producto = venta.getProducto().getNombreProducto();

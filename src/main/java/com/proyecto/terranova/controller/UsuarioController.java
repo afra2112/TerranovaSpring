@@ -6,7 +6,6 @@ import com.proyecto.terranova.entity.Usuario;
 import com.proyecto.terranova.service.NotificacionService;
 import com.proyecto.terranova.service.RolService;
 import com.proyecto.terranova.service.UsuarioService;
-import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -82,7 +80,7 @@ public class UsuarioController {
     private String directorioImagenes;
 
     @PostMapping("/mi-perfil/cambiar-foto")
-    public String cambiarFoto(@RequestParam(name = "foto") MultipartFile foto, Authentication authentication) throws IOException, MessagingException {
+    public String cambiarFoto(@RequestParam(name = "foto") MultipartFile foto, Authentication authentication) throws IOException {
         Path directorio = Paths.get(directorioImagenes);
         Files.createDirectories(directorio);
 
@@ -103,7 +101,7 @@ public class UsuarioController {
     }
 
     @PostMapping("/mi-perfil/editar")
-    public String editar(@ModelAttribute Usuario usuarioNuevo, Authentication authentication) throws MessagingException, IOException {
+    public String editar(@ModelAttribute Usuario usuarioNuevo, Authentication authentication) throws IOException {
         Usuario usuario = usuario(authentication);
         usuario.setNombres(usuarioNuevo.getNombres());
         usuario.setApellidos(usuarioNuevo.getApellidos());

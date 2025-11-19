@@ -1,7 +1,6 @@
 package com.proyecto.terranova.restController;
 
 import com.proyecto.terranova.dto.CitaDTO;
-import com.proyecto.terranova.dto.DisponibilidadDTO;
 import com.proyecto.terranova.entity.Cita;
 import com.proyecto.terranova.service.CitaService;
 import com.proyecto.terranova.service.UsuarioService;

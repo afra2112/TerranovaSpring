@@ -1,20 +1,13 @@
 package com.proyecto.terranova.controller;
 
-import com.proyecto.terranova.config.enums.EstadoAsistenciaEnum;
-import com.proyecto.terranova.config.enums.EstadoCitaEnum;
-import com.proyecto.terranova.config.enums.EstadoVentaEnum;
-import com.proyecto.terranova.config.enums.RolEnum;
+import com.proyecto.terranova.config.enums.*;
 import com.proyecto.terranova.entity.*;
 import com.proyecto.terranova.repository.*;
 import com.proyecto.terranova.service.*;
-import com.proyecto.terranova.specification.ProductoSpecification;
-import jakarta.mail.MessagingException;
 import com.proyecto.terranova.service.CompradorService;
 import com.proyecto.terranova.service.ProductoService;
 import com.proyecto.terranova.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,7 +17,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -167,7 +159,7 @@ public class CompradorController {
     }
 
     @PostMapping("/citas/cancerlar/asistencia/{id}")
-    public String cancelarAsistencia(@PathVariable Long id) throws MessagingException, IOException {
+    public String cancelarAsistencia(@PathVariable Long id) throws IOException {
         asistenciaService.cancelarAsistencia(id);
         return "redirect:/comprador/citas";
     }
@@ -188,16 +180,28 @@ public class CompradorController {
         switch (tipoProducto){
             case "GANADO" -> {
                 VentaGanado detalle = ventaGanadoRepository.findByVenta(ventaGeneral);
+
+                // Cargar los comprobantes con su información
+                Map<String, Comprobante> comprobantes = new HashMap<>();
+                for (Map.Entry<NombreComprobanteEnum, InfoComprobante> entry : detalle.getComprobantesInfo().entrySet()) {
+                    if (entry.getValue().getComprobante() != null) {
+                        comprobantes.put(entry.getKey().name(), entry.getValue().getComprobante());
+                    }
+                }
+
                 model.addAttribute("ventaDetalle", detalle);
+                model.addAttribute("comprobantes", comprobantes);
                 model.addAttribute("fragment", "fragments/comprador/compraGanado");
             }
             case "TERRENO" -> {
                 VentaTerreno detalle = ventaTerrenoRepository.findByVenta(ventaGeneral);
+                // Similar para terreno
                 model.addAttribute("ventaDetalle", detalle);
                 model.addAttribute("fragment", "fragments/comprador/compraTerreno");
             }
             case "FINCA" -> {
                 VentaFinca detalle = ventaFincaRepository.findByVenta(ventaGeneral);
+                // Similar para finca
                 model.addAttribute("ventaDetalle", detalle);
                 model.addAttribute("fragment", "fragments/comprador/compraFinca");
             }
@@ -209,7 +213,7 @@ public class CompradorController {
     }
 
     @PostMapping("/compras/actualizar-compra")
-    public String actualizarCompra(RedirectAttributes redirectAttributes, @RequestParam(name = "idVenta") Long idVenta, @RequestParam(name = "accion") String accion, @RequestParam(name = "razon", required = false) String razon) throws MessagingException, IOException {
+    public String actualizarCompra(RedirectAttributes redirectAttributes, @RequestParam(name = "idVenta") Long idVenta, @RequestParam(name = "accion") String accion, @RequestParam(name = "razon", required = false) String razon) throws IOException {
         Venta venta = ventaService.findById(idVenta);
 
         switch (accion){
@@ -235,7 +239,7 @@ public class CompradorController {
     }
 
     @PostMapping("/citas/reservar-cita")
-    public String reservar(@RequestParam(name = "idCita") Long idCita, Authentication authentication) throws MessagingException, IOException {
+    public String reservar(@RequestParam(name = "idCita") Long idCita, Authentication authentication) throws IOException {
         Usuario usuario = usuario(authentication);
         Cita cita = citaService.findById(idCita);
 
@@ -256,7 +260,7 @@ public class CompradorController {
     }
 
     @PostMapping("/citas/cancelar-cita")
-    public String cancelarCita(@RequestParam(name = "idCita") Long idCita, Authentication authentication) throws MessagingException, IOException {
+    public String cancelarCita(@RequestParam(name = "idCita") Long idCita, Authentication authentication) throws IOException {
         Usuario usuario = usuario(authentication);
         Cita cita = citaService.findById(idCita);
         cita.setEstadoCita(EstadoCitaEnum.CANCELADA);
@@ -287,7 +291,7 @@ public class CompradorController {
     }
 
     @PostMapping("/generar-venta")
-    public String generarVenta(@RequestParam(name = "idCita") Long idCita, Authentication authentication, RedirectAttributes redirectAttributes) throws MessagingException, IOException {
+    public String generarVenta(@RequestParam(name = "idCita") Long idCita, Authentication authentication, RedirectAttributes redirectAttributes) throws IOException {
         Usuario usuario = usuario(authentication);
 
         Cita cita = citaService.findById(idCita);

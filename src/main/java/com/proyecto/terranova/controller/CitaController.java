@@ -5,17 +5,13 @@ import com.proyecto.terranova.config.enums.EstadoCitaEnum;
 import com.proyecto.terranova.entity.Cita;
 import com.proyecto.terranova.entity.Usuario;
 import com.proyecto.terranova.service.*;
-import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 import java.util.Map;
 
 @Controller
@@ -86,19 +82,19 @@ public class CitaController {
             @RequestParam LocalDate fecha,
             @RequestParam LocalTime horaInicio,
             @RequestParam LocalTime horaFin
-            ) throws MessagingException, IOException {
+            ) throws IOException {
         citaService.reprogramarCita(id, fecha, horaInicio, horaFin);
         return "redirect:/vendedor/citas";
     }
 
     @PostMapping("/cancelar-cita/{id}")
-    public String cancelarCita(@PathVariable Long id) throws MessagingException, IOException {
+    public String cancelarCita(@PathVariable Long id) throws IOException {
         citaService.cancelarCita(id);
         return "redirect:/vendedor/citas";
     }
 
     @PostMapping("/finalizar-cita/{idCita}")
-    public String finalizarCita(@PathVariable Long idCita, @RequestParam Map<String, String> params) throws MessagingException, IOException {
+    public String finalizarCita(@PathVariable Long idCita, @RequestParam Map<String, String> params) throws IOException {
         citaService.finalizarCita(idCita, params);
         return "redirect:/vendedor/citas";
     }

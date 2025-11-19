@@ -1,25 +1,22 @@
 package com.proyecto.terranova.service;
 
-import com.proyecto.terranova.entity.Usuario;
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
+import com.sendgrid.Method;
+import com.sendgrid.Request;
+import com.sendgrid.Response;
+import com.sendgrid.SendGrid;
+import com.sendgrid.helpers.mail.Mail;
+import com.sendgrid.helpers.mail.objects.Content;
+import com.sendgrid.helpers.mail.objects.Email;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 @Service
 public class EmailService {
-
-    @Autowired
-    JavaMailSender javaMailSender;
 
     @Autowired
     TemplateEngine templateEngine;
@@ -38,19 +35,28 @@ public class EmailService {
         return templateEngine.process("correos/"+nombreTemplateHtml,context);
     }
 
-    @Async  
-    public void enviarEmailConHtml(boolean enviar, String email, String asunto, String mensajeHtml) throws MessagingException {
+    @Value("${sendgrid.api.key}")
+    private String sendGridApiKey;
 
+    @Async
+    public void enviarEmailConHtml(boolean enviar, String email, String asunto, String mensajeHtml) throws IOException {
         if(enviar){
-            MimeMessage mensaje = javaMailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(mensaje, true, "UTF-8");
+            Email from = new Email("terranova.avisos@gmail.com");
+            Email to = new Email(email);
+            Content content = new Content("text/html", mensajeHtml);
+            Mail mail = new Mail(from, asunto, to, content);
 
-            helper.setTo(email);
-            helper.setSubject(asunto);
-            helper.setText(mensajeHtml, true);
-            helper.setFrom("terranova.avisos@gmail.com");
+            SendGrid sg = new SendGrid(sendGridApiKey);
+            Request request = new Request();
+            request.setMethod(Method.POST);
+            request.setEndpoint("mail/send");
+            request.setBody(mail.build());
 
-            javaMailSender.send(mensaje);
+            Response response = sg.api(request);
+            System.out.println("Estado: " + response.getStatusCode());
+            System.out.println("Cuerpo: " + response.getBody());
+            System.out.println("Cabeceras: " + response.getHeaders());
+
         }
     }
 }

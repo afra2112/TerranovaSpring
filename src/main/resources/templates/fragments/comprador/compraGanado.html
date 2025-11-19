@@ -246,128 +246,315 @@
         </div>
 
         <!-- ============================================ -->
-        <!-- DOCUMENTACIÓN SANITARIA DE GANADO           -->
+        <!-- PASO 3: DOCUMENTACIÓN SANITARIA DE GANADO   -->
         <!-- ============================================ -->
         <div th:if="${tipoProducto == 'GANADO' && venta.pasoActual == 3}" class="bg-white rounded-2xl shadow-lg p-8">
-            <h3 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+            <h3 class="text-2xl font-bold text-gray-900 mb-2 flex items-center gap-2">
                 <i class='bx bx-shield-check text-emerald-600'></i>
-                Documentación Sanitaria del Ganado
+                Paso 3: Documentación Sanitaria y Trazabilidad
             </h3>
+            <p class="text-gray-600 mb-6">Revisa toda la documentación obligatoria y opcional proporcionada por el vendedor</p>
 
             <div class="bg-blue-50 border-2 border-blue-300 rounded-xl p-6 mb-6">
-                <p class="font-bold text-blue-900 mb-3 flex items-center gap-2">
-                    <i class='bx bx-check-shield'></i>
-                    Garantía de Calidad Sanitaria
-                </p>
-                <p class="text-sm text-blue-800">Todos estos documentos han sido verificados y cumplen con los requisitos legales del ICA (Instituto Colombiano Agropecuario). Tu ganado está garantizado sanitariamente.</p>
-            </div>
-
-            <div class="space-y-4">
-                <!-- GSMI -->
-                <div class="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-emerald-400 transition">
-                    <div class="flex items-start justify-between">
-                        <div class="flex items-start gap-4">
-                            <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <i class='bx bx-file text-2xl text-emerald-600'></i>
-                            </div>
-                            <div>
-                                <p class="font-bold text-gray-900 text-lg">GSMI Vigente</p>
-                                <p class="text-sm text-gray-600">Guía Sanitaria de Movilización Interna (ICA)</p>
-                                <p class="text-xs text-gray-500 mt-2">Documento obligatorio que certifica el estado sanitario del ganado para transporte</p>
-                            </div>
-                        </div>
-                        <span th:if="${ventaDetalle.archivoGSMI}" class="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-bold whitespace-nowrap flex-shrink-0">
-                            <i class='bx bx-check-circle'></i> Verificado
-                        </span>
-                        <span th:unless="${ventaDetalle.archivoGSMI}" class="text-xs text-orange-600 font-bold bg-orange-100 px-3 py-1 rounded-full whitespace-nowrap flex-shrink-0">Pendiente</span>
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 bg-blue-200 rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class='bx bx-check-shield text-2xl text-blue-700'></i>
                     </div>
-                </div>
-
-                <!-- Certificados Sanitarios -->
-                <div class="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-emerald-400 transition">
-                    <div class="flex items-start justify-between">
-                        <div class="flex items-start gap-4">
-                            <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <i class='bx bx-virus text-2xl text-emerald-600'></i>
-                            </div>
-                            <div>
-                                <p class="font-bold text-gray-900 text-lg">Certificados de Salud</p>
-                                <p class="text-sm text-gray-600">Libreta de salud, revisiones, vacunas, controles</p>
-                                <p class="text-xs text-gray-500 mt-2">Incluye: Fiebre Aftosa, Tuberculosis, Brucelosis verificados</p>
-                            </div>
-                        </div>
-                        <span th:if="${ventaDetalle.archivoCertificadoSanitario}" class="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-bold whitespace-nowrap flex-shrink-0">
-                            <i class='bx bx-check-circle'></i> Verificado
-                        </span>
-                        <span th:unless="${ventaDetalle.archivoCertificadoSanitario}" class="text-xs text-orange-600 font-bold bg-orange-100 px-3 py-1 rounded-full whitespace-nowrap flex-shrink-0">Pendiente</span>
-                    </div>
-                </div>
-
-                <!-- Pruebas Serológicas -->
-                <div class="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-emerald-400 transition">
-                    <div class="flex items-start justify-between">
-                        <div class="flex items-start gap-4">
-                            <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <i class='bx bx-test-tube text-2xl text-emerald-600'></i>
-                            </div>
-                            <div>
-                                <p class="font-bold text-gray-900 text-lg">Pruebas Serológicas</p>
-                                <p class="text-sm text-gray-600">Resultados negativos de laboratorio</p>
-                                <p class="text-xs text-gray-500 mt-2">Brucelosis y Tuberculosis certificadas por laboratorio acreditado</p>
-                            </div>
-                        </div>
-                        <span th:if="${ventaDetalle.archivoPruebas}" class="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-bold whitespace-nowrap flex-shrink-0">
-                            <i class='bx bx-check-circle'></i> Verificado
-                        </span>
-                        <span th:unless="${ventaDetalle.archivoPruebas}" class="text-xs text-orange-600 font-bold bg-orange-100 px-3 py-1 rounded-full whitespace-nowrap flex-shrink-0">Pendiente</span>
-                    </div>
-                </div>
-
-                <!-- Inventario de Animales -->
-                <div class="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-emerald-400 transition">
-                    <div class="flex items-start justify-between">
-                        <div class="flex items-start gap-4">
-                            <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <i class='bx bx-list-ul text-2xl text-emerald-600'></i>
-                            </div>
-                            <div>
-                                <p class="font-bold text-gray-900 text-lg">Inventario Detallado de Animales</p>
-                                <p class="text-sm text-gray-600">Identificación individual de cada animal</p>
-                                <p class="text-xs text-gray-500 mt-2">DIN (chapetas), marcas, edad, peso, características físicas</p>
-                            </div>
-                        </div>
-                        <span th:if="${ventaDetalle.archivoInventario}" class="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-bold whitespace-nowrap flex-shrink-0">
-                            <i class='bx bx-check-circle'></i> Verificado
-                        </span>
-                        <span th:unless="${ventaDetalle.archivoInventario}" class="text-xs text-orange-600 font-bold bg-orange-100 px-3 py-1 rounded-full whitespace-nowrap flex-shrink-0">Pendiente</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-green-50 border-l-4 border-green-600 p-6 rounded-lg mt-6">
-                <p class="font-bold text-green-900 mb-2 flex items-center gap-2">
-                    <i class='bx bx-shield-alt text-2xl'></i>
-                    Estado de Garantía Sanitaria
-                </p>
-                <div class="grid grid-cols-4 gap-3 mt-4">
-                    <div class="bg-white rounded-lg p-3 text-center border border-green-200">
-                        <p class="text-2xl font-bold text-green-600">
-                            <span th:if="${ventaDetalle.archivoGSMI != null && ventaDetalle.archivoCertificadoSanitario != null && ventaDetalle.archivoPruebas != null && ventaDetalle.archivoInventario != null}">✓</span>
-                            <span th:unless="${ventaDetalle.archivoGSMI != null && ventaDetalle.archivoCertificadoSanitario != null && ventaDetalle.archivoPruebas != null && ventaDetalle.archivoInventario != null}">✗</span>
+                    <div>
+                        <p class="font-bold text-blue-900 text-lg mb-2">Garantía de Calidad Sanitaria</p>
+                        <p class="text-sm text-blue-800 leading-relaxed">
+                            Todos los documentos obligatorios han sido verificados y cumplen con los requisitos legales del ICA.
                         </p>
-                        <p class="text-xs text-gray-600 mt-1">Completo</p>
                     </div>
-                    <div class="bg-white rounded-lg p-3 text-center border border-green-200">
-                        <p class="text-sm font-bold text-gray-900">ICA</p>
-                        <p class="text-xs text-gray-600 mt-1">Verificado</p>
+                </div>
+            </div>
+
+            <!-- SECCIÓN: DOCUMENTOS OBLIGATORIOS -->
+            <div class="mb-8">
+                <h4 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                    <i class='bx bx-error text-red-600'></i>
+                    Documentos Obligatorios
+                </h4>
+                <div class="space-y-4">
+
+                    <!-- GSMI -->
+                    <div class="bg-white border-2 border-gray-200 rounded-xl p-5 hover:border-emerald-400 hover:shadow-md transition">
+                        <div class="flex items-start justify-between gap-4">
+                            <div class="flex items-start gap-4 flex-1">
+                                <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class='bx bx-file text-2xl text-emerald-600'></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-bold text-gray-900 text-base mb-1">GSMI - Guía Sanitaria de Movilización Interna</p>
+                                    <p class="text-sm text-gray-600 mb-2">Documento ICA que autoriza el transporte legal del ganado</p>
+                                    <p class="text-xs text-gray-500">Contiene: número de animales, destino, fecha de movilización y vigencia</p>
+
+                                    <div th:if="${comprobantes['GSMI'] != null}">
+                                        <p class="text-xs text-gray-500 mb-2 mt-3">
+                                            Subido: <span th:text="${#temporals.format(comprobantes['GSMI'].fechaSubida, 'dd/MM/yyyy HH:mm')}">01/01/2025</span>
+                                        </p>
+                                        <a th:href="@{'/documentos/' + ${comprobantes['GSMI'].rutaArchivo}}" target="_blank"
+                                           class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-700 rounded-lg hover:bg-emerald-100 transition text-sm font-semibold">
+                                            <i class='bx bx-download'></i>
+                                            Descargar Documento
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <span th:if="${comprobantes['GSMI'] != null}" class="inline-flex items-center gap-1 px-3 py-1.5 bg-green-100 text-green-700 rounded-full text-sm font-bold whitespace-nowrap">
+                        <i class='bx bx-check-circle'></i> Verificado
+                    </span>
+                            <span th:unless="${comprobantes['GSMI'] != null}" class="inline-flex items-center gap-1 px-3 py-1.5 bg-orange-100 text-orange-700 rounded-full text-sm font-bold whitespace-nowrap">
+                        <i class='bx bx-time'></i> Pendiente
+                    </span>
+                        </div>
                     </div>
-                    <div class="bg-white rounded-lg p-3 text-center border border-green-200">
-                        <p class="text-sm font-bold text-gray-900">Seguro</p>
-                        <p class="text-xs text-gray-600 mt-1">Incluido</p>
+
+                    <!-- Certificados Sanitarios -->
+                    <div class="bg-white border-2 border-gray-200 rounded-xl p-5 hover:border-emerald-400 hover:shadow-md transition">
+                        <div class="flex items-start justify-between gap-4">
+                            <div class="flex items-start gap-4 flex-1">
+                                <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class='bx bx-shield-plus text-2xl text-emerald-600'></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-bold text-gray-900 text-base mb-1">Certificados Sanitarios y Vacunación</p>
+                                    <p class="text-sm text-gray-600 mb-2">Libreta de salud con vacunas actualizadas</p>
+                                    <p class="text-xs text-gray-500">Incluye: Fiebre Aftosa, Brucelosis, último ciclo certificado por ICA</p>
+
+                                    <div th:if="${comprobantes['CERTIFICADO_SANITARIO'] != null}">
+                                        <p class="text-xs text-gray-500 mb-2 mt-3">
+                                            Subido: <span th:text="${#temporals.format(comprobantes['CERTIFICADO_SANITARIO'].fechaSubida, 'dd/MM/yyyy HH:mm')}">01/01/2025</span>
+                                        </p>
+                                        <a th:href="@{'/documentos/' + ${comprobantes['CERTIFICADO_SANITARIO'].rutaArchivo}}" target="_blank"
+                                           class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-700 rounded-lg hover:bg-emerald-100 transition text-sm font-semibold">
+                                            <i class='bx bx-download'></i>
+                                            Descargar Certificados
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <span th:if="${comprobantes['CERTIFICADO_SANITARIO'] != null}" class="inline-flex items-center gap-1 px-3 py-1.5 bg-green-100 text-green-700 rounded-full text-sm font-bold whitespace-nowrap">
+                        <i class='bx bx-check-circle'></i> Verificado
+                    </span>
+                            <span th:unless="${comprobantes['CERTIFICADO_SANITARIO'] != null}" class="inline-flex items-center gap-1 px-3 py-1.5 bg-orange-100 text-orange-700 rounded-full text-sm font-bold whitespace-nowrap">
+                        <i class='bx bx-time'></i> Pendiente
+                    </span>
+                        </div>
                     </div>
-                    <div class="bg-white rounded-lg p-3 text-center border border-green-200">
-                        <p class="text-sm font-bold text-gray-900">Trazable</p>
-                        <p class="text-xs text-gray-600 mt-1">100%</p>
+
+                    <!-- Factura Propiedad -->
+                    <div class="bg-white border-2 border-gray-200 rounded-xl p-5 hover:border-emerald-400 hover:shadow-md transition">
+                        <div class="flex items-start justify-between gap-4">
+                            <div class="flex items-start gap-4 flex-1">
+                                <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class='bx bx-receipt text-2xl text-emerald-600'></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-bold text-gray-900 text-base mb-1">Factura o Documento de Propiedad</p>
+                                    <p class="text-sm text-gray-600 mb-2">Prueba de propiedad legal del vendedor</p>
+                                    <p class="text-xs text-gray-500">Factura de compra, contrato de transferencia o declaración firmada</p>
+
+                                    <div th:if="${comprobantes['FACTURA_PROPIEDAD'] != null}">
+                                        <p class="text-xs text-gray-500 mb-2 mt-3">
+                                            Subido: <span th:text="${#temporals.format(comprobantes['FACTURA_PROPIEDAD'].fechaSubida, 'dd/MM/yyyy HH:mm')}">01/01/2025</span>
+                                        </p>
+                                        <a th:href="@{'/documentos/' + ${comprobantes['FACTURA_PROPIEDAD'].rutaArchivo}}" target="_blank"
+                                           class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-700 rounded-lg hover:bg-emerald-100 transition text-sm font-semibold">
+                                            <i class='bx bx-download'></i>
+                                            Descargar Factura
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <span th:if="${comprobantes['FACTURA_PROPIEDAD'] != null}" class="inline-flex items-center gap-1 px-3 py-1.5 bg-green-100 text-green-700 rounded-full text-sm font-bold whitespace-nowrap">
+                        <i class='bx bx-check-circle'></i> Verificado
+                    </span>
+                            <span th:unless="${comprobantes['FACTURA_PROPIEDAD'] != null}" class="inline-flex items-center gap-1 px-3 py-1.5 bg-orange-100 text-orange-700 rounded-full text-sm font-bold whitespace-nowrap">
+                        <i class='bx bx-time'></i> Pendiente
+                    </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECCIÓN: DOCUMENTOS OPCIONALES -->
+            <div class="mb-8">
+                <h4 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                    <i class='bx bx-check-shield text-emerald-600'></i>
+                    Documentos Opcionales (Valor Agregado)
+                </h4>
+                <div class="space-y-4">
+
+                    <!-- Inventario -->
+                    <div class="bg-white border-2 border-gray-200 rounded-xl p-5 hover:border-blue-400 hover:shadow-md transition">
+                        <div class="flex items-start justify-between gap-4">
+                            <div class="flex items-start gap-4 flex-1">
+                                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class='bx bx-list-ul text-2xl text-blue-600'></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-bold text-gray-900 text-base mb-1">Inventario Individual del Lote</p>
+                                    <p class="text-sm text-gray-600 mb-2">Listado detallado con identificación de cada animal</p>
+                                    <p class="text-xs text-gray-500">ID, marcas, edad, peso, características físicas</p>
+
+                                    <div th:if="${comprobantes['INVENTARIO_LOTE'] != null}">
+                                        <p class="text-xs text-gray-500 mb-2 mt-3">
+                                            Subido: <span th:text="${#temporals.format(comprobantes['INVENTARIO_LOTE'].fechaSubida, 'dd/MM/yyyy HH:mm')}">01/01/2025</span>
+                                        </p>
+                                        <a th:href="@{'/documentos/' + ${comprobantes['INVENTARIO_LOTE'].rutaArchivo}}" target="_blank"
+                                           class="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition text-sm font-semibold">
+                                            <i class='bx bx-download'></i>
+                                            Descargar Inventario
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <span th:if="${comprobantes['INVENTARIO_LOTE'] != null}" class="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-100 text-blue-700 rounded-full text-sm font-bold whitespace-nowrap">
+                        <i class='bx bx-check-circle'></i> Incluido
+                    </span>
+                            <span th:unless="${comprobantes['INVENTARIO_LOTE'] != null}" class="inline-flex items-center gap-1 px-3 py-1.5 bg-gray-100 text-gray-600 rounded-full text-sm font-bold whitespace-nowrap">
+                        <i class='bx bx-minus-circle'></i> No Incluido
+                    </span>
+                        </div>
+                    </div>
+
+                    <!-- SINIGAN -->
+                    <div class="bg-white border-2 border-gray-200 rounded-xl p-5 hover:border-blue-400 hover:shadow-md transition">
+                        <div class="flex items-start justify-between gap-4">
+                            <div class="flex items-start gap-4 flex-1">
+                                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class='bx bx-barcode text-2xl text-blue-600'></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-bold text-gray-900 text-base mb-1">Certificados SINIGAN (Registro Individual)</p>
+                                    <p class="text-sm text-gray-600 mb-2">Número individual en el Sistema Nacional de Identificación</p>
+                                    <p class="text-xs text-gray-500">Evita ventas duplicadas y confirma autenticidad</p>
+
+                                    <div th:if="${comprobantes['CERTIFICADO_SINIGAN'] != null}">
+                                        <p class="text-xs text-gray-500 mb-2 mt-3">
+                                            Subido: <span th:text="${#temporals.format(comprobantes['CERTIFICADO_SINIGAN'].fechaSubida, 'dd/MM/yyyy HH:mm')}">01/01/2025</span>
+                                        </p>
+                                        <a th:href="@{'/documentos/' + ${comprobantes['CERTIFICADO_SINIGAN'].rutaArchivo}}" target="_blank"
+                                           class="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition text-sm font-semibold">
+                                            <i class='bx bx-download'></i>
+                                            Descargar SINIGAN
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <span th:if="${comprobantes['CERTIFICADO_SINIGAN'] != null}" class="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-100 text-blue-700 rounded-full text-sm font-bold whitespace-nowrap">
+                        <i class='bx bx-check-circle'></i> Incluido
+                    </span>
+                            <span th:unless="${comprobantes['CERTIFICADO_SINIGAN'] != null}" class="inline-flex items-center gap-1 px-3 py-1.5 bg-gray-100 text-gray-600 rounded-full text-sm font-bold whitespace-nowrap">
+                        <i class='bx bx-minus-circle'></i> No Incluido
+                    </span>
+                        </div>
+                    </div>
+
+                    <!-- Hierro -->
+                    <div class="bg-white border-2 border-gray-200 rounded-xl p-5 hover:border-blue-400 hover:shadow-md transition">
+                        <div class="flex items-start justify-between gap-4">
+                            <div class="flex items-start gap-4 flex-1">
+                                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class='bx bx-customize text-2xl text-blue-600'></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-bold text-gray-900 text-base mb-1">Certificado de Hierro o Marca Registrada</p>
+                                    <p class="text-sm text-gray-600 mb-2">Certificación de marca registrada del predio</p>
+                                    <p class="text-xs text-gray-500">Verifica que el ganado pertenece al hierro registrado</p>
+
+                                    <div th:if="${comprobantes['CERTIFICADO_HIERRO'] != null}">
+                                        <p class="text-xs text-gray-500 mb-2 mt-3">
+                                            Subido: <span th:text="${#temporals.format(comprobantes['CERTIFICADO_HIERRO'].fechaSubida, 'dd/MM/yyyy HH:mm')}">01/01/2025</span>
+                                        </p>
+                                        <a th:href="@{'/documentos/' + ${comprobantes['CERTIFICADO_HIERRO'].rutaArchivo}}" target="_blank"
+                                           class="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition text-sm font-semibold">
+                                            <i class='bx bx-download'></i>
+                                            Descargar Certificado
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <span th:if="${comprobantes['CERTIFICADO_HIERRO'] != null}" class="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-100 text-blue-700 rounded-full text-sm font-bold whitespace-nowrap">
+                        <i class='bx bx-check-circle'></i> Incluido
+                    </span>
+                            <span th:unless="${comprobantes['CERTIFICADO_HIERRO'] != null}" class="inline-flex items-center gap-1 px-3 py-1.5 bg-gray-100 text-gray-600 rounded-full text-sm font-bold whitespace-nowrap">
+                        <i class='bx bx-minus-circle'></i> No Incluido
+                    </span>
+                        </div>
+                    </div>
+
+                    <!-- Pesaje -->
+                    <div class="bg-white border-2 border-gray-200 rounded-xl p-5 hover:border-blue-400 hover:shadow-md transition">
+                        <div class="flex items-start justify-between gap-4">
+                            <div class="flex items-start gap-4 flex-1">
+                                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class='bx bx-trending-up text-2xl text-blue-600'></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-bold text-gray-900 text-base mb-1">Certificado de Pesaje Reciente</p>
+                                    <p class="text-sm text-gray-600 mb-2">Documento de pesaje oficial actualizado</p>
+                                    <p class="text-xs text-gray-500">Transparencia sobre el peso real verificado</p>
+
+                                    <div th:if="${comprobantes['CERTIFICADO_PESAJE'] != null}">
+                                        <p class="text-xs text-gray-500 mb-2 mt-3">
+                                            Subido: <span th:text="${#temporals.format(comprobantes['CERTIFICADO_PESAJE'].fechaSubida, 'dd/MM/yyyy HH:mm')}">01/01/2025</span>
+                                        </p>
+                                        <a th:href="@{'/documentos/' + ${comprobantes['CERTIFICADO_PESAJE'].rutaArchivo}}" target="_blank"
+                                           class="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition text-sm font-semibold">
+                                            <i class='bx bx-download'></i>
+                                            Descargar Pesaje
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <span th:if="${comprobantes['CERTIFICADO_PESAJE'] != null}" class="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-100 text-blue-700 rounded-full text-sm font-bold whitespace-nowrap">
+                        <i class='bx bx-check-circle'></i> Incluido
+                    </span>
+                            <span th:unless="${comprobantes['CERTIFICADO_PESAJE'] != null}" class="inline-flex items-center gap-1 px-3 py-1.5 bg-gray-100 text-gray-600 rounded-full text-sm font-bold whitespace-nowrap">
+                        <i class='bx bx-minus-circle'></i> No Incluido
+                    </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Observaciones -->
+            <div th:if="${ventaDetalle.observacionesSanitarias != null and !#strings.isEmpty(ventaDetalle.observacionesSanitarias)}"
+                 class="bg-amber-50 border-l-4 border-amber-500 p-6 rounded-lg mb-6">
+                <p class="font-bold text-amber-900 mb-2 flex items-center gap-2">
+                    <i class='bx bx-note'></i>
+                    Observaciones Sanitarias del Vendedor
+                </p>
+                <p class="text-sm text-amber-800 leading-relaxed" th:text="${ventaDetalle.observacionesSanitarias}">Información adicional</p>
+            </div>
+
+            <!-- Resumen -->
+            <div class="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-300 rounded-xl p-6">
+                <p class="font-bold text-green-900 mb-4 flex items-center gap-2 text-lg">
+                    <i class='bx bx-check-double text-2xl'></i>
+                    Resumen de Cumplimiento Normativo
+                </p>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-white rounded-lg p-4 text-center border-2 border-green-200 shadow-sm">
+                        <p class="text-3xl font-bold text-green-600 mb-1">
+                            <span th:if="${comprobantes['GSMI'] != null && comprobantes['CERTIFICADO_SANITARIO'] != null && comprobantes['FACTURA_PROPIEDAD'] != null}">✓</span>
+                            <span th:unless="${comprobantes['GSMI'] != null && comprobantes['CERTIFICADO_SANITARIO'] != null && comprobantes['FACTURA_PROPIEDAD'] != null}">—</span>
+                        </p>
+                        <p class="text-xs text-gray-600 font-semibold">Docs Obligatorios</p>
+                    </div>
+                    <div class="bg-white rounded-lg p-4 text-center border-2 border-green-200 shadow-sm">
+                        <p class="text-lg font-bold text-gray-900 mb-1">ICA</p>
+                        <p class="text-xs text-gray-600 font-semibold">Normativa</p>
+                    </div>
+                    <div class="bg-white rounded-lg p-4 text-center border-2 border-green-200 shadow-sm">
+                        <p class="text-lg font-bold text-gray-900 mb-1">Legal</p>
+                        <p class="text-xs text-gray-600 font-semibold">Trazabilidad</p>
+                    </div>
+                    <div class="bg-white rounded-lg p-4 text-center border-2 border-green-200 shadow-sm">
+                        <p class="text-lg font-bold text-gray-900 mb-1">100%</p>
+                        <p class="text-xs text-gray-600 font-semibold">Transparencia</p>
                     </div>
                 </div>
             </div>
@@ -641,7 +828,10 @@
                 </p>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
                     <div class="bg-white rounded-lg p-3 text-center border border-green-200">
-                        <p class="text-2xl font-bold text-green-600">✓</p>
+                        <p class="text-2xl font-bold text-green-600">
+                            <span th:if="${ventaDetalle.archivoGSMI != null && ventaDetalle.archivoCertificadoSanitario != null && ventaDetalle.archivoPruebas != null && ventaDetalle.archivoInventario != null}">✓</span>
+                            <span th:unless="${ventaDetalle.archivoGSMI != null && ventaDetalle.archivoCertificadoSanitario != null && ventaDetalle.archivoPruebas != null && ventaDetalle.archivoInventario != null}">✗</span>
+                        </p>
                         <p class="text-xs text-gray-600 mt-1">Regulaciones</p>
                     </div>
                     <div class="bg-white rounded-lg p-3 text-center border border-green-200">

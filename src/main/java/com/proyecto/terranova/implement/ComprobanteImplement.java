@@ -1,9 +1,12 @@
 package com.proyecto.terranova.implement;
 
+import com.proyecto.terranova.entity.Venta;
+import com.proyecto.terranova.repository.VentaRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.proyecto.terranova.service.ComprobanteService;
@@ -19,6 +22,9 @@ public class ComprobanteImplement implements ComprobanteService {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    private VentaRepository ventaRepository;
 
     @Override
     public Comprobante save(Comprobante comprobante) {

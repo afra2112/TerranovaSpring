@@ -6,78 +6,279 @@
             <!-- PASOS ESPECÍFICOS PARA GANADO -->
             <div th:if="${tipoProducto == 'GANADO'}">
 
-                <!-- PASO 3: Documentación Sanitaria -->
+                <!-- PASO 3: Documentación Sanitaria MEJORADO -->
                 <div th:if="${venta.venta.pasoActual == 3}">
                     <div class="mb-6">
-                        <h2 class="text-3xl font-bold text-gray-900 mb-2">Paso 3: Documentación Sanitaria y Garantías</h2>
-                        <p class="text-gray-600">Sube los documentos obligatorios para el lote de ganado</p>
+                        <h2 class="text-3xl font-bold text-gray-900 mb-2">Paso 3: Documentación Sanitaria y Trazabilidad</h2>
+                        <p class="text-gray-600">Sube todos los documentos obligatorios para garantizar la trazabilidad completa del ganado</p>
+                    </div>
+
+                    <!-- Información Importante sobre Documentación -->
+                    <div class="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 mb-6">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 bg-blue-200 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class='bx bx-info-circle text-2xl text-blue-700'></i>
+                            </div>
+                            <div>
+                                <p class="font-bold text-blue-900 text-lg mb-2">Documentación según Normativa ICA</p>
+                                <p class="text-sm text-blue-800 leading-relaxed">
+                                    Los documentos marcados como <span class="font-bold text-red-600">OBLIGATORIOS</span> son requeridos por ley para la movilización y comercialización de ganado en Colombia.
+                                    Los documentos opcionales son altamente recomendados para mayor transparencia y confianza.
+                                </p>
+                            </div>
+                        </div>
                     </div>
 
                     <form th:action="@{/vendedor/ventas/documentacion-sanitaria}" method="post" enctype="multipart/form-data" class="space-y-6">
                         <input type="hidden" name="idVenta" th:value="${venta.venta.idVenta}">
 
-                        <div class="space-y-6">
-                            <!-- Certificados Sanitarios -->
-                            <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 file-upload-area">
-                                <label class="block mb-4">
-                                                    <span class="text-sm font-semibold text-gray-700 flex items-center gap-2 mb-3">
-                                                        <i class='bx bx-shield-plus text-xl text-emerald-600'></i>
-                                                        Certificados Sanitarios * <span class="text-red-500">Obligatorio</span>
-                                                    </span>
-                                    <p class="text-sm text-gray-600 mb-3">Libreta de salud, revisiones, vacunas actualizadas</p>
-                                    <input type="file" name="certificadosSanitarios" accept=".pdf,.jpg,.jpeg,.png" multiple required
-                                           class="block w-full text-sm text-gray-500 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer">
-                                </label>
-                            </div>
+                        <!-- SECCIÓN 1: DOCUMENTOS OBLIGATORIOS -->
+                        <div class="bg-white border-2 border-red-200 rounded-2xl p-6">
+                            <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                <i class='bx bx-error text-red-600'></i>
+                                Documentos Obligatorios
+                            </h3>
+                            <p class="text-sm text-red-700 mb-6">Estos documentos son requeridos por ley para la venta de ganado</p>
 
-                            <!-- Registro de Procedencia / Guías -->
-                            <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 file-upload-area">
-                                <label class="block mb-4">
-                                                    <span class="text-sm font-semibold text-gray-700 flex items-center gap-2 mb-3">
-                                                        <i class='bx bx-file-find text-xl text-emerald-600'></i>
-                                                        Registro de Procedencia / Guías * <span class="text-red-500">Obligatorio</span>
-                                                    </span>
-                                    <p class="text-sm text-gray-600 mb-3">Documentos que acrediten el origen legal del ganado</p>
-                                    <input type="file" name="registroProcedencia" accept=".pdf,.jpg,.jpeg,.png" multiple required
-                                           class="block w-full text-sm text-gray-500 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer">
-                                </label>
-                            </div>
+                            <div class="space-y-5">
+                                <!-- 1. GSMI / Guía de Movilización -->
+                                <div class="border-2 rounded-xl p-5 hover:border-red-400 transition bg-red-50/30">
+                                    <label class="block">
+                                        <div class="flex items-start gap-3 mb-3">
+                                            <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                <i class='bx bx-file text-xl text-red-600'></i>
+                                            </div>
+                                            <div class="flex-1">
+                                                <span class="text-sm font-bold text-gray-900 flex items-center gap-2">
+                                                    GSMI - Guía Sanitaria de Movilización Interna
+                                                    <span class="text-xs bg-red-600 text-white px-2 py-0.5 rounded-full">OBLIGATORIO</span>
+                                                </span>
+                                                <p class="text-xs text-gray-600 mt-1 leading-relaxed">
+                                                    Documento expedido por el ICA que autoriza el transporte del ganado. Debe estar vigente y contener el número de animales, destino y fecha de movilización.
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <input type="file" name="gsmi" accept=".pdf,.jpg,.jpeg,.png" required
+                                               class="block w-full text-sm text-gray-600 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-red-100 file:text-red-700 hover:file:bg-red-200 cursor-pointer transition">
+                                    </label>
+                                </div>
 
-                            <!-- Inventario del Lote -->
-                            <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 file-upload-area">
-                                <label class="block mb-4">
-                                                    <span class="text-sm font-semibold text-gray-700 flex items-center gap-2 mb-3">
-                                                        <i class='bx bx-list-ul text-xl text-emerald-600'></i>
-                                                        Inventario del Lote con IDs/Marcas
-                                                    </span>
-                                    <p class="text-sm text-gray-600 mb-3">Listado detallado con identificación de cada animal (opcional pero recomendado)</p>
-                                    <input type="file" name="inventarioLote" accept=".pdf,.xlsx,.xls,.jpg,.jpeg,.png"
-                                           class="block w-full text-sm text-gray-500 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer">
-                                </label>
-                            </div>
+                                <!-- 2. Certificados Sanitarios -->
+                                <div class="border-2 rounded-xl p-5 hover:border-red-400 transition bg-red-50/30">
+                                    <label class="block">
+                                        <div class="flex items-start gap-3 mb-3">
+                                            <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                <i class='bx bx-shield-plus text-xl text-red-600'></i>
+                                            </div>
+                                            <div class="flex-1">
+                                                <span class="text-sm font-bold text-gray-900 flex items-center gap-2">
+                                                    Certificados Sanitarios y Vacunación
+                                                    <span class="text-xs bg-red-600 text-white px-2 py-0.5 rounded-full">OBLIGATORIO</span>
+                                                </span>
+                                                <p class="text-xs text-gray-600 mt-1 leading-relaxed">
+                                                    Libreta de salud del ganado con vacunas actualizadas (Fiebre Aftosa, Brucelosis). Debe incluir último ciclo de vacunación certificado por ICA.
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <input type="file" name="certificadosSanitarios" accept=".pdf,.jpg,.jpeg,.png" multiple required
+                                               class="block w-full text-sm text-gray-600 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-red-100 file:text-red-700 hover:file:bg-red-200 cursor-pointer transition">
+                                    </label>
+                                </div>
 
-                            <!-- Checkboxes de Confirmación -->
-                            <div class="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 space-y-3">
-                                <p class="font-semibold text-blue-900 mb-3">Confirmaciones Requeridas:</p>
-                                <label class="flex items-start gap-3 cursor-pointer">
+                                <!-- 4. Factura o Contrato de Compraventa -->
+                                <div class="border-2 rounded-xl p-5 hover:border-red-400 transition bg-red-50/30">
+                                    <label class="block">
+                                        <div class="flex items-start gap-3 mb-3">
+                                            <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                <i class='bx bx-receipt text-xl text-red-600'></i>
+                                            </div>
+                                            <div class="flex-1">
+                                                <span class="text-sm font-bold text-gray-900 flex items-center gap-2">
+                                                    Factura o Documento de Propiedad
+                                                    <span class="text-xs bg-red-600 text-white px-2 py-0.5 rounded-full">OBLIGATORIO</span>
+                                                </span>
+                                                <p class="text-xs text-gray-600 mt-1 leading-relaxed">
+                                                    Documento que demuestra que eres el propietario legal del ganado: factura de compra, contrato de transferencia o declaración de propiedad firmada.
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <input type="file" name="facturaPropiedad" accept=".pdf,.jpg,.jpeg,.png" required
+                                               class="block w-full text-sm text-gray-600 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-red-100 file:text-red-700 hover:file:bg-red-200 cursor-pointer transition">
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SECCIÓN 2: DOCUMENTOS OPCIONALES PERO RECOMENDADOS -->
+                        <div class="bg-white border-2 border-emerald-200 rounded-2xl p-6">
+                            <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                <i class='bx bx-check-shield text-emerald-600'></i>
+                                Documentos Opcionales (Recomendados)
+                            </h3>
+                            <p class="text-sm text-emerald-700 mb-6">Estos documentos aumentan la confianza y profesionalizan tu venta</p>
+
+                            <div class="space-y-5">
+                                <!-- 5. Inventario Individual del Lote -->
+                                <div class="border-2 rounded-xl p-5 hover:border-emerald-400 transition">
+                                    <label class="block">
+                                        <div class="flex items-start gap-3 mb-3">
+                                            <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                <i class='bx bx-list-ul text-xl text-emerald-600'></i>
+                                            </div>
+                                            <div class="flex-1">
+                                                <span class="text-sm font-bold text-gray-900 flex items-center gap-2">
+                                                    Inventario Individual del Lote
+                                                    <span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-semibold">Opcional</span>
+                                                </span>
+                                                <p class="text-xs text-gray-600 mt-1 leading-relaxed">
+                                                    Listado detallado con ID, marcas, edad, peso y características de cada animal. Facilita la verificación y aumenta la confianza del comprador.
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <input type="file" name="inventarioLote" accept=".pdf,.xlsx,.xls,.jpg,.jpeg,.png"
+                                               class="block w-full text-sm text-gray-600 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer transition">
+                                    </label>
+                                </div>
+
+                                <!-- 6. Certificado SINIGAN -->
+                                <div class="border-2 rounded-xl p-5 hover:border-emerald-400 transition">
+                                    <label class="block">
+                                        <div class="flex items-start gap-3 mb-3">
+                                            <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                <i class='bx bx-barcode text-xl text-emerald-600'></i>
+                                            </div>
+                                            <div class="flex-1">
+                                                <span class="text-sm font-bold text-gray-900 flex items-center gap-2">
+                                                    Certificados SINIGAN (Registro Individual)
+                                                    <span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-semibold">Opcional</span>
+                                                </span>
+                                                <p class="text-xs text-gray-600 mt-1 leading-relaxed">
+                                                    Número individual de cada bovino en el Sistema Nacional de Identificación. Evita ventas duplicadas y confirma autenticidad.
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <input type="file" name="certificadoSinigan" accept=".pdf,.xlsx,.xls,.jpg,.jpeg,.png"
+                                               class="block w-full text-sm text-gray-600 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer transition">
+                                    </label>
+                                </div>
+
+                                <!-- 7. Hierro o Marca Registrada -->
+                                <div class="border-2 rounded-xl p-5 hover:border-emerald-400 transition">
+                                    <label class="block">
+                                        <div class="flex items-start gap-3 mb-3">
+                                            <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                <i class='bx bx-customize text-xl text-emerald-600'></i>
+                                            </div>
+                                            <div class="flex-1">
+                                                <span class="text-sm font-bold text-gray-900 flex items-center gap-2">
+                                                    Certificado de Hierro o Marca Registrada
+                                                    <span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-semibold">Opcional</span>
+                                                </span>
+                                                <p class="text-xs text-gray-600 mt-1 leading-relaxed">
+                                                    Documento que certifica que el ganado pertenece a tu hierro o marca registrada ante las autoridades competentes.
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <input type="file" name="certificadoHierro" accept=".pdf,.jpg,.jpeg,.png"
+                                               class="block w-full text-sm text-gray-600 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer transition">
+                                    </label>
+                                </div>
+
+                                <!-- 9. Certificado de Pesaje -->
+                                <div class="border-2 rounded-xl p-5 hover:border-emerald-400 transition">
+                                    <label class="block">
+                                        <div class="flex items-start gap-3 mb-3">
+                                            <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                <i class='bx bx-trending-up text-xl text-emerald-600'></i>
+                                            </div>
+                                            <div class="flex-1">
+                                                <span class="text-sm font-bold text-gray-900 flex items-center gap-2">
+                                                    Certificado de Pesaje Reciente
+                                                    <span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-semibold">Opcional</span>
+                                                </span>
+                                                <p class="text-xs text-gray-600 mt-1 leading-relaxed">
+                                                    Documento de pesaje oficial con fecha reciente. Aumenta la transparencia sobre el peso real de los animales.
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <input type="file" name="certificadoPesaje" accept=".pdf,.jpg,.jpeg,.png"
+                                               class="block w-full text-sm text-gray-600 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer transition">
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Observaciones Sanitarias Adicionales -->
+                        <div class="bg-white border-2 border-gray-200 rounded-xl p-6">
+                            <label class="block">
+                                <span class="text-sm font-bold text-gray-900 flex items-center gap-2 mb-3">
+                                    <i class='bx bx-note text-xl text-gray-600'></i>
+                                    Observaciones Sanitarias Adicionales
+                                </span>
+                                <p class="text-xs text-gray-600 mb-3">Información adicional relevante sobre el estado sanitario del ganado (tratamientos recientes, historial médico, etc.)</p>
+                                <textarea name="observacionesSanitarias" rows="4"
+                                          class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-emerald-500 focus:ring-0 transition resize-none"
+                                          placeholder="Ej: Último desparasitado el 15/12/2024. Vacuna contra carbón aplicada en noviembre. Sin antecedentes de enfermedades..."></textarea>
+                            </label>
+                        </div>
+
+                        <!-- Checkboxes de Confirmación Legal -->
+                        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-300 rounded-xl p-6">
+                            <p class="font-bold text-blue-900 mb-4 flex items-center gap-2 text-lg">
+                                <i class='bx bx-shield-alt-2'></i>
+                                Declaración de Responsabilidad Legal
+                            </p>
+                            <div class="space-y-4">
+                                <label class="flex items-start gap-3 cursor-pointer hover:bg-blue-100/50 p-3 rounded-lg transition">
                                     <input type="checkbox" name="confirmaVeracidad" required
-                                           class="mt-1 w-5 h-5 text-emerald-600 border-2 border-gray-300 rounded focus:ring-emerald-500">
-                                    <span class="text-sm text-blue-900">Confirmo que todos los documentos son verídicos y están actualizados</span>
+                                           class="mt-1 w-5 h-5 text-blue-600 border-2 border-gray-400 rounded focus:ring-blue-500">
+                                    <span class="text-sm text-blue-900 leading-relaxed">
+                                        <strong>Confirmo que todos los documentos son auténticos y verídicos.</strong>
+                                        Los archivos subidos corresponden al ganado que estoy vendiendo y están actualizados.
+                                    </span>
                                 </label>
-                                <label class="flex items-start gap-3 cursor-pointer">
+                                <label class="flex items-start gap-3 cursor-pointer hover:bg-blue-100/50 p-3 rounded-lg transition">
                                     <input type="checkbox" name="confirmaResponsabilidad" required
-                                           class="mt-1 w-5 h-5 text-emerald-600 border-2 border-gray-300 rounded focus:ring-emerald-500">
-                                    <span class="text-sm text-blue-900">Asumo responsabilidad legal sobre la veracidad de la información sanitaria proporcionada</span>
+                                           class="mt-1 w-5 h-5 text-blue-600 border-2 border-gray-400 rounded focus:ring-blue-500">
+                                    <span class="text-sm text-blue-900 leading-relaxed">
+                                        <strong>Asumo responsabilidad legal sobre la información proporcionada.</strong>
+                                        Entiendo que proporcionar documentos falsos o adulterados constituye un delito y acepto las consecuencias legales correspondientes.
+                                    </span>
+                                </label>
+                                <label class="flex items-start gap-3 cursor-pointer hover:bg-blue-100/50 p-3 rounded-lg transition">
+                                    <input type="checkbox" name="confirmaPropiedad" required
+                                           class="mt-1 w-5 h-5 text-blue-600 border-2 border-gray-400 rounded focus:ring-blue-500">
+                                    <span class="text-sm text-blue-900 leading-relaxed">
+                                        <strong>Confirmo ser el propietario legal del ganado.</strong>
+                                        Certifico que tengo plenos derechos sobre estos animales y autoridad para venderlos.
+                                    </span>
                                 </label>
                             </div>
                         </div>
 
+                        <!-- Información de Ayuda -->
+                        <div class="bg-amber-50 border-l-4 border-amber-500 p-5 rounded-lg">
+                            <div class="flex items-start gap-3">
+                                <i class='bx bx-bulb text-2xl text-amber-600 flex-shrink-0'></i>
+                                <div>
+                                    <p class="font-bold text-amber-900 mb-2">Consejo Importante</p>
+                                    <p class="text-sm text-amber-800 leading-relaxed">
+                                        Mientras más documentos opcionales subas, mayor será la confianza del comprador y más rápida será la venta.
+                                        Los documentos escaneados deben ser legibles y en formato PDF o imagen de alta calidad.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Botones de Acción -->
                         <div class="flex gap-4">
-                            <button type="button" onclick="history.back()" class="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition">
-                                <i class='bx bx-arrow-back mr-2'></i> Atrás
+                            <button type="button" onclick="history.back()" class="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition flex items-center gap-2">
+                                <i class='bx bx-arrow-back'></i> Atrás
                             </button>
-                            <button type="submit" class="flex-1 px-6 py-3 gradient-bg text-white rounded-xl font-semibold hover:shadow-lg transition">
-                                Guardar y Continuar <i class='bx bx-right-arrow-alt ml-2'></i>
+                            <button type="submit" class="flex-1 px-6 py-4 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white rounded-xl font-bold text-lg hover:shadow-2xl hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
+                                <i class='bx bx-upload'></i>
+                                Guardar Documentos y Continuar
+                                <i class='bx bx-right-arrow-alt'></i>
                             </button>
                         </div>
                     </form>

@@ -9,19 +9,16 @@ import com.proyecto.terranova.entity.Usuario;
 import com.proyecto.terranova.repository.AsistenciaRepository;
 import com.proyecto.terranova.repository.ProductoRepository;
 import com.proyecto.terranova.service.NotificacionService;
-import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import com.proyecto.terranova.service.CitaService;
 import com.proyecto.terranova.repository.CitaRepository;
 import com.proyecto.terranova.dto.CitaDTO;
@@ -111,7 +108,7 @@ public class CitaImplement implements CitaService {
 
     @Transactional
     @Override
-    public void reprogramarCita(Long idCita, LocalDate nuevaFecha, LocalTime nuevaHoraInicio, LocalTime nuevaHoraFin) throws MessagingException, IOException {
+    public void reprogramarCita(Long idCita, LocalDate nuevaFecha, LocalTime nuevaHoraInicio, LocalTime nuevaHoraFin) throws IOException {
         Cita cita = repository.findById(idCita).orElseThrow();
 
         cita.setFecha(nuevaFecha);

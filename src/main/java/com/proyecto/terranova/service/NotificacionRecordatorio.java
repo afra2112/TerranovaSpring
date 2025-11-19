@@ -40,12 +40,17 @@ public class NotificacionRecordatorio {
             }
 
             if (ahora.isAfter(fin)) {
-                cita.setEstadoCita(EstadoCitaEnum.FINALIZADA);
+                cita.setEstadoCita(EstadoCitaEnum.FINALIZADA_AUTOMATICAMENTE);
                 citasActualizadas.add(cita);
             }
 
             else if (!ahora.isBefore(inicio) && ahora.isBefore(fin)) {
-                cita.setEstadoCita(EstadoCitaEnum.EN_CURSO);
+                if (!cita.getAsistencias().isEmpty()) {
+                    cita.setEstadoCita(EstadoCitaEnum.EN_CURSO);
+                } else {
+                    cita.setEstadoCita(EstadoCitaEnum.FINALIZADA_AUTOMATICAMENTE);
+                }
+
                 citasActualizadas.add(cita);
             }
         }
@@ -57,6 +62,11 @@ public class NotificacionRecordatorio {
 
             if (ahora.isAfter(fin)) {
                 cita.setEstadoCita(EstadoCitaEnum.FINALIZADA);
+                citasActualizadas.add(cita);
+            }
+
+            if (cita.getAsistencias().isEmpty()){
+                cita.setEstadoCita(EstadoCitaEnum.FINALIZADA_AUTOMATICAMENTE);
                 citasActualizadas.add(cita);
             }
         }

@@ -290,7 +290,7 @@
 </head>
 <body class="bg-gray-50">
 
-<div th:replace="fragments/vendedor/navbarVendedor :: navbarVendedor"></div>
+<div th:replace="~{fragments/vendedor/navbarVendedor :: navbarVendedor}"></div>
 
 <!-- Contenedor responsive -->
 <div class="lg:ml-64 flex flex-col min-h-screen">
@@ -1395,6 +1395,32 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         renderVentas();
+    });
+
+    function toggleUserDropdown() {
+        const dropdown = document.getElementById('userDropdown');
+        const arrow = document.getElementById('dropdownArrow');
+
+        if (dropdown.classList.contains('opacity-0')) {
+            dropdown.classList.remove('opacity-0', 'invisible', 'scale-95');
+            dropdown.classList.add('opacity-100', 'visible', 'scale-100');
+            arrow.style.transform = 'rotate(180deg)';
+        } else {
+            dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
+            dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
+            arrow.style.transform = 'rotate(0deg)';
+        }
+    }
+
+    document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('userDropdown');
+        const userButton = event.target.closest('[onclick="toggleUserDropdown()"]');
+
+        if (!userButton && !dropdown.contains(event.target)) {
+            dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
+            dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
+            document.getElementById('dropdownArrow').style.transform = 'rotate(0deg)';
+        }
     });
 </script>
 
