@@ -7,10 +7,17 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'DM Sans', sans-serif; }
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
 
         .gradient-hero {
             background: linear-gradient(135deg, #064e3b 0%, #059669 50%, #10b981 100%);
@@ -26,22 +33,26 @@
 
         .stat-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
         }
 
         .sale-card {
             transition: all 0.3s ease;
             cursor: pointer;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         .sale-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 24px 48px rgba(0,0,0,0.15);
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.85);
+            box-shadow: 0 12px 24px rgba(5, 150, 105, 0.15);
         }
 
         .modal-backdrop {
             background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(8px);
         }
 
         .custom-scrollbar::-webkit-scrollbar {
@@ -49,58 +60,65 @@
         }
 
         .custom-scrollbar::-webkit-scrollbar-track {
-            background: #f1f5f9;
+            background: rgba(241, 245, 249, 0.5);
             border-radius: 10px;
         }
 
         .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #10b981;
+            background: rgba(5, 150, 105, 0.5);
             border-radius: 10px;
         }
 
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(6, 78, 59, 0.7);
+        }
+
+        /* Colored badges with distinct colors for different states */
         .badge {
             display: inline-flex;
             align-items: center;
             gap: 0.25rem;
             padding: 0.35rem 0.85rem;
             border-radius: 9999px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 600;
+            backdrop-filter: blur(4px);
         }
 
-        .badge-completada { background: #dcfce7; color: #166534; border: 2px solid #86efac; }
-        .badge-procesando { background: #dbeafe; color: #1e40af; border: 2px solid #93c5fd; }
-        .badge-rechazada { background: #fee2e2; color: #991b1b; border: 2px solid #fca5a5; }
-        .badge-pagada { background: #d1fae5; color: #065f46; border: 2px solid #6ee7b7; }
-        .badge-no-pagada { background: #fef3c7; color: #92400e; border: 2px solid #fcd34d; }
+        .badge-completada { background: rgba(220, 252, 231, 0.8); color: #166534; border: 1px solid rgba(134, 239, 172, 0.5); }
+        .badge-procesando { background: rgba(219, 234, 254, 0.8); color: #1e40af; border: 1px solid rgba(147, 197, 253, 0.5); }
+        .badge-rechazada { background: rgba(254, 226, 226, 0.8); color: #991b1b; border: 1px solid rgba(252, 165, 165, 0.5); }
+        .badge-pagada { background: rgba(209, 250, 229, 0.8); color: #065f46; border: 1px solid rgba(110, 231, 183, 0.5); }
+        .badge-no-pagada { background: rgba(254, 243, 199, 0.8); color: #92400e; border: 1px solid rgba(252, 211, 77, 0.5); }
 
+        /* Modern toggle switch with glass effect */
         .toggle-switch {
             display: inline-flex;
-            align-items: center;
-            background: white;
-            border: 2px solid #e2e8f0;
-            border-radius: 20px;
-            padding: 4px;
-            cursor: pointer;
-            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(226, 232, 240, 0.5);
+            border-radius: 15px;
+            padding: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
 
         .toggle-option {
-            padding: 10px 18px;
-            border-radius: 16px;
+            padding: 12px 20px;
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.2s;
-            font-weight: 500;
-            font-size: 14px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 0.95rem;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
+            color: #64748b;
         }
 
         .toggle-option.active {
-            background: white;
-            color: #059669;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
         }
 
         .view-section {
@@ -129,12 +147,12 @@
             align-items: center;
             justify-content: center;
             height: 300px;
-            background: #f9fafb;
-            border-radius: 8px;
+            background: rgba(249, 250, 251, 0.5);
+            backdrop-filter: blur(4px);
+            border-radius: 12px;
             color: #6b7280;
         }
 
-        /* Añadido mejor efecto de expansión más suave */
         .detalle-expandido {
             max-height: 0;
             overflow: hidden;
@@ -145,57 +163,53 @@
             max-height: 5000px;
         }
 
-        /* Añadido bordes y hovers suaves para mejorar contraste */
+        /* Cleaner venta item with neutral background */
         .venta-item {
             transition: all 0.3s ease;
-            border: 2px solid transparent;
+            border: 1px solid rgba(226, 232, 240, 0.5);
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
         }
 
         .venta-item:hover {
-            border-color: #10b981;
+            border-color: rgba(100, 116, 139, 0.3);
+            background: rgba(255, 255, 255, 0.85);
         }
 
         .venta-item.expandida {
-            background: #fafbfc;
-            box-shadow: 0 10px 40px -10px rgba(16, 185, 129, 0.2);
-            border-color: #10b981;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            border-color: rgba(71, 85, 105, 0.3);
         }
 
         .rotate-180 {
             transform: rotate(180deg);
         }
 
-        /* Cards con hover más visible y bordes */
+        /* Refined info cards with neutral background */
         .info-card {
-            background: white;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(8px);
             border-radius: 12px;
             padding: 20px;
             transition: all 0.3s ease;
-            border: 2px solid #e5e7eb;
+            border: 1px solid rgba(226, 232, 240, 0.5);
         }
 
         .info-card:hover {
-            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.15);
-            border-color: #10b981;
-            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+            border-color: rgba(148, 163, 184, 0.5);
+            background: rgba(255, 255, 255, 0.75);
         }
 
+        /* Simplified stat boxes with neutral backgrounds */
         .stat-box {
-            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-            border-radius: 12px;
+            background: rgba(248, 250, 252, 0.8);
+            backdrop-filter: blur(4px);
+            border-radius: 10px;
             padding: 16px;
             text-align: center;
-            border: 2px solid #86efac;
-        }
-
-        .stat-box.red {
-            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
-            border: 2px solid #fca5a5;
-        }
-
-        .stat-box.blue {
-            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-            border: 2px solid #93c5fd;
+            border: 1px solid rgba(226, 232, 240, 0.6);
         }
 
         .modal-open {
@@ -204,42 +218,42 @@
             transform: scale(1) !important;
         }
 
-        /* Gasto items con bordes y mejor hover */
+        /* Cleaner gasto items with neutral background */
         .gasto-item {
             transition: all 0.2s ease;
             padding: 12px;
-            background: #f9fafb;
+            background: rgba(248, 250, 252, 0.6);
+            backdrop-filter: blur(4px);
             border-radius: 8px;
-            border: 2px solid #e5e7eb;
+            border: 1px solid rgba(226, 232, 240, 0.5);
         }
 
         .gasto-item:hover {
-            background: #fef2f2;
+            background: rgba(254, 242, 242, 0.7);
             transform: translateX(4px);
-            border-color: #fca5a5;
-            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.1);
+            border-color: rgba(252, 165, 165, 0.6);
         }
 
-        /* Documento items con bordes y mejor hover */
+        /* Cleaner doc items */
         .doc-item {
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 12px;
-            background: #f0fdf4;
+            background: rgba(240, 253, 244, 0.6);
+            backdrop-filter: blur(4px);
             border-radius: 8px;
             text-decoration: none;
             color: #047857;
             gap: 12px;
-            border: 2px solid #86efac;
+            border: 1px solid rgba(134, 239, 172, 0.4);
         }
 
         .doc-item:hover {
-            background: #d1fae5;
+            background: rgba(209, 250, 229, 0.7);
             transform: translateX(4px);
-            border-color: #10b981;
-            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);
+            border-color: rgba(110, 231, 183, 0.6);
         }
 
         .doc-name {
@@ -256,7 +270,39 @@
             overflow-wrap: break-word;
         }
 
-        /* Responsive breakpoints mejorados */
+        /* PDF Preview Modal */
+        .pdf-preview-modal {
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .pdf-preview-content {
+            background: white;
+            padding: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .pdf-chart-container {
+            width: 100%;
+            height: 300px !important;
+            max-height: 300px !important;
+            margin: 20px 0;
+            page-break-inside: avoid;
+            position: relative;
+        }
+
+        .pdf-chart-container canvas {
+            max-height: 300px !important;
+            height: 300px !important;
+        }
+
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+        }
+
         @media (max-width: 1024px) {
             .ml-64 {
                 margin-left: 0;
@@ -277,14 +323,6 @@
             .stat-box {
                 padding: 12px;
             }
-
-            .stat-box p {
-                font-size: 0.75rem;
-            }
-
-            .stat-box .text-lg {
-                font-size: 1rem;
-            }
         }
     </style>
 </head>
@@ -296,20 +334,17 @@
 <div class="lg:ml-64 flex flex-col min-h-screen">
     <main class="py-6 lg:py-10 px-4 lg:px-8">
 
-        <!-- Hero section con estadísticas -->
-        <div class="gradient-hero rounded-3xl p-6 lg:p-8 mb-6 lg:mb-8 text-white relative overflow-hidden">
+        <!-- Simplified hero section with modern glass effect -->
+        <div class="gradient-hero rounded-3xl p-6 lg:p-8 mb-6 lg:mb-8 text-white relative overflow-hidden shadow-xl">
             <div class="absolute inset-0 bg-black/10"></div>
-            <div class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full"></div>
-            <div class="absolute -bottom-5 -left-5 w-32 h-32 bg-white/5 rounded-full"></div>
 
             <div class="relative z-10">
-                <!-- Header responsive con mejor layout móvil -->
                 <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6 lg:mb-8">
                     <div>
                         <h1 class="text-3xl lg:text-4xl font-bold mb-2">Panel de Ventas</h1>
                         <p class="text-emerald-100 text-base lg:text-lg">Bienvenido <span th:text="${nombres}"></span></p>
                     </div>
-                    <button onclick="descargarPDF()"
+                    <button onclick="mostrarPrevisualizacionPDF()"
                             class="w-full lg:w-auto bg-white/20 backdrop-blur-sm text-white border-2 border-white/40 px-6 py-3 rounded-xl font-semibold shadow-lg hover:bg-white hover:text-emerald-600 transition-all duration-300 flex items-center justify-center gap-2 transform hover:scale-105">
                         <i class='bx bx-download text-xl'></i>
                         <span>Descargar PDF</span>
@@ -337,7 +372,6 @@
                             </div>
                             <div>
                                 <p class="text-emerald-100 text-xs lg:text-sm">Ingresos</p>
-                                <!-- Formato moneda colombiano aplicado -->
                                 <p class="text-xl lg:text-2xl font-bold" th:text="${#numbers.formatDecimal(ingresosTotales, 0, 'POINT', 0, 'COMMA')}">$0</p>
                             </div>
                         </div>
@@ -350,7 +384,6 @@
                             </div>
                             <div>
                                 <p class="text-emerald-100 text-xs lg:text-sm">Gastos</p>
-                                <!-- Formato moneda colombiano aplicado -->
                                 <p class="text-xl lg:text-2xl font-bold" th:text="${#numbers.formatDecimal(gastosTotales, 0, 'POINT', 0, 'COMMA')}">$0</p>
                             </div>
                         </div>
@@ -363,7 +396,6 @@
                             </div>
                             <div>
                                 <p class="text-emerald-100 text-xs lg:text-sm">Ganancia Neta</p>
-                                <!-- Formato moneda colombiano aplicado -->
                                 <p class="text-xl lg:text-2xl font-bold" th:text="${#numbers.formatDecimal(balanceFinal, 0, 'POINT', 0, 'COMMA')}">$0</p>
                             </div>
                         </div>
@@ -373,8 +405,8 @@
         </div>
 
         <!-- Toggle Vista -->
-        <div class="flex items-center justify-center mb-6 lg:mb-8 px-2">
-            <div class="toggle-switch w-full lg:w-auto">
+        <div class="flex items-center justify-center mb-8">
+            <div class="toggle-switch">
                 <div class="toggle-option active" id="btnVistas" onclick="cambiarVista('ventas')">
                     <i class='bx bx-grid-alt'></i>
                     <span>Ventas</span>
@@ -388,14 +420,14 @@
 
         <!-- VISTA VENTAS - Cards de ventas -->
         <div id="vistaVentas" class="view-section active">
-            <!-- Filtros responsive -->
-            <div class="bg-white rounded-xl shadow-sm p-4 lg:p-6 mb-6 lg:mb-8 border-2 border-gray-200">
+            <!-- Glass effect filters -->
+            <div class="venta-item rounded-xl shadow-sm p-4 lg:p-6 mb-6 lg:mb-8">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="font-semibold text-gray-800 flex items-center gap-2 text-sm lg:text-base">
-                        <i class='bx bx-filter-alt text-lg lg:text-xl'></i>
+                    <h3 class="font-semibold text-slate-800 flex items-center gap-2 text-sm lg:text-base">
+                        <i class='bx bx-filter-alt text-lg lg:text-xl text-emerald-600'></i>
                         Filtros
                     </h3>
-                    <button onclick="resetearFiltros()" class="text-xs lg:text-sm text-emerald-600 hover:text-emerald-700 font-medium flex items-center gap-1">
+                    <button onclick="resetearFiltros()" class="text-xs lg:text-sm text-emerald-600 hover:text-emerald-800 font-medium flex items-center gap-1">
                         <i class='bx bx-refresh'></i>
                         Resetear
                     </button>
@@ -403,14 +435,14 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 lg:gap-4">
                     <div>
-                        <label class="block text-xs lg:text-sm font-medium text-gray-700 mb-2">Búsqueda</label>
+                        <label class="block text-xs lg:text-sm font-medium text-slate-700 mb-2">Búsqueda</label>
                         <input type="text" id="busqueda" placeholder="Buscar comprador..."
-                               class="w-full px-3 lg:px-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                               class="w-full px-3 lg:px-4 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white/80">
                     </div>
 
                     <div>
-                        <label class="block text-xs lg:text-sm font-medium text-gray-700 mb-2">Estado</label>
-                        <select id="filterEstado" class="w-full px-3 lg:px-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                        <label class="block text-xs lg:text-sm font-medium text-slate-700 mb-2">Estado</label>
+                        <select id="filterEstado" class="w-full px-3 lg:px-4 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white/80">
                             <option value="">Todos</option>
                             <option value="EN_PROCESO">En Proceso</option>
                             <option value="FINALIZADA">Finalizada</option>
@@ -419,8 +451,8 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs lg:text-sm font-medium text-gray-700 mb-2">Pago</label>
-                        <select id="filterPago" class="w-full px-3 lg:px-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                        <label class="block text-xs lg:text-sm font-medium text-slate-700 mb-2">Pago</label>
+                        <select id="filterPago" class="w-full px-3 lg:px-4 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white/80">
                             <option value="">Todos</option>
                             <option value="pagada">Pagadas</option>
                             <option value="no-pagada">No Pagadas</option>
@@ -428,13 +460,13 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs lg:text-sm font-medium text-gray-700 mb-2">Desde</label>
-                        <input type="date" id="filterFechaDesde" class="w-full px-3 lg:px-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                        <label class="block text-xs lg:text-sm font-medium text-slate-700 mb-2">Desde</label>
+                        <input type="date" id="filterFechaDesde" class="w-full px-3 lg:px-4 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white/80">
                     </div>
 
                     <div>
-                        <label class="block text-xs lg:text-sm font-medium text-gray-700 mb-2">Hasta</label>
-                        <input type="date" id="filterFechaHasta" class="w-full px-3 lg:px-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                        <label class="block text-xs lg:text-sm font-medium text-slate-700 mb-2">Hasta</label>
+                        <input type="date" id="filterFechaHasta" class="w-full px-3 lg:px-4 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white/80">
                     </div>
                 </div>
             </div>
@@ -443,19 +475,19 @@
             <div id="ventasContainer" class="space-y-4"></div>
 
             <!-- Mensaje cuando no hay ventas -->
-            <div th:if="${ventas.isEmpty()}" class="bg-white rounded-2xl shadow-sm p-8 lg:p-12 text-center border-2 border-gray-200">
-                <i class='bx bx-inbox text-5xl lg:text-6xl text-gray-300 mb-4'></i>
-                <p class="text-xl lg:text-2xl font-semibold text-gray-600 mb-2">No hay ventas aún</p>
-                <p class="text-sm lg:text-base text-gray-500">Comienza a registrar tus primeras ventas</p>
+            <div th:if="${ventas.isEmpty()}" class="glass rounded-2xl shadow-sm p-8 lg:p-12 text-center">
+                <i class='bx bx-inbox text-5xl lg:text-6xl text-slate-300 mb-4'></i>
+                <p class="text-xl lg:text-2xl font-semibold text-slate-600 mb-2">No hay ventas aún</p>
+                <p class="text-sm lg:text-base text-slate-500">Comienza a registrar tus primeras ventas</p>
             </div>
         </div>
 
         <!-- VISTA GRÁFICOS -->
         <div id="vistaGraficos" class="view-section">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
-                <div class="bg-white rounded-xl shadow-sm p-4 lg:p-6 border-2 border-gray-200">
-                    <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2 text-sm lg:text-base">
-                        <i class='bx bx-chart-line text-emerald-600'></i>
+                <div class="glass rounded-xl shadow-sm p-4 lg:p-6">
+                    <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2 text-sm lg:text-base">
+                        <i class='bx bx-line-chart text-emerald-600'></i>
                         Ingresos vs Gastos
                     </h3>
                     <div class="chart-container">
@@ -463,8 +495,8 @@
                     </div>
                 </div>
 
-                <div class="bg-white rounded-xl shadow-sm p-4 lg:p-6 border-2 border-gray-200">
-                    <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2 text-sm lg:text-base">
+                <div class="glass rounded-xl shadow-sm p-4 lg:p-6">
+                    <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2 text-sm lg:text-base">
                         <i class='bx bx-pie-chart-alt text-emerald-600'></i>
                         Distribución de Estados
                     </h3>
@@ -473,9 +505,9 @@
                     </div>
                 </div>
 
-                <div class="bg-white rounded-xl shadow-sm p-4 lg:p-6 border-2 border-gray-200">
-                    <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2 text-sm lg:text-base">
-                        <i class='bx bx-bar-chart text-emerald-600'></i>
+                <div class="glass rounded-xl shadow-sm p-4 lg:p-6">
+                    <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2 text-sm lg:text-base">
+                        <i class='bx bx-trending-up text-emerald-600'></i>
                         Ganancia Neta por Venta
                     </h3>
                     <div class="chart-container">
@@ -483,8 +515,8 @@
                     </div>
                 </div>
 
-                <div class="bg-white rounded-xl shadow-sm p-4 lg:p-6 border-2 border-gray-200">
-                    <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2 text-sm lg:text-base">
+                <div class="glass rounded-xl shadow-sm p-4 lg:p-6">
+                    <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2 text-sm lg:text-base">
                         <i class='bx bx-wallet text-emerald-600'></i>
                         Métodos de Pago
                     </h3>
@@ -500,35 +532,35 @@
     </main>
 </div>
 
-<!-- Modal para agregar gasto -->
+<!-- Modal más grande con fondo blanco default en lugar de gris -->
 <div id="modalGasto" class="fixed inset-0 modal-backdrop flex items-center justify-center z-50 opacity-0 invisible transition-all duration-300 px-4" style="transform: scale(0.9);">
-    <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl">
-        <div class="gradient-bg text-white p-4 lg:p-6 rounded-t-2xl">
-            <h3 class="text-xl lg:text-2xl font-bold flex items-center gap-2">
-                <i class='bx bx-plus-circle text-xl lg:text-2xl'></i>
+    <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl">
+        <div class="gradient-bg text-white p-6 rounded-t-2xl">
+            <h3 class="text-2xl font-bold flex items-center gap-2">
+                <i class='bx bx-plus-circle text-2xl'></i>
                 Agregar Gasto
             </h3>
         </div>
-        <form id="formGasto" class="p-4 lg:p-6 space-y-4">
+        <form id="formGasto" class="p-8 space-y-6">
             <input type="hidden" id="ventaIdGasto">
             <input type="hidden" id="ventaIndexGasto">
             <div>
-                <label class="block text-xs lg:text-sm font-semibold text-gray-700 mb-2">Descripción</label>
+                <label class="block text-sm font-semibold text-slate-700 mb-2">Descripción</label>
                 <input type="text" id="descripcionGasto" required
-                       class="w-full px-3 lg:px-4 py-2 lg:py-3 text-sm border-2 border-gray-300 rounded-xl focus:border-emerald-500 focus:outline-none transition-colors"
+                       class="w-full px-4 py-3 text-sm border-2 border-slate-300 rounded-xl focus:border-emerald-500 focus:outline-none transition-colors bg-white"
                        placeholder="Ej: Transporte, comisión, etc.">
             </div>
             <div>
-                <label class="block text-xs lg:text-sm font-semibold text-gray-700 mb-2">Monto ($)</label>
+                <label class="block text-sm font-semibold text-slate-700 mb-2">Monto ($)</label>
                 <input type="number" id="montoGasto" required min="0" step="1"
-                       class="w-full px-3 lg:px-4 py-2 lg:py-3 text-sm border-2 border-gray-300 rounded-xl focus:border-emerald-500 focus:outline-none transition-colors"
+                       class="w-full px-4 py-3 text-sm border-2 border-slate-300 rounded-xl focus:border-emerald-500 focus:outline-none transition-colors bg-white"
                        placeholder="0">
             </div>
             <div class="flex gap-3 pt-4">
-                <button type="submit" class="flex-1 gradient-bg text-white px-4 py-2 lg:py-3 text-sm rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all">
+                <button type="submit" class="flex-1 gradient-bg text-white px-6 py-3 text-sm rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all">
                     <i class='bx bx-check'></i> Guardar
                 </button>
-                <button type="button" onclick="cerrarModalGasto()" class="flex-1 bg-gray-200 text-gray-800 px-4 py-2 lg:py-3 text-sm rounded-xl font-semibold hover:bg-gray-300 transition-all">
+                <button type="button" onclick="cerrarModalGasto()" class="flex-1 bg-slate-200 text-slate-800 px-6 py-3 text-sm rounded-xl font-semibold hover:bg-slate-300 transition-all">
                     <i class='bx bx-x'></i> Cancelar
                 </button>
             </div>
@@ -536,29 +568,29 @@
     </div>
 </div>
 
-<!-- Modal Editar Nota -->
+<!-- Modal más grande con fondo blanco default -->
 <div id="modalNota" class="fixed inset-0 modal-backdrop flex items-center justify-center z-50 opacity-0 invisible transition-all duration-300 px-4" style="transform: scale(0.9);">
-    <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl">
-        <div class="gradient-bg text-white p-4 lg:p-6 rounded-t-2xl">
-            <h3 class="text-xl lg:text-2xl font-bold flex items-center gap-2">
-                <i class='bx bx-edit text-xl lg:text-2xl'></i>
+    <div class="bg-white rounded-2xl max-w-3xl w-full shadow-2xl">
+        <div class="gradient-bg text-white p-6 rounded-t-2xl">
+            <h3 class="text-2xl font-bold flex items-center gap-2">
+                <i class='bx bx-edit text-2xl'></i>
                 Editar Notas
             </h3>
         </div>
-        <form id="formNota" class="p-4 lg:p-6 space-y-4">
+        <form id="formNota" class="p-8 space-y-6">
             <input type="hidden" id="ventaIdNota">
             <input type="hidden" id="ventaIndexNota">
             <div>
-                <label class="block text-xs lg:text-sm font-semibold text-gray-700 mb-2">Notas de la venta</label>
-                <textarea id="textoNota" rows="6"
-                          class="w-full px-3 lg:px-4 py-2 lg:py-3 text-sm border-2 border-gray-300 rounded-xl focus:border-emerald-500 focus:outline-none transition-colors resize-none"
+                <label class="block text-sm font-semibold text-slate-700 mb-2">Notas de la venta</label>
+                <textarea id="textoNota" rows="8"
+                          class="w-full px-4 py-3 text-sm border-2 border-slate-300 rounded-xl focus:border-emerald-500 focus:outline-none transition-colors resize-none bg-white"
                           placeholder="Escribe aquí las notas, observaciones o detalles importantes de esta venta..."></textarea>
             </div>
             <div class="flex gap-3">
-                <button type="submit" class="flex-1 gradient-bg text-white px-4 py-2 lg:py-3 text-sm rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all">
+                <button type="submit" class="flex-1 gradient-bg text-white px-6 py-3 text-sm rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all">
                     <i class='bx bx-save'></i> Guardar Cambios
                 </button>
-                <button type="button" onclick="cerrarModalNota()" class="flex-1 bg-gray-200 text-gray-800 px-4 py-2 lg:py-3 text-sm rounded-xl font-semibold hover:bg-gray-300 transition-all">
+                <button type="button" onclick="cerrarModalNota()" class="flex-1 bg-slate-200 text-slate-800 px-6 py-3 text-sm rounded-xl font-semibold hover:bg-slate-300 transition-all">
                     <i class='bx bx-x'></i> Cancelar
                 </button>
             </div>
@@ -566,51 +598,34 @@
     </div>
 </div>
 
-<!-- Contenedor oculto para PDF - NO TOCADO -->
-<div id="pdfContent" style="display:none;">
-    <div style="text-align: center; margin-bottom: 30px;">
-        <h1 style="color: #059669; font-size: 28px; margin-bottom: 10px;">REPORTE DE VENTAS</h1>
-        <p style="color: #666;">Generado el: <span id="pdfFecha"></span></p>
-    </div>
+<!-- PDF Preview Modal -->
+<div id="modalPDFPreview" class="fixed inset-0 modal-backdrop flex items-center justify-center z-50 opacity-0 invisible transition-all duration-300" style="transform: scale(0.9);">
+    <div class="glass rounded-2xl w-full max-w-6xl shadow-2xl pdf-preview-modal mx-4">
+        <div class="gradient-bg text-white p-4 lg:p-6 rounded-t-2xl flex items-center justify-between no-print">
+            <h3 class="text-xl lg:text-2xl font-bold flex items-center gap-2">
+                <i class='bx bx-file-blank text-xl lg:text-2xl'></i>
+                Previsualización del PDF
+            </h3>
+            <button onclick="cerrarModalPDFPreview()" class="text-white hover:bg-white/20 p-2 rounded-lg transition-all">
+                <i class='bx bx-x text-2xl'></i>
+            </button>
+        </div>
 
-    <div style="margin-bottom: 20px;">
-        <h2 style="color: #059669; border-bottom: 2px solid #059669; padding-bottom: 10px;">Resumen Financiero</h2>
-        <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
-            <tr style="background: #f0fdf4;">
-                <td style="border: 1px solid #ddd; padding: 10px;">Total de Ventas:</td>
-                <td style="border: 1px solid #ddd; padding: 10px;"><strong id="pdfTotalVentas">0</strong></td>
-            </tr>
-            <tr>
-                <td style="border: 1px solid #ddd; padding: 10px;">Ingresos Totales:</td>
-                <td style="border: 1px solid #ddd; padding: 10px;"><strong id="pdfIngresos">$0</strong></td>
-            </tr>
-            <tr style="background: #f0fdf4;">
-                <td style="border: 1px solid #ddd; padding: 10px;">Gastos Totales:</td>
-                <td style="border: 1px solid #ddd; padding: 10px;"><strong id="pdfGastos">$0</strong></td>
-            </tr>
-            <tr>
-                <td style="border: 1px solid #ddd; padding: 10px; background: #d1fae5;"><strong>Ganancia Neta:</strong></td>
-                <td style="border: 1px solid #ddd; padding: 10px; background: #d1fae5;"><strong id="pdfGanancia">$0</strong></td>
-            </tr>
-        </table>
-    </div>
+        <div class="p-4 lg:p-6 bg-slate-100 custom-scrollbar" style="max-height: 70vh; overflow-y: auto;">
+            <div id="pdfPreviewContent" class="pdf-preview-content bg-white shadow-lg rounded-lg">
+                <!-- El contenido del PDF se generará aquí -->
+            </div>
+        </div>
 
-    <div style="page-break-inside: avoid;">
-        <h2 style="color: #059669; border-bottom: 2px solid #059669; padding-bottom: 10px; margin-top: 30px;">Listado de Ventas</h2>
-        <table style="width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px;">
-            <thead>
-            <tr style="background: #059669; color: white;">
-                <th style="border: 1px solid #ddd; padding: 8px;">ID</th>
-                <th style="border: 1px solid #ddd; padding: 8px;">Comprador</th>
-                <th style="border: 1px solid #ddd; padding: 8px;">Monto</th>
-                <th style="border: 1px solid #ddd; padding: 8px;">Gastos</th>
-                <th style="border: 1px solid #ddd; padding: 8px;">Ganancia</th>
-                <th style="border: 1px solid #ddd; padding: 8px;">Estado</th>
-            </tr>
-            </thead>
-            <tbody id="pdfTableBody">
-            </tbody>
-        </table>
+        <div class="p-4 lg:p-6 border-t border-slate-200 flex gap-3 justify-end bg-white rounded-b-2xl no-print">
+            <button onclick="cerrarModalPDFPreview()" class="px-6 py-3 bg-slate-200 text-slate-800 rounded-xl font-semibold hover:bg-slate-300 transition-all">
+                <i class='bx bx-x'></i> Cancelar
+            </button>
+            <button onclick="descargarPDFConfirmado()" class="px-6 py-3 gradient-bg text-white rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all flex items-center gap-2">
+                <i class='bx bx-download'></i>
+                Descargar PDF
+            </button>
+        </div>
     </div>
 </div>
 
@@ -621,6 +636,7 @@
     let balanceFinal = [[${balanceFinal}]];
 
     let chartIngresosGastos, chartEstados, chartGanancia, chartMetodosPago;
+    let ventasFiltradas = allSales;
 
     const formatoMoneda = (valor) => {
         if (valor === null || valor === undefined) return '$0';
@@ -676,15 +692,15 @@
                     {
                         label: 'Ingresos',
                         data: ingresosPorVenta,
-                        backgroundColor: '#10b981',
-                        borderColor: '#059669',
+                        backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                        borderColor: 'rgba(37, 99, 235, 1)',
                         borderWidth: 1
                     },
                     {
                         label: 'Gastos',
                         data: gastosPorVenta,
-                        backgroundColor: '#ef4444',
-                        borderColor: '#dc2626',
+                        backgroundColor: 'rgba(239, 68, 68, 0.6)',
+                        borderColor: 'rgba(220, 38, 38, 1)',
                         borderWidth: 1
                     }
                 ]
@@ -729,7 +745,7 @@
                 labels: Object.keys(conteoEstados),
                 datasets: [{
                     data: Object.values(conteoEstados),
-                    backgroundColor: ['#fbbf24', '#10b981', '#ef4444'],
+                    backgroundColor: ['rgba(59, 130, 246, 0.8)', 'rgba(34, 197, 94, 0.8)', 'rgba(239, 68, 68, 0.8)'],
                     borderColor: '#fff',
                     borderWidth: 2
                 }]
@@ -755,13 +771,13 @@
                 datasets: [{
                     label: 'Ganancia Neta',
                     data: ganancias,
-                    borderColor: '#059669',
-                    backgroundColor: 'rgba(5, 150, 105, 0.1)',
+                    borderColor: 'rgba(5, 150, 105, 1)',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
                     borderWidth: 3,
                     tension: 0.4,
                     fill: true,
-                    pointBackgroundColor: '#10b981',
-                    pointBorderColor: '#059669',
+                    pointBackgroundColor: 'rgba(6, 78, 59, 1)',
+                    pointBorderColor: 'rgba(4, 120, 87, 1)',
                     pointRadius: 5
                 }]
             },
@@ -816,7 +832,7 @@
                     labels: Object.keys(metodos),
                     datasets: [{
                         data: Object.values(metodos),
-                        backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'],
+                        backgroundColor: ['rgba(59, 130, 246, 0.8)', 'rgba(16, 185, 129, 0.8)', 'rgba(251, 191, 36, 0.8)', 'rgba(139, 92, 246, 0.8)', 'rgba(244, 63, 94, 0.8)'],
                         borderColor: '#fff',
                         borderWidth: 2
                     }]
@@ -830,44 +846,300 @@
         }
     }
 
-    function descargarPDF() {
-        const pdfContent = document.getElementById('pdfContent');
-        const fechaHoy = new Date().toLocaleDateString('es-ES');
+    async function mostrarPrevisualizacionPDF() {
+        const modal = document.getElementById('modalPDFPreview');
+        const previewContent = document.getElementById('pdfPreviewContent');
 
-        document.getElementById('pdfFecha').textContent = fechaHoy;
-        document.getElementById('pdfTotalVentas').textContent = allSales.length;
-        document.getElementById('pdfIngresos').textContent = formatoMoneda(ingresosTotales);
-        document.getElementById('pdfGastos').textContent = formatoMoneda(gastosTotales);
-        document.getElementById('pdfGanancia').textContent = formatoMoneda(balanceFinal);
+        const totalVentas = ventasFiltradas.length;
+        const ingresos = ventasFiltradas.reduce((sum, v) => sum + (v.producto?.precioProducto || 0), 0);
+        const gastos = ventasFiltradas.reduce((sum, v) => sum + (v.totalGastos || 0), 0);
+        const ganancia = ingresos - gastos;
 
-        let tbody = document.getElementById('pdfTableBody');
-        tbody.innerHTML = '';
+        const fechaHoy = new Date().toLocaleDateString('es-ES', {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric'
+        });
 
-        allSales.forEach(venta => {
+        let html = `
+            <div style="text-align: center; margin-bottom: 40px; padding: 30px; background: linear-gradient(135deg, #064e3b 0%, #059669 50%, #10b981 100%); color: white; border-radius: 12px;">
+                <h1 style="font-size: 32px; margin-bottom: 10px; font-weight: 800;">REPORTE DE VENTAS</h1>
+                <p style="font-size: 16px; opacity: 0.9;">Generado el: ${fechaHoy}</p>
+            </div>
+
+            <div style="margin-bottom: 40px; padding: 30px; background: rgba(248, 250, 252, 0.8); border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.3);">
+                <h2 style="color: #064e3b; border-bottom: 3px solid #059669; padding-bottom: 15px; font-size: 24px; margin-bottom: 25px;">Resumen Financiero</h2>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                    <div style="padding: 20px; background: white; border-radius: 10px; border: 1px solid #d1fae5;">
+                        <p style="color: #059669; font-size: 14px; margin-bottom: 8px; font-weight: 600;">TOTAL DE VENTAS</p>
+                        <p style="font-size: 28px; font-weight: 800; color: #064e3b;">${totalVentas}</p>
+                    </div>
+                    <div style="padding: 20px; background: white; border-radius: 10px; border: 1px solid #d1fae5;">
+                        <p style="color: #059669; font-size: 14px; margin-bottom: 8px; font-weight: 600;">INGRESOS TOTALES</p>
+                        <p style="font-size: 28px; font-weight: 800; color: #047857;">${formatoMoneda(ingresos)}</p>
+                    </div>
+                    <div style="padding: 20px; background: white; border-radius: 10px; border: 1px solid #d1fae5;">
+                        <p style="color: #059669; font-size: 14px; margin-bottom: 8px; font-weight: 600;">GASTOS TOTALES</p>
+                        <p style="font-size: 28px; font-weight: 800; color: #065f46;">${formatoMoneda(gastos)}</p>
+                    </div>
+                    <div style="padding: 20px; background: linear-gradient(135deg, #059669 0%, #10b981 100%); border-radius: 10px; color: white;">
+                        <p style="font-size: 14px; margin-bottom: 8px; font-weight: 600; opacity: 0.9;">GANANCIA NETA</p>
+                        <p style="font-size: 28px; font-weight: 800;">${formatoMoneda(ganancia)}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="page-break-inside: avoid; margin-bottom: 40px;">
+                <h2 style="color: #064e3b; border-bottom: 3px solid #059669; padding-bottom: 15px; font-size: 24px; margin-bottom: 25px;">Detalle de Ventas</h2>
+                <table style="width: 100%; border-collapse: collapse; font-size: 13px; background: white; border-radius: 10px; overflow: hidden;">
+                    <thead>
+                        <tr style="background: linear-gradient(135deg, #059669 0%, #10b981 100%); color: white;">
+                            <th style="padding: 15px; text-align: left; font-weight: 700;">ID</th>
+                            <th style="padding: 15px; text-align: left; font-weight: 700;">Comprador</th>
+                            <th style="padding: 15px; text-align: left; font-weight: 700;">Producto</th>
+                            <th style="padding: 15px; text-align: right; font-weight: 700;">Monto</th>
+                            <th style="padding: 15px; text-align: right; font-weight: 700;">Gastos</th>
+                            <th style="padding: 15px; text-align: right; font-weight: 700;">Ganancia</th>
+                            <th style="padding: 15px; text-align: center; font-weight: 700;">Estado</th>
+                            <th style="padding: 15px; text-align: center; font-weight: 700;">Pago</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+
+        ventasFiltradas.forEach((venta, index) => {
             const totalGastos = venta.totalGastos || 0;
-            const ganancia = (venta.producto?.precioProducto || 0) - totalGastos;
+            const gananciaVenta = (venta.producto?.precioProducto || 0) - totalGastos;
+            const bgColor = index % 2 === 0 ? '#f8fafc' : '#ffffff';
 
-            tbody.innerHTML += `
-                <tr>
-                    <td style="border: 1px solid #ddd; padding: 8px;">${venta.idVenta}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">${venta.comprador?.nombres || '-'}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">${formatoMoneda(venta.producto?.precioProducto || 0)}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">${formatoMoneda(totalGastos)}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">${formatoMoneda(ganancia)}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">${venta.estado}</td>
+            html += `
+                <tr style="background: ${bgColor}; border-bottom: 1px solid #d1fae5;">
+                    <td style="padding: 12px; font-weight: 600; color: #064e3b;">#${venta.idVenta}</td>
+                    <td style="padding: 12px; color: #047857;">${venta.comprador?.nombres || '-'} ${venta.comprador?.apellidos || ''}</td>
+                    <td style="padding: 12px; color: #047857;">${venta.producto?.nombreProducto || '-'}</td>
+                    <td style="padding: 12px; text-align: right; font-weight: 600; color: #064e3b;">${formatoMoneda(venta.producto?.precioProducto || 0)}</td>
+                    <td style="padding: 12px; text-align: right; color: #065f46;">${formatoMoneda(totalGastos)}</td>
+                    <td style="padding: 12px; text-align: right; font-weight: 700; color: #047857;">${formatoMoneda(gananciaVenta)}</td>
+                    <td style="padding: 12px; text-align: center;">
+                        <span style="padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600;
+                            background: ${venta.estado === 'FINALIZADA' ? 'rgba(220, 252, 231, 0.8)' : venta.estado === 'EN_PROCESO' ? 'rgba(219, 234, 254, 0.8)' : 'rgba(254, 226, 226, 0.8)'};
+                            color: ${venta.estado === 'FINALIZADA' ? '#166534' : venta.estado === 'EN_PROCESO' ? '#1e40af' : '#991b1b'};">
+                            ${venta.estado}
+                        </span>
+                    </td>
+                    <td style="padding: 12px; text-align: center;">
+                        <span style="padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600;
+                            background: ${venta.pagado ? 'rgba(209, 250, 229, 0.8)' : 'rgba(254, 243, 199, 0.8)'};
+                            color: ${venta.pagado ? '#065f46' : '#92400e'};">
+                            ${venta.pagado ? 'PAGADA' : 'PENDIENTE'}
+                        </span>
+                    </td>
                 </tr>
             `;
         });
 
+        html += `
+                    </tbody>
+                </table>
+            </div>
+        `;
+
+        html += `
+            <div style="page-break-before: always; margin-top: 60px;">
+                <h2 style="color: #064e3b; border-bottom: 3px solid #059669; padding-bottom: 15px; font-size: 24px; margin-bottom: 30px;">Gráficas de Análisis</h2>
+
+                <div id="pdfCharts" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px;">
+                    <div style="background: white; padding: 25px; border-radius: 12px; border: 1px solid #d1fae5;">
+                        <h3 style="color: #047857; font-size: 16px; font-weight: 700; margin-bottom: 20px;">Ingresos vs Gastos</h3>
+                        <div style="width: 100%; height: 300px; max-height: 300px; position: relative;">
+                            <canvas id="pdfChartIngresosGastos" style="max-height: 300px !important;"></canvas>
+                        </div>
+                    </div>
+
+                    <div style="background: white; padding: 25px; border-radius: 12px; border: 1px solid #d1fae5;">
+                        <h3 style="color: #047857; font-size: 16px; font-weight: 700; margin-bottom: 20px;">Distribución de Estados</h3>
+                        <div style="width: 100%; height: 300px; max-height: 300px; position: relative;">
+                            <canvas id="pdfChartEstados" style="max-height: 300px !important;"></canvas>
+                        </div>
+                    </div>
+
+                    <div style="background: white; padding: 25px; border-radius: 12px; border: 1px solid #d1fae5;">
+                        <h3 style="color: #047857; font-size: 16px; font-weight: 700; margin-bottom: 20px;">Ganancia Neta por Venta</h3>
+                        <div style="width: 100%; height: 300px; max-height: 300px; position: relative;">
+                            <canvas id="pdfChartGanancia" style="max-height: 300px !important;"></canvas>
+                        </div>
+                    </div>
+
+                    <div style="background: white; padding: 25px; border-radius: 12px; border: 1px solid #d1fae5;">
+                        <h3 style="color: #047857; font-size: 16px; font-weight: 700; margin-bottom: 20px;">Métodos de Pago</h3>
+                        <div style="width: 100%; height: 300px; max-height: 300px; position: relative;">
+                            <canvas id="pdfChartMetodosPago" style="max-height: 300px !important;"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        previewContent.innerHTML = html;
+
+        setTimeout(() => {
+            crearGraficasPDF();
+            modal.classList.add('modal-open');
+        }, 100);
+    }
+
+    function crearGraficasPDF() {
+        const ctxIngresosGastosPDF = document.getElementById('pdfChartIngresosGastos');
+        if (ctxIngresosGastosPDF) {
+            new Chart(ctxIngresosGastosPDF.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: ventasFiltradas.map((_, i) => `V${i + 1}`),
+                    datasets: [
+                        {
+                            label: 'Ingresos',
+                            data: ventasFiltradas.map(v => v.producto?.precioProducto || 0),
+                            backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                            borderColor: 'rgba(37, 99, 235, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Gastos',
+                            data: ventasFiltradas.map(v => v.totalGastos || 0),
+                            backgroundColor: 'rgba(239, 68, 68, 0.6)',
+                            borderColor: 'rgba(220, 38, 38, 1)',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    aspectRatio: 2,
+                    plugins: { legend: { position: 'top' } },
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        }
+
+        const ctxEstadosPDF = document.getElementById('pdfChartEstados');
+        if (ctxEstadosPDF) {
+            const conteoEstados = {
+                EN_PROCESO: ventasFiltradas.filter(v => v.estado === 'EN_PROCESO').length,
+                FINALIZADA: ventasFiltradas.filter(v => v.estado === 'FINALIZADA').length,
+                CANCELADA: ventasFiltradas.filter(v => v.estado === 'CANCELADA').length,
+            };
+
+            new Chart(ctxEstadosPDF.getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(conteoEstados),
+                    datasets: [{
+                        data: Object.values(conteoEstados),
+                        backgroundColor: ['rgba(59, 130, 246, 0.8)', 'rgba(34, 197, 94, 0.8)', 'rgba(239, 68, 68, 0.8)'],
+                        borderColor: '#fff',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    aspectRatio: 1,
+                    plugins: { legend: { position: 'right' } }
+                }
+            });
+        }
+
+        const ctxGananciaPDF = document.getElementById('pdfChartGanancia');
+        if (ctxGananciaPDF) {
+            const ganancias = ventasFiltradas.map(v => (v.producto?.precioProducto || 0) - (v.totalGastos || 0));
+
+            new Chart(ctxGananciaPDF.getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: ventasFiltradas.map((_, i) => `V${i + 1}`),
+                    datasets: [{
+                        label: 'Ganancia Neta',
+                        data: ganancias,
+                        borderColor: 'rgba(5, 150, 105, 1)',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    aspectRatio: 2,
+                    plugins: { legend: { position: 'top' } },
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        }
+
+        const ctxMetodosPDF = document.getElementById('pdfChartMetodosPago');
+        if (ctxMetodosPDF) {
+            const metodos = {};
+            ventasFiltradas.forEach(v => {
+                const metodo = v.pago?.metodoPago || 'Sin especificar';
+                metodos[metodo] = (metodos[metodo] || 0) + 1;
+            });
+
+            new Chart(ctxMetodosPDF.getContext('2d'), {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(metodos),
+                    datasets: [{
+                        data: Object.values(metodos),
+                        backgroundColor: ['rgba(59, 130, 246, 0.8)', 'rgba(16, 185, 129, 0.8)', 'rgba(251, 191, 36, 0.8)', 'rgba(139, 92, 246, 0.8)', 'rgba(244, 63, 94, 0.8)'],
+                        borderColor: '#fff',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    aspectRatio: 1,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+        }
+    }
+
+    function cerrarModalPDFPreview() {
+        const modal = document.getElementById('modalPDFPreview');
+        modal.classList.remove('modal-open');
+    }
+
+    async function descargarPDFConfirmado() {
+        const element = document.getElementById('pdfPreviewContent');
+        const fechaHoy = new Date().toLocaleDateString('es-ES').replace(/\//g, '-');
+
         const opt = {
-            margin: 10,
+            margin: [10, 10, 10, 10],
             filename: `reporte-ventas-${fechaHoy}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+            html2canvas: {
+                scale: 2,
+                useCORS: true,
+                logging: false
+            },
+            jsPDF: {
+                unit: 'mm',
+                format: 'a4',
+                orientation: 'portrait'
+            },
+            pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
         };
 
-        html2pdf().set(opt).from(pdfContent).save();
+        try {
+            await html2pdf().set(opt).from(element).save();
+            cerrarModalPDFPreview();
+        } catch (error) {
+            console.error('Error generando PDF:', error);
+            alert('Hubo un error al generar el PDF. Por favor intenta nuevamente.');
+        }
     }
 
     function resetearFiltros() {
@@ -886,7 +1158,7 @@
         const fechaDesde = document.getElementById('filterFechaDesde').value;
         const fechaHasta = document.getElementById('filterFechaHasta').value;
 
-        const ventasFiltradas = allSales.filter(venta => {
+        ventasFiltradas = allSales.filter(venta => {
             const nombreComprador = `${venta.comprador.nombres} ${venta.comprador.apellidos}`.toLowerCase();
             const cumpleBusqueda = !busqueda || nombreComprador.includes(busqueda);
             const cumpleEstado = !estado || venta.estado === estado;
@@ -911,10 +1183,10 @@
 
         if (ventas.length === 0) {
             container.innerHTML = `
-                <div class="bg-white rounded-2xl shadow-sm p-8 lg:p-12 text-center border-2 border-gray-200">
-                    <i class='bx bx-filter-alt text-5xl lg:text-6xl text-gray-300 mb-4'></i>
-                    <p class="text-xl lg:text-2xl font-semibold text-gray-600 mb-2">No hay ventas que coincidan</p>
-                    <p class="text-sm lg:text-base text-gray-500">Intenta ajustar los filtros</p>
+                <div class="glass rounded-2xl shadow-sm p-8 lg:p-12 text-center">
+                    <i class='bx bx-filter-alt text-5xl lg:text-6xl text-slate-300 mb-4'></i>
+                    <p class="text-xl lg:text-2xl font-semibold text-slate-600 mb-2">No hay ventas que coincidan</p>
+                    <p class="text-sm lg:text-base text-slate-500">Intenta ajustar los filtros</p>
                 </div>
             `;
             return;
@@ -925,280 +1197,235 @@
             const realIndex = allSales.findIndex(v => v.idVenta === venta.idVenta);
 
             return `
-                <div class="venta-item bg-white rounded-2xl shadow-md overflow-hidden relative" id="venta-${realIndex}">
-                    <!-- Fondo decorativo -->
-                    <div class="absolute top-0 right-0 w-20 lg:w-32 h-20 lg:h-32 bg-emerald-100/30 rounded-full -mr-10 lg:-mr-16 -mt-10 lg:-mt-16 pointer-events-none"></div>
-
-                    <!-- Header mejorado con estructura similar al calendario -->
-                    <div class="p-4 lg:p-8 cursor-pointer hover:bg-gray-50/50 transition-colors relative z-10" onclick="toggleDetalle(${realIndex})">
-                        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 lg:gap-6">
-                            <!-- Info principal -->
-                            <div class="flex items-center gap-3 lg:gap-6 flex-1 min-w-0 w-full lg:w-auto">
-                                <div class="w-12 h-12 lg:w-16 lg:h-16 bg-gradient-bg rounded-xl lg:rounded-2xl flex items-center justify-center flex-shrink-0">
-                                    <i class='bx bx-shopping-bag text-white text-2xl lg:text-3xl'></i>
+                <div class="venta-item rounded-2xl overflow-hidden relative shadow-md" id="venta-${realIndex}">
+                    <div class="p-5 lg:p-7 cursor-pointer hover:bg-slate-50/50 transition-colors relative z-10" onclick="toggleDetalle(${realIndex})">
+                        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+                            <div class="flex items-center gap-3 lg:gap-4 flex-1 min-w-0 w-full lg:w-auto">
+                                <div class="w-16 h-16 lg:w-16 lg:h-16 gradient-bg rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
+                                    <i class='bx bx-shopping-bag text-white text-3xl'></i>
                                 </div>
                                 <div class="min-w-0 flex-1">
-                                    <div class="flex items-center gap-2 lg:gap-3 mb-2 flex-wrap">
-                                        <p class="text-xs font-bold uppercase tracking-wide bg-emerald-50 text-emerald-700 px-2 py-1 rounded">Venta #${venta.idVenta}</p>
+                                    <div class="flex items-center gap-2 mb-1 flex-wrap">
+                                        <p class="text-sm font-bold uppercase tracking-wide bg-slate-100 text-slate-700 px-3 py-1.5 rounded">Venta #${venta.idVenta}</p>
                                         ${getEstadoBadge(venta.estado)}
                                         ${getPagadoBadge(venta.pagado)}
                                     </div>
-                                    <h3 class="text-lg lg:text-xl font-bold text-gray-900 mb-1">${venta.comprador.nombres} ${venta.comprador.apellidos}</h3>
-                                    <p class="text-xs lg:text-sm text-emerald-600 font-semibold flex items-center gap-2">
+                                    <h3 class="text-lg lg:text-xl font-bold text-slate-900 mb-1">${venta.comprador.nombres} ${venta.comprador.apellidos}</h3>
+                                    <p class="text-sm lg:text-base text-slate-600 font-medium flex items-center gap-2">
                                         <i class='bx bx-package'></i>
                                         <span class="truncate">${venta.producto.nombreProducto}</span>
                                     </p>
                                 </div>
                             </div>
 
-                            <!-- Montos con mejor contraste y bordes -->
-                            <div class="flex items-center gap-2 lg:gap-3 flex-wrap justify-start lg:justify-end w-full lg:w-auto">
-                                <div class="stat-box text-center flex-1 lg:flex-none min-w-[100px]">
-                                    <p class="text-xs text-emerald-800 font-bold mb-1">PRECIO</p>
-                                    <p class="text-base lg:text-lg font-black text-emerald-700">${formatoMoneda(venta.producto?.precioProducto || 0)}</p>
+                            <div class="flex items-center gap-2 flex-wrap w-full lg:w-auto">
+                                <div class="stat-box flex-1 lg:flex-none min-w-[100px]">
+                                    <p class="text-xs text-slate-600 font-semibold mb-1">PRECIO</p>
+                                    <p class="text-base lg:text-lg font-bold text-slate-900">${formatoMoneda(venta.producto?.precioProducto || 0)}</p>
                                 </div>
-                                <div class="stat-box red text-center flex-1 lg:flex-none min-w-[100px]">
-                                    <p class="text-xs text-red-800 font-bold mb-1">GASTOS</p>
-                                    <p class="text-base lg:text-lg font-black text-red-700">${formatoMoneda(venta.totalGastos || 0)}</p>
+                                <div class="stat-box flex-1 lg:flex-none min-w-[100px]">
+                                    <p class="text-xs text-slate-600 font-semibold mb-1">GASTOS</p>
+                                    <p class="text-base lg:text-lg font-bold text-red-600">${formatoMoneda(venta.totalGastos || 0)}</p>
                                 </div>
-                                <div class="stat-box blue text-center flex-1 lg:flex-none min-w-[100px]">
-                                    <p class="text-xs text-blue-800 font-bold mb-1">GANANCIA</p>
-                                    <p class="text-base lg:text-lg font-black text-blue-700">${formatoMoneda(ganancia)}</p>
+                                <div class="stat-box flex-1 lg:flex-none min-w-[100px] bg-emerald-50">
+                                    <p class="text-xs text-emerald-700 font-semibold mb-1">GANANCIA</p>
+                                    <p class="text-base lg:text-lg font-bold text-emerald-700">${formatoMoneda(ganancia)}</p>
                                 </div>
                             </div>
 
-                            <!-- Fecha y toggle -->
-                            <div class="flex items-center justify-between lg:justify-end gap-4 w-full lg:w-auto">
+                            <div class="flex items-center justify-between lg:justify-end gap-3 w-full lg:w-auto">
                                 <div class="text-left lg:text-right">
-                                    <p class="text-xs text-gray-500 font-semibold">FECHA INICIO</p>
-                                    <p class="text-sm font-bold text-gray-700">${formatFecha(venta.fechaInicioVenta)}</p>
+                                    <p class="text-xs text-slate-500 font-medium">Inicio</p>
+                                    <p class="text-sm font-semibold text-slate-700">${formatFecha(venta.fechaInicioVenta)}</p>
                                 </div>
-                                <div class="w-10 h-10 lg:w-12 lg:h-12 bg-emerald-100 rounded-full flex items-center justify-center cursor-pointer hover:bg-emerald-200 transition-colors flex-shrink-0">
-                                    <i class='bx bx-chevron-down text-xl lg:text-2xl text-emerald-600 transition-transform duration-300' id="icon-${realIndex}"></i>
+                                <div class="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center cursor-pointer hover:bg-slate-200 transition-colors flex-shrink-0">
+                                    <i class='bx bx-chevron-down text-xl text-slate-600 transition-transform duration-300' id="icon-${realIndex}"></i>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Detalle expandible con mejor estructura inspirada en calendario -->
+                    <!-- Slightly larger detail section with better spacing -->
                     <div class="detalle-expandido" id="detalle-${realIndex}">
-                        <div class="border-t-2 border-gray-200 p-4 lg:p-8 bg-gradient-to-b from-gray-50/50 to-white relative z-10">
-                            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
-                                <!-- Columna 1: Información General -->
-                                <div class="space-y-4 lg:space-y-6">
-                                    <!-- Info Comprador -->
+                        <div class="border-t border-slate-200 p-5 lg:p-7 relative z-10">
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                                <div class="space-y-4">
                                     <div class="info-card">
-                                        <h4 class="font-bold text-gray-900 text-base lg:text-lg mb-3 lg:mb-4 flex items-center gap-2">
-                                            <div class="bg-emerald-100 p-2 rounded-lg">
-                                                <i class='bx bx-user text-emerald-600 text-lg'></i>
+                                        <h4 class="font-bold text-slate-900 text-base mb-3 flex items-center gap-2">
+                                            <div class="bg-slate-100 p-2 rounded-lg">
+                                                <i class='bx bx-user text-slate-600'></i>
                                             </div>
                                             <span>Comprador</span>
                                         </h4>
-                                        <div class="space-y-3 text-sm">
-                                            <div class="bg-gray-50 rounded-lg p-3 border-l-4 border-emerald-500">
-                                                <p class="text-xs text-gray-500 font-semibold mb-1">NOMBRE COMPLETO</p>
-                                                <p class="font-bold text-gray-900">${venta.comprador.nombres} ${venta.comprador.apellidos}</p>
+                                        <div class="grid grid-cols-2 gap-2 text-sm">
+                                            <div class="bg-slate-50 rounded-lg p-2">
+                                                <p class="text-xs text-slate-600 font-medium mb-1">Nombre</p>
+                                                <p class="font-semibold text-slate-900 text-xs">${venta.comprador.nombres} ${venta.comprador.apellidos}</p>
                                             </div>
-                                            <div class="bg-gray-50 rounded-lg p-3 border-l-4 border-blue-500">
-                                                <p class="text-xs text-gray-500 font-semibold mb-1">CÉDULA</p>
-                                                <p class="text-gray-700">${venta.comprador.cedula}</p>
+                                            <div class="bg-slate-50 rounded-lg p-2">
+                                                <p class="text-xs text-slate-600 font-medium mb-1">Cédula</p>
+                                                <p class="text-slate-800 text-xs">${venta.comprador.cedula}</p>
                                             </div>
-                                            <div class="bg-gray-50 rounded-lg p-3 border-l-4 border-purple-500">
-                                                <p class="text-xs text-gray-500 font-semibold mb-1">CONTACTO</p>
-                                                <p class="text-gray-700 flex items-center gap-2 mb-1">
-                                                    <i class='bx bx-phone text-emerald-600'></i>
-                                                    <span class="break-all">${venta.comprador.telefono}</span>
-                                                </p>
-                                                <p class="text-gray-700 flex items-center gap-2">
-                                                    <i class='bx bx-envelope text-emerald-600'></i>
-                                                    <span class="break-all text-xs lg:text-sm">${venta.comprador.email}</span>
-                                                </p>
+                                            <div class="bg-slate-50 rounded-lg p-2">
+                                                <p class="text-xs text-slate-600 font-medium mb-1">Teléfono</p>
+                                                <p class="text-slate-800 text-xs break-all">${venta.comprador.telefono}</p>
+                                            </div>
+                                            <div class="bg-slate-50 rounded-lg p-2">
+                                                <p class="text-xs text-slate-600 font-medium mb-1">Email</p>
+                                                <p class="text-slate-800 text-xs break-all">${venta.comprador.email}</p>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <!-- Info Producto -->
                                     <div class="info-card">
-                                        <h4 class="font-bold text-gray-900 text-base lg:text-lg mb-3 lg:mb-4 flex items-center gap-2">
-                                            <div class="bg-blue-100 p-2 rounded-lg">
-                                                <i class='bx bx-package text-blue-600 text-lg'></i>
+                                        <h4 class="font-bold text-slate-900 text-base mb-3 flex items-center gap-2">
+                                            <div class="bg-slate-100 p-2 rounded-lg">
+                                                <i class='bx bx-package text-slate-600'></i>
                                             </div>
                                             <span>Producto</span>
                                         </h4>
-                                        <div class="space-y-3 text-sm">
-                                            <div class="bg-blue-50 rounded-lg p-3 border-l-4 border-blue-500">
-                                                <p class="text-xs text-blue-600 font-semibold mb-1">NOMBRE</p>
-                                                <p class="font-bold text-gray-900">${venta.producto.nombreProducto}</p>
+                                        <div class="space-y-2">
+                                            <div class="bg-slate-50 rounded-lg p-3">
+                                                <p class="text-xs text-slate-600 font-medium mb-1">NOMBRE</p>
+                                                <p class="font-bold text-slate-900 text-sm">${venta.producto.nombreProducto}</p>
                                             </div>
-                                            <div class="bg-gray-50 rounded-lg p-3 border-l-4 border-gray-400">
-                                                <p class="text-xs text-gray-500 font-semibold mb-1">DESCRIPCIÓN</p>
-                                                <p class="text-gray-700 leading-relaxed text-xs lg:text-sm">${venta.producto.descripcion || 'Sin descripción'}</p>
+                                            <div class="bg-slate-50 rounded-lg p-3">
+                                                <p class="text-xs text-slate-600 font-medium mb-1">DESCRIPCIÓN</p>
+                                                <p class="text-slate-800 text-xs">${venta.producto.descripcion || 'Sin descripción'}</p>
                                             </div>
-                                            <div class="bg-emerald-50 rounded-lg p-4 border-l-4 border-emerald-500">
-                                                <p class="text-xs text-emerald-600 font-semibold mb-1">PRECIO</p>
-                                                <p class="text-xl lg:text-2xl font-black text-emerald-600">${formatoMoneda(venta.producto?.precioProducto || 0)}</p>
+                                            <div class="gradient-bg text-white rounded-lg p-3 shadow-md">
+                                                <p class="text-xs font-medium mb-1 opacity-90">PRECIO</p>
+                                                <p class="text-xl font-black">${formatoMoneda(venta.producto?.precioProducto || 0)}</p>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <!-- Información de cita si existe -->
                                     ${venta.cita ? `
                                     <div class="info-card">
-                                        <h4 class="font-bold text-gray-900 text-base lg:text-lg mb-3 lg:mb-4 flex items-center gap-2">
-                                            <div class="bg-purple-100 p-2 rounded-lg">
-                                                <i class='bx bx-calendar text-purple-600 text-lg'></i>
+                                        <h4 class="font-bold text-slate-900 text-base mb-3 flex items-center gap-2">
+                                            <div class="bg-slate-100 p-2 rounded-lg">
+                                                <i class='bx bx-calendar text-slate-600'></i>
                                             </div>
-                                            <span>Cita Asociada</span>
+                                            <span>Cita</span>
                                         </h4>
-                                        <div class="space-y-3 text-sm">
-                                            <div class="bg-purple-50 rounded-lg p-3 border-l-4 border-purple-500">
-                                                <p class="text-xs text-purple-600 font-semibold mb-1">FECHA</p>
-                                                <p class="font-bold text-gray-900">${formatFecha(venta.cita.fecha)}</p>
+                                        <div class="grid grid-cols-2 gap-2">
+                                            <div class="bg-slate-50 rounded-lg p-2">
+                                                <p class="text-xs text-slate-600 font-medium mb-1">Fecha</p>
+                                                <p class="font-semibold text-slate-900 text-xs">${formatFecha(venta.cita.fecha)}</p>
                                             </div>
-                                            <div class="bg-purple-50 rounded-lg p-3 border-l-4 border-purple-500">
-                                                <p class="text-xs text-purple-600 font-semibold mb-1">HORARIO</p>
-                                                <p class="text-gray-700">${venta.cita.horaInicio} - ${venta.cita.horaFin}</p>
-                                            </div>
-                                            <div class="bg-gray-50 rounded-lg p-3">
-                                                <p class="text-xs text-gray-500 font-semibold mb-1">ESTADO</p>
-                                                <span class="badge ${venta.cita.estadoCita === 'FINALIZADA' ? 'badge-completada' : venta.cita.estadoCita === 'EN_CURSO' ? 'badge-procesando' : 'badge-no-pagada'}">
-                                                    ${venta.cita.estadoCita}
-                                                </span>
+                                            <div class="bg-slate-50 rounded-lg p-2">
+                                                <p class="text-xs text-slate-600 font-medium mb-1">Horario</p>
+                                                <p class="text-slate-800 text-xs">${venta.cita.horaInicio} - ${venta.cita.horaFin}</p>
                                             </div>
                                         </div>
                                     </div>
                                     ` : ''}
                                 </div>
 
-                                <!-- Columna 2: Notas y Gastos -->
-                                <div class="space-y-4 lg:space-y-6">
-                                    <!-- Notas -->
+                                <div class="space-y-4">
                                     <div class="info-card">
-                                        <div class="flex items-center justify-between mb-3 lg:mb-4">
-                                            <h4 class="font-bold text-gray-900 text-base lg:text-lg flex items-center gap-2">
-                                                <div class="bg-yellow-100 p-2 rounded-lg">
-                                                    <i class='bx bx-note text-yellow-600 text-lg'></i>
+                                        <div class="flex items-center justify-between mb-2">
+                                            <h4 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                                                <div class="bg-slate-100 p-1.5 rounded-lg">
+                                                    <i class='bx bx-note text-slate-600 text-sm'></i>
                                                 </div>
                                                 <span>Notas</span>
                                             </h4>
                                             <button onclick="abrirModalNota(${realIndex}); event.stopPropagation();"
-                                                    class="text-emerald-600 hover:text-emerald-700 font-bold text-xs lg:text-sm flex items-center gap-1 bg-emerald-50 px-2 py-1 rounded-lg hover:bg-emerald-100 transition-all border-2 border-emerald-200">
-                                                <i class='bx bx-edit'></i> <span class="hidden sm:inline">Editar</span>
+                                                    class="text-emerald-600 hover:text-emerald-800 text-xs font-medium flex items-center gap-1 bg-emerald-50 px-2 py-1 rounded-lg hover:bg-emerald-100 transition-all">
+                                                <i class='bx bx-edit text-sm'></i> Editar
                                             </button>
                                         </div>
-                                        <div class="bg-yellow-50 rounded-lg p-3 lg:p-4 text-xs lg:text-sm text-gray-700 leading-relaxed min-h-24 border-2 border-yellow-200">
-                                            ${venta.nota || '<span class="text-gray-500 italic">Sin notas registradas</span>'}
+                                        <div class="bg-slate-50 rounded-lg p-3 text-xs text-slate-800 min-h-16">
+                                            ${venta.nota || '<span class="text-slate-400 italic">Sin notas</span>'}
                                         </div>
                                     </div>
 
-                                    <!-- Gastos -->
                                     <div class="info-card">
-                                        <div class="flex items-center justify-between mb-3 lg:mb-4">
-                                            <h4 class="font-bold text-gray-900 text-base lg:text-lg flex items-center gap-2">
-                                                <div class="bg-red-100 p-2 rounded-lg">
-                                                    <i class='bx bx-credit-card text-red-600 text-lg'></i>
+                                        <div class="flex items-center justify-between mb-2">
+                                            <h4 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                                                <div class="bg-slate-100 p-1.5 rounded-lg">
+                                                    <i class='bx bx-credit-card text-slate-600 text-sm'></i>
                                                 </div>
                                                 <span>Gastos</span>
                                             </h4>
                                             <button onclick="abrirModalGasto(${realIndex}); event.stopPropagation();"
-                                                    class="gradient-bg text-white px-2 lg:px-3 py-1 rounded-lg hover:shadow-md transition-all text-xs lg:text-sm font-bold flex items-center gap-1 border-2 border-emerald-600">
-                                                <i class='bx bx-plus'></i> <span class="hidden sm:inline">Agregar</span>
+                                                    class="gradient-bg text-white px-2 py-1 rounded-lg hover:shadow-md transition-all text-xs font-medium flex items-center gap-1">
+                                                <i class='bx bx-plus text-sm'></i> Agregar
                                             </button>
                                         </div>
-                                        <div class="space-y-2 mb-4 max-h-64 overflow-y-auto custom-scrollbar" id="listaGastos-${realIndex}">
+                                        <div class="space-y-1.5 mb-2 max-h-48 overflow-y-auto custom-scrollbar" id="listaGastos-${realIndex}">
                                             ${venta.listaGastos && venta.listaGastos.length > 0 ? venta.listaGastos.map(gasto => `
                                                 <div class="gasto-item flex justify-between items-center gap-2" id="gasto-${gasto.idGasto}">
-                                                    <div class="flex-1 min-w-0">
-                                                        <span class="text-xs lg:text-sm font-semibold text-gray-800 break-words">${gasto.nombreGasto || gasto.descripcion}</span>
-                                                    </div>
-                                                    <div class="flex items-center gap-2 lg:gap-3 flex-shrink-0">
-                                                        <span class="font-black text-red-700 text-sm lg:text-base whitespace-nowrap">${formatoMoneda(gasto.valorGasto || gasto.monto)}</span>
+                                                    <span class="text-xs font-medium text-slate-900 flex-1 truncate">${gasto.nombreGasto || gasto.descripcion}</span>
+                                                    <div class="flex items-center gap-2 flex-shrink-0">
+                                                        <span class="font-bold text-red-600 text-xs">${formatoMoneda(gasto.valorGasto || gasto.monto)}</span>
                                                         <button onclick="eliminarGasto(${realIndex}, ${gasto.idGasto}); event.stopPropagation();"
-                                                                class="text-red-500 hover:text-red-700 transition-colors hover:bg-red-50 p-1 rounded">
-                                                            <i class='bx bx-trash text-base lg:text-lg'></i>
+                                                                class="text-slate-500 hover:text-red-600 transition-colors p-1">
+                                                            <i class='bx bx-trash text-sm'></i>
                                                         </button>
                                                     </div>
                                                 </div>
-                                            `).join('') : '<p class="text-gray-500 text-xs lg:text-sm italic py-4 text-center">No hay gastos registrados</p>'}
+                                            `).join('') : '<p class="text-slate-400 text-xs italic py-2 text-center">No hay gastos</p>'}
                                         </div>
-                                        <div class="pt-3 lg:pt-4 border-t-2 border-gray-200 bg-red-50 rounded-lg p-3 border-2 border-red-200">
+                                        <div class="pt-2 border-t border-slate-200 bg-slate-50 rounded-lg p-2">
                                             <div class="flex justify-between items-center">
-                                                <span class="text-xs lg:text-sm font-bold text-gray-800">Total Gastos</span>
-                                                <span class="text-base lg:text-lg font-black text-red-700">${formatoMoneda(venta.totalGastos || 0)}</span>
+                                                <span class="text-xs font-semibold text-slate-800">Total</span>
+                                                <span class="text-sm font-black text-red-600">${formatoMoneda(venta.totalGastos || 0)}</span>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <!-- Columna 3: Documentos y Resumen -->
-                                <div class="space-y-4 lg:space-y-6">
-                                    <!-- Botón ver proceso si está EN_PROCESO -->
-                                    ${venta.estado === 'EN_PROCESO' && venta.pasoActual ? `
-                                    <div class="info-card bg-gradient-to-br from-blue-50 to-blue-100 border-blue-300">
-                                        <div class="flex items-center justify-between mb-4">
-                                            <h4 class="font-bold text-gray-900 text-base lg:text-lg flex items-center gap-2">
-                                                <span>Venta en Proceso</span>
-                                            </h4>
-                                        </div>
-                                        <div class="space-y-3">
-                                            <div class="bg-white rounded-lg p-3 border-2 border-blue-300">
-                                                <p class="text-xs text-blue-700 font-semibold mb-1">PASO ACTUAL</p>
-                                                <p class="text-2xl font-black text-blue-700">${venta.pasoActual}</p>
-                                            </div>
-                                            <a href="/vendedor/ventas/detalle-venta/${venta.idVenta}"
-                                               class="block w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-3 rounded-xl font-bold text-center hover:shadow-lg transform hover:scale-105 transition-all flex items-center justify-center gap-2 border-2 border-blue-800">
-                                                <i class='bx bx-right-arrow-circle text-xl'></i>
-                                                <span>Ver Proceso de Venta</span>
-                                            </a>
-                                        </div>
-                                    </div>
-                                    ` : ''}
-
-                                    <!-- Documentos -->
                                     <div class="info-card">
-                                        <h4 class="font-bold text-gray-900 text-base lg:text-lg mb-3 lg:mb-4 flex items-center gap-2">
-                                            <div class="bg-green-100 p-2 rounded-lg">
-                                                <i class='bx bx-file text-green-600 text-lg'></i>
+                                        <h4 class="font-bold text-slate-900 text-sm mb-2 flex items-center gap-2">
+                                            <div class="bg-slate-100 p-1.5 rounded-lg">
+                                                <i class='bx bx-file text-slate-600 text-sm'></i>
                                             </div>
-                                            <span>Comprobantes</span>
+                                            <span>Documentos</span>
                                         </h4>
-                                        <div class="space-y-2 mb-4 lg:mb-6 max-h-64 overflow-y-auto custom-scrollbar">
+                                        <div class="space-y-1.5 max-h-32 overflow-y-auto custom-scrollbar">
                                             ${venta.listaComprobantes && venta.listaComprobantes.length > 0 ? venta.listaComprobantes.map(doc => `
                                                 <a href="/descargar/comprobante/${doc.idComprobante}" class="doc-item" target="_blank">
                                                     <div class="flex items-center gap-2 flex-1 min-w-0">
-                                                        <i class='bx bxs-file-pdf text-red-600 text-lg lg:text-xl flex-shrink-0'></i>
-                                                        <div class="doc-name min-w-0">
-                                                            <p class="doc-name-text text-xs lg:text-sm break-all">${doc.nombreComprobante}</p>
-                                                            <p class="text-xs text-emerald-700">${formatFecha(doc.fechaSubida)}</p>
-                                                        </div>
+                                                        <i class='bx bxs-file-pdf text-red-500 text-base flex-shrink-0'></i>
+                                                        <span class="text-xs font-medium text-emerald-700 truncate">${doc.nombreComprobante}</span>
                                                     </div>
-                                                    <i class='bx bx-download text-base lg:text-lg text-emerald-600 flex-shrink-0'></i>
+                                                    <i class='bx bx-download text-sm text-emerald-600'></i>
                                                 </a>
-                                            `).join('') : '<p class="text-gray-500 text-xs lg:text-sm italic py-4 text-center">No hay comprobantes adjuntos</p>'}
+                                            `).join('') : '<p class="text-slate-400 text-xs italic py-2 text-center">Sin documentos</p>'}
                                         </div>
                                     </div>
 
-                                    <!-- Resumen Financiero -->
-                                    <div class="gradient-bg text-white rounded-xl p-4 lg:p-5 border-2 border-emerald-600 shadow-lg">
-                                        <h5 class="text-sm lg:text-base font-bold mb-3 lg:mb-4 opacity-90 flex items-center gap-2">
-                                            <i class='bx bx-calculator text-lg'></i>
-                                            Resumen Financiero
+                                    <div class="gradient-bg text-white rounded-xl p-4 shadow-md">
+                                        <h5 class="text-sm font-bold mb-2 opacity-90 flex items-center gap-2">
+                                            <i class='bx bx-calculator'></i>
+                                            Resumen
                                         </h5>
-                                        <div class="space-y-2 lg:space-y-3 text-xs lg:text-sm">
-                                            <div class="flex justify-between pb-2 border-b border-white/20">
-                                                <span class="opacity-90">Precio Producto</span>
-                                                <span class="font-bold">${formatoMoneda(venta.producto?.precioProducto || 0)}</span>
+                                        <div class="space-y-1.5 text-sm">
+                                            <div class="flex justify-between pb-1.5 border-b border-white/20">
+                                                <span class="opacity-90">Precio</span>
+                                                <span class="font-semibold">${formatoMoneda(venta.producto?.precioProducto || 0)}</span>
                                             </div>
-                                            <div class="flex justify-between pb-2 border-b border-white/20">
-                                                <span class="opacity-90">Total Gastos</span>
-                                                <span class="font-bold">- ${formatoMoneda(venta.totalGastos || 0)}</span>
+                                            <div class="flex justify-between pb-1.5 border-b border-white/20">
+                                                <span class="opacity-90">Gastos</span>
+                                                <span class="font-black text-red-600">- ${formatoMoneda(venta.totalGastos || 0)}</span>
                                             </div>
-                                            <div class="flex justify-between pt-2 bg-white/10 rounded-lg p-2 lg:p-3">
-                                                <span class="font-bold text-sm lg:text-base">Ganancia Neta</span>
-                                                <span class="text-lg lg:text-xl font-black">${formatoMoneda(ganancia)}</span>
+                                            <div class="flex justify-between pt-1.5 bg-white/10 rounded-lg p-2">
+                                                <span class="font-bold text-sm">Ganancia</span>
+                                                <span class="text-lg font-black">${formatoMoneda(ganancia)}</span>
                                             </div>
                                         </div>
                                     </div>
+
+                                    ${venta.estado === 'EN_PROCESO' && venta.pasoActual ? `
+                                    <div class="info-card bg-slate-50">
+                                        <a href="/vendedor/ventas/detalle-venta/${venta.idVenta}"
+                                           class="block w-full gradient-bg text-white px-4 py-3 rounded-lg font-semibold text-center hover:shadow-md transform hover:scale-105 transition-all flex items-center justify-center gap-2 text-sm">
+                                            <i class='bx bx-right-arrow-circle'></i>
+                                            <span>Ver Proceso (Paso ${venta.pasoActual})</span>
+                                        </a>
+                                    </div>
+                                    ` : ''}
                                 </div>
                             </div>
                         </div>
@@ -1230,11 +1457,11 @@
     function getPagadoBadge(pagado) {
         return pagado
             ? '<span class="badge badge-pagada"><i class="bx bx-check"></i> Pagada</span>'
-            : '<span class="badge badge-no-pagada"><i class="bx bx-x"></i> No Pagada</span>';
+            : '<span class="badge badge-no-pagada"><i class="bx bx-x"></i>Pago Pendiente</span>';
     }
 
     function eliminarGasto(ventaIndex, gastoId) {
-        if (!confirm('¿Estás seguro de eliminar este gasto?')) return;
+        if (!confirm('¿Eliminar este gasto?')) return;
 
         const venta = allSales[ventaIndex];
 
@@ -1242,32 +1469,30 @@
             method: 'POST',
             headers: { 'Content-Type': 'application/json' }
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                venta.listaGastos = venta.listaGastos.filter(g => g.idGasto !== gastoId);
-                venta.totalGastos = venta.listaGastos.reduce((sum, g) => sum + (g.valorGasto || g.monto), 0);
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    venta.listaGastos = venta.listaGastos.filter(g => g.idGasto !== gastoId);
+                    venta.totalGastos = venta.listaGastos.reduce((sum, g) => sum + (g.valorGasto || g.monto), 0);
 
-                const container = document.getElementById(`listaGastos-${ventaIndex}`);
-                if (container) {
-                    container.innerHTML = venta.listaGastos.length > 0 ? venta.listaGastos.map(gasto => `
+                    const container = document.getElementById(`listaGastos-${ventaIndex}`);
+                    if (container) {
+                        container.innerHTML = venta.listaGastos.length > 0 ? venta.listaGastos.map(gasto => `
                         <div class="gasto-item flex justify-between items-center gap-2" id="gasto-${gasto.idGasto}">
-                            <div class="flex-1 min-w-0">
-                                <span class="text-xs lg:text-sm font-semibold text-gray-800 break-words">${gasto.nombreGasto || gasto.descripcion}</span>
-                            </div>
-                            <div class="flex items-center gap-2 lg:gap-3 flex-shrink-0">
-                                <span class="font-black text-red-700 text-sm lg:text-base whitespace-nowrap">${formatoMoneda(gasto.valorGasto || gasto.monto)}</span>
+                            <span class="text-xs font-medium text-slate-900 flex-1 truncate">${gasto.nombreGasto}</span>
+                            <div class="flex items-center gap-2 flex-shrink-0">
+                                <span class="font-bold text-red-600 text-xs">${formatoMoneda(gasto.valorGasto)}</span>
                                 <button onclick="eliminarGasto(${ventaIndex}, ${gasto.idGasto}); event.stopPropagation();"
-                                        class="text-red-500 hover:text-red-700 transition-colors hover:bg-red-50 p-1 rounded">
-                                    <i class='bx bx-trash text-base lg:text-lg'></i>
+                                        class="text-slate-500 hover:text-red-600 transition-colors p-1">
+                                    <i class='bx bx-trash text-sm'></i>
                                 </button>
                             </div>
                         </div>
-                    `).join('') : '<p class="text-gray-500 text-xs lg:text-sm italic py-4 text-center">No hay gastos registrados</p>';
+                    `).join('') : '<p class="text-slate-400 text-xs italic py-2 text-center">No hay gastos</p>';
+                    }
                 }
-            }
-        })
-        .catch(error => console.error('Error eliminando gasto:', error));
+            })
+            .catch(error => console.error('Error:', error));
     }
 
     function abrirModalGasto(index) {
@@ -1310,37 +1535,35 @@
                 valorGasto: monto
             })
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                const venta = allSales[ventaIndex];
-                venta.listaGastos.push({
-                    idGasto: data.idGasto,
-                    nombreGasto: descripcion,
-                    valorGasto: monto
-                });
-                venta.totalGastos = (venta.totalGastos || 0) + monto;
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const venta = allSales[ventaIndex];
+                    venta.listaGastos.push({
+                        idGasto: data.idGasto,
+                        nombreGasto: descripcion,
+                        valorGasto: monto
+                    });
+                    venta.totalGastos = (venta.totalGastos || 0) + monto;
 
-                const container = document.getElementById(`listaGastos-${ventaIndex}`);
-                if (container) {
-                    container.innerHTML = venta.listaGastos.map(gasto => `
+                    const container = document.getElementById(`listaGastos-${ventaIndex}`);
+                    if (container) {
+                        container.innerHTML = venta.listaGastos.map(gasto => `
                         <div class="gasto-item flex justify-between items-center gap-2" id="gasto-${gasto.idGasto}">
-                            <div class="flex-1 min-w-0">
-                                <span class="text-xs lg:text-sm font-semibold text-gray-800 break-words">${gasto.nombreGasto}</span>
-                            </div>
-                            <div class="flex items-center gap-2 lg:gap-3 flex-shrink-0">
-                                <span class="font-black text-red-700 text-sm lg:text-base whitespace-nowrap">${formatoMoneda(gasto.valorGasto)}</span>
+                            <span class="text-xs font-medium text-slate-900 flex-1 truncate">${gasto.nombreGasto}</span>
+                            <div class="flex items-center gap-2 flex-shrink-0">
+                                <span class="font-bold text-red-600 text-xs">${formatoMoneda(gasto.valorGasto)}</span>
                                 <button onclick="eliminarGasto(${ventaIndex}, ${gasto.idGasto}); event.stopPropagation();"
-                                        class="text-red-500 hover:text-red-700 transition-colors hover:bg-red-50 p-1 rounded">
-                                    <i class='bx bx-trash text-base lg:text-lg'></i>
+                                        class="text-slate-500 hover:text-red-600 transition-colors p-1">
+                                    <i class='bx bx-trash text-sm'></i>
                                 </button>
                             </div>
                         </div>
                     `).join('');
+                    }
                 }
-            }
-        })
-        .catch(error => console.error('Error agregando gasto:', error));
+            })
+            .catch(error => console.error('Error:', error));
 
         cerrarModalGasto();
     });
@@ -1359,22 +1582,22 @@
                 nota: nota
             })
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                const venta = allSales[ventaIndex];
-                venta.nota = nota;
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const venta = allSales[ventaIndex];
+                    venta.nota = nota;
 
-                const ventaDetailElement = document.getElementById(`venta-${ventaIndex}`);
-                if (ventaDetailElement) {
-                    const notaElement = ventaDetailElement.querySelector('.bg-yellow-50');
-                    if (notaElement) {
-                        notaElement.innerHTML = nota || '<span class="text-gray-500 italic">Sin notas registradas</span>';
+                    const ventaDetailElement = document.getElementById(`venta-${ventaIndex}`);
+                    if (ventaDetailElement) {
+                        const notaElement = ventaDetailElement.querySelector('.bg-slate-50');
+                        if (notaElement) {
+                            notaElement.innerHTML = nota || '<span class="text-slate-400 italic">Sin notas</span>';
+                        }
                     }
                 }
-            }
-        })
-        .catch(error => console.error('Error actualizando nota:', error));
+            })
+            .catch(error => console.error('Error:', error));
 
         cerrarModalNota();
     });
@@ -1387,6 +1610,10 @@
         if (e.target === this) cerrarModalNota();
     });
 
+    document.getElementById('modalPDFPreview').addEventListener('click', function(e) {
+        if (e.target === this) cerrarModalPDFPreview();
+    });
+
     document.getElementById('busqueda').addEventListener('input', aplicarFiltros);
     document.getElementById('filterEstado').addEventListener('change', aplicarFiltros);
     document.getElementById('filterPago').addEventListener('change', aplicarFiltros);
@@ -1395,32 +1622,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         renderVentas();
-    });
-
-    function toggleUserDropdown() {
-        const dropdown = document.getElementById('userDropdown');
-        const arrow = document.getElementById('dropdownArrow');
-
-        if (dropdown.classList.contains('opacity-0')) {
-            dropdown.classList.remove('opacity-0', 'invisible', 'scale-95');
-            dropdown.classList.add('opacity-100', 'visible', 'scale-100');
-            arrow.style.transform = 'rotate(180deg)';
-        } else {
-            dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
-            dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
-            arrow.style.transform = 'rotate(0deg)';
-        }
-    }
-
-    document.addEventListener('click', function(event) {
-        const dropdown = document.getElementById('userDropdown');
-        const userButton = event.target.closest('[onclick="toggleUserDropdown()"]');
-
-        if (!userButton && !dropdown.contains(event.target)) {
-            dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
-            dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
-            document.getElementById('dropdownArrow').style.transform = 'rotate(0deg)';
-        }
+        ventasFiltradas = allSales;
     });
 </script>
 
