@@ -131,6 +131,7 @@ public class MercadoPagoService {
 
             Venta venta = ventaRepository.findById(pagoHecho.getVenta().getIdVenta()).orElseThrow();
             venta.setMetodoPago(metodoPago);
+            venta.setPagado(true);
             venta.setPasoActual(5);
             ventaRepository.save(venta);
 
