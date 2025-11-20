@@ -7,10 +7,7 @@ import com.proyecto.terranova.entity.*;
 import com.proyecto.terranova.repository.VentaFincaRepository;
 import com.proyecto.terranova.repository.VentaGanadoRepository;
 import com.proyecto.terranova.repository.VentaTerrenoRepository;
-import com.proyecto.terranova.service.AsistenciaService;
-import com.proyecto.terranova.service.TransporteService;
-import com.proyecto.terranova.service.UsuarioService;
-import com.proyecto.terranova.service.VentaService;
+import com.proyecto.terranova.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -44,6 +41,9 @@ public class VentaController {
 
     @Autowired
     TransporteService transporteService;
+
+    @Autowired
+    GastoVentaService gastoVentaService;
 
     @ModelAttribute("esVendedor")
     public boolean esVendedor(Authentication authentication){

@@ -1,5 +1,6 @@
 package com.proyecto.terranova.implement;
 
+import com.proyecto.terranova.repository.VentaRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,15 @@ public class GastoVentaImplement implements GastoVentaService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    private VentaRepository ventaRepository;
+
     @Override
-    public GastoVenta save(GastoVenta gastoVenta) {
+    public GastoVenta save(Long idVenta, String nombreGasto, Long valorGasto) {
+        GastoVenta gastoVenta = new GastoVenta();
+        gastoVenta.setVenta(ventaRepository.findById(idVenta).orElseThrow());
+        gastoVenta.setNombreGasto(nombreGasto);
+        gastoVenta.setValorGasto(valorGasto);
         return repository.save(gastoVenta);
     }
 
@@ -50,12 +58,8 @@ public class GastoVentaImplement implements GastoVentaService {
     }
 
     @Override
-    public boolean delete(Long id) {
-        if(!repository.existsById(id)){
-               return false;
-        }
-        repository.deleteById(id);
-        return true;
+    public void delete(Long idVenta) {
+        repository.delete(repository.findById(idVenta).orElseThrow());
     }
 
     @Override

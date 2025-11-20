@@ -112,6 +112,7 @@ public class TransporteImplement implements TransporteService {
 
         Venta venta = transporte.getVenta();
         venta.setEstado(EstadoVentaEnum.FINALIZADA);
+        venta.getComprador().setPuntuacionUsuario(venta.getComprador().getPuntuacionUsuario() + 15);
         ventaRepository.save(venta);
     }
 

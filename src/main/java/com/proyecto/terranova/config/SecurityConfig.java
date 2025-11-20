@@ -30,6 +30,7 @@ public class  SecurityConfig {
         return httpSecurity
                 .csrf(csrf -> csrf
                         .ignoringRequestMatchers("/api/mercadopago/webhook")
+                        .ignoringRequestMatchers("/vendedor/ventas/gasto/**")
                 )
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/api/mercadopago/webhook").permitAll();

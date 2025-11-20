@@ -1356,7 +1356,7 @@
                                                 <i class='bx bx-plus text-sm'></i> Agregar
                                             </button>
                                         </div>
-                                        <div class="space-y-1.5 mb-2 max-h-48 overflow-y-auto custom-scrollbar" id="listaGastos-${realIndex}">
+                                        <div class="space-y-1.5 mb-2 max-h-48" id="listaGastos-${realIndex}">
                                             ${venta.listaGastos && venta.listaGastos.length > 0 ? venta.listaGastos.map(gasto => `
                                                 <div class="gasto-item flex justify-between items-center gap-2" id="gasto-${gasto.idGasto}">
                                                     <span class="text-xs font-medium text-slate-900 flex-1 truncate">${gasto.nombreGasto || gasto.descripcion}</span>
@@ -1469,7 +1469,7 @@
 
         fetch(`/vendedor/ventas/gasto/eliminar/${gastoId}`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
         })
             .then(response => response.json())
             .then(data => {
@@ -1530,8 +1530,8 @@
 
         fetch('/vendedor/ventas/gasto/agregar', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
                 idVenta: idVenta,
                 nombreGasto: descripcion,
                 valorGasto: monto
@@ -1576,10 +1576,10 @@
         const ventaIndex = parseInt(document.getElementById('ventaIndexNota').value);
         const nota = document.getElementById('textoNota').value;
 
-        fetch('/vendedor/ventas/nota/actualizar', {
+        fetch('/vendedor/ventas/gasto/nota/actualizar', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
                 idVenta: idVenta,
                 nota: nota
             })
