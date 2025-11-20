@@ -103,7 +103,7 @@
 
         .modal-content {
             animation: slideUp 0.3s ease;
-        }
+
 
         .benefit-card {
             transition: all 0.3s ease;
@@ -146,7 +146,7 @@
             border-color: #10b981;
         }
 
-        .upload-zone.dragover {
+        .upload-zone.dragover{
             background: rgba(5, 150, 105, 0.1);
             border-color: #10b981;
             transform: scale(1.02);
@@ -574,14 +574,6 @@
                                 <span class="text-orange-400 font-bold">1.</span>
                                 <span>Verificar tu correo electrónico con código de confirmación</span>
                             </li>
-                            <li class="flex gap-2">
-                                <span class="text-orange-400 font-bold">2.</span>
-                                <span>Validar tu cédula mediante OCR (extracción automática de datos)</span>
-                            </li>
-                            <li class="flex gap-2">
-                                <span class="text-orange-400 font-bold">3.</span>
-                                <span>Capturar una foto de tu rostro para registro facial</span>
-                            </li>
                         </ul>
                     </div>
 
@@ -629,15 +621,10 @@
 
                         <div class="flex flex-col items-center flex-1">
                             <div class="step-circle step-inactive" id="step2Circle">2</div>
-                            <p class="text-xs font-medium text-gray-600 mt-2 text-center">Cédula</p>
+                            <p class="text-xs font-medium text-gray-600 mt-2 text-center">Finalización</p>
                         </div>
                         <div class="flex-1 flex items-start justify-center pt-5">
                             <div class="w-full h-1 bg-gray-200"></div>
-                        </div>
-
-                        <div class="flex flex-col items-center flex-1">
-                            <div class="step-circle step-inactive" id="step3Circle">3</div>
-                            <p class="text-xs font-medium text-gray-600 mt-2 text-center">Foto</p>
                         </div>
                     </div>
 
@@ -654,7 +641,7 @@
                         </div>
 
                         <div class="mb-6">
-                            <!--                            aqui va el form-->
+
                             <label class="block text-sm font-medium text-gray-700 mb-2">Código de Verificación</label>
                             <input  type="text" placeholder="000000" maxlength="6" id="verificationCode"
                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-center text-lg tracking-widest">
@@ -667,126 +654,20 @@
                         </button>
                     </div>
 
-                    <!-- Step 2: ID/Cédula Upload -->
                     <div id="step2Content" class="step-content hidden">
                         <div class="mb-6">
-                            <h3 class="text-xl font-bold text-gray-900 mb-2">Sube tu Cédula</h3>
-                            <p class="text-gray-600">Captura clara de ambos lados. OCR validará automáticamente tus
-                                datos</p>
+                            <h3 class="text-xl font-bold text-gray-900 mb-2">Finalizar Proceso</h3>
+                            <p class="text-gray-600">Completa tu registro haciendo clic en el botón de abajo</p>
                         </div>
-
-                        <div class="upload-zone" id="cedolaUploadZone" ondrop="handleDrop(event, 'cedula')"
-                             ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
-                            <svg class="w-12 h-12 text-primary mx-auto mb-3" fill="none" stroke="currentColor"
-                                 viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M12 4v16m8-8H4"/>
-                            </svg>
-                            <p class="text-sm font-semibold text-gray-900 mb-1">Arrastra tu cédula aquí</p>
-                            <p class="text-xs text-gray-600 mb-3">o</p>
-                            <button type="button" onclick="document.getElementById('cedulaInput').click()"
-                                    class="text-primary hover:text-emerald-700 font-semibold text-sm">
-                                Seleccionar archivo
+                        <form th:action="@{/comprador/mi-perfil/ser-vendedor}" method="post">
+                            <button type="submit"
+                                    class="w-full mt-6 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-lg transition-colors">
+                                Finalizar
                             </button>
-                            <input type="file" id="cedulaInput" accept="image/*" class="hidden"
-                                   onchange="handleFileSelect(event, 'cedula')">
-                            <p class="text-xs text-gray-500 mt-3">JPG, PNG. Máximo 10MB</p>
-                        </div>
+                        </form>
 
-                        <div id="cedulaPreview" class="mt-6 hidden">
-                            <img id="cedulaImage" src="/placeholder.svg" alt="Cédula"
-                                 class="w-full rounded-lg border border-gray-200">
-                            <button type="button" onclick="removeCedula()"
-                                    class="mt-3 text-red-600 hover:text-red-700 font-medium text-sm">
-                                Cambiar archivo
-                            </button>
-                        </div>
-
-                        <div id="ocrResults" class="mt-6 bg-green-50 border border-green-200 rounded-lg p-4 hidden">
-                            <h4 class="font-semibold text-gray-900 mb-3">Datos Validados</h4>
-                            <div class="grid grid-cols-2 gap-3 text-sm">
-                                <div>
-                                    <p class="text-gray-600">Nombres</p>
-                                    <p class="font-semibold text-gray-900" id="ocrNombre">Juan Carlos</p>
-                                </div>
-                                <div>
-                                    <p class="text-gray-600">Apellidos</p>
-                                    <p class="font-semibold text-gray-900" id="ocrApellido">García López</p>
-                                </div>
-                                <div>
-                                    <p class="text-gray-600">Cédula</p>
-                                    <p class="font-semibold text-gray-900" id="ocrCedula">1234567890</p>
-                                </div>
-                                <div>
-                                    <p class="text-gray-600">Fecha de Nacimiento</p>
-                                    <p class="font-semibold text-gray-900" id="ocrFecha">01/01/1990</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <button onclick="nextStep()" id="step2Button"
-                                class="w-full mt-6 bg-gray-300 text-gray-500 font-semibold py-3 rounded-lg cursor-not-allowed"
-                                disabled>
-                            Sube un archivo para continuar
-                        </button>
                     </div>
 
-                    <!-- Step 3: Facial Recognition -->
-                    <div id="step3Content" class="step-content hidden">
-                        <div class="mb-6">
-                            <h3 class="text-xl font-bold text-gray-900 mb-2">Captura tu Foto</h3>
-                            <p class="text-gray-600">Tomaremos una foto de tu rostro para el registro de
-                                verificación</p>
-                        </div>
-
-                        <div class="bg-gray-900 rounded-2xl overflow-hidden mb-6 relative">
-                            <video id="cameraFeed" class="w-full aspect-square object-cover hidden" autoplay
-                                   playsinline></video>
-                            <div id="cameraPlaceholder"
-                                 class="w-full aspect-square bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
-                                <svg class="w-20 h-20 text-gray-600" fill="none" stroke="currentColor"
-                                     viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                </svg>
-                            </div>
-                            <canvas id="photoCanvas" class="hidden"></canvas>
-                        </div>
-
-                        <div id="photoCapture" class="flex gap-3 mb-6">
-                            <button type="button" onclick="startCamera()" id="startCameraBtn"
-                                    class="flex-1 bg-primary text-white font-semibold py-3 rounded-lg hover:bg-primary-dark transition">
-                                Iniciar Cámara
-                            </button>
-                            <button type="button" onclick="capturePhoto()" id="captureBtn"
-                                    class="flex-1 bg-secondary text-gray-800 font-semibold py-3 rounded-lg hover:bg-secondary-dark transition hidden">
-                                Capturar Foto
-                            </button>
-                        </div>
-
-                        <div id="photoPreview" class="hidden mb-6">
-                            <img id="capturedPhoto" src="/placeholder.svg" alt="Foto capturada"
-                                 class="w-full rounded-lg border border-gray-200">
-                            <div class="flex gap-3 mt-3">
-                                <button type="button" onclick="retakePhoto()"
-                                        class="flex-1 bg-gray-200 text-gray-800 font-semibold py-2 rounded-lg hover:bg-gray-300 transition">
-                                    Retomar Foto
-                                </button>
-                                <button type="button" onclick="usePhoto()"
-                                        class="flex-1 bg-green-600 text-white font-semibold py-2 rounded-lg hover:bg-green-700 transition">
-                                    Usar Esta Foto
-                                </button>
-                            </div>
-                        </div>
-
-                        <button onclick="completeVerification()" id="step3Button"
-                                class="w-full bg-gray-300 text-gray-500 font-semibold py-3 rounded-lg cursor-not-allowed"
-                                disabled>
-                            Captura tu foto para finalizar
-                        </button>
-                    </div>
                 </div>
             </div>
         </div>
@@ -1199,18 +1080,7 @@
                 if (data.success) {
                     // ✅ Código correcto: redirigir o cerrar modal
                     console.log("paso en codigo");
-                    fetch("/mi-perfil/ser-vendedor", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/x-www-form-urlencoded",
-                            [csrfHeaderName]: csrfToken
-                        },
-                        body: "" // si tu método no necesita parámetros adicionales
-                    })
-                        .then(() => {
-                            // 👇 después del POST, redirigimos a la vista final
-                            window.location.href = "/usuarios/mi-perfil?id=1";
-                        });
+                    nextStep();
                 } else {
                     // ❌ Error: mostrar mensaje en el modal
                     document.getElementById("errorMsg").innerText = data.error;
