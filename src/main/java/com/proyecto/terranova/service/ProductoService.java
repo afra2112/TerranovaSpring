@@ -18,5 +18,15 @@ public interface ProductoService {
     void actualizarProducto(Producto prodForm);
     void eliminarProducto(Long idProducto, String correo);
     List<Producto> obtenerTodasMenosVendedor(Usuario vendedor);
-    List<Producto> filtrarConSpecification(String texto, String tipo, String orden);
+    List<Producto> filtrarConSpecification(String texto, String tipo, String orden,String razaGanado,
+                                           Integer pesoMin,
+                                           Integer pesoMax,
+                                           Integer edadMin,
+                                           Integer edadMax,
+                                           String generoGanado,
+                                           Double tamanoTerrenoMin,
+                                           String tipoTerreno,
+                                           Integer estratoFinca,
+                                           Integer habitacionesMin,
+                                           Integer banosMin);
 }

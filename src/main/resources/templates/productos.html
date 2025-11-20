@@ -36,6 +36,56 @@
         .hover-lift:hover {
             transform: translateY(-4px);
         }
+
+        /* Agregando estilos para los filtros avanzados */
+        .filter-section {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .filter-collapsed {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+        }
+
+        .filter-expanded {
+            max-height: 2000px;
+            opacity: 1;
+        }
+
+        .filter-badge {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #10b981;
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #059669;
+        }
     </style>
 </head>
 <body class="min-h-screen">
@@ -68,65 +118,426 @@
 
 <div th:classappend="${usuario != null} ? 'ml-64' : ''" class="flex flex-col min-h-screen">
     <main class="lg:px-10 py-10">
+        <!-- Reemplazando toda la sección de filtros con nuevo diseño acoplado al FiltroDTO -->
         <section class="mb-8">
             <div class="container mx-auto">
                 <div class="bg-white rounded-2xl shadow-md p-6">
-                    <h1 class="text-3xl font-bold text-gray-800 mb-6">Explorar Productos</h1>
+                    <div class="flex items-center justify-between mb-6">
+                        <h1 class="text-3xl font-bold text-gray-800">Explorar Productos</h1>
+                        <button type="button" onclick="toggleFiltrosAvanzados()"
+                                class="flex items-center gap-2 px-4 py-2 bg-green-50 text-green-700 rounded-xl hover:bg-green-100 transition-all duration-300 font-semibold">
+                            <i class='bx bx-slider-alt text-xl'></i>
+                            <span>Filtros Avanzados</span>
+                            <i id="filtrosToggleIcon" class='bx bx-chevron-down text-xl transition-transform duration-300'></i>
+                        </button>
+                    </div>
 
-                    <form th:action="@{/productos}" method="get" class="space-y-6">
+                    <form th:action="@{/productos}" method="get" id="filtrosForm" class="space-y-6">
 
-                        <div class="flex flex-col lg:flex-row gap-4">
-                            <div class="flex-1 relative">
-                                <i class='bx bx-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl'></i>
-                                <input type="text"
-                                       name="busquedaTexto"
-                                       th:value="${param.busqueda}"
-                                       placeholder="Buscar por nombre, ubicación o características..."
-                                       class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                        <!-- Búsqueda principal y botones de tipo -->
+                        <div class="space-y-4">
+                            <div class="flex flex-col lg:flex-row gap-4">
+                                <div class="flex-1 relative">
+                                    <i class='bx bx-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl'></i>
+                                    <input type="text"
+                                           name="nombreProducto"
+                                           th:value="${param.nombreProducto}"
+                                           placeholder="Buscar por nombre de producto..."
+                                           class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all">
+                                </div>
+                                <button type="submit"
+                                        class="gradient-bg text-white px-8 py-3 rounded-xl hover:shadow-lg transition-all duration-300 flex items-center gap-2 font-semibold hover:-translate-y-0.5">
+                                    <i class='bx bx-search-alt'></i>
+                                    Buscar
+                                </button>
                             </div>
-                            <button type="submit"
-                                    class="gradient-bg text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300 flex items-center gap-2 font-semibold">
-                                <i class='bx bx-search-alt'></i>
-                                Buscar
-                            </button>
+
+                            <!-- Filtro por tipo de producto -->
+                            <div class="flex flex-wrap gap-3 items-center justify-between">
+                                <div class="flex gap-3 flex-wrap">
+                                    <button type="submit" onclick="setTipoProducto('')" name="tipo" value="todos"
+                                            class="px-5 py-2.5 rounded-xl font-semibold flex items-center gap-2 transition-all duration-300 hover:-translate-y-0.5"
+                                            th:classappend="${param.tipoProducto == null or param.tipoProducto == ''} ? 'bg-green-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'">
+                                        <i class='bx bx-filter-alt text-lg'></i> Todos
+                                    </button>
+                                    <button type="button" onclick="setTipoProducto('ganado')"
+                                            class="px-5 py-2.5 rounded-xl font-semibold flex items-center gap-2 transition-all duration-300 hover:-translate-y-0.5"
+                                            th:classappend="${param.tipoProducto == 'ganado'} ? 'bg-green-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'">
+                                        <i class='bx bxs-cow text-lg'></i> Ganado
+                                    </button>
+                                    <button type="button" onclick="setTipoProducto('terreno')"
+                                            class="px-5 py-2.5 rounded-xl font-semibold flex items-center gap-2 transition-all duration-300 hover:-translate-y-0.5"
+                                            th:classappend="${param.tipoProducto == 'terreno'} ? 'bg-green-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'">
+                                        <i class='bx bx-landscape text-lg'></i> Terrenos
+                                    </button>
+                                    <button type="button" onclick="setTipoProducto('finca')"
+                                            class="px-5 py-2.5 rounded-xl font-semibold flex items-center gap-2 transition-all duration-300 hover:-translate-y-0.5"
+                                            th:classappend="${param.tipoProducto == 'finca'} ? 'bg-green-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'">
+                                        <i class='bx bxs-home text-lg'></i> Fincas
+                                    </button>
+                                </div>
+
+                                <!-- Ordenamiento -->
+                                <div class="flex items-center gap-2">
+                                    <i class='bx bx-sort text-gray-500 text-xl'></i>
+                                    <select name="orden"
+                                            class="px-4 py-2.5 border border-gray-300 rounded-xl font-medium focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white cursor-pointer"
+                                            onchange="this.form.submit()">
+                                        <option value="">Ordenar por</option>
+                                        <option value="asc" th:selected="${param.orden == 'asc'}">Precio: Menor a Mayor</option>
+                                        <option value="desc" th:selected="${param.orden == 'desc'}">Precio: Mayor a Menor</option>
+                                        <option value="recientes" th:selected="${param.orden == 'recientes'}">Más Recientes</option>
+                                        <option value="antiguos" th:selected="${param.orden == 'antiguos'}">Más Antiguos</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="flex flex-wrap gap-3 items-center">
+                        <input type="hidden" id="tipoProductoInput" name="tipoProducto" th:value="${param.tipoProducto}" />
 
-                            <div class="flex gap-3">
-                                <button type="submit" name="tipo" value="todos"
-                                        class="px-4 py-2 rounded-lg font-medium flex items-center gap-2
-                                [[${param.tipo} == 'todos' ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200']]">
-                                    <i class='bx bx-filter-alt'></i> Todos
-                                </button>
-                                <button type="submit" name="tipo" value="ganado"
-                                        class="px-4 py-2 rounded-lg font-medium flex items-center gap-2
-                                [[${param.tipo} == 'ganado' ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200']]">
-                                    <i class='bx bxs-cow'></i> Ganado
-                                </button>
-                                <button type="submit" name="tipo" value="terreno"
-                                        class="px-4 py-2 rounded-lg font-medium flex items-center gap-2
-                                [[${param.tipo} == 'terreno' ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200']]">
-                                    <i class='bx bx-landscape'></i> Terrenos
-                                </button>
-                                <button type="submit" name="tipo" value="finca"
-                                        class="px-4 py-2 rounded-lg font-medium flex items-center gap-2
-                                [[${param.tipo} == 'finca' ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200']]">
-                                    <i class='bx bxs-home'></i> Fincas
-                                </button>
-                            </div>
+                        <!-- Filtros Avanzados (Colapsables) -->
+                        <div id="filtrosAvanzados" class="filter-section filter-collapsed">
+                            <div class="border-t border-gray-200 pt-6 space-y-6">
 
-                            <div class="ml-auto">
-                                <select name="orden"
-                                        class="px-4 py-2 border border-gray-300 rounded-lg font-medium focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                                        onchange="this.form.submit()">
-                                    <option th:value="asc" th:selected="${param.orden == 'asc'}">Precio: Menor a Mayor</option>
-                                    <option th:value="desc" th:selected="${param.orden == 'desc'}">Precio: Mayor a Menor</option>
-                                    <option th:value="recientes" th:selected="${param.orden == 'recientes'}">Más Recientes</option>
-                                    <option th:value="antiguos" th:selected="${param.orden == 'antiguos'}">Más Antiguos</option>
-                                </select>
+                                <!-- Filtros Generales de Producto -->
+                                <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-5 border border-green-100">
+                                    <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                                        <i class='bx bx-package text-green-600 text-xl'></i>
+                                        Filtros Generales
+                                    </h3>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+                                        <!-- Ubicación -->
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class='bx bx-map text-green-600'></i> Ubicación
+                                            </label>
+                                            <select name="idUbicacion"
+                                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white">
+                                                <option value="">Todas las ubicaciones</option>
+                                                <!-- Aquí irían las opciones de ubicación desde el backend -->
+                                                <option th:each="ciudad : ${ciudades}"
+                                                        th:value="${ciudad.idCiudad}"
+                                                        th:text="${ciudad.nombreCiudad}"
+                                                        th:selected="${param.idUbicacion == ciudad.idCiudad}"></option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Precio mínimo -->
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class='bx bx-dollar text-green-600'></i> Precio Mínimo
+                                            </label>
+                                            <input type="number"
+                                                   name="precioMinimo"
+                                                   th:value="${param.precioMinimo}"
+                                                   placeholder="$ 0"
+                                                   min="0"
+                                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                                        </div>
+
+                                        <!-- Precio máximo -->
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class='bx bx-dollar text-green-600'></i> Precio Máximo
+                                            </label>
+                                            <input type="number"
+                                                   name="precioMaximo"
+                                                   th:value="${param.precioMaximo}"
+                                                   placeholder="$ Sin límite"
+                                                   min="0"
+                                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                                        </div>
+
+                                        <!-- Fecha de publicación -->
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class='bx bx-calendar text-green-600'></i> Publicado desde
+                                            </label>
+                                            <input type="date"
+                                                   name="fechaPublicacion"
+                                                   th:value="${param.fechaPublicacion}"
+                                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <!-- Filtros Específicos de Ganado -->
+                                <div id="filtrosGanado" class="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-5 border border-blue-100 hidden">
+                                    <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                                        <i class='bx bxs-cow text-blue-600 text-xl'></i>
+                                        Filtros de Ganado
+                                    </h3>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+                                        <!-- Raza -->
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class='bx bx-dna text-blue-600'></i> Raza
+                                            </label>
+                                            <input type="text"
+                                                   name="razaGanado"
+                                                   th:value="${param.razaGanado}"
+                                                   placeholder="Ej: Angus, Holstein..."
+                                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                        </div>
+
+                                        <!-- Tipo de Ganado -->
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class='bx bx-category text-blue-600'></i> Tipo
+                                            </label>
+                                            <select name="tipoGanado"
+                                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white">
+                                                <option value="">Todos los tipos</option>
+                                                <option value="bovino" th:selected="${param.tipoGanado == 'bovino'}">Bovino</option>
+                                                <option value="porcino" th:selected="${param.tipoGanado == 'porcino'}">Porcino</option>
+                                                <option value="ovino" th:selected="${param.tipoGanado == 'ovino'}">Ovino</option>
+                                                <option value="caprino" th:selected="${param.tipoGanado == 'caprino'}">Caprino</option>
+                                                <option value="equino" th:selected="${param.tipoGanado == 'equino'}">Equino</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Género -->
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class='bx bx-transgender text-blue-600'></i> Género
+                                            </label>
+                                            <select name="generoGanado"
+                                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white">
+                                                <option value="">Todos</option>
+                                                <option value="macho" th:selected="${param.generoGanado == 'macho'}">Macho</option>
+                                                <option value="hembra" th:selected="${param.generoGanado == 'hembra'}">Hembra</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Edad -->
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class='bx bx-calendar-check text-blue-600'></i> Edad (años)
+                                            </label>
+                                            <input type="number"
+                                                   name="edadGanado"
+                                                   th:value="${param.edadGanado}"
+                                                   placeholder="Ej: 2"
+                                                   min="0"
+                                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                        </div>
+
+                                        <!-- Peso -->
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class='bx bx-donate-blood text-blue-600'></i> Peso (kg)
+                                            </label>
+                                            <input type="number"
+                                                   name="pesoGanado"
+                                                   th:value="${param.pesoGanado}"
+                                                   placeholder="Ej: 450"
+                                                   min="0"
+                                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                        </div>
+
+                                    </div>
+                                </div>
+
+<!--                                 Filtros Específicos de Terreno -->
+                                <div id="filtrosTerreno" class="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-xl p-5 border border-amber-100 hidden">
+                                    <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                                        <i class='bx bx-landscape text-amber-600 text-xl'></i>
+                                        Filtros de Terreno
+                                    </h3>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+                                        <!-- Tamaño -->
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class='bx bx-area text-amber-600'></i> Tamaño (m²)
+                                            </label>
+                                            <input type="number"
+                                                   name="tamanoTerreno"
+                                                   th:value="${param.tamanoTerreno}"
+                                                   placeholder="Ej: 5000"
+                                                   min="0"
+                                                   step="0.01"
+                                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+                                        </div>
+
+                                        <!-- Tipo de Terreno -->
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class='bx bx-category text-amber-600'></i> Tipo
+                                            </label>
+                                            <select name="tipoTerreno"
+                                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent bg-white">
+                                                <option value="">Todos los tipos</option>
+                                                <option value="agricola" th:selected="${param.tipoTerreno == 'agricola'}">Agrícola</option>
+                                                <option value="ganadero" th:selected="${param.tipoTerreno == 'ganadero'}">Ganadero</option>
+                                                <option value="forestal" th:selected="${param.tipoTerreno == 'forestal'}">Forestal</option>
+                                                <option value="urbano" th:selected="${param.tipoTerreno == 'urbano'}">Urbano</option>
+                                                <option value="rural" th:selected="${param.tipoTerreno == 'rural'}">Rural</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Topografía -->
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class='bx bx-shape-polygon text-amber-600'></i> Topografía
+                                            </label>
+                                            <select name="topografiaTerreno"
+                                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent bg-white">
+                                                <option value="">Todas</option>
+                                                <option value="plano" th:selected="${param.topografiaTerreno == 'plano'}">Plano</option>
+                                                <option value="ondulado" th:selected="${param.topografiaTerreno == 'ondulado'}">Ondulado</option>
+                                                <option value="inclinado" th:selected="${param.topografiaTerreno == 'inclinado'}">Inclinado</option>
+                                                <option value="montanoso" th:selected="${param.topografiaTerreno == 'montanoso'}">Montañoso</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Acceso -->
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class='bx bx-car text-amber-600'></i> Acceso
+                                            </label>
+                                            <select name="acceso"
+                                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent bg-white">
+                                                <option value="">Todos</option>
+                                                <option value="pavimentado" th:selected="${param.acceso == 'pavimentado'}">Pavimentado</option>
+                                                <option value="destapado" th:selected="${param.acceso == 'destapado'}">Destapado</option>
+                                                <option value="herradura" th:selected="${param.acceso == 'herradura'}">Herradura</option>
+                                                <option value="carreteable" th:selected="${param.acceso == 'carreteable'}">Carreteable</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Servicios -->
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class='bx bx-bulb text-amber-600'></i> Servicios
+                                            </label>
+                                            <input type="text"
+                                                   name="servicios"
+                                                   th:value="${param.servicios}"
+                                                   placeholder="Ej: Agua, Luz..."
+                                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+                                        </div>
+
+                                        <!-- Uso Actual -->
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class='bx bx-list-check text-amber-600'></i> Uso Actual
+                                            </label>
+                                            <input type="text"
+                                                   name="usoActual"
+                                                   th:value="${param.usoActual}"
+                                                   placeholder="Ej: Cultivo, Pastoreo..."
+                                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <!-- Filtros Específicos de Finca -->
+                                <div id="filtrosFinca" class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-5 border border-purple-100 hidden">
+                                    <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                                        <i class='bx bxs-home text-purple-600 text-xl'></i>
+                                        Filtros de Finca
+                                    </h3>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+                                        <!-- Espacio Total -->
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class='bx bx-expand text-purple-600'></i> Espacio Total (m²)
+                                            </label>
+                                            <input type="text"
+                                                   name="espacioTotal"
+                                                   th:value="${param.espacioTotal}"
+                                                   placeholder="Ej: 1000"
+                                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                                        </div>
+
+                                        <!-- Espacio Construido -->
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class='bx bx-building text-purple-600'></i> Espacio Construido (m²)
+                                            </label>
+                                            <input type="text"
+                                                   name="espacioConstruido"
+                                                   th:value="${param.espacioConstruido}"
+                                                   placeholder="Ej: 250"
+                                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                                        </div>
+
+                                        <!-- Estrato -->
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class='bx bx-layer text-purple-600'></i> Estrato
+                                            </label>
+                                            <select name="estratoFinca"
+                                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white">
+                                                <option value="">Todos</option>
+                                                <option value="1" th:selected="${param.estratoFinca == '1'}">Estrato 1</option>
+                                                <option value="2" th:selected="${param.estratoFinca == '2'}">Estrato 2</option>
+                                                <option value="3" th:selected="${param.estratoFinca == '3'}">Estrato 3</option>
+                                                <option value="4" th:selected="${param.estratoFinca == '4'}">Estrato 4</option>
+                                                <option value="5" th:selected="${param.estratoFinca == '5'}">Estrato 5</option>
+                                                <option value="6" th:selected="${param.estratoFinca == '6'}">Estrato 6</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Habitaciones -->
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class='bx bx-bed text-purple-600'></i> Habitaciones
+                                            </label>
+                                            <input type="number"
+                                                   name="numeroHabitaciones"
+                                                   th:value="${param.numeroHabitaciones}"
+                                                   placeholder="Ej: 3"
+                                                   min="0"
+                                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                                        </div>
+
+                                        <!-- Baños -->
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class='bx bx-bath text-purple-600'></i> Baños
+                                            </label>
+                                            <input type="number"
+                                                   name="numeroBanos"
+                                                   th:value="${param.numeroBanos}"
+                                                   placeholder="Ej: 2"
+                                                   min="0"
+                                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <!-- Botones de Acción -->
+                                <div class="flex flex-wrap gap-3 justify-between items-center pt-4 border-t border-gray-200">
+                                    <button type="button" onclick="limpiarFiltros()"
+                                            class="px-6 py-2.5 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all duration-300 font-semibold flex items-center gap-2">
+                                        <i class='bx bx-x-circle'></i>
+                                        Limpiar Filtros
+                                    </button>
+                                    <div class="flex gap-3">
+                                        <button type="button" onclick="toggleFiltrosAvanzados()"
+                                                class="px-6 py-2.5 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all duration-300 font-semibold flex items-center gap-2">
+                                            <i class='bx bx-chevron-up'></i>
+                                            Ocultar
+                                        </button>
+                                        <button type="submit"
+                                                class="gradient-bg text-white px-8 py-2.5 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold flex items-center gap-2 hover:-translate-y-0.5">
+                                            <i class='bx bx-filter-alt'></i>
+                                            Aplicar Filtros
+                                        </button>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
+
                     </form>
                 </div>
             </div>
@@ -296,8 +707,8 @@
     </div>
 </div>
 
+<!-- Agregando scripts para manejar los filtros dinámicos -->
 <script>
-
     function toggleUserDropdown() {
         const dropdown = document.getElementById('userDropdown');
         const arrow = document.getElementById('dropdownArrow');
@@ -360,6 +771,76 @@
     document.getElementById('loginModal')?.addEventListener('click', (e) => {
         if (e.target.id === 'loginModal') {
             cerrarModalInicio();
+        }
+    });
+
+    // Nuevas funciones para los filtros avanzados
+    function toggleFiltrosAvanzados() {
+        const filtrosAvanzados = document.getElementById('filtrosAvanzados');
+        const toggleIcon = document.getElementById('filtrosToggleIcon');
+
+        if (filtrosAvanzados.classList.contains('filter-collapsed')) {
+            filtrosAvanzados.classList.remove('filter-collapsed');
+            filtrosAvanzados.classList.add('filter-expanded');
+            toggleIcon.style.transform = 'rotate(180deg)';
+        } else {
+            filtrosAvanzados.classList.remove('filter-expanded');
+            filtrosAvanzados.classList.add('filter-collapsed');
+            toggleIcon.style.transform = 'rotate(0deg)';
+        }
+    }
+
+    function setTipoProducto(tipo) {
+        document.getElementById('tipoProductoInput').value = tipo;
+
+        // Ocultar todos los filtros específicos
+        document.getElementById('filtrosGanado').classList.add('hidden');
+        document.getElementById('filtrosTerreno').classList.add('hidden');
+        document.getElementById('filtrosFinca').classList.add('hidden');
+
+        // Mostrar filtros específicos según el tipo
+        if (tipo === 'ganado') {
+            document.getElementById('filtrosGanado').classList.remove('hidden');
+        } else if (tipo === 'terreno') {
+            document.getElementById('filtrosTerreno').classList.remove('hidden');
+        } else if (tipo === 'finca') {
+            document.getElementById('filtrosFinca').classList.remove('hidden');
+        }
+
+        // Submit del formulario
+        document.getElementById('filtrosForm').submit();
+    }
+
+    function limpiarFiltros() {
+        // Limpiar todos los inputs del formulario
+        const form = document.getElementById('filtrosForm');
+        const inputs = form.querySelectorAll('input[type="text"], input[type="number"], input[type="date"], select');
+
+        inputs.forEach(input => {
+            if (input.type === 'text' || input.type === 'number' || input.type === 'date') {
+                input.value = '';
+            } else if (input.tagName === 'SELECT') {
+                input.selectedIndex = 0;
+            }
+        });
+
+        // Reiniciar tipo de producto
+        document.getElementById('tipoProductoInput').value = '';
+
+        // Redirigir a la página sin parámetros
+        window.location.href = window.location.pathname;
+    }
+
+    // Inicializar filtros específicos basados en el tipo seleccionado al cargar la página
+    document.addEventListener('DOMContentLoaded', function() {
+        const tipoProducto = document.getElementById('tipoProductoInput').value;
+
+        if (tipoProducto === 'ganado') {
+            document.getElementById('filtrosGanado').classList.remove('hidden');
+        } else if (tipoProducto === 'terreno') {
+            document.getElementById('filtrosTerreno').classList.remove('hidden');
+        } else if (tipoProducto === 'finca') {
+            document.getElementById('filtrosFinca').classList.remove('hidden');
         }
     });
 </script>

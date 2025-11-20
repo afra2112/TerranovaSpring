@@ -167,7 +167,21 @@ public class ProductoImplement implements ProductoService {
     }
 
     @Override
-    public List<Producto> filtrarConSpecification(String texto, String tipo, String orden) {
+    public List<Producto> filtrarConSpecification(String texto,
+                                                  String tipo,
+                                                  String orden,
+                                                  String razaGanado,
+                                                  Integer pesoMin,
+                                                  Integer pesoMax,
+                                                  Integer edadMin,
+                                                  Integer edadMax,
+                                                  String generoGanado,
+                                                  Double tamanoTerrenoMin,
+                                                  String tipoTerreno,
+                                                  Integer estratoFinca,
+                                                  Integer habitacionesMin,
+                                                  Integer banosMin
+    ) {
         Specification<Producto> spec = (root, query, cb) -> cb.conjunction();
 
         if (texto != null && !texto.isEmpty()) {
@@ -176,6 +190,14 @@ public class ProductoImplement implements ProductoService {
         if (tipo != null && !tipo.isEmpty()) {
             spec = spec.and(ProductoSpecification.filtrarPorTipo(tipo));
         }
+
+        if("ganado".equalsIgnoreCase(tipo)){
+            if (razaGanado != null) spec = spec.and(ProductoSpecification.filtrarPorRaza(razaGanado));
+            if (pesoMin != null || pesoMax != null) spec = spec.and(ProductoSpecification.filtrarPorPeso(pesoMin, pesoMax));
+            if (edadMin != null || edadMax != null) spec = spec.and(ProductoSpecification.filtrarPorEdad(edadMin, edadMax));
+            if (generoGanado != null) spec = spec.and(ProductoSpecification.filtrarPorGenero(generoGanado));
+        }
+
 
         if (orden == null) {
             orden = "recientes";

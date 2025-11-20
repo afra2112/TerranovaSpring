@@ -64,10 +64,52 @@ public class PublicController {
             Authentication authentication,
             @RequestParam(required = false) String busquedaTexto,
             @RequestParam(required = false) String tipo,
-            @RequestParam(required = false) String orden){
+            @RequestParam(required = false) String orden,
+            @RequestParam(required = false) String razaGanado,
+            @RequestParam(required = false) Integer pesoMin,
+            @RequestParam(required = false) Integer pesoMax,
+            @RequestParam(required = false) Integer edadMin,
+            @RequestParam(required = false) Integer edadMax,
+            @RequestParam(required = false) String generoGanado,
+            @RequestParam(required = false) Double tamanoTerrenoMin,
+            @RequestParam(required = false) String tipoTerreno,
+            @RequestParam(required = false) Integer estratoFinca,
+            @RequestParam(required = false) Integer habitacionesMin,
+            @RequestParam(required = false) Integer banosMin
 
+    )
+    {
         Usuario usuario;
-        List<Producto> productos = productoService.filtrarConSpecification(busquedaTexto, tipo, orden);
+        List<Producto> productos = productoService.filtrarConSpecification(
+                busquedaTexto,
+                tipo,
+                orden,
+                razaGanado,
+                pesoMin,
+                pesoMax,
+                edadMin,
+                edadMax,
+                generoGanado,
+                tamanoTerrenoMin,
+                tipoTerreno,
+                estratoFinca,
+                habitacionesMin,
+                banosMin);
+
+        System.out.println("aquiiiii--------------"+busquedaTexto+
+                tipo+
+                orden+
+                razaGanado+
+                pesoMin+
+                pesoMax+
+                edadMin+
+                edadMax+
+                generoGanado+
+                tamanoTerrenoMin+
+                tipoTerreno+
+                estratoFinca+
+                habitacionesMin+
+                banosMin+"------------------------------------");
 
         if (authentication != null){
             usuario = usuarioService.findByEmail(authentication.getName());
