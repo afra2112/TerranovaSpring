@@ -47,6 +47,35 @@
             0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
             50% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
         }
+
+        .bg-emerald-custom {
+            background-color: #059669;
+        }
+
+        .bg-emerald-custom-light {
+            background-color: #D1FAE5;
+        }
+
+        .border-emerald-custom {
+            border-color: #10B981;
+        }
+
+        .text-emerald-custom {
+            color: #047857;
+        }
+
+        @keyframes pulse-slow {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.6;
+            }
+        }
+
+        .animate-pulse-slow {
+            animation: pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -382,7 +411,7 @@
                     </div>
 
                     <!-- Información del pago total -->
-                    <div th:if="${venta.pasoActual >= 4}" class="bg-white rounded-2xl shadow-lg p-6">
+                    <div th:if="${venta.pasoActual == 4}" class="bg-white rounded-2xl shadow-lg p-6">
                         <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
                             <i class='bx bx-dollar-circle text-emerald-600'></i>
                             Información de Pago
@@ -430,58 +459,6 @@
                                         </form>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Información de logística y transporte -->
-                    <div th:if="${venta.pasoActual >= 5}" class="bg-white rounded-2xl shadow-lg p-6">
-                        <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                            <i class='bx bx-truck text-emerald-600'></i>
-                            Logística y Entrega
-                        </h3>
-
-                        <div class="space-y-4">
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <p class="text-sm font-semibold text-gray-700 mb-1">Fecha de Transporte</p>
-                                    <p class="text-gray-900" th:text="${#temporals.format(venta.fechaTransporte, 'dd/MM/yyyy')}">28/01/2025</p>
-                                </div>
-                                <div>
-                                    <p class="text-sm font-semibold text-gray-700 mb-1">Hora Estimada</p>
-                                    <p class="text-gray-900" th:text="${venta.horaTransporte}">10:00 AM</p>
-                                </div>
-                            </div>
-
-                            <div>
-                                <p class="text-sm font-semibold text-gray-700 mb-1">Punto de Entrega</p>
-                                <p class="text-gray-900 leading-relaxed" th:text="${venta.puntoEntrega}">Dirección de entrega</p>
-                            </div>
-
-                            <div>
-                                <p class="text-sm font-semibold text-gray-700 mb-1">Responsable del Transporte</p>
-                                <span class="inline-flex items-center gap-2 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold">
-                                    <i class='bx bx-user-check'></i>
-                                    <span th:text="${venta.responsableTransporte == 'VENDEDOR' ? 'Vendedor' : (venta.responsableTransporte == 'COMPRADOR' ? 'Comprador (Tú)' : 'Empresa Tercera')}">Vendedor</span>
-                                </span>
-                            </div>
-
-                            <div th:if="${venta.empresaTransporte != null}">
-                                <p class="text-sm font-semibold text-gray-700 mb-1">Empresa de Transporte</p>
-                                <p class="text-gray-900" th:text="${venta.empresaTransporte}">Transportes S.A.S</p>
-                            </div>
-
-                            <div th:if="${venta.telefonoTransporte != null}">
-                                <p class="text-sm font-semibold text-gray-700 mb-1">Teléfono de Contacto</p>
-                                <p class="text-gray-900 flex items-center gap-2">
-                                    <i class='bx bx-phone text-emerald-600'></i>
-                                    <span th:text="${venta.telefonoTransporte}">+57 300 123 4567</span>
-                                </p>
-                            </div>
-
-                            <div th:if="${venta.observacionesEntrega != null}" class="bg-gray-50 rounded-lg p-4">
-                                <p class="text-sm font-semibold text-gray-700 mb-1">Observaciones</p>
-                                <p class="text-gray-800 text-sm leading-relaxed" th:text="${venta.observacionesEntrega}">Observaciones de entrega</p>
                             </div>
                         </div>
                     </div>

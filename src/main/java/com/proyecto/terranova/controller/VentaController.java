@@ -1,12 +1,14 @@
 package com.proyecto.terranova.controller;
 
 import com.proyecto.terranova.config.enums.EstadoAsistenciaEnum;
+import com.proyecto.terranova.config.enums.NombreComprobanteEnum;
 import com.proyecto.terranova.config.enums.RolEnum;
 import com.proyecto.terranova.entity.*;
 import com.proyecto.terranova.repository.VentaFincaRepository;
 import com.proyecto.terranova.repository.VentaGanadoRepository;
 import com.proyecto.terranova.repository.VentaTerrenoRepository;
 import com.proyecto.terranova.service.AsistenciaService;
+import com.proyecto.terranova.service.TransporteService;
 import com.proyecto.terranova.service.UsuarioService;
 import com.proyecto.terranova.service.VentaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +16,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/vendedor/ventas")
@@ -40,6 +41,9 @@ public class VentaController {
 
     @Autowired
     UsuarioService usuarioService;
+
+    @Autowired
+    TransporteService transporteService;
 
     @ModelAttribute("esVendedor")
     public boolean esVendedor(Authentication authentication){
@@ -74,10 +78,27 @@ public class VentaController {
         Venta ventaGeneral = ventaService.findById(id);
         String tipoProducto = ventaGeneral.getProducto().getClass().getSimpleName().toUpperCase();
 
+        Transporte transporte = transporteService.obtenerPorVenta(ventaGeneral);
+        model.addAttribute("transporte", transporte);
+
         switch (tipoProducto){
             case "GANADO" -> {
                 VentaGanado detalle = ventaGanadoRepository.findByVenta(ventaGeneral);
+
+                // Cargar los comprobantes existentes
+                Map<String, Comprobante> comprobantes = new HashMap<>();
+                Map<String, InfoComprobante> infosComprobantes = new HashMap<>();
+
+                for (Map.Entry<NombreComprobanteEnum, InfoComprobante> entry : detalle.getComprobantesInfo().entrySet()) {
+                    infosComprobantes.put(entry.getKey().name(), entry.getValue());
+                    if (entry.getValue().getComprobante() != null) {
+                        comprobantes.put(entry.getKey().name(), entry.getValue().getComprobante());
+                    }
+                }
+
                 model.addAttribute("venta", detalle);
+                model.addAttribute("comprobantes", comprobantes);
+                model.addAttribute("infosComprobantes", infosComprobantes);
                 model.addAttribute("fragment", "fragments/vendedor/ventaGanadoVendedor");
             }
             case "TERRENO" -> {

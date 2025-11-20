@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface VentaService {
-    Venta actualizarDatosVenta(Venta venta, List<Long> idsComprobantesEliminados, List<Long> idsGastosEliminados, List<MultipartFile> comprobantes) throws IOException;
     Venta actualizarEstado(Venta venta, EstadoVentaEnum estado);
     Venta save(Venta venta);
     VentaDTO update(Long id, VentaDTO dto); // Actualizar

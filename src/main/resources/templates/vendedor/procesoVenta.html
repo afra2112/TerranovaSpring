@@ -232,6 +232,35 @@
             color: #10b981;
             font-size: 1.5rem;
         }
+
+        .bg-emerald-custom {
+            background-color: #059669;
+        }
+
+        .bg-emerald-custom-light {
+            background-color: #D1FAE5;
+        }
+
+        .border-emerald-custom {
+            border-color: #10B981;
+        }
+
+        .text-emerald-custom {
+            color: #047857;
+        }
+
+        @keyframes pulse-slow {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.6;
+            }
+        }
+
+        .animate-pulse-slow {
+            animation: pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
     </style>
 </head>
 <body class="bg-gray-50">

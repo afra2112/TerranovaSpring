@@ -16,9 +16,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 
 @Controller
@@ -65,7 +68,10 @@ public class CompradorController {
     VentaFincaRepository ventaFincaRepository;
 
     @Autowired
-    private AsistenciaRepository asistenciaRepository;
+    AsistenciaRepository asistenciaRepository;
+
+    @Autowired
+    TransporteService transporteService;
 
     @ModelAttribute("usuario")
     public Usuario usuario(Authentication authentication){
@@ -177,6 +183,9 @@ public class CompradorController {
         Venta ventaGeneral = ventaService.findById(id);
         String tipoProducto = ventaGeneral.getProducto().getClass().getSimpleName().toUpperCase();
 
+        Transporte transporte = transporteService.obtenerPorVenta(ventaGeneral);
+        model.addAttribute("transporte", transporte);
+
         switch (tipoProducto){
             case "GANADO" -> {
                 VentaGanado detalle = ventaGanadoRepository.findByVenta(ventaGeneral);
@@ -195,14 +204,30 @@ public class CompradorController {
             }
             case "TERRENO" -> {
                 VentaTerreno detalle = ventaTerrenoRepository.findByVenta(ventaGeneral);
-                // Similar para terreno
+
+                Map<String, Comprobante> comprobantes = new HashMap<>();
+                for (Map.Entry<NombreComprobanteEnum, InfoComprobante> entry : detalle.getComprobantesInfo().entrySet()) {
+                    if (entry.getValue().getComprobante() != null) {
+                        comprobantes.put(entry.getKey().name(), entry.getValue().getComprobante());
+                    }
+                }
+
                 model.addAttribute("ventaDetalle", detalle);
+                model.addAttribute("comprobantes", comprobantes);
                 model.addAttribute("fragment", "fragments/comprador/compraTerreno");
             }
             case "FINCA" -> {
                 VentaFinca detalle = ventaFincaRepository.findByVenta(ventaGeneral);
-                // Similar para finca
+
+                Map<String, Comprobante> comprobantes = new HashMap<>();
+                for (Map.Entry<NombreComprobanteEnum, InfoComprobante> entry : detalle.getComprobantesInfo().entrySet()) {
+                    if (entry.getValue().getComprobante() != null) {
+                        comprobantes.put(entry.getKey().name(), entry.getValue().getComprobante());
+                    }
+                }
+
                 model.addAttribute("ventaDetalle", detalle);
+                model.addAttribute("comprobantes", comprobantes);
                 model.addAttribute("fragment", "fragments/comprador/compraFinca");
             }
         }

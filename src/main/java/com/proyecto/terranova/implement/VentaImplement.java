@@ -62,50 +62,6 @@ public class VentaImplement implements VentaService {
     private InfoComprobanteRepository infoComprobanteRepository;
 
     @Override
-    public Venta actualizarDatosVenta(Venta venta, List<Long> idsComprobantesEliminados, List<Long> idsGastosEliminados, List<MultipartFile> comprobantes) throws IOException {
-        Venta ventaAcual = repository.findById(venta.getIdVenta()).orElseThrow();
-        ventaAcual.setFechaInicioVenta(venta.getFechaInicioVenta());
-        ventaAcual.setMetodoPago(venta.getMetodoPago());
-        ventaAcual.setNota(venta.getNota());
-
-        if(idsGastosEliminados != null){
-            ventaAcual.getListaGastos().removeIf(gastoVenta -> idsGastosEliminados.contains(gastoVenta.getIdGasto()));
-        }
-
-        if(venta.getListaGastos() != null){
-            for (GastoVenta gasto : venta.getListaGastos()){
-                gasto.setVenta(ventaAcual);
-                ventaAcual.getListaGastos().add(gasto);
-            }
-        }
-
-//        if(idsComprobantesEliminados != null){
-//            ventaAcual.getListaComprobantes().removeIf(comprobante -> idsComprobantesEliminados.contains(comprobante.getIdComprobante()));
-//        }
-//
-//        if(venta.getListaComprobantes() != null && comprobantes != null){
-//            for (MultipartFile file : comprobantes){
-//                String nombreArchivo = UUID.randomUUID() + "_" + file.getOriginalFilename();
-//                Path rutaArchivo = Paths.get("archivos").resolve(nombreArchivo);
-//                Files.write(rutaArchivo, file.getBytes());
-//
-//                Comprobante comprobante = new Comprobante();
-//                comprobante.setFechaSubida(LocalDateTime.now());
-//                //comprobante.setVenta(ventaAcual);
-//                //comprobante.setNombreComprobante(file.getOriginalFilename());
-//                comprobante.setRutaArchivo(nombreArchivo);
-//                ventaAcual.getListaComprobantes().add(comprobante);
-//            }
-//        }
-
-        ventaAcual.setGananciaNeta(ventaAcual.getProducto().getPrecioProducto() - ventaAcual.getTotalGastos());
-
-        repository.save(ventaAcual);
-
-        return ventaAcual;
-    }
-
-    @Override
     public Venta actualizarEstado(Venta venta, EstadoVentaEnum estado) {
         Venta ventaActualizada = repository.findById(venta.getIdVenta()).orElseThrow();
         ventaActualizada.setEstado(estado);
@@ -264,9 +220,6 @@ public class VentaImplement implements VentaService {
         repository.save(venta);
     }
 
-    @Value("${comprobantes.directorio}")
-    private String directorioComprobantes;
-
     @Override
     public void actualizarVentaPaso3Ganado(
             Long idVenta,
@@ -288,7 +241,7 @@ public class VentaImplement implements VentaService {
             actualizarObservaciones(ventaDetalle, observacionesSanitarias);
         }
 
-        //documentos obligatorios
+        //aqudocumentos obligatorios
         if (gsmi != null && !gsmi.isEmpty()) {
             procesarComprobante(ventaDetalle, gsmi, NombreComprobanteEnum.GSMI);
         }
@@ -330,7 +283,6 @@ public class VentaImplement implements VentaService {
         };
     }
 
-    // Metodo auxiliar para actualizar observaciones
     private void actualizarObservaciones(Object ventaDetalle, String observaciones) {
         if (ventaDetalle instanceof VentaGanado ventaGanado) {
             ventaGanado.setObservacionesSanitarias(observaciones);
@@ -338,39 +290,63 @@ public class VentaImplement implements VentaService {
         }
     }
 
-    // Metodo auxiliar para procesar y guardar comprobantes
     private void procesarComprobante(Object ventaDetalle, MultipartFile archivo, NombreComprobanteEnum nombreComprobante) throws IOException {
 
-        // Guardar archivo físicamente
+        // primero guardo el archivo en la carpeta uploads
         String rutaArchivo = guardarArchivo(archivo);
 
-        // Crear o actualizar InfoComprobante
+        // despues agarro el infocomprobante
         InfoComprobante infoComprobante = obtenerOCrearInfoComprobante(ventaDetalle, nombreComprobante);
 
-        // Crear el comprobante
-        Comprobante comprobante = new Comprobante();
-        comprobante.setRutaArchivo(rutaArchivo);
-        comprobante.setFechaSubida(LocalDateTime.now());
-        comprobante.setInfoComprobante(infoComprobante);
+        // aqui valido si existe un comprobante
+        Comprobante comprobanteExistente = infoComprobante.getComprobante();
 
-        // Guardar el comprobante
-        comprobanteRepository.save(comprobante);
+        if (comprobanteExistente != null) {
+            // Eliminar el archivo anterior del sistema de archivos
+            eliminarArchivo(comprobanteExistente.getRutaArchivo());
+
+            // Actualizar el comprobante existente
+            comprobanteExistente.setRutaArchivo(rutaArchivo);
+            comprobanteExistente.setFechaSubida(LocalDateTime.now());
+            comprobanteRepository.save(comprobanteExistente);
+        } else {
+            Comprobante nuevoComprobante = new Comprobante();
+            nuevoComprobante.setRutaArchivo(rutaArchivo);
+            nuevoComprobante.setFechaSubida(LocalDateTime.now());
+            nuevoComprobante.setInfoComprobante(infoComprobante);
+
+            comprobanteRepository.save(nuevoComprobante);
+
+            infoComprobante.setComprobante(nuevoComprobante);
+            infoComprobanteRepository.save(infoComprobante);
+        }
     }
 
-    // Metodo para guardar el archivo físicamente
+    private void eliminarArchivo(String nombreArchivo) {
+        try {
+            Path rutaArchivo = Paths.get("uploads/documentos/").resolve(nombreArchivo);
+            Files.deleteIfExists(rutaArchivo);
+        } catch (IOException e) {
+            System.out.println("Error al eliminar archivo: " + e.getMessage());
+        }
+    }
+
     private String guardarArchivo(MultipartFile archivo) throws IOException {
-        Path directorio = Paths.get(directorioComprobantes);
-        Files.createDirectories(directorio);
+        String directorioDocumentos = "uploads/documentos/";
+        Path ruta = Paths.get(directorioDocumentos);
+
+        if (!Files.exists(ruta)) {
+            Files.createDirectories(ruta);
+        }
 
         String nombreArchivo = UUID.randomUUID().toString() + "_" + archivo.getOriginalFilename();
-        Path rutaCompleta = Paths.get(directorioComprobantes).resolve(nombreArchivo);
+        Path rutaCompleta = ruta.resolve(nombreArchivo);
 
         Files.copy(archivo.getInputStream(), rutaCompleta, StandardCopyOption.REPLACE_EXISTING);
 
         return nombreArchivo;
     }
 
-    // Metodo para obtener o crear InfoComprobante
     private InfoComprobante obtenerOCrearInfoComprobante(Object ventaDetalle, NombreComprobanteEnum nombreComprobante) {
 
         Map<NombreComprobanteEnum, InfoComprobante> comprobantesInfo = null;
@@ -383,6 +359,23 @@ public class VentaImplement implements VentaService {
             comprobantesInfo = ventaFinca.getComprobantesInfo();
         }
 
-        return comprobantesInfo != null ? comprobantesInfo.get(nombreComprobante) : null;
+        InfoComprobante infoComprobante = comprobantesInfo != null ? comprobantesInfo.get(nombreComprobante) : null;
+
+        if (infoComprobante == null) {
+            infoComprobante = new InfoComprobante();
+            infoComprobante.setNombreComprobante(nombreComprobante);
+
+            if (ventaDetalle instanceof VentaGanado ventaGanado) {
+                infoComprobante.setVentaGanado(ventaGanado);
+            } else if (ventaDetalle instanceof VentaTerreno ventaTerreno) {
+                infoComprobante.setVentaTerreno(ventaTerreno);
+            } else if (ventaDetalle instanceof VentaFinca ventaFinca) {
+                infoComprobante.setVentaFinca(ventaFinca);
+            }
+
+            infoComprobante = infoComprobanteRepository.save(infoComprobante);
+        }
+
+        return infoComprobante;
     }
 }

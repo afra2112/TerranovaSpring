@@ -7,7 +7,6 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Entity
@@ -23,17 +22,7 @@ public class VentaGanado {
     @JoinColumn(name = "id_venta")
     private Venta venta;
 
-    private String condicionesEntrega;
-
     private String observacionesSanitarias;
-
-    private LocalDate fechaTransporte;
-
-    private LocalTime horaTransporte;
-
-    private String puntoEntrega;
-
-    private String empresaTransporte;
 
     private Long precioNegociado;
 

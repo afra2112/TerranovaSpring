@@ -145,26 +145,6 @@ public class VendedorController {
         return "vendedor/ventas";
     }
 
-    @PostMapping("/ventas/actualizar-datos")
-    @ResponseBody
-    public String actualizarDatos(
-            @ModelAttribute Venta venta,
-            @RequestParam(required = false) List<Long> idsGastosEliminados,
-            @RequestParam(required = false) List<Long> idsComprobantesEliminados,
-            @RequestParam(required = false) List<MultipartFile> comprobantes,
-            Authentication authentication
-    ) {
-        try {
-            Venta ventaActualizada = ventaService.actualizarDatosVenta(venta, idsComprobantesEliminados, idsGastosEliminados, comprobantes);
-
-            notificacionService.notificacionVentaModificada(ventaActualizada);
-
-            return "ok";
-        } catch (Exception e) {
-            return "error: " + e.getMessage();
-        }
-    }
-
     @PostMapping("/venta/enviar-peticion-venta")
     public String enviarPeticionVenta(@ModelAttribute Venta venta, @RequestParam(name = "comprobantes") int comprobantes, RedirectAttributes redirectAttributes, Authentication authentication) throws IOException {
         if(venta.getFechaInicioVenta() == null || (venta.getMetodoPago() == null || venta.getMetodoPago().isBlank()) || comprobantes == 0){

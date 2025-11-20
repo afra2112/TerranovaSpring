@@ -7,10 +7,26 @@
             <div th:if="${tipoProducto == 'GANADO'}">
 
                 <!-- PASO 3: Documentación Sanitaria MEJORADO -->
+                <!-- PASO 3: Documentación Sanitaria MEJORADO -->
                 <div th:if="${venta.venta.pasoActual == 3}">
                     <div class="mb-6">
                         <h2 class="text-3xl font-bold text-gray-900 mb-2">Paso 3: Documentación Sanitaria y Trazabilidad</h2>
                         <p class="text-gray-600">Sube todos los documentos obligatorios para garantizar la trazabilidad completa del ganado</p>
+                    </div>
+
+                    <!-- Alertas de mensajes flash -->
+                    <div th:if="${success}" class="bg-green-50 border-2 border-green-300 rounded-xl p-4 mb-6">
+                        <div class="flex items-center gap-3">
+                            <i class='bx bx-check-circle text-2xl text-green-600'></i>
+                            <p class="text-green-800 font-semibold" th:text="${success}"></p>
+                        </div>
+                    </div>
+
+                    <div th:if="${error}" class="bg-red-50 border-2 border-red-300 rounded-xl p-4 mb-6">
+                        <div class="flex items-center gap-3">
+                            <i class='bx bx-error text-2xl text-red-600'></i>
+                            <p class="text-red-800 font-semibold" th:text="${error}"></p>
+                        </div>
                     </div>
 
                     <!-- Información Importante sobre Documentación -->
@@ -33,7 +49,7 @@
                         <input type="hidden" name="idVenta" th:value="${venta.venta.idVenta}">
 
                         <!-- SECCIÓN 1: DOCUMENTOS OBLIGATORIOS -->
-                        <div class="bg-white border-2 border-red-200 rounded-2xl p-6">
+                        <div th:classappend="${comprobantes['GSMI'] == null or comprobantes['FACTURA_PROPIEDAD'] == null or comprobantes['CERTIFICADO_SANITARIO'] == null} ? 'border-red-200' : 'border-green-200'" class="bg-white border-2 rounded-2xl p-6">
                             <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
                                 <i class='bx bx-error text-red-600'></i>
                                 Documentos Obligatorios
@@ -42,74 +58,140 @@
 
                             <div class="space-y-5">
                                 <!-- 1. GSMI / Guía de Movilización -->
-                                <div class="border-2 rounded-xl p-5 hover:border-red-400 transition bg-red-50/30">
+                                <div class="border-2 rounded-xl p-5 transition bg-red-50/30"
+                                     th:classappend="${comprobantes['GSMI'] != null} ? 'border-green-300' : 'border-red-300 hover:border-red-400'">
                                     <label class="block">
                                         <div class="flex items-start gap-3 mb-3">
-                                            <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                                <i class='bx bx-file text-xl text-red-600'></i>
+                                            <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                                                 th:classappend="${comprobantes['GSMI'] != null} ? 'bg-green-100' : 'bg-red-100'">
+                                                <i class='bx text-xl'
+                                                   th:classappend="${comprobantes['GSMI'] != null} ? 'bx-check text-green-600' : 'bx-file text-red-600'"></i>
                                             </div>
                                             <div class="flex-1">
-                                                <span class="text-sm font-bold text-gray-900 flex items-center gap-2">
-                                                    GSMI - Guía Sanitaria de Movilización Interna
-                                                    <span class="text-xs bg-red-600 text-white px-2 py-0.5 rounded-full">OBLIGATORIO</span>
-                                                </span>
+                                <span class="text-sm font-bold text-gray-900 flex items-center gap-2">
+                                    GSMI - Guía Sanitaria de Movilización Interna
+                                    <span class="text-xs bg-red-600 text-white px-2 py-0.5 rounded-full">OBLIGATORIO</span>
+                                    <span th:if="${comprobantes['GSMI'] != null}" class="text-xs bg-green-600 text-white px-2 py-0.5 rounded-full">✓ SUBIDO</span>
+                                </span>
                                                 <p class="text-xs text-gray-600 mt-1 leading-relaxed">
-                                                    Documento expedido por el ICA que autoriza el transporte del ganado. Debe estar vigente y contener el número de animales, destino y fecha de movilización.
+                                                    Documento expedido por el ICA que autoriza el transporte del ganado.
                                                 </p>
+
+                                                <!-- Mostrar archivo actual si existe -->
+                                                <div th:if="${comprobantes['GSMI'] != null}" class="mt-3 bg-green-50 border border-green-200 rounded-lg p-3">
+                                                    <p class="text-xs text-green-800 mb-2 flex items-center gap-2">
+                                                        <i class='bx bx-file'></i>
+                                                        <span>Subido el: <span th:text="${#temporals.format(comprobantes['GSMI'].fechaSubida, 'dd/MM/yyyy HH:mm')}"></span></span>
+                                                    </p>
+                                                    <a th:href="@{'/documentos/' + ${comprobantes['GSMI'].rutaArchivo}}" target="_blank"
+                                                       class="text-xs text-green-700 hover:text-green-900 underline flex items-center gap-1">
+                                                        <i class='bx bx-download'></i> Ver documento actual
+                                                    </a>
+                                                </div>
                                             </div>
                                         </div>
-                                        <input type="file" name="gsmi" accept=".pdf,.jpg,.jpeg,.png" required
-                                               class="block w-full text-sm text-gray-600 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-red-100 file:text-red-700 hover:file:bg-red-200 cursor-pointer transition">
+                                        <input th:classappend="${comprobantes['GSMI'] == null } ? 'file:bg-red-100 file:text-red-700 hover:file:bg-red-200' : 'file:bg-green-100 file:text-green-700 hover:file:bg-green-200'" type="file" name="gsmi" accept=".pdf,.jpg,.jpeg,.png"
+                                               class="block w-full text-sm text-gray-600 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-semibold cursor-pointer transition">
+                                        <p class="text-xs text-gray-500 mt-2" th:if="${comprobantes['GSMI'] == null}">
+                                            * Documento requerido para continuar al siguiente paso
+                                        </p>
+                                        <p class="text-xs text-green-600 mt-2" th:if="${comprobantes['GSMI'] != null}">
+                                            Puedes subir un nuevo archivo para reemplazar el actual
+                                        </p>
                                     </label>
                                 </div>
 
                                 <!-- 2. Certificados Sanitarios -->
-                                <div class="border-2 rounded-xl p-5 hover:border-red-400 transition bg-red-50/30">
+                                <div class="border-2 rounded-xl p-5 transition bg-red-50/30"
+                                     th:classappend="${comprobantes['CERTIFICADO_SANITARIO'] != null} ? 'border-green-300' : 'border-red-300 hover:border-red-400'">
                                     <label class="block">
                                         <div class="flex items-start gap-3 mb-3">
-                                            <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                                <i class='bx bx-shield-plus text-xl text-red-600'></i>
+                                            <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                                                 th:classappend="${comprobantes['CERTIFICADO_SANITARIO'] != null} ? 'bg-green-100' : 'bg-red-100'">
+                                                <i class='bx text-xl'
+                                                   th:classappend="${comprobantes['CERTIFICADO_SANITARIO'] != null} ? 'bx-check text-green-600' : 'bx-shield-plus text-red-600'"></i>
                                             </div>
                                             <div class="flex-1">
-                                                <span class="text-sm font-bold text-gray-900 flex items-center gap-2">
-                                                    Certificados Sanitarios y Vacunación
-                                                    <span class="text-xs bg-red-600 text-white px-2 py-0.5 rounded-full">OBLIGATORIO</span>
-                                                </span>
+                                <span class="text-sm font-bold text-gray-900 flex items-center gap-2">
+                                    Certificados Sanitarios y Vacunación
+                                    <span class="text-xs bg-red-600 text-white px-2 py-0.5 rounded-full">OBLIGATORIO</span>
+                                    <span th:if="${comprobantes['CERTIFICADO_SANITARIO'] != null}" class="text-xs bg-green-600 text-white px-2 py-0.5 rounded-full">✓ SUBIDO</span>
+                                </span>
                                                 <p class="text-xs text-gray-600 mt-1 leading-relaxed">
-                                                    Libreta de salud del ganado con vacunas actualizadas (Fiebre Aftosa, Brucelosis). Debe incluir último ciclo de vacunación certificado por ICA.
+                                                    Libreta de salud del ganado con vacunas actualizadas (Fiebre Aftosa, Brucelosis).
                                                 </p>
+
+                                                <!-- Mostrar archivo actual si existe -->
+                                                <div th:if="${comprobantes['CERTIFICADO_SANITARIO'] != null}" class="mt-3 bg-green-50 border border-green-200 rounded-lg p-3">
+                                                    <p class="text-xs text-green-800 mb-2 flex items-center gap-2">
+                                                        <i class='bx bx-file'></i>
+                                                        <span>Subido el: <span th:text="${#temporals.format(comprobantes['CERTIFICADO_SANITARIO'].fechaSubida, 'dd/MM/yyyy HH:mm')}"></span></span>
+                                                    </p>
+                                                    <a th:href="@{'/documentos/' + ${comprobantes['CERTIFICADO_SANITARIO'].rutaArchivo}}" target="_blank"
+                                                       class="text-xs text-green-700 hover:text-green-900 underline flex items-center gap-1">
+                                                        <i class='bx bx-download'></i> Ver documento actual
+                                                    </a>
+                                                </div>
                                             </div>
                                         </div>
-                                        <input type="file" name="certificadosSanitarios" accept=".pdf,.jpg,.jpeg,.png" multiple required
-                                               class="block w-full text-sm text-gray-600 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-red-100 file:text-red-700 hover:file:bg-red-200 cursor-pointer transition">
+                                        <input th:classappend="${comprobantes['CERTIFICADO_SANITARIO'] == null } ? 'file:bg-red-100 file:text-red-700 hover:file:bg-red-200' : 'file:bg-green-100 file:text-green-700 hover:file:bg-green-200'" type="file" name="certificadoSanitario" accept=".pdf,.jpg,.jpeg,.png"
+                                               class="block w-full text-sm text-gray-600 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-semibold cursor-pointer transition">
+                                        <p class="text-xs text-gray-500 mt-2" th:if="${comprobantes['CERTIFICADO_SANITARIO'] == null}">
+                                            * Documento requerido para continuar al siguiente paso
+                                        </p>
+                                        <p class="text-xs text-green-600 mt-2" th:if="${comprobantes['CERTIFICADO_SANITARIO'] != null}">
+                                            Puedes subir un nuevo archivo para reemplazar el actual
+                                        </p>
                                     </label>
                                 </div>
 
-                                <!-- 4. Factura o Contrato de Compraventa -->
-                                <div class="border-2 rounded-xl p-5 hover:border-red-400 transition bg-red-50/30">
+                                <!-- 3. Factura o Contrato de Compraventa -->
+                                <div class="border-2 rounded-xl p-5 transition bg-red-50/30"
+                                     th:classappend="${comprobantes['FACTURA_PROPIEDAD'] != null} ? 'border-green-300' : 'border-red-300 hover:border-red-400'">
                                     <label class="block">
                                         <div class="flex items-start gap-3 mb-3">
-                                            <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                                <i class='bx bx-receipt text-xl text-red-600'></i>
+                                            <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                                                 th:classappend="${comprobantes['FACTURA_PROPIEDAD'] != null} ? 'bg-green-100' : 'bg-red-100'">
+                                                <i class='bx text-xl'
+                                                   th:classappend="${comprobantes['FACTURA_PROPIEDAD'] != null} ? 'bx-check text-green-600' : 'bx-receipt text-red-600'"></i>
                                             </div>
                                             <div class="flex-1">
-                                                <span class="text-sm font-bold text-gray-900 flex items-center gap-2">
-                                                    Factura o Documento de Propiedad
-                                                    <span class="text-xs bg-red-600 text-white px-2 py-0.5 rounded-full">OBLIGATORIO</span>
-                                                </span>
+                                <span class="text-sm font-bold text-gray-900 flex items-center gap-2">
+                                    Factura o Documento de Propiedad
+                                    <span class="text-xs bg-red-600 text-white px-2 py-0.5 rounded-full">OBLIGATORIO</span>
+                                    <span th:if="${comprobantes['FACTURA_PROPIEDAD'] != null}" class="text-xs bg-green-600 text-white px-2 py-0.5 rounded-full">✓ SUBIDO</span>
+                                </span>
                                                 <p class="text-xs text-gray-600 mt-1 leading-relaxed">
-                                                    Documento que demuestra que eres el propietario legal del ganado: factura de compra, contrato de transferencia o declaración de propiedad firmada.
+                                                    Documento que demuestra que eres el propietario legal del ganado.
                                                 </p>
+
+                                                <!-- Mostrar archivo actual si existe -->
+                                                <div th:if="${comprobantes['FACTURA_PROPIEDAD'] != null}" class="mt-3 bg-green-50 border border-green-200 rounded-lg p-3">
+                                                    <p class="text-xs text-green-800 mb-2 flex items-center gap-2">
+                                                        <i class='bx bx-file'></i>
+                                                        <span>Subido el: <span th:text="${#temporals.format(comprobantes['FACTURA_PROPIEDAD'].fechaSubida, 'dd/MM/yyyy HH:mm')}"></span></span>
+                                                    </p>
+                                                    <a th:href="@{'/documentos/' + ${comprobantes['FACTURA_PROPIEDAD'].rutaArchivo}}" target="_blank"
+                                                       class="text-xs text-green-700 hover:text-green-900 underline flex items-center gap-1">
+                                                        <i class='bx bx-download'></i> Ver documento actual
+                                                    </a>
+                                                </div>
                                             </div>
                                         </div>
-                                        <input type="file" name="facturaPropiedad" accept=".pdf,.jpg,.jpeg,.png" required
-                                               class="block w-full text-sm text-gray-600 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-red-100 file:text-red-700 hover:file:bg-red-200 cursor-pointer transition">
+                                        <input th:classappend="${comprobantes['FACTURA_PROPIEDAD'] == null } ? 'file:bg-red-100 file:text-red-700 hover:file:bg-red-200' : 'file:bg-green-100 file:text-green-700 hover:file:bg-green-200'" type="file" name="facturaPropiedad" accept=".pdf,.jpg,.jpeg,.png"
+                                               class="block w-full text-sm text-gray-600 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-semibold cursor-pointer transition">
+                                        <p class="text-xs text-gray-500 mt-2" th:if="${comprobantes['FACTURA_PROPIEDAD'] == null}">
+                                            * Documento requerido para continuar al siguiente paso
+                                        </p>
+                                        <p class="text-xs text-green-600 mt-2" th:if="${comprobantes['FACTURA_PROPIEDAD'] != null}">
+                                            Puedes subir un nuevo archivo para reemplazar el actual
+                                        </p>
                                     </label>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- SECCIÓN 2: DOCUMENTOS OPCIONALES PERO RECOMENDADOS -->
+                        <!-- SECCIÓN 2: DOCUMENTOS OPCIONALES -->
                         <div class="bg-white border-2 border-emerald-200 rounded-2xl p-6">
                             <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
                                 <i class='bx bx-check-shield text-emerald-600'></i>
@@ -118,21 +200,40 @@
                             <p class="text-sm text-emerald-700 mb-6">Estos documentos aumentan la confianza y profesionalizan tu venta</p>
 
                             <div class="space-y-5">
-                                <!-- 5. Inventario Individual del Lote -->
-                                <div class="border-2 rounded-xl p-5 hover:border-emerald-400 transition">
+                                <!-- Repite el mismo patrón para documentos opcionales -->
+                                <!-- Inventario, SINIGAN, Hierro, Pesaje -->
+                                <!-- Similar structure but with emerald colors and without "OBLIGATORIO" badge -->
+
+                                <!-- Ejemplo: Inventario -->
+                                <div class="border-2 rounded-xl p-5 hover:border-emerald-400 transition"
+                                     th:classappend="${comprobantes['INVENTARIO_LOTE'] != null} ? 'border-emerald-300 bg-emerald-50/30' : 'border-gray-200'">
                                     <label class="block">
                                         <div class="flex items-start gap-3 mb-3">
-                                            <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                                <i class='bx bx-list-ul text-xl text-emerald-600'></i>
+                                            <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                                                 th:classappend="${comprobantes['INVENTARIO_LOTE'] != null} ? 'bg-emerald-200' : 'bg-emerald-100'">
+                                                <i class='bx text-xl'
+                                                   th:classappend="${comprobantes['INVENTARIO_LOTE'] != null} ? 'bx-check text-emerald-700' : 'bx-list-ul text-emerald-600'"></i>
                                             </div>
                                             <div class="flex-1">
                                                 <span class="text-sm font-bold text-gray-900 flex items-center gap-2">
                                                     Inventario Individual del Lote
                                                     <span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-semibold">Opcional</span>
+                                                    <span th:if="${comprobantes['INVENTARIO_LOTE'] != null}" class="text-xs bg-emerald-600 text-white px-2 py-0.5 rounded-full">✓ SUBIDO</span>
                                                 </span>
                                                 <p class="text-xs text-gray-600 mt-1 leading-relaxed">
-                                                    Listado detallado con ID, marcas, edad, peso y características de cada animal. Facilita la verificación y aumenta la confianza del comprador.
+                                                    Listado detallado con ID, marcas, edad, peso y características de cada animal.
                                                 </p>
+
+                                                <div th:if="${comprobantes['INVENTARIO_LOTE'] != null}" class="mt-3 bg-emerald-50 border border-emerald-200 rounded-lg p-3">
+                                                    <p class="text-xs text-emerald-800 mb-2 flex items-center gap-2">
+                                                        <i class='bx bx-file'></i>
+                                                        <span>Subido el: <span th:text="${#temporals.format(comprobantes['INVENTARIO_LOTE'].fechaSubida, 'dd/MM/yyyy HH:mm')}"></span></span>
+                                                    </p>
+                                                    <a th:href="@{'/documentos/' + ${comprobantes['INVENTARIO_LOTE'].rutaArchivo}}" target="_blank"
+                                                       class="text-xs text-emerald-700 hover:text-emerald-900 underline flex items-center gap-1">
+                                                        <i class='bx bx-download'></i> Ver documento actual
+                                                    </a>
+                                                </div>
                                             </div>
                                         </div>
                                         <input type="file" name="inventarioLote" accept=".pdf,.xlsx,.xls,.jpg,.jpeg,.png"
@@ -140,21 +241,36 @@
                                     </label>
                                 </div>
 
-                                <!-- 6. Certificado SINIGAN -->
-                                <div class="border-2 rounded-xl p-5 hover:border-emerald-400 transition">
+                                <!-- CERTIFICADO SINIGAN -->
+                                <div class="border-2 rounded-xl p-5 hover:border-emerald-400 transition"
+                                     th:classappend="${comprobantes['CERTIFICADO_SINIGAN'] != null} ? 'border-emerald-300 bg-emerald-50/30' : 'border-gray-200'">
                                     <label class="block">
                                         <div class="flex items-start gap-3 mb-3">
-                                            <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                                <i class='bx bx-barcode text-xl text-emerald-600'></i>
+                                            <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                                                 th:classappend="${comprobantes['CERTIFICADO_SINIGAN'] != null} ? 'bg-emerald-200' : 'bg-emerald-100'">
+                                                <i class='bx text-xl'
+                                                   th:classappend="${comprobantes['CERTIFICADO_SINIGAN'] != null} ? 'bx-check text-emerald-700' : 'bx-barcode text-emerald-600'"></i>
                                             </div>
                                             <div class="flex-1">
-                                                <span class="text-sm font-bold text-gray-900 flex items-center gap-2">
-                                                    Certificados SINIGAN (Registro Individual)
-                                                    <span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-semibold">Opcional</span>
-                                                </span>
+                <span class="text-sm font-bold text-gray-900 flex items-center gap-2">
+                    Certificados SINIGAN (Registro Individual)
+                    <span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-semibold">Opcional</span>
+                    <span th:if="${comprobantes['CERTIFICADO_SINIGAN'] != null}" class="text-xs bg-emerald-600 text-white px-2 py-0.5 rounded-full">✓ SUBIDO</span>
+                </span>
                                                 <p class="text-xs text-gray-600 mt-1 leading-relaxed">
-                                                    Número individual de cada bovino en el Sistema Nacional de Identificación. Evita ventas duplicadas y confirma autenticidad.
+                                                    Número individual de cada bovino en el Sistema Nacional de Identificación.
                                                 </p>
+
+                                                <div th:if="${comprobantes['CERTIFICADO_SINIGAN'] != null}" class="mt-3 bg-emerald-50 border border-emerald-200 rounded-lg p-3">
+                                                    <p class="text-xs text-emerald-800 mb-2 flex items-center gap-2">
+                                                        <i class='bx bx-file'></i>
+                                                        <span>Subido el: <span th:text="${#temporals.format(comprobantes['CERTIFICADO_SINIGAN'].fechaSubida, 'dd/MM/yyyy HH:mm')}"></span></span>
+                                                    </p>
+                                                    <a th:href="@{'/documentos/' + ${comprobantes['CERTIFICADO_SINIGAN'].rutaArchivo}}" target="_blank"
+                                                       class="text-xs text-emerald-700 hover:text-emerald-900 underline flex items-center gap-1">
+                                                        <i class='bx bx-download'></i> Ver documento actual
+                                                    </a>
+                                                </div>
                                             </div>
                                         </div>
                                         <input type="file" name="certificadoSinigan" accept=".pdf,.xlsx,.xls,.jpg,.jpeg,.png"
@@ -162,21 +278,36 @@
                                     </label>
                                 </div>
 
-                                <!-- 7. Hierro o Marca Registrada -->
-                                <div class="border-2 rounded-xl p-5 hover:border-emerald-400 transition">
+                                <!-- CERTIFICADO HIERRO -->
+                                <div class="border-2 rounded-xl p-5 hover:border-emerald-400 transition"
+                                     th:classappend="${comprobantes['CERTIFICADO_HIERRO'] != null} ? 'border-emerald-300 bg-emerald-50/30' : 'border-gray-200'">
                                     <label class="block">
                                         <div class="flex items-start gap-3 mb-3">
-                                            <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                                <i class='bx bx-customize text-xl text-emerald-600'></i>
+                                            <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                                                 th:classappend="${comprobantes['CERTIFICADO_HIERRO'] != null} ? 'bg-emerald-200' : 'bg-emerald-100'">
+                                                <i class='bx text-xl'
+                                                   th:classappend="${comprobantes['CERTIFICADO_HIERRO'] != null} ? 'bx-check text-emerald-700' : 'bx-customize text-emerald-600'"></i>
                                             </div>
                                             <div class="flex-1">
-                                                <span class="text-sm font-bold text-gray-900 flex items-center gap-2">
-                                                    Certificado de Hierro o Marca Registrada
-                                                    <span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-semibold">Opcional</span>
-                                                </span>
+                <span class="text-sm font-bold text-gray-900 flex items-center gap-2">
+                    Certificado de Hierro o Marca Registrada
+                    <span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-semibold">Opcional</span>
+                    <span th:if="${comprobantes['CERTIFICADO_HIERRO'] != null}" class="text-xs bg-emerald-600 text-white px-2 py-0.5 rounded-full">✓ SUBIDO</span>
+                </span>
                                                 <p class="text-xs text-gray-600 mt-1 leading-relaxed">
-                                                    Documento que certifica que el ganado pertenece a tu hierro o marca registrada ante las autoridades competentes.
+                                                    Documento que certifica que el ganado pertenece a tu hierro o marca registrada.
                                                 </p>
+
+                                                <div th:if="${comprobantes['CERTIFICADO_HIERRO'] != null}" class="mt-3 bg-emerald-50 border border-emerald-200 rounded-lg p-3">
+                                                    <p class="text-xs text-emerald-800 mb-2 flex items-center gap-2">
+                                                        <i class='bx bx-file'></i>
+                                                        <span>Subido el: <span th:text="${#temporals.format(comprobantes['CERTIFICADO_HIERRO'].fechaSubida, 'dd/MM/yyyy HH:mm')}"></span></span>
+                                                    </p>
+                                                    <a th:href="@{'/documentos/' + ${comprobantes['CERTIFICADO_HIERRO'].rutaArchivo}}" target="_blank"
+                                                       class="text-xs text-emerald-700 hover:text-emerald-900 underline flex items-center gap-1">
+                                                        <i class='bx bx-download'></i> Ver documento actual
+                                                    </a>
+                                                </div>
                                             </div>
                                         </div>
                                         <input type="file" name="certificadoHierro" accept=".pdf,.jpg,.jpeg,.png"
@@ -184,21 +315,36 @@
                                     </label>
                                 </div>
 
-                                <!-- 9. Certificado de Pesaje -->
-                                <div class="border-2 rounded-xl p-5 hover:border-emerald-400 transition">
+                                <!-- CERTIFICADO PESAJE -->
+                                <div class="border-2 rounded-xl p-5 hover:border-emerald-400 transition"
+                                     th:classappend="${comprobantes['CERTIFICADO_PESAJE'] != null} ? 'border-emerald-300 bg-emerald-50/30' : 'border-gray-200'">
                                     <label class="block">
                                         <div class="flex items-start gap-3 mb-3">
-                                            <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                                <i class='bx bx-trending-up text-xl text-emerald-600'></i>
+                                            <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                                                 th:classappend="${comprobantes['CERTIFICADO_PESAJE'] != null} ? 'bg-emerald-200' : 'bg-emerald-100'">
+                                                <i class='bx text-xl'
+                                                   th:classappend="${comprobantes['CERTIFICADO_PESAJE'] != null} ? 'bx-check text-emerald-700' : 'bx-trending-up text-emerald-600'"></i>
                                             </div>
                                             <div class="flex-1">
-                                                <span class="text-sm font-bold text-gray-900 flex items-center gap-2">
-                                                    Certificado de Pesaje Reciente
-                                                    <span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-semibold">Opcional</span>
-                                                </span>
+                <span class="text-sm font-bold text-gray-900 flex items-center gap-2">
+                    Certificado de Pesaje Reciente
+                    <span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-semibold">Opcional</span>
+                    <span th:if="${comprobantes['CERTIFICADO_PESAJE'] != null}" class="text-xs bg-emerald-600 text-white px-2 py-0.5 rounded-full">✓ SUBIDO</span>
+                </span>
                                                 <p class="text-xs text-gray-600 mt-1 leading-relaxed">
-                                                    Documento de pesaje oficial con fecha reciente. Aumenta la transparencia sobre el peso real de los animales.
+                                                    Documento de pesaje oficial con fecha reciente.
                                                 </p>
+
+                                                <div th:if="${comprobantes['CERTIFICADO_PESAJE'] != null}" class="mt-3 bg-emerald-50 border border-emerald-200 rounded-lg p-3">
+                                                    <p class="text-xs text-emerald-800 mb-2 flex items-center gap-2">
+                                                        <i class='bx bx-file'></i>
+                                                        <span>Subido el: <span th:text="${#temporals.format(comprobantes['CERTIFICADO_PESAJE'].fechaSubida, 'dd/MM/yyyy HH:mm')}"></span></span>
+                                                    </p>
+                                                    <a th:href="@{'/documentos/' + ${comprobantes['CERTIFICADO_PESAJE'].rutaArchivo}}" target="_blank"
+                                                       class="text-xs text-emerald-700 hover:text-emerald-900 underline flex items-center gap-1">
+                                                        <i class='bx bx-download'></i> Ver documento actual
+                                                    </a>
+                                                </div>
                                             </div>
                                         </div>
                                         <input type="file" name="certificadoPesaje" accept=".pdf,.jpg,.jpeg,.png"
@@ -208,17 +354,17 @@
                             </div>
                         </div>
 
-                        <!-- Observaciones Sanitarias Adicionales -->
+                        <!-- Observaciones -->
                         <div class="bg-white border-2 border-gray-200 rounded-xl p-6">
                             <label class="block">
-                                <span class="text-sm font-bold text-gray-900 flex items-center gap-2 mb-3">
-                                    <i class='bx bx-note text-xl text-gray-600'></i>
-                                    Observaciones Sanitarias Adicionales
-                                </span>
-                                <p class="text-xs text-gray-600 mb-3">Información adicional relevante sobre el estado sanitario del ganado (tratamientos recientes, historial médico, etc.)</p>
+                <span class="text-sm font-bold text-gray-900 flex items-center gap-2 mb-3">
+                    <i class='bx bx-note text-xl text-gray-600'></i>
+                    Observaciones Sanitarias Adicionales
+                </span>
                                 <textarea name="observacionesSanitarias" rows="4"
+                                          th:text="${venta.observacionesSanitarias}"
                                           class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-emerald-500 focus:ring-0 transition resize-none"
-                                          placeholder="Ej: Último desparasitado el 15/12/2024. Vacuna contra carbón aplicada en noviembre. Sin antecedentes de enfermedades..."></textarea>
+                                          placeholder="Ej: Último desparasitado el 15/12/2024..."></textarea>
                             </label>
                         </div>
 
@@ -233,57 +379,91 @@
                                     <input type="checkbox" name="confirmaVeracidad" required
                                            class="mt-1 w-5 h-5 text-blue-600 border-2 border-gray-400 rounded focus:ring-blue-500">
                                     <span class="text-sm text-blue-900 leading-relaxed">
-                                        <strong>Confirmo que todos los documentos son auténticos y verídicos.</strong>
-                                        Los archivos subidos corresponden al ganado que estoy vendiendo y están actualizados.
-                                    </span>
+                        <strong>Confirmo que todos los documentos son auténticos y verídicos.</strong>
+                    </span>
                                 </label>
                                 <label class="flex items-start gap-3 cursor-pointer hover:bg-blue-100/50 p-3 rounded-lg transition">
                                     <input type="checkbox" name="confirmaResponsabilidad" required
                                            class="mt-1 w-5 h-5 text-blue-600 border-2 border-gray-400 rounded focus:ring-blue-500">
                                     <span class="text-sm text-blue-900 leading-relaxed">
-                                        <strong>Asumo responsabilidad legal sobre la información proporcionada.</strong>
-                                        Entiendo que proporcionar documentos falsos o adulterados constituye un delito y acepto las consecuencias legales correspondientes.
-                                    </span>
+                        <strong>Asumo responsabilidad legal sobre la información proporcionada.</strong>
+                    </span>
                                 </label>
                                 <label class="flex items-start gap-3 cursor-pointer hover:bg-blue-100/50 p-3 rounded-lg transition">
                                     <input type="checkbox" name="confirmaPropiedad" required
                                            class="mt-1 w-5 h-5 text-blue-600 border-2 border-gray-400 rounded focus:ring-blue-500">
                                     <span class="text-sm text-blue-900 leading-relaxed">
-                                        <strong>Confirmo ser el propietario legal del ganado.</strong>
-                                        Certifico que tengo plenos derechos sobre estos animales y autoridad para venderlos.
-                                    </span>
+                        <strong>Confirmo ser el propietario legal del ganado.</strong>
+                    </span>
                                 </label>
-                            </div>
-                        </div>
-
-                        <!-- Información de Ayuda -->
-                        <div class="bg-amber-50 border-l-4 border-amber-500 p-5 rounded-lg">
-                            <div class="flex items-start gap-3">
-                                <i class='bx bx-bulb text-2xl text-amber-600 flex-shrink-0'></i>
-                                <div>
-                                    <p class="font-bold text-amber-900 mb-2">Consejo Importante</p>
-                                    <p class="text-sm text-amber-800 leading-relaxed">
-                                        Mientras más documentos opcionales subas, mayor será la confianza del comprador y más rápida será la venta.
-                                        Los documentos escaneados deben ser legibles y en formato PDF o imagen de alta calidad.
-                                    </p>
-                                </div>
                             </div>
                         </div>
 
                         <!-- Botones de Acción -->
                         <div class="flex gap-4">
-                            <button type="button" onclick="history.back()" class="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition flex items-center gap-2">
+                            <button type="button" onclick="history.back()"
+                                    class="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition flex items-center gap-2">
                                 <i class='bx bx-arrow-back'></i> Atrás
                             </button>
-                            <button type="submit" class="flex-1 px-6 py-4 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white rounded-xl font-bold text-lg hover:shadow-2xl hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
-                                <i class='bx bx-upload'></i>
-                                Guardar Documentos y Continuar
+
+                            <!-- Botón Guardar Cambios -->
+                            <button type="submit" name="accion" value="guardar"
+                                    class="px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition flex items-center gap-2">
+                                <i class='bx bx-save'></i>
+                                Guardar Cambios
+                            </button>
+
+                            <!-- Botón Continuar (solo habilitado si tiene documentos obligatorios) -->
+                            <button type="submit" name="accion" value="continuar"
+                                    th:disabled="${comprobantes['GSMI'] == null || comprobantes['CERTIFICADO_SANITARIO'] == null || comprobantes['FACTURA_PROPIEDAD'] == null}"
+                                    class="flex-1 px-6 py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-2"
+                                    th:classappend="${comprobantes['GSMI'] != null && comprobantes['CERTIFICADO_SANITARIO'] != null && comprobantes['FACTURA_PROPIEDAD'] != null} ? 'bg-gradient-to-r from-emerald-600 to-emerald-500 text-white hover:shadow-2xl hover:scale-[1.02]' : 'bg-gray-300 text-gray-500 cursor-not-allowed'">
+                                <i class='bx bx-check-double'></i>
+                                <span th:if="${comprobantes['GSMI'] != null && comprobantes['CERTIFICADO_SANITARIO'] != null && comprobantes['FACTURA_PROPIEDAD'] != null}">
+                    Continuar al Siguiente Paso
+                </span>
+                                <span th:unless="${comprobantes['GSMI'] != null && comprobantes['CERTIFICADO_SANITARIO'] != null && comprobantes['FACTURA_PROPIEDAD'] != null}">
+                    Complete Documentos Obligatorios
+                </span>
                                 <i class='bx bx-right-arrow-alt'></i>
                             </button>
                         </div>
+
+                        <!-- Indicador de progreso de documentos obligatorios -->
+                        <div class="bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-gray-200 rounded-xl p-6">
+                            <p class="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                <i class='bx bx-task'></i>
+                                Progreso de Documentos Obligatorios
+                            </p>
+                            <div class="grid grid-cols-3 gap-4">
+                                <div class="text-center">
+                                    <div class="w-16 h-16 mx-auto mb-2 rounded-full flex items-center justify-center"
+                                         th:classappend="${comprobantes['GSMI'] != null} ? 'bg-green-100' : 'bg-gray-200'">
+                                        <i class='bx text-3xl'
+                                           th:classappend="${comprobantes['GSMI'] != null} ? 'bx-check-circle text-green-600' : 'bx-circle text-gray-400'"></i>
+                                    </div>
+                                    <p class="text-xs font-semibold text-gray-700">GSMI</p>
+                                </div>
+                                <div class="text-center">
+                                    <div class="w-16 h-16 mx-auto mb-2 rounded-full flex items-center justify-center"
+                                         th:classappend="${comprobantes['CERTIFICADO_SANITARIO'] != null} ? 'bg-green-100' : 'bg-gray-200'">
+                                        <i class='bx text-3xl'
+                                           th:classappend="${comprobantes['CERTIFICADO_SANITARIO'] != null} ? 'bx-check-circle text-green-600' : 'bx-circle text-gray-400'"></i>
+                                    </div>
+                                    <p class="text-xs font-semibold text-gray-700">Certificados</p>
+                                </div>
+                                <div class="text-center">
+                                    <div class="w-16 h-16 mx-auto mb-2 rounded-full flex items-center justify-center"
+                                         th:classappend="${comprobantes['FACTURA_PROPIEDAD'] != null} ? 'bg-green-100' : 'bg-gray-200'">
+                                        <i class='bx text-3xl'
+                                           th:classappend="${comprobantes['FACTURA_PROPIEDAD'] != null} ? 'bx-check-circle text-green-600' : 'bx-circle text-gray-400'"></i>
+                                    </div>
+                                    <p class="text-xs font-semibold text-gray-700">Propiedad</p>
+                                </div>
+                            </div>
+                        </div>
                     </form>
                 </div>
-
                 <!-- PASO 4: Cambiado de Depósito Inicial al Pago Total del 100% -->
                 <div th:if="${venta.venta.pasoActual == 4}">
                     <div class="mb-6">
@@ -395,147 +575,612 @@
                     </div>
                 </div>
 
-                <!-- PASO 5: Logística/Entrega mejorado para registrar trazabilidad del transporte -->
+                <!-- ============================================ -->
+                <!-- PASO 5: TRANSPORTE Y ENTREGA - VENDEDOR     -->
+                <!-- ============================================ -->
                 <div th:if="${venta.venta.pasoActual == 5}">
                     <div class="mb-6">
-                        <h2 class="text-3xl font-bold text-gray-900 mb-2">Paso 5: Logística / Entrega</h2>
-                        <p class="text-gray-600">Registra los detalles de transporte y entrega para la trazabilidad</p>
+                        <h2 class="text-3xl font-bold text-gray-900 mb-2">Paso 5: Transporte y Entrega del Ganado</h2>
+                        <p class="text-gray-600">Gestiona la carga y entrega del ganado al transportista</p>
                     </div>
 
-                    <form th:action="@{/vendedor/ventas/paso-5-ganado}" method="post" class="space-y-6">
-                        <input type="hidden" name="idVenta" th:value="${venta.venta.idVenta}">
+                    <!-- Alertas -->
+                    <div th:if="${success}" class="bg-emerald-50 border-2 border-emerald-300 rounded-xl p-4 mb-6">
+                        <div class="flex items-center gap-3">
+                            <i class='bx bx-check-circle text-2xl text-emerald-600'></i>
+                            <p class="text-emerald-800 font-semibold" th:text="${success}"></p>
+                        </div>
+                    </div>
 
-                        <!-- Información del Transporte (solo para registro) -->
-                        <div class="bg-blue-50 border-2 border-blue-200 rounded-xl p-5 mb-6">
-                            <div class="flex items-start gap-3">
-                                <i class='bx bx-info-circle text-2xl text-blue-600'></i>
-                                <div>
-                                    <p class="font-semibold text-blue-900 mb-1">Registro de Trazabilidad</p>
-                                    <p class="text-sm text-blue-800">Esta información se registra únicamente para llevar la trazabilidad del proceso. El sistema NO gestiona directamente el transporte, pero mantiene un registro completo para fines legales y de seguimiento.</p>
+                    <div th:if="${error}" class="bg-red-50 border-2 border-red-300 rounded-xl p-4 mb-6">
+                        <div class="flex items-center gap-3">
+                            <i class='bx bx-error text-2xl text-red-600'></i>
+                            <p class="text-red-800 font-semibold" th:text="${error}"></p>
+                        </div>
+                    </div>
+
+                    <!-- CASO 1: Transporte PROGRAMADO - Esperando día del transporte -->
+                    <div th:if="${transporte != null && transporte.estadoTransporte.name() == 'PROGRAMADO'}">
+                        <div class="bg-blue-50 border-2 border-blue-300 rounded-xl p-6 mb-6">
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 bg-blue-200 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class='bx bx-calendar-check text-2xl text-blue-700'></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-bold text-blue-900 text-lg mb-2">Transporte Programado por el Comprador</p>
+                                    <p class="text-sm text-blue-800 leading-relaxed">
+                                        El comprador ha programado el transporte del ganado. Revisa los detalles y prepara los animales para la fecha indicada.
+                                        El día del transporte deberás confirmar la carga subiendo las fotos obligatorias.
+                                    </p>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="md:col-span-2">
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                    <i class='bx bx-building text-emerald-600'></i> Empresa de Transporte (Opcional)
-                                </label>
-                                <input type="text" name="empresaTransporte"
-                                       class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-emerald-500 focus:ring-0 transition"
-                                       placeholder="Ej: Transportes Ganaderos del Valle S.A.S. (dejar vacío si el comprador/vendedor gestiona directamente)">
-                                <p class="text-xs text-gray-500 mt-1">Si el transporte lo coordina directamente el comprador o vendedor, este campo puede quedar vacío</p>
-                            </div>
+                        <!-- Detalles del Transporte -->
+                        <div class="bg-white border-2 border-emerald-300 rounded-2xl p-6 mb-6">
+                            <h4 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                <i class='bx bx-info-circle text-emerald-600'></i>
+                                Detalles del Transporte
+                            </h4>
 
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                    <i class='bx bx-calendar text-emerald-600'></i> Fecha de Transporte *
-                                </label>
-                                <input type="date" name="fechaTransporte" required
-                                       class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-emerald-500 focus:ring-0 transition">
-                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="bg-emerald-50 rounded-lg p-4 border border-emerald-200">
+                                    <p class="text-xs text-emerald-700 mb-1 font-semibold">Fecha de Recogida</p>
+                                    <p class="font-bold text-emerald-900 text-lg" th:text="${#temporals.format(transporte.fechaTransporte, 'dd/MMM/yyyy')}">28/Ene/2025</p>
+                                </div>
 
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                    <i class='bx bx-time text-emerald-600'></i> Hora Estimada de Entrega
-                                </label>
-                                <input type="time" name="horaTransporte"
-                                       class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-emerald-500 focus:ring-0 transition">
-                            </div>
+                                <div class="bg-emerald-50 rounded-lg p-4 border border-emerald-200">
+                                    <p class="text-xs text-emerald-700 mb-1 font-semibold">Hora Estimada</p>
+                                    <p class="font-bold text-emerald-900 text-lg" th:text="${transporte.horaTransporte}">10:00 AM</p>
+                                </div>
 
-                            <div class="md:col-span-2">
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                    <i class='bx bx-map text-emerald-600'></i> Punto de Entrega *
-                                </label>
-                                <textarea name="puntoEntrega" required rows="3"
-                                          class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-emerald-500 focus:ring-0 transition"
-                                          placeholder="Dirección completa del punto donde se realizará la entrega del ganado..."></textarea>
-                            </div>
+                                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                    <p class="text-xs text-gray-600 mb-1">Empresa Transportadora</p>
+                                    <p class="font-bold text-gray-900" th:text="${transporte.empresaTransporte}">Transportes Los Llanos</p>
+                                </div>
 
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                    <i class='bx bx-user-check text-emerald-600'></i> Responsable del Transporte *
-                                </label>
-                                <select name="responsableTransporte" required
-                                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-emerald-500 focus:ring-0 transition">
-                                    <option value="">Selecciona...</option>
-                                    <option value="VENDEDOR">Vendedor (yo coordino el transporte)</option>
-                                    <option value="COMPRADOR">Comprador (el comprador coordina el transporte)</option>
-                                    <option value="EMPRESA_TERCERA">Empresa Tercera (ambos coordinamos)</option>
-                                </select>
-                                <p class="text-xs text-gray-500 mt-1">Define quién está a cargo de coordinar el transporte para trazabilidad</p>
-                            </div>
+                                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                    <p class="text-xs text-gray-600 mb-1">Placa del Vehículo</p>
+                                    <p class="font-bold text-gray-900" th:text="${transporte.placaVehiculo}">ABC123</p>
+                                </div>
 
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                    <i class='bx bx-phone text-emerald-600'></i> Teléfono de Contacto Transporte
-                                </label>
-                                <input type="tel" name="telefonoTransporte"
-                                       class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-emerald-500 focus:ring-0 transition"
-                                       placeholder="+ 57 300 123 4567">
-                                <p class="text-xs text-gray-500 mt-1">Teléfono de quien coordina el transporte</p>
-                            </div>
+                                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                    <p class="text-xs text-gray-600 mb-1">Conductor</p>
+                                    <p class="font-bold text-gray-900" th:text="${transporte.nombreConductor}">Juan Pérez</p>
+                                </div>
 
-                            <div class="md:col-span-2">
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                    <i class='bx bx-note text-emerald-600'></i> Observaciones de Entrega
-                                </label>
-                                <textarea name="observacionesEntrega" rows="3"
-                                          class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-emerald-500 focus:ring-0 transition"
-                                          placeholder="Detalles adicionales: condiciones especiales, requerimientos de manejo, horarios preferidos..."></textarea>
-                            </div>
-                        </div>
+                                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                    <p class="text-xs text-gray-600 mb-1">Teléfono Conductor</p>
+                                    <p class="font-bold text-gray-900" th:text="${transporte.telefonoConductor}">+57 300 123 4567</p>
+                                </div>
 
-                        <!-- Checklist de Entrega -->
-                        <div class="bg-emerald-50 border-2 border-emerald-200 rounded-xl p-6">
-                            <p class="font-bold text-emerald-900 mb-4 flex items-center gap-2">
-                                <i class='bx bx-clipboard text-xl'></i>
-                                Checklist de Entrega (Confirmación Digital)
-                            </p>
-                            <p class="text-sm text-emerald-800 mb-4">Marca los siguientes items que confirmarás en el momento de la entrega:</p>
-                            <div class="space-y-3">
-                                <label class="flex items-start gap-3 cursor-pointer hover:bg-emerald-100 p-2 rounded-lg transition">
-                                    <input type="checkbox" name="checkPeso" required
-                                           class="mt-1 w-5 h-5 text-emerald-600 border-2 border-gray-300 rounded focus:ring-emerald-500">
-                                    <span class="text-sm text-emerald-900">Verificación de peso según lo acordado</span>
-                                </label>
-                                <label class="flex items-start gap-3 cursor-pointer hover:bg-emerald-100 p-2 rounded-lg transition">
-                                    <input type="checkbox" name="checkCantidad" required
-                                           class="mt-1 w-5 h-5 text-emerald-600 border-2 border-gray-300 rounded focus:ring-emerald-500">
-                                    <span class="text-sm text-emerald-900">Cantidad de animales correcta</span>
-                                </label>
-                                <label class="flex items-start gap-3 cursor-pointer hover:bg-emerald-100 p-2 rounded-lg transition">
-                                    <input type="checkbox" name="checkSanitario" required
-                                           class="mt-1 w-5 h-5 text-emerald-600 border-2 border-gray-300 rounded focus:ring-emerald-500">
-                                    <span class="text-sm text-emerald-900">Estado sanitario verificado</span>
-                                </label>
-                                <label class="flex items-start gap-3 cursor-pointer hover:bg-emerald-100 p-2 rounded-lg transition">
-                                    <input type="checkbox" name="checkDocumentos" required
-                                           class="mt-1 w-5 h-5 text-emerald-600 border-2 border-gray-300 rounded focus:ring-emerald-500">
-                                    <span class="text-sm text-emerald-900">Documentos de tránsito en regla</span>
-                                </label>
-                            </div>
-                        </div>
+                                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                    <p class="text-xs text-gray-600 mb-1">Cédula Conductor</p>
+                                    <p class="font-bold text-gray-900" th:text="${transporte.cedulaConductor}">1234567890</p>
+                                </div>
 
-                        <div class="bg-gray-50 border-2 border-gray-200 rounded-xl p-4">
-                            <div class="flex items-start gap-3">
-                                <i class='bx bx-check-shield text-2xl text-gray-600'></i>
-                                <div>
-                                    <p class="font-semibold text-gray-900 mb-1">Confirmación Final</p>
-                                    <p class="text-sm text-gray-700">Al enviar este formulario, se registrarán todos estos datos en el sistema para trazabilidad. Tanto vendedor como comprador recibirán un documento digital que confirma los detalles del transporte y entrega.</p>
+                                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                    <p class="text-xs text-gray-600 mb-1">Destino</p>
+                                    <p class="font-bold text-gray-900 text-sm" th:text="${transporte.puntoEntrega}">Dirección de entrega...</p>
+                                </div>
+
+                                <div th:if="${transporte.observacionesComprador}" class="md:col-span-2 bg-amber-50 rounded-lg p-4 border border-amber-200">
+                                    <p class="text-xs text-amber-700 mb-1 font-semibold">Observaciones del Comprador</p>
+                                    <p class="text-sm text-amber-900" th:text="${transporte.observacionesComprador}">Observaciones...</p>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="flex gap-4">
-                            <button type="button" onclick="history.back()" class="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition">
-                                <i class='bx bx-arrow-back mr-2'></i> Atrás
-                            </button>
-                            <button type="submit" class="flex-1 px-6 py-3 gradient-bg text-white rounded-xl font-semibold hover:shadow-lg transition">
-                                Registrar y Finalizar Venta <i class='bx bx-check-circle ml-2'></i>
-                            </button>
+                        <!-- Instrucciones de Preparación -->
+                        <div class="bg-amber-50 border-l-4 border-amber-500 p-5 rounded-lg mb-6">
+                            <div class="flex items-start gap-3">
+                                <i class='bx bx-info-circle text-2xl text-amber-600 flex-shrink-0'></i>
+                                <div>
+                                    <p class="font-bold text-amber-900 mb-2">Preparación para el Transporte</p>
+                                    <ul class="text-sm text-amber-800 leading-relaxed space-y-1 list-disc list-inside">
+                                        <li>Prepara el ganado con anticipación a la fecha programada</li>
+                                        <li>Verifica que todos los animales estén en condiciones aptas para el transporte</li>
+                                        <li>Ten lista la GSMI y demás documentación sanitaria</li>
+                                        <li>El día de la carga deberás tomar 3 fotos obligatorias para confirmar el proceso</li>
+                                        <li>El conductor debe presentar identificación y confirmar datos del vehículo</li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
-                    </form>
+
+                        <!-- Formulario de Confirmación de Carga (Solo disponible el día del transporte o después) -->
+                        <form th:action="@{/vendedor/ventas/confirmar-carga}" method="post" enctype="multipart/form-data" class="space-y-6">
+                            <input type="hidden" name="idTransporte" th:value="${transporte.idTransporte}">
+
+                            <div class="bg-white border-2 border-emerald-300 rounded-2xl p-6">
+                                <h4 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                    <i class='bx bx-camera text-emerald-600'></i>
+                                    Confirmar Carga del Ganado
+                                </h4>
+
+                                <p class="text-sm text-gray-600 mb-6">
+                                    El día del transporte, cuando el conductor llegue y estés cargando el ganado, debes documentar el proceso
+                                    con las siguientes 3 fotos obligatorias:
+                                </p>
+
+                                <div class="space-y-5">
+                                    <!-- Foto 1: Camión Vacío -->
+                                    <div class="border-2 border-emerald-200 rounded-xl p-5 bg-emerald-50/30">
+                                        <label class="block">
+                                            <div class="flex items-start gap-3 mb-3">
+                                                <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                    <i class='bx bx-image text-xl text-emerald-600'></i>
+                                                </div>
+                                                <div class="flex-1">
+                                    <span class="text-sm font-bold text-gray-900 flex items-center gap-2">
+                                        Foto del Camión Vacío *
+                                        <span class="text-xs bg-emerald-600 text-white px-2 py-0.5 rounded-full">OBLIGATORIA</span>
+                                    </span>
+                                                    <p class="text-xs text-gray-600 mt-1 leading-relaxed">
+                                                        Toma una foto del interior del camión vacío antes de cargar el ganado
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <input type="file" name="fotoCamionVacio" accept="image/*" capture="environment" required
+                                                   class="block w-full text-sm text-gray-600 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-emerald-100 file:text-emerald-700 hover:file:bg-emerald-200 cursor-pointer transition">
+                                        </label>
+                                    </div>
+
+                                    <!-- Foto 2: Carga del Ganado -->
+                                    <div class="border-2 border-emerald-200 rounded-xl p-5 bg-emerald-50/30">
+                                        <label class="block">
+                                            <div class="flex items-start gap-3 mb-3">
+                                                <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                    <i class='bx bx-image text-xl text-emerald-600'></i>
+                                                </div>
+                                                <div class="flex-1">
+                                    <span class="text-sm font-bold text-gray-900 flex items-center gap-2">
+                                        Foto de la Carga del Ganado *
+                                        <span class="text-xs bg-emerald-600 text-white px-2 py-0.5 rounded-full">OBLIGATORIA</span>
+                                    </span>
+                                                    <p class="text-xs text-gray-600 mt-1 leading-relaxed">
+                                                        Foto del proceso de carga del ganado al camión
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <input type="file" name="fotoCargaGanado" accept="image/*" capture="environment" required
+                                                   class="block w-full text-sm text-gray-600 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-emerald-100 file:text-emerald-700 hover:file:bg-emerald-200 cursor-pointer transition">
+                                        </label>
+                                    </div>
+
+                                    <!-- Foto 3: GSMI y Conductor -->
+                                    <div class="border-2 border-emerald-200 rounded-xl p-5 bg-emerald-50/30">
+                                        <label class="block">
+                                            <div class="flex items-start gap-3 mb-3">
+                                                <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                    <i class='bx bx-image text-xl text-emerald-600'></i>
+                                                </div>
+                                                <div class="flex-1">
+                                    <span class="text-sm font-bold text-gray-900 flex items-center gap-2">
+                                        Foto de GSMI y Conductor *
+                                        <span class="text-xs bg-emerald-600 text-white px-2 py-0.5 rounded-full">OBLIGATORIA</span>
+                                    </span>
+                                                    <p class="text-xs text-gray-600 mt-1 leading-relaxed">
+                                                        Foto del conductor mostrando su identificación junto con la GSMI del transporte
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <input type="file" name="fotoGsmiConductor" accept="image/*" capture="environment" required
+                                                   class="block w-full text-sm text-gray-600 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-emerald-100 file:text-emerald-700 hover:file:bg-emerald-200 cursor-pointer transition">
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Observaciones del Vendedor -->
+                                <div class="mt-6">
+                                    <label class="block">
+                        <span class="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                            <i class='bx bx-note text-gray-600'></i>
+                            Observaciones sobre la Carga (Opcional)
+                        </span>
+                                        <textarea name="observacionesVendedor" rows="3"
+                                                  class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-emerald-500 focus:ring-0 transition resize-none"
+                                                  placeholder="Ej: El ganado fue cargado sin contratiempos. Todos los animales están en excelente estado. Se entregó la GSMI No. 123456..."></textarea>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Confirmación Legal -->
+                            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-300 rounded-xl p-6">
+                                <p class="font-bold text-blue-900 mb-4 flex items-center gap-2 text-lg">
+                                    <i class='bx bx-shield-alt-2'></i>
+                                    Declaración de Entrega
+                                </p>
+                                <div class="space-y-4">
+                                    <label class="flex items-start gap-3 cursor-pointer hover:bg-blue-100/50 p-3 rounded-lg transition">
+                                        <input type="checkbox" name="confirmaEntrega" required
+                                               class="mt-1 w-5 h-5 text-blue-600 border-2 border-gray-400 rounded focus:ring-blue-500">
+                                        <span class="text-sm text-blue-900 leading-relaxed">
+                            <strong>Confirmo que el ganado ha sido entregado al transportista.</strong>
+                            Los animales corresponden a lo acordado en la venta y están en buen estado de salud.
+                        </span>
+                                    </label>
+                                    <label class="flex items-start gap-3 cursor-pointer hover:bg-blue-100/50 p-3 rounded-lg transition">
+                                        <input type="checkbox" name="confirmaDocumentacion" required
+                                               class="mt-1 w-5 h-5 text-blue-600 border-2 border-gray-400 rounded focus:ring-blue-500">
+                                        <span class="text-sm text-blue-900 leading-relaxed">
+                            <strong>He entregado toda la documentación requerida.</strong>
+                            La GSMI vigente y demás documentos sanitarios han sido entregados al conductor.
+                        </span>
+                                    </label>
+                                    <label class="flex items-start gap-3 cursor-pointer hover:bg-blue-100/50 p-3 rounded-lg transition">
+                                        <input type="checkbox" name="confirmaIdentidadConductor" required
+                                               class="mt-1 w-5 h-5 text-blue-600 border-2 border-gray-400 rounded focus:ring-blue-500">
+                                        <span class="text-sm text-blue-900 leading-relaxed">
+                            <strong>He verificado la identidad del conductor.</strong>
+                            El conductor ha presentado su identificación y coincide con los datos proporcionados.
+                        </span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Información Importante -->
+                            <div class="bg-amber-50 border-l-4 border-amber-500 p-5 rounded-lg">
+                                <div class="flex items-start gap-3">
+                                    <i class='bx bx-info-circle text-2xl text-amber-600 flex-shrink-0'></i>
+                                    <div>
+                                        <p class="font-bold text-amber-900 mb-2">Importante</p>
+                                        <ul class="text-sm text-amber-800 leading-relaxed space-y-1 list-disc list-inside">
+                                            <li>Al confirmar la carga, el transporte se marcará como <strong>EN CAMINO</strong></li>
+                                            <li>El comprador será notificado inmediatamente</li>
+                                            <li>Las fotos quedarán registradas en el sistema para trazabilidad</li>
+                                            <li>No podrás editar esta información después de confirmar</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Botones -->
+                            <div class="flex gap-4">
+                                <button type="button" onclick="history.back()"
+                                        class="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition flex items-center gap-2">
+                                    <i class='bx bx-arrow-back'></i> Atrás
+                                </button>
+
+                                <button type="submit"
+                                        class="flex-1 px-6 py-4 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white rounded-xl font-bold text-lg hover:shadow-2xl hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
+                                    <i class='bx bx-check-circle'></i>
+                                    Confirmar Carga del Ganado
+                                    <i class='bx bx-right-arrow-alt'></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- CASO 2: Transporte EN CAMINO - Esperando confirmación del comprador -->
+                    <div th:if="${transporte != null && transporte.estadoTransporte.name() == 'EN_CAMINO'}">
+                        <div class="bg-blue-50 border-2 border-blue-300 rounded-xl p-6 mb-6">
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 bg-blue-200 rounded-full flex items-center justify-center flex-shrink-0 animate-pulse">
+                                    <i class='bx bx-truck text-2xl text-blue-700'></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-bold text-blue-900 text-lg mb-2">Ganado En Camino</p>
+                                    <p class="text-sm text-blue-800 leading-relaxed">
+                                        Has confirmado la carga del ganado exitosamente. El transporte está en camino hacia el predio del comprador.
+                                        Cuando el comprador confirme la recepción, la venta se marcará como finalizada automáticamente.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Información de la Carga -->
+                        <div class="bg-white border-2 border-emerald-300 rounded-2xl p-6 mb-6">
+                            <h4 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                <i class='bx bx-package text-emerald-600'></i>
+                                Información de la Carga
+                            </h4>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                <div class="bg-emerald-50 rounded-lg p-4 border border-emerald-200">
+                                    <p class="text-xs text-emerald-700 mb-1 font-semibold">Fecha y Hora de Carga</p>
+                                    <p class="font-bold text-emerald-900" th:text="${#temporals.format(transporte.fechaHoraCarga, 'dd/MMM/yyyy HH:mm')}">28/Ene/2025 10:30</p>
+                                </div>
+
+                                <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                                    <p class="text-xs text-blue-700 mb-1 font-semibold">Estado Actual</p>
+                                    <p class="font-bold text-blue-900 flex items-center gap-2">
+                                        <span class="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></span>
+                                        En Tránsito al Destino
+                                    </p>
+                                </div>
+
+                                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                    <p class="text-xs text-gray-600 mb-1">Empresa Transportadora</p>
+                                    <p class="font-bold text-gray-900" th:text="${transporte.empresaTransporte}">Transportes Los Llanos</p>
+                                </div>
+
+                                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                    <p class="text-xs text-gray-600 mb-1">Conductor</p>
+                                    <p class="font-bold text-gray-900" th:text="${transporte.nombreConductor}">Juan Pérez</p>
+                                </div>
+
+                                <div class="md:col-span-2 bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                    <p class="text-xs text-gray-600 mb-1">Destino</p>
+                                    <p class="font-semibold text-gray-900" th:text="${transporte.puntoEntrega}">Dirección de entrega...</p>
+                                </div>
+
+                                <div th:if="${transporte.observacionesVendedor}" class="md:col-span-2 bg-amber-50 rounded-lg p-4 border border-amber-200">
+                                    <p class="text-xs text-amber-700 mb-1 font-semibold">Tus Observaciones</p>
+                                    <p class="text-sm text-amber-900" th:text="${transporte.observacionesVendedor}">Observaciones...</p>
+                                </div>
+                            </div>
+
+                            <!-- Fotos de Carga -->
+                            <div>
+                                <p class="font-bold text-gray-900 mb-3">Fotos de la Carga Registradas</p>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div th:each="archivo : ${transporte.archivosTransporte}"
+                                         th:if="${archivo.tipoArchivo.name() == 'CAMION_VACIO' || archivo.tipoArchivo.name() == 'CARGA_GANADO' || archivo.tipoArchivo.name() == 'GSMI_CONDUCTOR'}"
+                                         class="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                                        <div class="aspect-video bg-gray-200 rounded-lg mb-2 overflow-hidden">
+                                            <img th:src="@{'/transporte/' + ${archivo.rutaArchivo}}"
+                                                 th:alt="${archivo.descripcion}"
+                                                 class="w-full h-full object-cover cursor-pointer hover:scale-105 transition"
+                                                 onclick="window.open(this.src, '_blank')">
+                                        </div>
+                                        <p class="text-xs text-gray-600 font-semibold" th:text="${archivo.descripcion}">Descripción</p>
+                                        <p class="text-xs text-gray-500" th:text="${#temporals.format(archivo.fechaSubida, 'dd/MMM HH:mm')}">28/Ene 10:30</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Timeline de Estado -->
+                        <div class="bg-white border-2 border-gray-200 rounded-2xl p-6">
+                            <h4 class="text-xl font-bold text-gray-900 mb-4">Estado del Transporte</h4>
+
+                            <div class="relative">
+                                <div class="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200"></div>
+
+                                <!-- Paso 1: Programado -->
+                                <div class="relative pl-12 pb-8">
+                                    <div class="absolute left-0 w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center">
+                                        <i class='bx bx-check text-white text-lg'></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-gray-900">Transporte Programado</p>
+                                        <p class="text-sm text-gray-600" th:text="${#temporals.format(transporte.fechaTransporte, 'dd/MMM/yyyy')}">28/Ene/2025</p>
+                                    </div>
+                                </div>
+
+                                <!-- Paso 2: Carga Confirmada -->
+                                <div class="relative pl-12 pb-8">
+                                    <div class="absolute left-0 w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center">
+                                        <i class='bx bx-check text-white text-lg'></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-emerald-900">Carga Confirmada</p>
+                                        <p class="text-sm text-emerald-700" th:text="${#temporals.format(transporte.fechaHoraCarga, 'dd/MMM/yyyy HH:mm')}">28/Ene/2025 10:30</p>
+                                    </div>
+                                </div>
+
+                                <!-- Paso 3: En camino (actual) -->
+                                <div class="relative pl-12 pb-8">
+                                    <div class="absolute left-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center animate-pulse">
+                                        <i class='bx bx-truck text-white text-lg'></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-blue-900">En Camino al Destino</p>
+                                        <p class="text-sm text-blue-700">El comprador confirmará la recepción</p>
+                                    </div>
+                                </div>
+
+                                <!-- Paso 4: Finalizado (pendiente) -->
+                                <div class="relative pl-12 opacity-40">
+                                    <div class="absolute left-0 w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                                        <i class='bx bx-check-double text-gray-600 text-lg'></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-gray-700">Venta Finalizada</p>
+                                        <p class="text-sm text-gray-500">El comprador confirmará la recepción</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Información de Contacto del Comprador -->
+                        <div class="bg-blue-50 border-l-4 border-blue-500 p-5 rounded-lg mt-6">
+                            <div class="flex items-start gap-3">
+                                <i class='bx bx-phone text-2xl text-blue-600 flex-shrink-0'></i>
+                                <div>
+                                    <p class="font-bold text-blue-900 mb-2">Contacto del Comprador</p>
+                                    <p class="text-sm text-blue-800 leading-relaxed">
+                                        Si necesitas comunicarte con el comprador o el conductor, puedes hacerlo a través de los datos de contacto
+                                        registrados en la venta. El sistema te notificará automáticamente cuando el comprador confirme la recepción.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CASO 3: Transporte COMPLETADO - Venta Finalizada -->
+                    <div th:if="${transporte != null && transporte.estadoTransporte.name() == 'COMPLETADO'}">
+                        <div class="bg-emerald-50 border-2 border-emerald-300 rounded-xl p-6 mb-6">
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 bg-emerald-200 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class='bx bx-check-double text-2xl text-emerald-700'></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-bold text-emerald-900 text-lg mb-2">¡Venta Finalizada Exitosamente!</p>
+                                    <p class="text-sm text-emerald-800 leading-relaxed">
+                                        El comprador ha confirmado la recepción del ganado. La venta se ha completado satisfactoriamente y todos los
+                                        registros han sido guardados en el sistema. ¡Felicitaciones por completar la transacción!
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Resumen Final del Transporte -->
+                        <div class="bg-white border-2 border-gray-200 rounded-2xl p-6 mb-6">
+                            <h4 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                <i class='bx bx-file-blank text-gray-600'></i>
+                                Resumen del Transporte
+                            </h4>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                    <p class="text-xs text-gray-600 mb-1">Fecha de Carga</p>
+                                    <p class="font-bold text-gray-900" th:text="${#temporals.format(transporte.fechaHoraCarga, 'dd/MMM/yyyy HH:mm')}">28/Ene/2025 10:30</p>
+                                </div>
+
+                                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                    <p class="text-xs text-gray-600 mb-1">Fecha de Entrega</p>
+                                    <p class="font-bold text-gray-900" th:text="${#temporals.format(transporte.fechaHoraEntrega, 'dd/MMM/yyyy HH:mm')}">28/Ene/2025 16:45</p>
+                                </div>
+
+                                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                    <p class="text-xs text-gray-600 mb-1">Empresa Transportadora</p>
+                                    <p class="font-bold text-gray-900" th:text="${transporte.empresaTransporte}">Transportes Los Llanos</p>
+                                </div>
+
+                                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                    <p class="text-xs text-gray-600 mb-1">Conductor</p>
+                                    <p class="font-bold text-gray-900" th:text="${transporte.nombreConductor}">Juan Pérez</p>
+                                </div>
+
+                                <div class="md:col-span-2 bg-emerald-50 rounded-lg p-4 border border-emerald-200">
+                                    <p class="text-xs text-emerald-700 mb-1 font-semibold">Estado Final</p>
+                                    <p class="font-bold text-emerald-900 flex items-center gap-2">
+                                        <i class='bx bx-check-circle'></i>
+                                        Entregado y Confirmado por el Comprador
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Galería de Fotos Completa -->
+                            <div>
+                                <p class="font-bold text-gray-900 mb-3">Documentación Fotográfica Completa</p>
+
+                                <!-- Fotos de Carga (Vendedor) -->
+                                <div class="mb-4">
+                                    <p class="text-sm font-semibold text-gray-700 mb-2">Fotos de Carga (Tus fotos)</p>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div th:each="archivo : ${transporte.archivosTransporte}"
+                                             th:if="${archivo.tipoArchivo.name() == 'CAMION_VACIO' || archivo.tipoArchivo.name() == 'CARGA_GANADO' || archivo.tipoArchivo.name() == 'GSMI_CONDUCTOR'}"
+                                             class="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                                            <div class="aspect-video bg-gray-200 rounded-lg mb-2 overflow-hidden">
+                                                <img th:src="@{'/transporte/' + ${archivo.rutaArchivo}}"
+                                                     th:alt="${archivo.descripcion}"
+                                                     class="w-full h-full object-cover cursor-pointer hover:scale-105 transition"
+                                                     onclick="window.open(this.src, '_blank')">
+                                            </div>
+                                            <p class="text-xs text-gray-600 font-semibold" th:text="${archivo.descripcion}">Descripción</p>
+                                            <p class="text-xs text-gray-500" th:text="${#temporals.format(archivo.fechaSubida, 'dd/MMM HH:mm')}">28/Ene 10:30</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Fotos de Entrega (Comprador) -->
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-700 mb-2">Fotos de Entrega (Comprador)</p>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div th:each="archivo : ${transporte.archivosTransporte}"
+                                             th:if="${archivo.tipoArchivo.name() == 'GANADO_DESCARGADO' || archivo.tipoArchivo.name() == 'GANADO_NUEVO_LOTE'}"
+                                             class="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                                            <div class="aspect-video bg-gray-200 rounded-lg mb-2 overflow-hidden">
+                                                <img th:src="@{'/transporte/' + ${archivo.rutaArchivo}}"
+                                                     th:alt="${archivo.descripcion}"
+                                                     class="w-full h-full object-cover cursor-pointer hover:scale-105 transition"
+                                                     onclick="window.open(this.src, '_blank')">
+                                            </div>
+                                            <p class="text-xs text-gray-600 font-semibold" th:text="${archivo.descripcion}">Descripción</p>
+                                            <p class="text-xs text-gray-500" th:text="${#temporals.format(archivo.fechaSubida, 'dd/MMM HH:mm')}">28/Ene 16:45</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Timeline Completo -->
+                        <div class="bg-white border-2 border-gray-200 rounded-2xl p-6 mb-6">
+                            <h4 class="text-xl font-bold text-gray-900 mb-4">Historial Completo del Transporte</h4>
+
+                            <div class="relative">
+                                <div class="absolute left-4 top-0 bottom-0 w-0.5 bg-emerald-300"></div>
+
+                                <!-- Paso 1: Programado -->
+                                <div class="relative pl-12 pb-8">
+                                    <div class="absolute left-0 w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center">
+                                        <i class='bx bx-check text-white text-lg'></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-gray-900">Transporte Programado</p>
+                                        <p class="text-sm text-gray-600">Comprador programó el transporte</p>
+                                        <p class="text-xs text-gray-500" th:text="${#temporals.format(transporte.fechaTransporte, 'dd/MMM/yyyy')}">28/Ene/2025</p>
+                                    </div>
+                                </div>
+
+                                <!-- Paso 2: Carga -->
+                                <div class="relative pl-12 pb-8">
+                                    <div class="absolute left-0 w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center">
+                                        <i class='bx bx-check text-white text-lg'></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-gray-900">Carga Confirmada</p>
+                                        <p class="text-sm text-gray-600">Entregaste el ganado al transportista</p>
+                                        <p class="text-xs text-gray-500" th:text="${#temporals.format(transporte.fechaHoraCarga, 'dd/MMM/yyyy HH:mm')}">28/Ene/2025 10:30</p>
+                                    </div>
+                                </div>
+
+                                <!-- Paso 3: En camino -->
+                                <div class="relative pl-12 pb-8">
+                                    <div class="absolute left-0 w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center">
+                                        <i class='bx bx-check text-white text-lg'></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-gray-900">En Tránsito</p>
+                                        <p class="text-sm text-gray-600">Ganado transportado exitosamente</p>
+                                    </div>
+                                </div>
+
+                                <!-- Paso 4: Completado -->
+                                <div class="relative pl-12">
+                                    <div class="absolute left-0 w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center">
+                                        <i class='bx bx-check-double text-white text-lg'></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-emerald-900">Recepción Confirmada</p>
+                                        <p class="text-sm text-emerald-700">El comprador confirmó la recepción</p>
+                                        <p class="text-xs text-emerald-600" th:text="${#temporals.format(transporte.fechaHoraEntrega, 'dd/MMM/yyyy HH:mm')}">28/Ene/2025 16:45</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Certificado de Venta Finalizada -->
+                        <div class="bg-gradient-to-br from-emerald-50 to-green-50 border-2 border-emerald-300 rounded-xl p-6">
+                            <div class="text-center">
+                                <div class="w-16 h-16 bg-emerald-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <i class='bx bx-award text-3xl text-emerald-700'></i>
+                                </div>
+                                <p class="font-bold text-emerald-900 text-xl mb-2">Venta Completada Exitosamente</p>
+                                <p class="text-sm text-emerald-800 mb-4">
+                                    La transacción ha finalizado con éxito. Todos los registros y documentación han sido guardados
+                                    en el sistema para trazabilidad completa.
+                                </p>
+                                <div class="flex gap-3 justify-center">
+                                    <button class="px-6 py-3 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition flex items-center gap-2">
+                                        <i class='bx bx-download'></i>
+                                        Descargar Certificado
+                                    </button>
+                                    <button class="px-6 py-3 bg-white text-emerald-700 border-2 border-emerald-300 rounded-xl font-semibold hover:bg-emerald-50 transition flex items-center gap-2">
+                                        <i class='bx bx-printer'></i>
+                                        Imprimir Resumen
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div th:unless="${transporte != null && transporte.estadoTransporte.name() == 'PROGRAMADO'}">
+
+                    </div>
                 </div>
             </div>
 
