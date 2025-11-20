@@ -9,8 +9,6 @@ public class PagoDTO {
 
     private Long idPago;
 
-    private VentaDTO venta;
-
     private Long idPaymentMercadoPago;
 
     private Long montoPagado;
