@@ -19,8 +19,4 @@ public class VentaFinca {
     @OneToOne
     @JoinColumn(name = "id_venta")
     private Venta venta;
-
-    @OneToMany(mappedBy = "ventaFinca")
-    @MapKey(name = "nombreComprobante")
-    private Map<NombreComprobanteEnum, InfoComprobante> comprobantesInfo = new HashMap<>();
 }

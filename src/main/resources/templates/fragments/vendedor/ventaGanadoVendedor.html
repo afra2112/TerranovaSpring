@@ -1178,10 +1178,164 @@
                         </div>
                     </div>
 
+                    <!-- CASO 3: Sin transporte programado - El comprador debe encargarse -->
+                    <div th:unless="${transporte != null}">
+                        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-300 rounded-2xl p-8 mb-6">
+                            <div class="flex items-start gap-4">
+                                <div class="w-16 h-16 bg-blue-200 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class='bx bx-info-circle text-3xl text-blue-700'></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-bold text-blue-900 text-2xl mb-3">Transporte a Cargo del Comprador</p>
+                                    <p class="text-base text-blue-800 leading-relaxed">
+                                        El comprador es el encargado de gestionar y organizar el transporte del ganado.
+                                        Terranova únicamente se encarga de la trazabilidad del proceso, no de la gestión logística.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Información Detallada -->
+                        <div class="bg-white border-2 border-emerald-300 rounded-2xl p-6 mb-6">
+                            <h4 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                <i class='bx bx-clipboard-check text-emerald-600'></i>
+                                ¿Qué significa esto para ti?
+                            </h4>
+
+                            <div class="space-y-4">
+                                <div class="flex items-start gap-3 bg-emerald-50 p-4 rounded-lg border border-emerald-200">
+                                    <div class="w-10 h-10 bg-emerald-200 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <i class='bx bx-user-check text-xl text-emerald-700'></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="font-bold text-emerald-900 mb-1">Espera la Confirmación del Comprador</p>
+                                        <p class="text-sm text-emerald-800 leading-relaxed">
+                                            El comprador debe programar el transporte del ganado con una empresa transportadora de su elección.
+                                            Una vez programado, recibirás una notificación con todos los detalles.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-start gap-3 bg-blue-50 p-4 rounded-lg border border-blue-200">
+                                    <div class="w-10 h-10 bg-blue-200 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <i class='bx bx-truck text-xl text-blue-700'></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="font-bold text-blue-900 mb-1">Terranova Solo Traza el Proceso</p>
+                                        <p class="text-sm text-blue-800 leading-relaxed">
+                                            Nuestra plataforma únicamente registra y documenta el proceso de transporte para garantizar
+                                            la trazabilidad completa de la operación, pero no gestionamos ni coordinamos el transporte físico.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-start gap-3 bg-amber-50 p-4 rounded-lg border border-amber-200">
+                                    <div class="w-10 h-10 bg-amber-200 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <i class='bx bx-camera text-xl text-amber-700'></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="font-bold text-amber-900 mb-1">Prepárate para Documentar</p>
+                                        <p class="text-sm text-amber-800 leading-relaxed">
+                                            Cuando el comprador programe el transporte y llegue el día de la carga, deberás tomar 3 fotos
+                                            obligatorias para confirmar la entrega del ganado al transportista.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Timeline de Proceso -->
+                        <div class="bg-white border-2 border-gray-200 rounded-2xl p-6 mb-6">
+                            <h4 class="text-xl font-bold text-gray-900 mb-4">Proceso de Transporte</h4>
+
+                            <div class="relative">
+                                <div class="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200"></div>
+
+                                <!-- Paso 1: Actual -->
+                                <div class="relative pl-12 pb-8">
+                                    <div class="absolute left-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center animate-pulse">
+                                        <i class='bx bx-time-five text-white text-lg'></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-blue-900">Esperando Programación</p>
+                                        <p class="text-sm text-blue-700">El comprador debe programar el transporte</p>
+                                        <p class="text-xs text-blue-600 mt-1">Estado Actual</p>
+                                    </div>
+                                </div>
+
+                                <!-- Paso 2: Futuro -->
+                                <div class="relative pl-12 pb-8 opacity-50">
+                                    <div class="absolute left-0 w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                                        <i class='bx bx-calendar text-gray-600 text-lg'></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-gray-700">Transporte Programado</p>
+                                        <p class="text-sm text-gray-600">Recibirás notificación con fecha y detalles</p>
+                                    </div>
+                                </div>
+
+                                <!-- Paso 3: Futuro -->
+                                <div class="relative pl-12 pb-8 opacity-50">
+                                    <div class="absolute left-0 w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                                        <i class='bx bx-camera text-gray-600 text-lg'></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-gray-700">Confirmar Carga</p>
+                                        <p class="text-sm text-gray-600">Documentarás la entrega con fotos</p>
+                                    </div>
+                                </div>
+
+                                <!-- Paso 4: Futuro -->
+                                <div class="relative pl-12 opacity-50">
+                                    <div class="absolute left-0 w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                                        <i class='bx bx-check-double text-gray-600 text-lg'></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-gray-700">Venta Finalizada</p>
+                                        <p class="text-sm text-gray-600">El comprador confirmará la recepción</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recomendaciones -->
+                        <div class="bg-gradient-to-r from-emerald-50 to-teal-50 border-l-4 border-emerald-500 p-6 rounded-lg">
+                            <div class="flex items-start gap-3">
+                                <i class='bx bx-bulb text-2xl text-emerald-600 flex-shrink-0'></i>
+                                <div>
+                                    <p class="font-bold text-emerald-900 mb-3 text-lg">Recomendaciones Mientras Esperas</p>
+                                    <ul class="text-sm text-emerald-800 leading-relaxed space-y-2 list-disc list-inside">
+                                        <li>Mantén el ganado en óptimas condiciones de salud y alimentación</li>
+                                        <li>Verifica que toda la documentación sanitaria (GSMI) esté vigente y lista</li>
+                                        <li>Coordina con el comprador si necesitas comunicarte directamente</li>
+                                        <li>Prepara un espacio adecuado para la carga cuando llegue el transportista</li>
+                                        <li>Mantén tu celular con batería suficiente para tomar las fotos requeridas</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contacto de Soporte -->
+                        <div class="bg-white border-2 border-slate-200 rounded-xl p-6 mt-6">
+                            <div class="flex items-start gap-3">
+                                <i class='bx bx-support text-2xl text-slate-600'></i>
+                                <div>
+                                    <p class="font-bold text-slate-900 mb-2">¿Necesitas Ayuda?</p>
+                                    <p class="text-sm text-slate-700">
+                                        Si tienes dudas sobre el proceso de transporte o necesitas asistencia, puedes contactar a
+                                        nuestro equipo de soporte. Estamos aquí para ayudarte con cualquier inquietud sobre la trazabilidad.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- This is a placeholder for the next condition, it's not meant to be removed or altered. -->
                     <div th:unless="${transporte != null && transporte.estadoTransporte.name() == 'PROGRAMADO'}">
 
                     </div>
                 </div>
+
             </div>
 
             <!-- PASOS ESPECÍFICOS PARA TERRENO -->

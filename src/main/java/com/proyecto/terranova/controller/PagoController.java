@@ -20,8 +20,7 @@ public class PagoController {
     @GetMapping("iniciar-pago")
     public String iniciarPago(@RequestParam Long idProducto, @RequestParam Long idVenta, Model model) throws MPException, MPApiException {
         String puntoInicio = mercadoPagoService.crearPreferencia(idProducto, idVenta);
-        model.addAttribute("puntoInicio", puntoInicio);
-        return "comprador/pago";
+        return "redirect:" + puntoInicio;
     }
 
     @GetMapping("exitoso")

@@ -1,5 +1,6 @@
 package com.proyecto.terranova.dto;
 
+import com.proyecto.terranova.config.enums.NombreComprobanteEnum;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -9,11 +10,17 @@ public class ComprobanteDTO {
 
     private Long idComprobante;
 
-    private String nombreComprobante;
+    private NombreComprobanteEnum nombreComprobante;
+
+    private String nombreMostrar;
+
+    private String descripcion;
+
+    private String icono;
+
+    private boolean obligatorio;
 
     private String rutaArchivo;
 
     private LocalDateTime fechaSubida;
-
-    private Long idVenta;
 }

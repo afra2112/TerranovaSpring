@@ -73,6 +73,12 @@ public class CompradorController {
     @Autowired
     TransporteService transporteService;
 
+    @Autowired
+    InfoComprobanteRepository infoComprobanteRepository;
+
+    @Autowired
+    ComprobanteRepository comprobanteRepository;
+
     @ModelAttribute("usuario")
     public Usuario usuario(Authentication authentication){
         return usuarioService.findByEmail(authentication.getName());
@@ -178,7 +184,7 @@ public class CompradorController {
     }
 
     @GetMapping("/compras/detalle/{id}")
-    public String compras(@PathVariable Long id, Model model){
+    public String compras(@PathVariable Long id, Model model) {
 
         Venta ventaGeneral = ventaService.findById(id);
         String tipoProducto = ventaGeneral.getProducto().getClass().getSimpleName().toUpperCase();
@@ -186,52 +192,47 @@ public class CompradorController {
         Transporte transporte = transporteService.obtenerPorVenta(ventaGeneral);
         model.addAttribute("transporte", transporte);
 
-        switch (tipoProducto){
+        List<Comprobante> comprobantesVenta =
+                comprobanteRepository.findByVenta(ventaGeneral);
+
+        Map<String, Comprobante> comprobantes = new HashMap<>();
+
+        List<InfoComprobante> infoCatalogo = infoComprobanteRepository.findAll();
+
+        for (InfoComprobante info : infoCatalogo) {
+            comprobantes.put(info.getNombreComprobante().name(), null);
+        }
+
+        for (Comprobante comp : comprobantesVenta) {
+            comprobantes.put(comp.getInfoComprobante().getNombreComprobante().name(), comp);
+        }
+
+        Map<NombreComprobanteEnum, InfoComprobante> infosComprobantes = new HashMap<>();
+        for (InfoComprobante info : infoCatalogo) {
+            infosComprobantes.put(info.getNombreComprobante(), info);
+        }
+
+        model.addAttribute("infosComprobantes", infosComprobantes);
+
+        switch (tipoProducto) {
             case "GANADO" -> {
                 VentaGanado detalle = ventaGanadoRepository.findByVenta(ventaGeneral);
-
-                // Cargar los comprobantes con su información
-                Map<String, Comprobante> comprobantes = new HashMap<>();
-                for (Map.Entry<NombreComprobanteEnum, InfoComprobante> entry : detalle.getComprobantesInfo().entrySet()) {
-                    if (entry.getValue().getComprobante() != null) {
-                        comprobantes.put(entry.getKey().name(), entry.getValue().getComprobante());
-                    }
-                }
-
                 model.addAttribute("ventaDetalle", detalle);
-                model.addAttribute("comprobantes", comprobantes);
                 model.addAttribute("fragment", "fragments/comprador/compraGanado");
             }
             case "TERRENO" -> {
                 VentaTerreno detalle = ventaTerrenoRepository.findByVenta(ventaGeneral);
-
-                Map<String, Comprobante> comprobantes = new HashMap<>();
-                for (Map.Entry<NombreComprobanteEnum, InfoComprobante> entry : detalle.getComprobantesInfo().entrySet()) {
-                    if (entry.getValue().getComprobante() != null) {
-                        comprobantes.put(entry.getKey().name(), entry.getValue().getComprobante());
-                    }
-                }
-
                 model.addAttribute("ventaDetalle", detalle);
-                model.addAttribute("comprobantes", comprobantes);
                 model.addAttribute("fragment", "fragments/comprador/compraTerreno");
             }
             case "FINCA" -> {
                 VentaFinca detalle = ventaFincaRepository.findByVenta(ventaGeneral);
-
-                Map<String, Comprobante> comprobantes = new HashMap<>();
-                for (Map.Entry<NombreComprobanteEnum, InfoComprobante> entry : detalle.getComprobantesInfo().entrySet()) {
-                    if (entry.getValue().getComprobante() != null) {
-                        comprobantes.put(entry.getKey().name(), entry.getValue().getComprobante());
-                    }
-                }
-
                 model.addAttribute("ventaDetalle", detalle);
-                model.addAttribute("comprobantes", comprobantes);
                 model.addAttribute("fragment", "fragments/comprador/compraFinca");
             }
         }
 
+        model.addAttribute("comprobantes", comprobantes);
         model.addAttribute("venta", ventaGeneral);
         model.addAttribute("tipoProducto", tipoProducto);
         return "comprador/detalleVentaComprador";

@@ -232,43 +232,42 @@ public class VentaImplement implements VentaService {
             MultipartFile certificadoPesaje,
             String observacionesSanitarias
     ) throws IOException {
-        Venta venta = repository.findById(idVenta).orElseThrow();
-        String tipoProducto = venta.getProducto().getClass().getSimpleName().toUpperCase();
 
-        Object ventaDetalle = obtenerVentaDetalle(venta, tipoProducto);
+        Venta venta = repository.findById(idVenta).orElseThrow(() -> new IllegalArgumentException("Venta no encontrada: " + idVenta));
 
+        // Actualizar observaciones (si aplica) -- usa ventaDetalle solo para campos específicos
+        Object ventaDetalle = obtenerVentaDetalle(venta, venta.getProducto().getClass().getSimpleName().toUpperCase());
         if (observacionesSanitarias != null && !observacionesSanitarias.isEmpty()) {
             actualizarObservaciones(ventaDetalle, observacionesSanitarias);
         }
 
-        //aqudocumentos obligatorios
+        // Procesar cada archivo (si existe)
         if (gsmi != null && !gsmi.isEmpty()) {
-            procesarComprobante(ventaDetalle, gsmi, NombreComprobanteEnum.GSMI);
+            procesarComprobante(venta, gsmi, NombreComprobanteEnum.GSMI);
         }
 
         if (certificadoSanitario != null && !certificadoSanitario.isEmpty()) {
-            procesarComprobante(ventaDetalle, certificadoSanitario, NombreComprobanteEnum.CERTIFICADO_SANITARIO);
+            procesarComprobante(venta, certificadoSanitario, NombreComprobanteEnum.CERTIFICADO_SANITARIO);
         }
 
         if (facturaPropiedad != null && !facturaPropiedad.isEmpty()) {
-            procesarComprobante(ventaDetalle, facturaPropiedad, NombreComprobanteEnum.FACTURA_PROPIEDAD);
+            procesarComprobante(venta, facturaPropiedad, NombreComprobanteEnum.FACTURA_PROPIEDAD);
         }
 
-        //documentos opcionales
         if (inventarioLote != null && !inventarioLote.isEmpty()) {
-            procesarComprobante(ventaDetalle, inventarioLote, NombreComprobanteEnum.INVENTARIO_LOTE);
+            procesarComprobante(venta, inventarioLote, NombreComprobanteEnum.INVENTARIO_LOTE);
         }
 
         if (certificadoSinigan != null && !certificadoSinigan.isEmpty()) {
-            procesarComprobante(ventaDetalle, certificadoSinigan, NombreComprobanteEnum.CERTIFICADO_SINIGAN);
+            procesarComprobante(venta, certificadoSinigan, NombreComprobanteEnum.CERTIFICADO_SINIGAN);
         }
 
         if (certificadoHierro != null && !certificadoHierro.isEmpty()) {
-            procesarComprobante(ventaDetalle, certificadoHierro, NombreComprobanteEnum.CERTIFICADO_HIERRO);
+            procesarComprobante(venta, certificadoHierro, NombreComprobanteEnum.CERTIFICADO_HIERRO);
         }
 
         if (certificadoPesaje != null && !certificadoPesaje.isEmpty()) {
-            procesarComprobante(ventaDetalle, certificadoPesaje, NombreComprobanteEnum.CERTIFICADO_PESAJE);
+            procesarComprobante(venta, certificadoPesaje, NombreComprobanteEnum.CERTIFICADO_PESAJE);
         }
 
         repository.save(venta);
@@ -290,35 +289,29 @@ public class VentaImplement implements VentaService {
         }
     }
 
-    private void procesarComprobante(Object ventaDetalle, MultipartFile archivo, NombreComprobanteEnum nombreComprobante) throws IOException {
+    private void procesarComprobante(Venta venta, MultipartFile archivo, NombreComprobanteEnum nombreComprobante) throws IOException {
 
-        // primero guardo el archivo en la carpeta uploads
-        String rutaArchivo = guardarArchivo(archivo);
+        String nombreArchivo = guardarArchivo(archivo);
 
-        // despues agarro el infocomprobante
-        InfoComprobante infoComprobante = obtenerOCrearInfoComprobante(ventaDetalle, nombreComprobante);
+        InfoComprobante info = infoComprobanteRepository.findByNombreComprobante(nombreComprobante);
 
-        // aqui valido si existe un comprobante
-        Comprobante comprobanteExistente = infoComprobante.getComprobante();
+        Optional<Comprobante> optionalExistente = comprobanteRepository.findByVentaAndInfoComprobante(venta, info);
 
-        if (comprobanteExistente != null) {
-            // Eliminar el archivo anterior del sistema de archivos
-            eliminarArchivo(comprobanteExistente.getRutaArchivo());
-
-            // Actualizar el comprobante existente
-            comprobanteExistente.setRutaArchivo(rutaArchivo);
-            comprobanteExistente.setFechaSubida(LocalDateTime.now());
-            comprobanteRepository.save(comprobanteExistente);
+        if (optionalExistente.isPresent()) {
+            Comprobante existente = optionalExistente.get();
+            if (existente.getRutaArchivo() != null) {
+                eliminarArchivo(existente.getRutaArchivo());
+            }
+            existente.setRutaArchivo(nombreArchivo);
+            existente.setFechaSubida(LocalDateTime.now());
+            comprobanteRepository.save(existente);
         } else {
-            Comprobante nuevoComprobante = new Comprobante();
-            nuevoComprobante.setRutaArchivo(rutaArchivo);
-            nuevoComprobante.setFechaSubida(LocalDateTime.now());
-            nuevoComprobante.setInfoComprobante(infoComprobante);
-
-            comprobanteRepository.save(nuevoComprobante);
-
-            infoComprobante.setComprobante(nuevoComprobante);
-            infoComprobanteRepository.save(infoComprobante);
+            Comprobante nuevo = new Comprobante();
+            nuevo.setVenta(venta);
+            nuevo.setInfoComprobante(info);
+            nuevo.setRutaArchivo(nombreArchivo);
+            nuevo.setFechaSubida(LocalDateTime.now());
+            comprobanteRepository.save(nuevo);
         }
     }
 
@@ -345,37 +338,5 @@ public class VentaImplement implements VentaService {
         Files.copy(archivo.getInputStream(), rutaCompleta, StandardCopyOption.REPLACE_EXISTING);
 
         return nombreArchivo;
-    }
-
-    private InfoComprobante obtenerOCrearInfoComprobante(Object ventaDetalle, NombreComprobanteEnum nombreComprobante) {
-
-        Map<NombreComprobanteEnum, InfoComprobante> comprobantesInfo = null;
-
-        if (ventaDetalle instanceof VentaGanado ventaGanado) {
-            comprobantesInfo = ventaGanado.getComprobantesInfo();
-        } else if (ventaDetalle instanceof VentaTerreno ventaTerreno) {
-            comprobantesInfo = ventaTerreno.getComprobantesInfo();
-        } else if (ventaDetalle instanceof VentaFinca ventaFinca) {
-            comprobantesInfo = ventaFinca.getComprobantesInfo();
-        }
-
-        InfoComprobante infoComprobante = comprobantesInfo != null ? comprobantesInfo.get(nombreComprobante) : null;
-
-        if (infoComprobante == null) {
-            infoComprobante = new InfoComprobante();
-            infoComprobante.setNombreComprobante(nombreComprobante);
-
-            if (ventaDetalle instanceof VentaGanado ventaGanado) {
-                infoComprobante.setVentaGanado(ventaGanado);
-            } else if (ventaDetalle instanceof VentaTerreno ventaTerreno) {
-                infoComprobante.setVentaTerreno(ventaTerreno);
-            } else if (ventaDetalle instanceof VentaFinca ventaFinca) {
-                infoComprobante.setVentaFinca(ventaFinca);
-            }
-
-            infoComprobante = infoComprobanteRepository.save(infoComprobante);
-        }
-
-        return infoComprobante;
     }
 }

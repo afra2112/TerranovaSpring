@@ -4,9 +4,7 @@ import com.proyecto.terranova.config.enums.EstadoAsistenciaEnum;
 import com.proyecto.terranova.config.enums.NombreComprobanteEnum;
 import com.proyecto.terranova.config.enums.RolEnum;
 import com.proyecto.terranova.entity.*;
-import com.proyecto.terranova.repository.VentaFincaRepository;
-import com.proyecto.terranova.repository.VentaGanadoRepository;
-import com.proyecto.terranova.repository.VentaTerrenoRepository;
+import com.proyecto.terranova.repository.*;
 import com.proyecto.terranova.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -43,7 +41,10 @@ public class VentaController {
     TransporteService transporteService;
 
     @Autowired
-    GastoVentaService gastoVentaService;
+    ComprobanteRepository comprobanteRepository;
+
+    @Autowired
+    InfoComprobanteRepository infoComprobanteRepository;
 
     @ModelAttribute("esVendedor")
     public boolean esVendedor(Authentication authentication){
@@ -75,30 +76,36 @@ public class VentaController {
 
     @GetMapping("/detalle-venta/{id}")
     public String procesoVenta(@PathVariable Long id, Model model) {
+
         Venta ventaGeneral = ventaService.findById(id);
         String tipoProducto = ventaGeneral.getProducto().getClass().getSimpleName().toUpperCase();
 
         Transporte transporte = transporteService.obtenerPorVenta(ventaGeneral);
         model.addAttribute("transporte", transporte);
 
-        switch (tipoProducto){
+        List<Comprobante> comprobantesVenta =
+                comprobanteRepository.findByVenta(ventaGeneral);
+
+        Map<String, Comprobante> comprobantes = new HashMap<>();
+        Map<NombreComprobanteEnum, InfoComprobante> infosComprobantes = new HashMap<>();
+
+        List<InfoComprobante> infoCatalogo = infoComprobanteRepository.findAll();
+
+        for (InfoComprobante info : infoCatalogo) {
+            comprobantes.put(info.getNombreComprobante().name(), null);
+        }
+
+        for (Comprobante comp : comprobantesVenta) {
+            comprobantes.put(comp.getInfoComprobante().getNombreComprobante().name(), comp);
+        }
+
+        model.addAttribute("comprobantes", comprobantes);
+        model.addAttribute("infosComprobantes", infosComprobantes);
+
+        switch (tipoProducto) {
             case "GANADO" -> {
                 VentaGanado detalle = ventaGanadoRepository.findByVenta(ventaGeneral);
-
-                // Cargar los comprobantes existentes
-                Map<String, Comprobante> comprobantes = new HashMap<>();
-                Map<String, InfoComprobante> infosComprobantes = new HashMap<>();
-
-                for (Map.Entry<NombreComprobanteEnum, InfoComprobante> entry : detalle.getComprobantesInfo().entrySet()) {
-                    infosComprobantes.put(entry.getKey().name(), entry.getValue());
-                    if (entry.getValue().getComprobante() != null) {
-                        comprobantes.put(entry.getKey().name(), entry.getValue().getComprobante());
-                    }
-                }
-
                 model.addAttribute("venta", detalle);
-                model.addAttribute("comprobantes", comprobantes);
-                model.addAttribute("infosComprobantes", infosComprobantes);
                 model.addAttribute("fragment", "fragments/vendedor/ventaGanadoVendedor");
             }
             case "TERRENO" -> {
@@ -114,7 +121,12 @@ public class VentaController {
         }
 
         model.addAttribute("tipoProducto", tipoProducto);
-        model.addAttribute("asistencias", asistenciaService.encontrarAsistenciasPorCitaYEstadoAsistencia(ventaGeneral.getCita().getIdCita(), EstadoAsistenciaEnum.ASISTIO));
+        model.addAttribute("asistencias",
+                asistenciaService.encontrarAsistenciasPorCitaYEstadoAsistencia(
+                        ventaGeneral.getCita().getIdCita(),
+                        EstadoAsistenciaEnum.ASISTIO
+                )
+        );
         return "vendedor/procesoVenta";
     }
 

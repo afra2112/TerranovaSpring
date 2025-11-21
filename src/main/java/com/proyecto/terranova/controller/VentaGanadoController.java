@@ -1,10 +1,11 @@
 package com.proyecto.terranova.controller;
 
 import com.proyecto.terranova.config.enums.NombreComprobanteEnum;
+import com.proyecto.terranova.entity.InfoComprobante;
 import com.proyecto.terranova.entity.Transporte;
 import com.proyecto.terranova.entity.Venta;
-import com.proyecto.terranova.entity.VentaGanado;
-import com.proyecto.terranova.repository.VentaGanadoRepository;
+import com.proyecto.terranova.repository.ComprobanteRepository;
+import com.proyecto.terranova.repository.InfoComprobanteRepository;
 import com.proyecto.terranova.service.NotificacionService;
 import com.proyecto.terranova.service.TransporteService;
 import com.proyecto.terranova.service.VentaService;
@@ -33,7 +34,10 @@ public class VentaGanadoController {
     NotificacionService notificacionService;
 
     @Autowired
-    VentaGanadoRepository ventaGanadoRepository;
+    InfoComprobanteRepository infoComprobanteRepository;
+
+    @Autowired
+    ComprobanteRepository comprobanteRepository;
 
     @Autowired
     TransporteService transporteService;
@@ -63,10 +67,11 @@ public class VentaGanadoController {
             @RequestParam(required = false) MultipartFile certificadoSinigan,
             @RequestParam(required = false) MultipartFile certificadoHierro,
             @RequestParam(required = false) MultipartFile certificadoPesaje,
-            @RequestParam(required = false) String accion, // "guardar" o "continuar"
+            @RequestParam(required = false) String accion,
             RedirectAttributes redirectAttributes
     ) {
         try {
+            // 👉 Guardar archivos
             ventaService.actualizarVentaPaso3Ganado(
                     idVenta,
                     gsmi,
@@ -79,37 +84,58 @@ public class VentaGanadoController {
                     observacionesSanitarias
             );
 
-            if ("continuar".equals(accion)) {
-                Venta venta = ventaService.findById(idVenta);
-                VentaGanado ventaGanado = ventaGanadoRepository.findByVenta(venta);
+            Venta venta = ventaService.findById(idVenta);
 
-                //aqui valido que esten todos los documentos obligatorios en el mapa
-                boolean tieneGsmi = ventaGanado.getComprobantesInfo().containsKey(NombreComprobanteEnum.GSMI)
-                        && ventaGanado.getComprobantesInfo().get(NombreComprobanteEnum.GSMI).getComprobante() != null;
-                boolean tieneCertificado = ventaGanado.getComprobantesInfo().containsKey(NombreComprobanteEnum.CERTIFICADO_SANITARIO)
-                        && ventaGanado.getComprobantesInfo().get(NombreComprobanteEnum.CERTIFICADO_SANITARIO).getComprobante() != null;
-                boolean tieneFactura = ventaGanado.getComprobantesInfo().containsKey(NombreComprobanteEnum.FACTURA_PROPIEDAD)
-                        && ventaGanado.getComprobantesInfo().get(NombreComprobanteEnum.FACTURA_PROPIEDAD).getComprobante() != null;
+            if ("continuar".equals(accion)) {
+
+                InfoComprobante infoGsmi =
+                        infoComprobanteRepository.findByNombreComprobante(NombreComprobanteEnum.GSMI);
+                InfoComprobante infoCertSan =
+                        infoComprobanteRepository.findByNombreComprobante(NombreComprobanteEnum.CERTIFICADO_SANITARIO);
+                InfoComprobante infoFactura =
+                        infoComprobanteRepository.findByNombreComprobante(NombreComprobanteEnum.FACTURA_PROPIEDAD);
+
+                boolean tieneGsmi = comprobanteRepository
+                        .findByVentaAndInfoComprobante(venta, infoGsmi)
+                        .isPresent();
+
+                boolean tieneCertificado = comprobanteRepository
+                        .findByVentaAndInfoComprobante(venta, infoCertSan)
+                        .isPresent();
+
+                boolean tieneFactura = comprobanteRepository
+                        .findByVentaAndInfoComprobante(venta, infoFactura)
+                        .isPresent();
 
                 if (!tieneGsmi || !tieneCertificado || !tieneFactura) {
-                    redirectAttributes.addFlashAttribute("error", "Debes subir todos los documentos obligatorios antes de continuar");
+                    redirectAttributes.addFlashAttribute(
+                            "error",
+                            "Debes subir todos los documentos obligatorios antes de continuar"
+                    );
                     return "redirect:/vendedor/ventas/detalle-venta/" + idVenta;
                 }
 
+                // 👉 Avanza al siguiente paso
                 venta.setPasoActual(4);
                 ventaService.save(venta);
-                redirectAttributes.addFlashAttribute("success", "Documentación completada. Avanzando al siguiente paso");
+
+                redirectAttributes.addFlashAttribute("success",
+                        "Documentación completada. Avanzando al siguiente paso");
+
             } else {
-                redirectAttributes.addFlashAttribute("success", "Documentos actualizados correctamente");
+                redirectAttributes.addFlashAttribute("success",
+                        "Documentos actualizados correctamente");
             }
 
             return "redirect:/vendedor/ventas/detalle-venta/" + idVenta;
 
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error al guardar la documentación: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error",
+                    "Error al guardar la documentación: " + e.getMessage());
             return "redirect:/vendedor/ventas/detalle-venta/" + idVenta;
         }
     }
+
 
     @PostMapping("/comprador/compras/confirmar-negociacion")
     public String actializarPaso2Comprador(

@@ -7,8 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -73,7 +71,6 @@
             background: rgba(6, 78, 59, 0.7);
         }
 
-        /* Colored badges with distinct colors for different states */
         .badge {
             display: inline-flex;
             align-items: center;
@@ -85,13 +82,12 @@
             backdrop-filter: blur(4px);
         }
 
-        .badge-completada { background: rgba(220, 252, 231, 0.8); color: #166534; border: 1px solid rgba(134, 239, 172, 0.5); }
-        .badge-procesando { background: rgba(219, 234, 254, 0.8); color: #1e40af; border: 1px solid rgba(147, 197, 253, 0.5); }
-        .badge-rechazada { background: rgba(254, 226, 226, 0.8); color: #991b1b; border: 1px solid rgba(252, 165, 165, 0.5); }
-        .badge-pagada { background: rgba(209, 250, 229, 0.8); color: #065f46; border: 1px solid rgba(110, 231, 183, 0.5); }
-        .badge-no-pagada { background: rgba(254, 243, 199, 0.8); color: #92400e; border: 1px solid rgba(252, 211, 77, 0.5); }
+        .badge-completada { background: rgba(220, 252, 231, 0.9); color: #166534; border: 1px solid rgba(134, 239, 172, 0.6); }
+        .badge-procesando { background: rgba(219, 234, 254, 0.9); color: #1e40af; border: 1px solid rgba(147, 197, 253, 0.6); }
+        .badge-rechazada { background: rgba(254, 226, 226, 0.9); color: #991b1b; border: 1px solid rgba(252, 165, 165, 0.6); }
+        .badge-pagada { background: rgba(209, 250, 229, 0.9); color: #065f46; border: 1px solid rgba(110, 231, 183, 0.6); }
+        .badge-no-pagada { background: rgba(254, 243, 199, 0.9); color: #92400e; border: 1px solid rgba(252, 211, 77, 0.6); }
 
-        /* Modern toggle switch with glass effect */
         .toggle-switch {
             display: inline-flex;
             background: rgba(255, 255, 255, 0.6);
@@ -163,53 +159,118 @@
             max-height: 5000px;
         }
 
-        /* Cleaner venta item with neutral background */
         .venta-item {
             transition: all 0.3s ease;
-            border: 1px solid rgba(226, 232, 240, 0.5);
-            background: rgba(255, 255, 255, 0.7);
+            border: 2px solid rgba(226, 232, 240, 0.6);
+            background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(10px);
         }
 
         .venta-item:hover {
-            border-color: rgba(100, 116, 139, 0.3);
-            background: rgba(255, 255, 255, 0.85);
+            border-color: rgba(5, 150, 105, 0.3);
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 4px 16px rgba(5, 150, 105, 0.1);
         }
 
         .venta-item.expandida {
-            background: rgba(255, 255, 255, 0.9);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-            border-color: rgba(71, 85, 105, 0.3);
+            background: rgba(255, 255, 255, 1);
+            box-shadow: 0 8px 24px rgba(5, 150, 105, 0.15);
+            border-color: rgba(5, 150, 105, 0.4);
         }
 
         .rotate-180 {
             transform: rotate(180deg);
         }
 
-        /* Refined info cards with neutral background */
+        /* Cards con colores distintivos */
         .info-card {
-            background: rgba(255, 255, 255, 0.6);
+            background: linear-gradient(135deg, rgba(249, 250, 251, 0.9) 0%, rgba(255, 255, 255, 0.9) 100%);
             backdrop-filter: blur(8px);
             border-radius: 12px;
             padding: 20px;
             transition: all 0.3s ease;
-            border: 1px solid rgba(226, 232, 240, 0.5);
+            border: 2px solid rgba(226, 232, 240, 0.6);
         }
 
         .info-card:hover {
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-            border-color: rgba(148, 163, 184, 0.5);
-            background: rgba(255, 255, 255, 0.75);
+            box-shadow: 0 6px 20px rgba(5, 150, 105, 0.1);
+            border-color: rgba(5, 150, 105, 0.3);
+            transform: translateY(-2px);
         }
 
-        /* Simplified stat boxes with neutral backgrounds */
+        /* Card de comprador con color azul */
+        .info-card-comprador {
+            background: linear-gradient(135deg, rgba(219, 234, 254, 0.3) 0%, rgba(255, 255, 255, 0.9) 100%);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .info-card-comprador:hover {
+            border-color: rgba(59, 130, 246, 0.5);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.15);
+        }
+
+        /* Card de producto con color verde */
+        .info-card-producto {
+            background: linear-gradient(135deg, rgba(209, 250, 229, 0.3) 0%, rgba(255, 255, 255, 0.9) 100%);
+            border-color: rgba(5, 150, 105, 0.3);
+        }
+
+        .info-card-producto:hover {
+            border-color: rgba(5, 150, 105, 0.5);
+            box-shadow: 0 6px 20px rgba(5, 150, 105, 0.15);
+        }
+
+        /* Card de cita con color morado */
+        .info-card-cita {
+            background: linear-gradient(135deg, rgba(233, 213, 255, 0.3) 0%, rgba(255, 255, 255, 0.9) 100%);
+            border-color: rgba(139, 92, 246, 0.3);
+        }
+
+        .info-card-cita:hover {
+            border-color: rgba(139, 92, 246, 0.5);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.15);
+        }
+
+        /* Card de gastos con color rojo */
+        .info-card-gastos {
+            background: linear-gradient(135deg, rgba(254, 226, 226, 0.3) 0%, rgba(255, 255, 255, 0.9) 100%);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .info-card-gastos:hover {
+            border-color: rgba(239, 68, 68, 0.5);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.15);
+        }
+
+        /* Card de documentos con color verde oscuro */
+        .info-card-docs {
+            background: linear-gradient(135deg, rgba(209, 250, 229, 0.4) 0%, rgba(255, 255, 255, 0.9) 100%);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .info-card-docs:hover {
+            border-color: rgba(16, 185, 129, 0.5);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.15);
+        }
+
+        /* Card de notas con color amarillo */
+        .info-card-notas {
+            background: linear-gradient(135deg, rgba(254, 243, 199, 0.3) 0%, rgba(255, 255, 255, 0.9) 100%);
+            border-color: rgba(251, 191, 36, 0.3);
+        }
+
+        .info-card-notas:hover {
+            border-color: rgba(251, 191, 36, 0.5);
+            box-shadow: 0 6px 20px rgba(251, 191, 36, 0.15);
+        }
+
         .stat-box {
-            background: rgba(248, 250, 252, 0.8);
+            background: linear-gradient(135deg, rgba(248, 250, 252, 0.9) 0%, rgba(255, 255, 255, 0.9) 100%);
             backdrop-filter: blur(4px);
             border-radius: 10px;
             padding: 16px;
             text-align: center;
-            border: 1px solid rgba(226, 232, 240, 0.6);
+            border: 2px solid rgba(226, 232, 240, 0.7);
         }
 
         .modal-open {
@@ -218,42 +279,42 @@
             transform: scale(1) !important;
         }
 
-        /* Cleaner gasto items with neutral background */
         .gasto-item {
             transition: all 0.2s ease;
             padding: 12px;
-            background: rgba(248, 250, 252, 0.6);
+            background: rgba(254, 242, 242, 0.5);
             backdrop-filter: blur(4px);
             border-radius: 8px;
-            border: 1px solid rgba(226, 232, 240, 0.5);
+            border: 2px solid rgba(252, 165, 165, 0.4);
         }
 
         .gasto-item:hover {
-            background: rgba(254, 242, 242, 0.7);
+            background: rgba(254, 226, 226, 0.8);
             transform: translateX(4px);
-            border-color: rgba(252, 165, 165, 0.6);
+            border-color: rgba(239, 68, 68, 0.6);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
         }
 
-        /* Cleaner doc items */
         .doc-item {
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 12px;
-            background: rgba(240, 253, 244, 0.6);
+            padding: 12px 16px;
+            background: linear-gradient(135deg, rgba(209, 250, 229, 0.6) 0%, rgba(240, 253, 244, 0.6) 100%);
             backdrop-filter: blur(4px);
-            border-radius: 8px;
+            border-radius: 10px;
             text-decoration: none;
             color: #047857;
             gap: 12px;
-            border: 1px solid rgba(134, 239, 172, 0.4);
+            border: 2px solid rgba(110, 231, 183, 0.4);
         }
 
         .doc-item:hover {
-            background: rgba(209, 250, 229, 0.7);
+            background: linear-gradient(135deg, rgba(167, 243, 208, 0.7) 0%, rgba(209, 250, 229, 0.8) 100%);
             transform: translateX(4px);
-            border-color: rgba(110, 231, 183, 0.6);
+            border-color: rgba(16, 185, 129, 0.6);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
         }
 
         .doc-name {
@@ -263,14 +324,13 @@
         }
 
         .doc-name-text {
-            font-weight: 600;
+            font-weight: 700;
             font-size: 0.875rem;
             color: #047857;
             word-break: break-word;
             overflow-wrap: break-word;
         }
 
-        /* PDF Preview Modal */
         .pdf-preview-modal {
             max-height: 90vh;
             overflow-y: auto;
@@ -283,23 +343,22 @@
             margin: 0 auto;
         }
 
-        .pdf-chart-container {
-            width: 100%;
-            height: 300px !important;
-            max-height: 300px !important;
-            margin: 20px 0;
-            page-break-inside: avoid;
-            position: relative;
-        }
-
-        .pdf-chart-container canvas {
-            max-height: 300px !important;
-            height: 300px !important;
-        }
-
         @media print {
             .no-print {
                 display: none !important;
+            }
+
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .page-break {
+                page-break-before: always;
+            }
+
+            .avoid-break {
+                page-break-inside: avoid;
             }
         }
 
@@ -334,7 +393,7 @@
 <div class="lg:ml-64 flex flex-col min-h-screen">
     <main class="py-6 lg:py-10 px-4 lg:px-8">
 
-        <!-- Simplified hero section with modern glass effect -->
+        <!-- Hero section -->
         <div class="gradient-hero rounded-3xl p-6 lg:p-8 mb-6 lg:mb-8 text-white relative overflow-hidden shadow-xl">
             <div class="absolute inset-0 bg-black/10"></div>
 
@@ -420,7 +479,7 @@
 
         <!-- VISTA VENTAS - Cards de ventas -->
         <div id="vistaVentas" class="view-section active">
-            <!-- Glass effect filters -->
+            <!-- Filters -->
             <div class="venta-item rounded-xl shadow-sm p-4 lg:p-6 mb-6 lg:mb-8">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="font-semibold text-slate-800 flex items-center gap-2 text-sm lg:text-base">
@@ -528,11 +587,10 @@
                 </div>
             </div>
         </div>
-
     </main>
 </div>
 
-<!-- Modal más grande con fondo blanco default en lugar de gris -->
+<!-- Modal Gasto -->
 <div id="modalGasto" class="fixed inset-0 modal-backdrop flex items-center justify-center z-50 opacity-0 invisible transition-all duration-300 px-4" style="transform: scale(0.9);">
     <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl">
         <div class="gradient-bg text-white p-6 rounded-t-2xl">
@@ -568,7 +626,7 @@
     </div>
 </div>
 
-<!-- Modal más grande con fondo blanco default -->
+<!-- Modal Nota -->
 <div id="modalNota" class="fixed inset-0 modal-backdrop flex items-center justify-center z-50 opacity-0 invisible transition-all duration-300 px-4" style="transform: scale(0.9);">
     <div class="bg-white rounded-2xl max-w-3xl w-full shadow-2xl">
         <div class="gradient-bg text-white p-6 rounded-t-2xl">
@@ -635,7 +693,7 @@
     let gastosTotales = [[${gastosTotales}]];
     let balanceFinal = [[${balanceFinal}]];
 
-    console.log(allSales);
+    console.log('Ventas cargadas:', allSales);
 
     let chartIngresosGastos, chartEstados, chartGanancia, chartMetodosPago;
     let ventasFiltradas = allSales;
@@ -653,7 +711,7 @@
     const formatFecha = (fecha) => {
         if (!fecha) return 'N/A';
         const date = new Date(fecha);
-        return date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        return date.toLocaleDateString('es-ES', {day: '2-digit', month: '2-digit', year: 'numeric'});
     };
 
     function cambiarVista(vista) {
@@ -685,36 +743,48 @@
         const ingresosPorVenta = allSales.map(v => v.producto?.precioProducto || 0);
         const gastosPorVenta = allSales.map(v => v.totalGastos || 0);
 
+        // Verificar si hay gastos
+        const hayGastos = gastosPorVenta.some(gasto => gasto > 0);
+
         if (chartIngresosGastos) chartIngresosGastos.destroy();
+
+        const datasets = [
+            {
+                label: 'Ingresos',
+                data: ingresosPorVenta,
+                backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                borderColor: 'rgba(37, 99, 235, 1)',
+                borderWidth: 1,
+                barThickness: hayGastos ? undefined : 40, // Si no hay gastos, controlar el ancho
+                maxBarThickness: hayGastos ? undefined : 50
+            }
+        ];
+
+        // Solo agregar dataset de gastos si existen
+        if (hayGastos) {
+            datasets.push({
+                label: 'Gastos',
+                data: gastosPorVenta,
+                backgroundColor: 'rgba(239, 68, 68, 0.6)',
+                borderColor: 'rgba(220, 38, 38, 1)',
+                borderWidth: 1
+            });
+        }
+
         chartIngresosGastos = new Chart(ctxIngresos.getContext('2d'), {
             type: 'bar',
             data: {
                 labels: allSales.map((_, i) => `Venta ${i + 1}`),
-                datasets: [
-                    {
-                        label: 'Ingresos',
-                        data: ingresosPorVenta,
-                        backgroundColor: 'rgba(59, 130, 246, 0.8)',
-                        borderColor: 'rgba(37, 99, 235, 1)',
-                        borderWidth: 1
-                    },
-                    {
-                        label: 'Gastos',
-                        data: gastosPorVenta,
-                        backgroundColor: 'rgba(239, 68, 68, 0.6)',
-                        borderColor: 'rgba(220, 38, 38, 1)',
-                        borderWidth: 1
-                    }
-                ]
+                datasets: datasets
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { position: 'top' },
+                    legend: {position: 'top'},
                     tooltip: {
                         callbacks: {
-                            label: function(context) {
+                            label: function (context) {
                                 return context.dataset.label + ': ' + formatoMoneda(context.parsed.y);
                             }
                         }
@@ -724,7 +794,7 @@
                     y: {
                         beginAtZero: true,
                         ticks: {
-                            callback: function(value) {
+                            callback: function (value) {
                                 return formatoMoneda(value);
                             }
                         }
@@ -755,7 +825,7 @@
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { position: 'right' } }
+                plugins: {legend: {position: 'right'}}
             }
         });
 
@@ -787,10 +857,10 @@
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { position: 'top' },
+                    legend: {position: 'top'},
                     tooltip: {
                         callbacks: {
-                            label: function(context) {
+                            label: function (context) {
                                 return 'Ganancia: ' + formatoMoneda(context.parsed.y);
                             }
                         }
@@ -800,7 +870,7 @@
                     y: {
                         beginAtZero: true,
                         ticks: {
-                            callback: function(value) {
+                            callback: function (value) {
                                 return formatoMoneda(value);
                             }
                         }
@@ -842,7 +912,7 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom' } }
+                    plugins: {legend: {position: 'bottom'}}
                 }
             });
         }
@@ -891,19 +961,19 @@
                 </div>
             </div>
 
-            <div style="page-break-inside: avoid; margin-bottom: 40px;">
+            <div class="avoid-break" style="margin-bottom: 40px;">
                 <h2 style="color: #064e3b; border-bottom: 3px solid #059669; padding-bottom: 15px; font-size: 24px; margin-bottom: 25px;">Detalle de Ventas</h2>
-                <table style="width: 100%; border-collapse: collapse; font-size: 13px; background: white; border-radius: 10px; overflow: hidden;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 12px; background: white; border-radius: 10px; overflow: hidden;">
                     <thead>
                         <tr style="background: linear-gradient(135deg, #059669 0%, #10b981 100%); color: white;">
-                            <th style="padding: 15px; text-align: left; font-weight: 700;">ID</th>
-                            <th style="padding: 15px; text-align: left; font-weight: 700;">Comprador</th>
-                            <th style="padding: 15px; text-align: left; font-weight: 700;">Producto</th>
-                            <th style="padding: 15px; text-align: right; font-weight: 700;">Monto</th>
-                            <th style="padding: 15px; text-align: right; font-weight: 700;">Gastos</th>
-                            <th style="padding: 15px; text-align: right; font-weight: 700;">Ganancia</th>
-                            <th style="padding: 15px; text-align: center; font-weight: 700;">Estado</th>
-                            <th style="padding: 15px; text-align: center; font-weight: 700;">Pago</th>
+                            <th style="padding: 12px 8px; text-align: left; font-weight: 700; font-size: 11px;">ID</th>
+                            <th style="padding: 12px 8px; text-align: left; font-weight: 700; font-size: 11px;">Comprador</th>
+                            <th style="padding: 12px 8px; text-align: left; font-weight: 700; font-size: 11px;">Producto</th>
+                            <th style="padding: 12px 8px; text-align: right; font-weight: 700; font-size: 11px;">Monto</th>
+                            <th style="padding: 12px 8px; text-align: right; font-weight: 700; font-size: 11px;">Gastos</th>
+                            <th style="padding: 12px 8px; text-align: right; font-weight: 700; font-size: 11px;">Ganancia</th>
+                            <th style="padding: 12px 8px; text-align: center; font-weight: 700; font-size: 11px;">Estado</th>
+                            <th style="padding: 12px 8px; text-align: center; font-weight: 700; font-size: 11px;">Pago</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -916,21 +986,21 @@
 
             html += `
                 <tr style="background: ${bgColor}; border-bottom: 1px solid #d1fae5;">
-                    <td style="padding: 12px; font-weight: 600; color: #064e3b;">#${venta.idVenta}</td>
-                    <td style="padding: 12px; color: #047857;">${venta.comprador?.nombres || '-'} ${venta.comprador?.apellidos || ''}</td>
-                    <td style="padding: 12px; color: #047857;">${venta.producto?.nombreProducto || '-'}</td>
-                    <td style="padding: 12px; text-align: right; font-weight: 600; color: #064e3b;">${formatoMoneda(venta.producto?.precioProducto || 0)}</td>
-                    <td style="padding: 12px; text-align: right; color: #065f46;">${formatoMoneda(totalGastos)}</td>
-                    <td style="padding: 12px; text-align: right; font-weight: 700; color: #047857;">${formatoMoneda(gananciaVenta)}</td>
-                    <td style="padding: 12px; text-align: center;">
-                        <span style="padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600;
+                    <td style="padding: 10px 8px; font-weight: 600; color: #064e3b; font-size: 11px;">#${venta.idVenta}</td>
+                    <td style="padding: 10px 8px; color: #047857; font-size: 11px;">${venta.comprador?.nombres || '-'} ${venta.comprador?.apellidos || ''}</td>
+                    <td style="padding: 10px 8px; color: #047857; font-size: 11px;">${venta.producto?.nombreProducto || '-'}</td>
+                    <td style="padding: 10px 8px; text-align: right; font-weight: 600; color: #064e3b; font-size: 11px;">${formatoMoneda(venta.producto?.precioProducto || 0)}</td>
+                    <td style="padding: 10px 8px; text-align: right; color: #065f46; font-size: 11px;">${formatoMoneda(totalGastos)}</td>
+                    <td style="padding: 10px 8px; text-align: right; font-weight: 700; color: #047857; font-size: 11px;">${formatoMoneda(gananciaVenta)}</td>
+                    <td style="padding: 10px 8px; text-align: center; font-size: 10px;">
+                        <span style="padding: 4px 8px; border-radius: 20px; font-weight: 600; display: inline-block;
                             background: ${venta.estado === 'FINALIZADA' ? 'rgba(220, 252, 231, 0.8)' : venta.estado === 'EN_PROCESO' ? 'rgba(219, 234, 254, 0.8)' : 'rgba(254, 226, 226, 0.8)'};
                             color: ${venta.estado === 'FINALIZADA' ? '#166534' : venta.estado === 'EN_PROCESO' ? '#1e40af' : '#991b1b'};">
                             ${venta.estado}
                         </span>
                     </td>
-                    <td style="padding: 12px; text-align: center;">
-                        <span style="padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600;
+                    <td style="padding: 10px 8px; text-align: center; font-size: 10px;">
+                        <span style="padding: 4px 8px; border-radius: 20px; font-weight: 600; display: inline-block;
                             background: ${venta.pagado ? 'rgba(209, 250, 229, 0.8)' : 'rgba(254, 243, 199, 0.8)'};
                             color: ${venta.pagado ? '#065f46' : '#92400e'};">
                             ${venta.pagado ? 'PAGADA' : 'PENDIENTE'}
@@ -944,38 +1014,38 @@
                     </tbody>
                 </table>
             </div>
-        `;
 
-        html += `
-            <div style="page-break-before: always; margin-top: 60px;">
+            <div class="page-break"></div>
+
+            <div style="margin-top: 40px;">
                 <h2 style="color: #064e3b; border-bottom: 3px solid #059669; padding-bottom: 15px; font-size: 24px; margin-bottom: 30px;">Gráficas de Análisis</h2>
 
-                <div id="pdfCharts" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px;">
-                    <div style="background: white; padding: 25px; border-radius: 12px; border: 1px solid #d1fae5;">
-                        <h3 style="color: #047857; font-size: 16px; font-weight: 700; margin-bottom: 20px;">Ingresos vs Gastos</h3>
-                        <div style="width: 100%; height: 300px; max-height: 300px; position: relative;">
-                            <canvas id="pdfChartIngresosGastos" style="max-height: 300px !important;"></canvas>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; margin-bottom: 40px;">
+                    <div class="avoid-break" style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #d1fae5;">
+                        <h3 style="color: #047857; font-size: 14px; font-weight: 700; margin-bottom: 15px;">Ingresos vs Gastos</h3>
+                        <div style="width: 100%; height: 250px;">
+                            <canvas id="pdfChartIngresosGastos"></canvas>
                         </div>
                     </div>
 
-                    <div style="background: white; padding: 25px; border-radius: 12px; border: 1px solid #d1fae5;">
-                        <h3 style="color: #047857; font-size: 16px; font-weight: 700; margin-bottom: 20px;">Distribución de Estados</h3>
-                        <div style="width: 100%; height: 300px; max-height: 300px; position: relative;">
-                            <canvas id="pdfChartEstados" style="max-height: 300px !important;"></canvas>
+                    <div class="avoid-break" style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #d1fae5;">
+                        <h3 style="color: #047857; font-size: 14px; font-weight: 700; margin-bottom: 15px;">Distribución de Estados</h3>
+                        <div style="width: 100%; height: 250px;">
+                            <canvas id="pdfChartEstados"></canvas>
                         </div>
                     </div>
 
-                    <div style="background: white; padding: 25px; border-radius: 12px; border: 1px solid #d1fae5;">
-                        <h3 style="color: #047857; font-size: 16px; font-weight: 700; margin-bottom: 20px;">Ganancia Neta por Venta</h3>
-                        <div style="width: 100%; height: 300px; max-height: 300px; position: relative;">
-                            <canvas id="pdfChartGanancia" style="max-height: 300px !important;"></canvas>
+                    <div class="avoid-break" style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #d1fae5;">
+                        <h3 style="color: #047857; font-size: 14px; font-weight: 700; margin-bottom: 15px;">Ganancia Neta por Venta</h3>
+                        <div style="width: 100%; height: 250px;">
+                            <canvas id="pdfChartGanancia"></canvas>
                         </div>
                     </div>
 
-                    <div style="background: white; padding: 25px; border-radius: 12px; border: 1px solid #d1fae5;">
-                        <h3 style="color: #047857; font-size: 16px; font-weight: 700; margin-bottom: 20px;">Métodos de Pago</h3>
-                        <div style="width: 100%; height: 300px; max-height: 300px; position: relative;">
-                            <canvas id="pdfChartMetodosPago" style="max-height: 300px !important;"></canvas>
+                    <div class="avoid-break" style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #d1fae5;">
+                        <h3 style="color: #047857; font-size: 14px; font-weight: 700; margin-bottom: 15px;">Métodos de Pago</h3>
+                        <div style="width: 100%; height: 250px;">
+                            <canvas id="pdfChartMetodosPago"></canvas>
                         </div>
                     </div>
                 </div>
@@ -993,33 +1063,57 @@
     function crearGraficasPDF() {
         const ctxIngresosGastosPDF = document.getElementById('pdfChartIngresosGastos');
         if (ctxIngresosGastosPDF) {
+            const ingresosPorVenta = ventasFiltradas.map(v => v.producto?.precioProducto || 0);
+            const gastosPorVenta = ventasFiltradas.map(v => v.totalGastos || 0);
+            const hayGastos = gastosPorVenta.some(gasto => gasto > 0);
+
+            const datasets = [
+                {
+                    label: 'Ingresos',
+                    data: ingresosPorVenta,
+                    backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                    borderColor: 'rgba(37, 99, 235, 1)',
+                    borderWidth: 1,
+                    barThickness: hayGastos ? undefined : 30,
+                    maxBarThickness: hayGastos ? undefined : 40
+                }
+            ];
+
+            if (hayGastos) {
+                datasets.push({
+                    label: 'Gastos',
+                    data: gastosPorVenta,
+                    backgroundColor: 'rgba(239, 68, 68, 0.6)',
+                    borderColor: 'rgba(220, 38, 38, 1)',
+                    borderWidth: 1
+                });
+            }
+
             new Chart(ctxIngresosGastosPDF.getContext('2d'), {
                 type: 'bar',
                 data: {
                     labels: ventasFiltradas.map((_, i) => `V${i + 1}`),
-                    datasets: [
-                        {
-                            label: 'Ingresos',
-                            data: ventasFiltradas.map(v => v.producto?.precioProducto || 0),
-                            backgroundColor: 'rgba(59, 130, 246, 0.8)',
-                            borderColor: 'rgba(37, 99, 235, 1)',
-                            borderWidth: 1
-                        },
-                        {
-                            label: 'Gastos',
-                            data: ventasFiltradas.map(v => v.totalGastos || 0),
-                            backgroundColor: 'rgba(239, 68, 68, 0.6)',
-                            borderColor: 'rgba(220, 38, 38, 1)',
-                            borderWidth: 1
-                        }
-                    ]
+                    datasets: datasets
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: true,
-                    aspectRatio: 2,
-                    plugins: { legend: { position: 'top' } },
-                    scales: { y: { beginAtZero: true } }
+                    aspectRatio: 1.5,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {font: {size: 10}}
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {font: {size: 9}}
+                        },
+                        x: {
+                            ticks: {font: {size: 9}}
+                        }
+                    }
                 }
             });
         }
@@ -1046,8 +1140,13 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: true,
-                    aspectRatio: 1,
-                    plugins: { legend: { position: 'right' } }
+                    aspectRatio: 1.2,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {font: {size: 10}}
+                        }
+                    }
                 }
             });
         }
@@ -1065,7 +1164,7 @@
                         data: ganancias,
                         borderColor: 'rgba(5, 150, 105, 1)',
                         backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        borderWidth: 3,
+                        borderWidth: 2,
                         tension: 0.4,
                         fill: true
                     }]
@@ -1073,9 +1172,22 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: true,
-                    aspectRatio: 2,
-                    plugins: { legend: { position: 'top' } },
-                    scales: { y: { beginAtZero: true } }
+                    aspectRatio: 1.5,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {font: {size: 10}}
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {font: {size: 9}}
+                        },
+                        x: {
+                            ticks: {font: {size: 9}}
+                        }
+                    }
                 }
             });
         }
@@ -1102,8 +1214,13 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: true,
-                    aspectRatio: 1,
-                    plugins: { legend: { position: 'bottom' } }
+                    aspectRatio: 1.2,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {font: {size: 10}}
+                        }
+                    }
                 }
             });
         }
@@ -1119,20 +1236,25 @@
         const fechaHoy = new Date().toLocaleDateString('es-ES').replace(/\//g, '-');
 
         const opt = {
-            margin: [10, 10, 10, 10],
+            margin: [8, 8, 8, 8],
             filename: `reporte-ventas-${fechaHoy}.pdf`,
-            image: { type: 'jpeg', quality: 0.98 },
+            image: {type: 'jpeg', quality: 0.95},
             html2canvas: {
                 scale: 2,
                 useCORS: true,
-                logging: false
+                logging: false,
+                letterRendering: true
             },
             jsPDF: {
                 unit: 'mm',
                 format: 'a4',
                 orientation: 'portrait'
             },
-            pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+            pagebreak: {
+                mode: ['avoid-all', 'css', 'legacy'],
+                before: '.page-break',
+                avoid: '.avoid-break'
+            }
         };
 
         try {
@@ -1247,386 +1369,537 @@
                         </div>
                     </div>
 
-                    <!-- Slightly larger detail section with better spacing -->
+                    <!-- Detalle expandido con colores -->
                     <div class="detalle-expandido" id="detalle-${realIndex}">
-                        <div class="border-t border-slate-200 p-5 lg:p-7 relative z-10">
-                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                                <div class="space-y-4">
-                                    <div class="info-card">
-                                        <h4 class="font-bold text-slate-900 text-base mb-3 flex items-center gap-2">
-                                            <div class="bg-slate-100 p-2 rounded-lg">
-                                                <i class='bx bx-user text-slate-600'></i>
-                                            </div>
-                                            <span>Comprador</span>
-                                        </h4>
-                                        <div class="grid grid-cols-2 gap-2 text-sm">
-                                            <div class="bg-slate-50 rounded-lg p-2">
-                                                <p class="text-xs text-slate-600 font-medium mb-1">Nombre</p>
-                                                <p class="font-semibold text-slate-900 text-xs">${venta.comprador.nombres} ${venta.comprador.apellidos}</p>
-                                            </div>
-                                            <div class="bg-slate-50 rounded-lg p-2">
-                                                <p class="text-xs text-slate-600 font-medium mb-1">Cédula</p>
-                                                <p class="text-slate-800 text-xs">${venta.comprador.cedula}</p>
-                                            </div>
-                                            <div class="bg-slate-50 rounded-lg p-2">
-                                                <p class="text-xs text-slate-600 font-medium mb-1">Teléfono</p>
-                                                <p class="text-slate-800 text-xs break-all">${venta.comprador.telefono}</p>
-                                            </div>
-                                            <div class="bg-slate-50 rounded-lg p-2">
-                                                <p class="text-xs text-slate-600 font-medium mb-1">Email</p>
-                                                <p class="text-slate-800 text-xs break-all">${venta.comprador.email}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="info-card">
-                                        <h4 class="font-bold text-slate-900 text-base mb-3 flex items-center gap-2">
-                                            <div class="bg-slate-100 p-2 rounded-lg">
-                                                <i class='bx bx-package text-slate-600'></i>
-                                            </div>
-                                            <span>Producto</span>
-                                        </h4>
-                                        <div class="space-y-2">
-                                            <div class="bg-slate-50 rounded-lg p-3">
-                                                <p class="text-xs text-slate-600 font-medium mb-1">NOMBRE</p>
-                                                <p class="font-bold text-slate-900 text-sm">${venta.producto.nombreProducto}</p>
-                                            </div>
-                                            <div class="bg-slate-50 rounded-lg p-3">
-                                                <p class="text-xs text-slate-600 font-medium mb-1">DESCRIPCIÓN</p>
-                                                <p class="text-slate-800 text-xs">${venta.producto.descripcion || 'Sin descripción'}</p>
-                                            </div>
-                                            <div class="gradient-bg text-white rounded-lg p-3 shadow-md">
-                                                <p class="text-xs font-medium mb-1 opacity-90">PRECIO</p>
-                                                <p class="text-xl font-black">${formatoMoneda(venta.producto?.precioProducto || 0)}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    ${venta.cita ? `
-                                    <div class="info-card">
-                                        <h4 class="font-bold text-slate-900 text-base mb-3 flex items-center gap-2">
-                                            <div class="bg-slate-100 p-2 rounded-lg">
-                                                <i class='bx bx-calendar text-slate-600'></i>
-                                            </div>
-                                            <span>Cita</span>
-                                        </h4>
-                                        <div class="grid grid-cols-2 gap-2">
-                                            <div class="bg-slate-50 rounded-lg p-2">
-                                                <p class="text-xs text-slate-600 font-medium mb-1">Fecha</p>
-                                                <p class="font-semibold text-slate-900 text-xs">${formatFecha(venta.cita.fecha)}</p>
-                                            </div>
-                                            <div class="bg-slate-50 rounded-lg p-2">
-                                                <p class="text-xs text-slate-600 font-medium mb-1">Horario</p>
-                                                <p class="text-slate-800 text-xs">${venta.cita.horaInicio} - ${venta.cita.horaFin}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    ` : ''}
-                                </div>
-
-                                <div class="space-y-4">
-                                    <div class="info-card">
-                                        <div class="flex items-center justify-between mb-2">
-                                            <h4 class="font-bold text-slate-900 text-sm flex items-center gap-2">
-                                                <div class="bg-slate-100 p-1.5 rounded-lg">
-                                                    <i class='bx bx-note text-slate-600 text-sm'></i>
-                                                </div>
-                                                <span>Notas</span>
-                                            </h4>
-                                            <button onclick="abrirModalNota(${realIndex}); event.stopPropagation();"
-                                                    class="text-emerald-600 hover:text-emerald-800 text-xs font-medium flex items-center gap-1 bg-emerald-50 px-2 py-1 rounded-lg hover:bg-emerald-100 transition-all">
-                                                <i class='bx bx-edit text-sm'></i> Editar
-                                            </button>
-                                        </div>
-                                        <div class="bg-slate-50 rounded-lg p-3 text-xs text-slate-800 min-h-16">
-                                            ${venta.nota || '<span class="text-slate-400 italic">Sin notas</span>'}
-                                        </div>
-                                    </div>
-
-                                    <div class="info-card">
-                                        <div class="flex items-center justify-between mb-2">
-                                            <h4 class="font-bold text-slate-900 text-sm flex items-center gap-2">
-                                                <div class="bg-slate-100 p-1.5 rounded-lg">
-                                                    <i class='bx bx-credit-card text-slate-600 text-sm'></i>
-                                                </div>
-                                                <span>Gastos</span>
-                                            </h4>
-                                            <button onclick="abrirModalGasto(${realIndex}); event.stopPropagation();"
-                                                    class="gradient-bg text-white px-2 py-1 rounded-lg hover:shadow-md transition-all text-xs font-medium flex items-center gap-1">
-                                                <i class='bx bx-plus text-sm'></i> Agregar
-                                            </button>
-                                        </div>
-                                        <div class="space-y-1.5 mb-2 max-h-48" id="listaGastos-${realIndex}">
-                                            ${venta.listaGastos && venta.listaGastos.length > 0 ? venta.listaGastos.map(gasto => `
-                                                <div class="gasto-item flex justify-between items-center gap-2" id="gasto-${gasto.idGasto}">
-                                                    <span class="text-xs font-medium text-slate-900 flex-1 truncate">${gasto.nombreGasto || gasto.descripcion}</span>
-                                                    <div class="flex items-center gap-2 flex-shrink-0">
-                                                        <span class="font-bold text-red-600 text-xs">${formatoMoneda(gasto.valorGasto || gasto.monto)}</span>
-                                                        <button onclick="eliminarGasto(${realIndex}, ${gasto.idGasto}); event.stopPropagation();"
-                                                                class="text-slate-500 hover:text-red-600 transition-colors p-1">
-                                                            <i class='bx bx-trash text-sm'></i>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            `).join('') : '<p class="text-slate-400 text-xs italic py-2 text-center">No hay gastos</p>'}
-                                        </div>
-                                        <div class="pt-2 border-t border-slate-200 bg-slate-50 rounded-lg p-2">
-                                            <div class="flex justify-between items-center">
-                                                <span class="text-xs font-semibold text-slate-800">Total</span>
-                                                <span class="text-sm font-black text-red-600">${formatoMoneda(venta.totalGastos || 0)}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="info-card">
-                                        <h4 class="font-bold text-slate-900 text-sm mb-2 flex items-center gap-2">
-                                            <div class="bg-slate-100 p-1.5 rounded-lg">
-                                                <i class='bx bx-file text-slate-600 text-sm'></i>
-                                            </div>
-                                            <span>Documentos</span>
-                                        </h4>
-                                        <div class="space-y-1.5 max-h-32 overflow-y-auto custom-scrollbar">
-                                            ${venta.listaComprobantes && venta.listaComprobantes.length > 0 ? venta.listaComprobantes.map(doc => `
-                                                <a href="/descargar/comprobante/${doc.idComprobante}" class="doc-item" target="_blank">
-                                                    <div class="flex items-center gap-2 flex-1 min-w-0">
-                                                        <i class='bx bxs-file-pdf text-red-500 text-base flex-shrink-0'></i>
-                                                        <span class="text-xs font-medium text-emerald-700 truncate">${doc.nombreComprobante}</span>
-                                                    </div>
-                                                    <i class='bx bx-download text-sm text-emerald-600'></i>
-                                                </a>
-                                            `).join('') : '<p class="text-slate-400 text-xs italic py-2 text-center">Sin documentos</p>'}
-                                        </div>
-                                    </div>
-
-                                    <div class="gradient-bg text-white rounded-xl p-4 shadow-md">
-                                        <h5 class="text-sm font-bold mb-2 opacity-90 flex items-center gap-2">
-                                            <i class='bx bx-calculator'></i>
-                                            Resumen
-                                        </h5>
-                                        <div class="space-y-1.5 text-sm">
-                                            <div class="flex justify-between pb-1.5 border-b border-white/20">
-                                                <span class="opacity-90">Precio</span>
-                                                <span class="font-semibold">${formatoMoneda(venta.producto?.precioProducto || 0)}</span>
-                                            </div>
-                                            <div class="flex justify-between pb-1.5 border-b border-white/20">
-                                                <span class="opacity-90">Gastos</span>
-                                                <span class="font-black text-red-600">- ${formatoMoneda(venta.totalGastos || 0)}</span>
-                                            </div>
-                                            <div class="flex justify-between pt-1.5 bg-white/10 rounded-lg p-2">
-                                                <span class="font-bold text-sm">Ganancia</span>
-                                                <span class="text-lg font-black">${formatoMoneda(ganancia)}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    ${venta.estado === 'EN_PROCESO' && venta.pasoActual ? `
-                                    <div class="info-card bg-slate-50">
-                                        <a href="/vendedor/ventas/detalle-venta/${venta.idVenta}"
-                                           class="block w-full gradient-bg text-white px-4 py-3 rounded-lg font-semibold text-center hover:shadow-md transform hover:scale-105 transition-all flex items-center justify-center gap-2 text-sm">
-                                            <i class='bx bx-right-arrow-circle'></i>
-                                            <span>Ver Proceso (Paso ${venta.pasoActual})</span>
-                                        </a>
-                                    </div>
-                                    ` : ''}
-                                </div>
-                            </div>
+    <div class="border-t-2 border-emerald-100 p-5 lg:p-7 relative z-10 bg-gradient-to-br from-slate-50 to-white">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            <div class="space-y-4">
+                <div class="info-card info-card-comprador">
+                    <h4 class="font-bold text-slate-900 text-base mb-3 flex items-center gap-2">
+                        <div class="bg-blue-100 p-2 rounded-lg">
+                            <i class='bx bx-user text-blue-600'></i>
+                        </div>
+                        <span>Comprador</span>
+                    </h4>
+                    <div class="grid grid-cols-2 gap-2 text-sm">
+                        <div class="bg-blue-50 rounded-lg p-2 border border-blue-100">
+                            <p class="text-xs text-blue-700 font-medium mb-1">Nombre</p>
+                            <p class="font-semibold text-blue-900 text-xs">${venta.comprador.nombres} ${venta.comprador.apellidos}</p>
+                        </div>
+                        <div class="bg-blue-50 rounded-lg p-2 border border-blue-100">
+                            <p class="text-xs text-blue-700 font-medium mb-1">Cédula</p>
+                            <p class="text-blue-800 text-xs">${venta.comprador.cedula}</p>
+                        </div>
+                        <div class="bg-blue-50 rounded-lg p-2 border border-blue-100">
+                            <p class="text-xs text-blue-700 font-medium mb-1">Teléfono</p>
+                            <p class="text-blue-800 text-xs break-all">${venta.comprador.telefono}</p>
+                        </div>
+                        <div class="bg-blue-50 rounded-lg p-2 border border-blue-100">
+                            <p class="text-xs text-blue-700 font-medium mb-1">Email</p>
+                            <p class="text-blue-800 text-xs break-all">${venta.comprador.email}</p>
                         </div>
                     </div>
+                </div>
+
+                <div class="info-card info-card-producto">
+                    <h4 class="font-bold text-slate-900 text-base mb-3 flex items-center gap-2">
+                        <div class="bg-emerald-100 p-2 rounded-lg">
+                            <i class='bx bx-package text-emerald-600'></i>
+                        </div>
+                        <span>Producto</span>
+                    </h4>
+                    <div class="space-y-2">
+                        <div class="bg-emerald-50 rounded-lg p-3 border border-emerald-100">
+                            <p class="text-xs text-emerald-700 font-medium mb-1">NOMBRE</p>
+                            <p class="font-bold text-emerald-900 text-sm">${venta.producto.nombreProducto}</p>
+                        </div>
+                        <div class="bg-emerald-50 rounded-lg p-3 border border-emerald-100">
+                            <p class="text-xs text-emerald-700 font-medium mb-1">DESCRIPCIÓN</p>
+                            <p class="text-emerald-800 text-xs">${venta.producto.descripcion || 'Sin descripción'}</p>
+                        </div>
+                        <div class="gradient-bg text-white rounded-lg p-3 shadow-md">
+                            <p class="text-xs font-medium mb-1 opacity-90">PRECIO</p>
+                            <p class="text-xl font-black">${formatoMoneda(venta.producto?.precioProducto || 0)}</p>
+                        </div>
+                    </div>
+                </div>
+
+                ${venta.cita ? `
+                <div class="info-card info-card-cita">
+                    <h4 class="font-bold text-slate-900 text-base mb-3 flex items-center gap-2">
+                        <div class="bg-purple-100 p-2 rounded-lg">
+                            <i class='bx bx-calendar text-purple-600'></i>
+                        </div>
+                        <span>Cita</span>
+                    </h4>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="bg-purple-50 rounded-lg p-2 border border-purple-100">
+                            <p class="text-xs text-purple-700 font-medium mb-1">Fecha</p>
+                            <p class="font-semibold text-purple-900 text-xs">${formatFecha(venta.cita.fecha)}</p>
+                        </div>
+                        <div class="bg-purple-50 rounded-lg p-2 border border-purple-100">
+                            <p class="text-xs text-purple-700 font-medium mb-1">Horario</p>
+                            <p class="text-purple-800 text-xs">${venta.cita.horaInicio} - ${venta.cita.horaFin}</p>
+                        </div>
+                    </div>
+                </div>
+                ` : ''}
+
+                    <a href="/vendedor/ventas/detalle-venta/${venta.idVenta}"
+                       class="block w-full gradient-bg text-white px-4 py-3 rounded-lg font-semibold text-center hover:shadow-md transform hover:scale-105 transition-all flex items-center justify-center gap-2 text-sm">
+                        <i class='bx bx-right-arrow-circle'></i>
+                        <span>Ver Proceso (Paso ${venta.pasoActual})</span>
+                    </a>
+            </div>
+
+            <div class="space-y-4">
+                <div class="info-card info-card-notas">
+                    <div class="flex items-center justify-between mb-2">
+                        <h4 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                            <div class="bg-amber-100 p-1.5 rounded-lg">
+                                <i class='bx bx-note text-amber-600 text-sm'></i>
+                            </div>
+                            <span>Notas</span>
+                        </h4>
+                        <button onclick="abrirModalNota(${realIndex}); event.stopPropagation();"
+                                class="text-amber-700 hover:text-amber-900 text-xs font-medium flex items-center gap-1 bg-amber-100 px-2 py-1 rounded-lg hover:bg-amber-200 transition-all">
+                            <i class='bx bx-edit text-sm'></i> Editar
+                        </button>
+                    </div>
+                    <div class="bg-amber-50 rounded-lg p-3 text-xs text-amber-900 min-h-16 border border-amber-100" id="nota-content-${realIndex}">
+                        ${venta.nota || '<span class="text-amber-400 italic">Sin notas</span>'}
+                    </div>
+                </div>
+
+                <div class="info-card info-card-gastos">
+                    <div class="flex items-center justify-between mb-2">
+                        <h4 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                            <div class="bg-red-100 p-1.5 rounded-lg">
+                                <i class='bx bx-credit-card text-red-600 text-sm'></i>
+                            </div>
+                            <span>Gastos</span>
+                        </h4>
+                        <button onclick="abrirModalGasto(${realIndex}); event.stopPropagation();"
+                                class="gradient-bg text-white px-2 py-1 rounded-lg hover:shadow-md transition-all text-xs font-medium flex items-center gap-1">
+                            <i class='bx bx-plus text-sm'></i> Agregar
+                        </button>
+                    </div>
+                    <div class="space-y-1.5 mb-2 max-h-48 overflow-y-auto custom-scrollbar" id="listaGastos-${realIndex}">
+                        ${venta.listaGastos && venta.listaGastos.length > 0 ? venta.listaGastos.map(gasto => `
+                            <div class="gasto-item flex justify-between items-center gap-2" id="gasto-${gasto.idGasto}">
+                                <span class="text-xs font-medium text-red-900 flex-1 truncate">${gasto.nombreGasto || gasto.descripcion}</span>
+                                <div class="flex items-center gap-2 flex-shrink-0">
+                                    <span class="font-bold text-red-700 text-xs">${formatoMoneda(gasto.valorGasto || gasto.monto)}</span>
+                                    <button onclick="eliminarGasto(${realIndex}, ${gasto.idGasto}); event.stopPropagation();"
+                                            class="text-red-500 hover:text-red-700 transition-colors p-1">
+                                        <i class='bx bx-trash text-sm'></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('') : '<p class="text-red-400 text-xs italic py-2 text-center">No hay gastos</p>'}
+                    </div>
+                    <div class="pt-2 border-t-2 border-red-200 bg-red-50 rounded-lg p-2" id="total-gastos-${realIndex}">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-semibold text-red-800">Total</span>
+                            <span class="text-sm font-black text-red-700">${formatoMoneda(venta.totalGastos || 0)}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-card info-card-docs">
+                    <h4 class="font-bold text-slate-900 text-sm mb-2 flex items-center gap-2">
+                        <div class="bg-emerald-100 p-1.5 rounded-lg">
+                            <i class='bx bx-file text-emerald-700 text-sm'></i>
+                        </div>
+                        <span>Documentos</span>
+                    </h4>
+                    <div class="space-y-1.5 max-h-32 overflow-y-auto custom-scrollbar">
+                        ${venta.listaComprobantes && venta.listaComprobantes.length > 0 ? venta.listaComprobantes.map(doc => `
+                            <a href="/vendedor/descargar/comprobante/${doc.idComprobante}" class="doc-item" target="_blank">
+                                <div class="flex items-center gap-2 flex-1 min-w-0">
+                                    <span class="doc-name-text truncate">${doc.nombreComprobante}</span>
+                                </div>
+                                <i class='bx bx-download text-sm text-emerald-700'></i>
+                            </a>
+                        `).join('') : '<p class="text-emerald-400 text-xs italic py-2 text-center">Sin documentos</p>'}
+                    </div>
+                </div>
+
+                <div class="gradient-bg text-white rounded-xl p-4 shadow-md">
+                    <h5 class="text-sm font-bold mb-2 opacity-90 flex items-center gap-1">
+                        <i class='bx bx-calculator text-base'></i>
+                        Resumen Financiero
+                    </h5>
+                    <div class="grid grid-cols-3 gap-2 text-center">
+                        <div class="bg-white/20 backdrop-blur-sm rounded-lg p-2">
+                            <p class="text-xs opacity-80">Precio</p>
+                            <p class="text-sm font-bold">${formatoMoneda(venta.producto?.precioProducto || 0)}</p>
+                        </div>
+                        <div class="bg-white/20 backdrop-blur-sm rounded-lg p-2">
+                            <p class="text-xs opacity-80">Gastos</p>
+                            <p class="text-sm font-bold">-${formatoMoneda(venta.totalGastos || 0)}</p>
+                        </div>
+                        <div class="bg-white/30 backdrop-blur-sm rounded-lg p-2 border-2 border-white/50">
+                            <p class="text-xs opacity-80">Ganancia</p>
+                            <p class="text-base font-black">${formatoMoneda(ganancia)}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
                 </div>
             `;
         }).join('');
     }
 
-    function toggleDetalle(index) {
-        const detalle = document.getElementById(`detalle-${index}`);
-        const icon = document.getElementById(`icon-${index}`);
-        const ventaItem = document.getElementById(`venta-${index}`);
-
-        detalle.classList.toggle('activo');
-        icon.classList.toggle('rotate-180');
-        ventaItem.classList.toggle('expandida');
-    }
-
     function getEstadoBadge(estado) {
         const badges = {
+            'EN_PROCESO': '<span class="badge badge-procesando"><i class="bx bx-time-five"></i> En Proceso</span>',
             'FINALIZADA': '<span class="badge badge-completada"><i class="bx bx-check-circle"></i> Finalizada</span>',
-            'EN_PROCESO': '<span class="badge badge-procesando"><i class="bx bx-loader"></i> En Proceso</span>',
             'CANCELADA': '<span class="badge badge-rechazada"><i class="bx bx-x-circle"></i> Cancelada</span>'
         };
-        return badges[estado] || '';
+        return badges[estado] || '<span class="badge badge-procesando">Desconocido</span>';
     }
 
     function getPagadoBadge(pagado) {
         return pagado
-            ? '<span class="badge badge-pagada"><i class="bx bx-check"></i> Pagada</span>'
-            : '<span class="badge badge-no-pagada"><i class="bx bx-x"></i>Pago Pendiente</span>';
+            ? '<span class="badge badge-pagada"><i class="bx bx-check-double"></i> Pagada</span>'
+            : '<span class="badge badge-no-pagada"><i class="bx bx-time"></i> No Pagada</span>';
     }
 
-    function eliminarGasto(ventaIndex, gastoId) {
-        if (!confirm('¿Eliminar este gasto?')) return;
+    function toggleDetalle(index) {
+        const detalle = document.getElementById(`detalle-${index}`);
+        const icono = document.getElementById(`icon-${index}`);
+        const ventaItem = document.getElementById(`venta-${index}`);
 
-        const venta = allSales[ventaIndex];
-
-        fetch(`/vendedor/ventas/gasto/eliminar/${gastoId}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    venta.listaGastos = venta.listaGastos.filter(g => g.idGasto !== gastoId);
-                    venta.totalGastos = venta.listaGastos.reduce((sum, g) => sum + (g.valorGasto || g.monto), 0);
-
-                    const container = document.getElementById(`listaGastos-${ventaIndex}`);
-                    if (container) {
-                        container.innerHTML = venta.listaGastos.length > 0 ? venta.listaGastos.map(gasto => `
-                        <div class="gasto-item flex justify-between items-center gap-2" id="gasto-${gasto.idGasto}">
-                            <span class="text-xs font-medium text-slate-900 flex-1 truncate">${gasto.nombreGasto}</span>
-                            <div class="flex items-center gap-2 flex-shrink-0">
-                                <span class="font-bold text-red-600 text-xs">${formatoMoneda(gasto.valorGasto)}</span>
-                                <button onclick="eliminarGasto(${ventaIndex}, ${gasto.idGasto}); event.stopPropagation();"
-                                        class="text-slate-500 hover:text-red-600 transition-colors p-1">
-                                    <i class='bx bx-trash text-sm'></i>
-                                </button>
-                            </div>
-                        </div>
-                    `).join('') : '<p class="text-slate-400 text-xs italic py-2 text-center">No hay gastos</p>';
-                    }
-                }
-            })
-            .catch(error => console.error('Error:', error));
+        detalle.classList.toggle('activo');
+        icono.classList.toggle('rotate-180');
+        ventaItem.classList.toggle('expandida');
     }
 
-    function abrirModalGasto(index) {
-        document.getElementById('ventaIdGasto').value = allSales[index].idVenta;
-        document.getElementById('ventaIndexGasto').value = index;
-        document.getElementById('modalGasto').classList.add('modal-open');
+    function abrirModalNota(index) {
+        const idxInput = document.getElementById('ventaIndexNota');
+        const textarea = document.getElementById('textoNota'); // ID CORREGIDO
+        const modal = document.getElementById('modalNota');
+
+        // Se corrige la validación para reflejar los IDs correctos
+        if (!idxInput || !textarea || !modal) {
+            console.error('Faltan elementos del modal de nota:', { idxInput, textarea: textarea ? '#textoNota' : null, modal });
+            alert('No se puede abrir el modal de nota. Revisa el HTML del modal.');
+            return;
+        }
+
+        const nota = allSales[index].nota || '';
+        idxInput.value = index;
+        textarea.value = nota;
+        modal.classList.add('modal-open');
     }
 
     function cerrarModalGasto() {
         document.getElementById('modalGasto').classList.remove('modal-open');
-        document.getElementById('formGasto').reset();
-    }
-
-    function abrirModalNota(index) {
-        const venta = allSales[index];
-        document.getElementById('ventaIdNota').value = venta.idVenta;
-        document.getElementById('ventaIndexNota').value = index;
-        document.getElementById('textoNota').value = venta.nota || '';
-        document.getElementById('modalNota').classList.add('modal-open');
     }
 
     function cerrarModalNota() {
         document.getElementById('modalNota').classList.remove('modal-open');
-        document.getElementById('formNota').reset();
     }
 
-    document.getElementById('formGasto').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const idVenta = document.getElementById('ventaIdGasto').value;
-        const ventaIndex = parseInt(document.getElementById('ventaIndexGasto').value);
+    function reabrirDetalle(index) {
+        // Asumimos que el detalle tiene un ID como 'venta-detalle-X'
+        const detailElement = document.getElementById(`venta-detalle-${index}`);
+
+        // Si el elemento existe y está oculto, lo hacemos visible
+        if (detailElement && detailElement.classList.contains('hidden')) {
+            detailElement.classList.remove('hidden');
+        }
+    }
+
+    async function guardarNota() {
+        const index = document.getElementById('ventaIndexNota').value;
+        const nota = document.getElementById('textoNota').value; // ID CORREGIDO
+        const venta = allSales[index];
+
+        try {
+            const response = await fetch(`/vendedor/ventas/gasto/nota/actualizar`, { // Endpoint corregido a 'nota/agregar' si es para notas
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: new URLSearchParams({ idVenta: venta.idVenta, nota: nota })
+            });
+
+            if (response.ok) {
+                allSales[index].nota = nota;
+                document.getElementById(`nota-content-${index}`).innerHTML = nota || '<span class="text-amber-400 italic">Sin notas</span>';
+                cerrarModalNota();
+                // Opcional: mostrar una notificación de éxito
+            } else {
+                alert('Error al guardar la nota. Servidor respondió con error.');
+            }
+        } catch (error) {
+            console.error('Error de red o parseo:', error);
+            alert('Error al guardar la nota. Revisa la consola para más detalles.');
+        }
+    }
+
+    function abrirModalGasto(index) {
+        const idxInput = document.getElementById('ventaIndexGasto');
+        const descripcion = document.getElementById('descripcionGasto'); // ID CORREGIDO
+        const monto = document.getElementById('montoGasto');         // ID CORREGIDO
+        const modal = document.getElementById('modalGasto');
+
+        // Se corrige la validación para reflejar los IDs correctos
+        if (!idxInput || !descripcion || !monto || !modal) {
+            console.error('Faltan elementos del modal gasto:', { idxInput, descripcion: descripcion ? '#descripcionGasto' : null, monto: monto ? '#montoGasto' : null, modal });
+            alert('No se puede abrir el modal de gasto. Revisa el HTML del modal.');
+            return;
+        }
+
+        // Limpiar campos y establecer el índice
+        idxInput.value = index;
+        descripcion.value = '';
+        monto.value = '';
+        modal.classList.add('modal-open');
+    }
+
+    /* 4. FUNCIÓN GUARDAR GASTO (CORREGIDA PARA ID) */
+    async function guardarGasto() {
+        const index = document.getElementById('ventaIndexGasto').value;
         const descripcion = document.getElementById('descripcionGasto').value;
-        const monto = parseFloat(document.getElementById('montoGasto').value);
+        const monto = document.getElementById('montoGasto').value;
+        const venta = allSales[index];
 
-        fetch('/vendedor/ventas/gasto/agregar', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams({
-                idVenta: idVenta,
-                nombreGasto: descripcion,
-                valorGasto: monto
-            })
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    const venta = allSales[ventaIndex];
-                    venta.listaGastos.push({
-                        idGasto: data.idGasto,
-                        nombreGasto: descripcion,
-                        valorGasto: monto
-                    });
-                    venta.totalGastos = (venta.totalGastos || 0) + monto;
+        if (!descripcion || !monto) {
+            alert('Por favor completa todos los campos');
+            return;
+        }
 
-                    const container = document.getElementById(`listaGastos-${ventaIndex}`);
-                    if (container) {
-                        container.innerHTML = venta.listaGastos.map(gasto => `
-                        <div class="gasto-item flex justify-between items-center gap-2" id="gasto-${gasto.idGasto}">
-                            <span class="text-xs font-medium text-slate-900 flex-1 truncate">${gasto.nombreGasto}</span>
-                            <div class="flex items-center gap-2 flex-shrink-0">
-                                <span class="font-bold text-red-600 text-xs">${formatoMoneda(gasto.valorGasto)}</span>
-                                <button onclick="eliminarGasto(${ventaIndex}, ${gasto.idGasto}); event.stopPropagation();"
-                                        class="text-slate-500 hover:text-red-600 transition-colors p-1">
-                                    <i class='bx bx-trash text-sm'></i>
-                                </button>
-                            </div>
+        try {
+            const response = await fetch(`/vendedor/ventas/gasto/agregar`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: new URLSearchParams({
+                    idVenta: venta.idVenta,
+                    nombreGasto: descripcion,
+                    valorGasto: parseInt(monto)
+                })
+            });
+
+            if (response.ok) {
+                const nuevoGastoRaw = await response.json();
+
+                // --- FIX DE NOMBRE: Usamos 'nombreGasto' como clave para el frontend ---
+                const nuevoGasto = {
+                    // El frontend espera esta clave
+                    nombreGasto: nuevoGastoRaw.nombreGasto || descripcion,
+                    // El valor ya funciona, mantenemos la clave
+                    valorGasto: nuevoGastoRaw.valorGasto || parseInt(monto),
+                    idGasto: nuevoGastoRaw.idGasto
+                };
+                // ----------------------------------------------------------------------
+
+                if (!allSales[index].listaGastos) {
+                    allSales[index].listaGastos = [];
+                }
+
+                allSales[index].listaGastos.push(nuevoGasto);
+
+                const totalGastos = allSales[index].listaGastos.reduce((sum, g) => sum + (g.valorGasto || g.monto || 0), 0);
+                allSales[index].totalGastos = totalGastos;
+
+
+                // FIX para mantener el detalle abierto (punto 2)
+                aplicarFiltros();
+                setTimeout(() => {
+                    reabrirDetalle(index);
+                }, 50);
+
+                cerrarModalGasto();
+            } else {
+                alert('Error al guardar el gasto. Servidor respondió con error.');
+            }
+        } catch (error) {
+            console.error('Error de red o parseo:', error);
+            alert('Error al guardar el gasto. Revisa la consola para más detalles.');
+        }
+    }
+
+    async function eliminarGasto(ventaIndex, gastoId) {
+        if (!confirm('¿Estás seguro de eliminar este gasto?')) return;
+
+        const venta = allSales[ventaIndex];
+
+        try {
+            const response = await fetch(`/vendedor/ventas/gasto/eliminar/${gastoId}`, {
+                method: 'POST'
+            });
+
+            if (response.ok) {
+                allSales[ventaIndex].listaGastos = allSales[ventaIndex].listaGastos.filter(g => g.idGasto !== gastoId);
+
+                const totalGastos = allSales[ventaIndex].listaGastos.reduce((sum, g) => sum + (g.valorGasto || g.monto || 0), 0);
+                allSales[ventaIndex].totalGastos = totalGastos;
+
+                aplicarFiltros();
+            } else {
+                alert('Error al eliminar el gasto');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error al eliminar el gasto');
+        }
+    }
+
+    function mostrarPrevisualizacionPDF() {
+        const modal = document.getElementById('modalPDFPreview');
+        const previewContent = document.getElementById('pdfPreviewContent');
+
+        const totalIngresos = ventasFiltradas.reduce((sum, v) => sum + (v.producto?.precioProducto || 0), 0);
+        const totalGastos = ventasFiltradas.reduce((sum, v) => sum + (v.totalGastos || 0), 0);
+        const gananciaNeta = totalIngresos - totalGastos;
+        const fechaActual = new Date().toLocaleDateString('es-ES', {day: '2-digit', month: 'long', year: 'numeric'});
+
+        previewContent.innerHTML = `
+            <div class="avoid-break">
+                <div class="gradient-hero text-white p-8 rounded-2xl mb-6 shadow-lg">
+                    <h1 class="text-4xl font-bold mb-2">Reporte de Ventas</h1>
+                    <p class="text-xl opacity-90">Generado el ${fechaActual}</p>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4 mb-8">
+                    <div class="bg-blue-50 border-2 border-blue-200 p-6 rounded-xl text-center">
+                        <p class="text-sm text-blue-700 font-semibold mb-2">TOTAL VENTAS</p>
+                        <p class="text-3xl font-black text-blue-900">${ventasFiltradas.length}</p>
+                    </div>
+                    <div class="bg-emerald-50 border-2 border-emerald-200 p-6 rounded-xl text-center">
+                        <p class="text-sm text-emerald-700 font-semibold mb-2">INGRESOS TOTALES</p>
+                        <p class="text-3xl font-black text-emerald-900">${formatoMoneda(totalIngresos)}</p>
+                    </div>
+                    <div class="bg-red-50 border-2 border-red-200 p-6 rounded-xl text-center">
+                        <p class="text-sm text-red-700 font-semibold mb-2">GASTOS TOTALES</p>
+                        <p class="text-3xl font-black text-red-900">${formatoMoneda(totalGastos)}</p>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white p-6 rounded-xl mb-8 shadow-lg">
+                    <p class="text-lg font-semibold mb-2 opacity-90">GANANCIA NETA TOTAL</p>
+                    <p class="text-5xl font-black">${formatoMoneda(gananciaNeta)}</p>
+                </div>
+            </div>
+
+            <div class="avoid-break mb-8">
+                <h2 class="text-2xl font-bold text-slate-900 mb-4 border-b-4 border-emerald-500 pb-2">Listado de Ventas</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse text-sm">
+                        <thead>
+                            <tr class="bg-slate-800 text-white">
+                                <th class="p-3 text-left font-bold">#</th>
+                                <th class="p-3 text-left font-bold">Comprador</th>
+                                <th class="p-3 text-left font-bold">Producto</th>
+                                <th class="p-3 text-left font-bold">Estado</th>
+                                <th class="p-3 text-right font-bold">Precio</th>
+                                <th class="p-3 text-right font-bold">Gastos</th>
+                                <th class="p-3 text-right font-bold">Ganancia</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${ventasFiltradas.map((venta, i) => {
+            const ganancia = (venta.producto?.precioProducto || 0) - (venta.totalGastos || 0);
+            return `
+                                    <tr class="border-b border-slate-200 ${i % 2 === 0 ? 'bg-slate-50' : 'bg-white'}">
+                                        <td class="p-3 font-bold text-slate-700">${venta.idVenta}</td>
+                                        <td class="p-3">${venta.comprador.nombres} ${venta.comprador.apellidos}</td>
+                                        <td class="p-3 text-slate-700">${venta.producto.nombreProducto}</td>
+                                        <td class="p-3">
+                                            <span class="px-3 py-1 rounded-full text-xs font-bold
+                                                ${venta.estado === 'FINALIZADA' ? 'bg-green-100 text-green-800' :
+                venta.estado === 'EN_PROCESO' ? 'bg-blue-100 text-blue-800' :
+                    'bg-red-100 text-red-800'}">
+                                                ${venta.estado}
+                                            </span>
+                                        </td>
+                                        <td class="p-3 text-right font-semibold text-slate-900">${formatoMoneda(venta.producto?.precioProducto || 0)}</td>
+                                        <td class="p-3 text-right font-semibold text-red-700">${formatoMoneda(venta.totalGastos || 0)}</td>
+                                        <td class="p-3 text-right font-bold text-emerald-700">${formatoMoneda(ganancia)}</td>
+                                    </tr>
+                                `;
+        }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="page-break"></div>
+
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-slate-900 mb-6 border-b-4 border-emerald-500 pb-2">Análisis Gráfico</h2>
+
+                <div class="grid grid-cols-2 gap-6 mb-6">
+                    <div class="bg-white border-2 border-slate-200 rounded-xl p-4">
+                        <h3 class="text-lg font-bold text-slate-800 mb-3 text-center">Ingresos vs Gastos</h3>
+                        <div style="height: 250px; position: relative;">
+                            <canvas id="pdfChartIngresosGastos"></canvas>
                         </div>
-                    `).join('');
-                    }
-                }
-            })
-            .catch(error => console.error('Error:', error));
+                    </div>
 
-        cerrarModalGasto();
-    });
+                    <div class="bg-white border-2 border-slate-200 rounded-xl p-4">
+                        <h3 class="text-lg font-bold text-slate-800 mb-3 text-center">Estados de Ventas</h3>
+                        <div style="height: 250px; position: relative;">
+                            <canvas id="pdfChartEstados"></canvas>
+                        </div>
+                    </div>
+                </div>
 
-    document.getElementById('formNota').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const idVenta = document.getElementById('ventaIdNota').value;
-        const ventaIndex = parseInt(document.getElementById('ventaIndexNota').value);
-        const nota = document.getElementById('textoNota').value;
+                <div class="grid grid-cols-2 gap-6">
+                    <div class="bg-white border-2 border-slate-200 rounded-xl p-4">
+                        <h3 class="text-lg font-bold text-slate-800 mb-3 text-center">Ganancia Neta</h3>
+                        <div style="height: 250px; position: relative;">
+                            <canvas id="pdfChartGanancia"></canvas>
+                        </div>
+                    </div>
 
-        fetch('/vendedor/ventas/gasto/nota/actualizar', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams({
-                idVenta: idVenta,
-                nota: nota
-            })
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    const venta = allSales[ventaIndex];
-                    venta.nota = nota;
+                    <div class="bg-white border-2 border-slate-200 rounded-xl p-4">
+                        <h3 class="text-lg font-bold text-slate-800 mb-3 text-center">Métodos de Pago</h3>
+                        <div style="height: 250px; position: relative;">
+                            <canvas id="pdfChartMetodosPago"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
 
-                    const ventaDetailElement = document.getElementById(`venta-${ventaIndex}`);
-                    if (ventaDetailElement) {
-                        const notaElement = ventaDetailElement.querySelector('.bg-slate-50');
-                        if (notaElement) {
-                            notaElement.innerHTML = nota || '<span class="text-slate-400 italic">Sin notas</span>';
-                        }
-                    }
-                }
-            })
-            .catch(error => console.error('Error:', error));
+        modal.classList.add('modal-open');
 
-        cerrarModalNota();
-    });
+        setTimeout(() => {
+            crearGraficasPDF();
+        }, 300);
+    }
 
-    document.getElementById('modalGasto').addEventListener('click', function(e) {
-        if (e.target === this) cerrarModalGasto();
-    });
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('busqueda').addEventListener('input', aplicarFiltros);
+        document.getElementById('filterEstado').addEventListener('change', aplicarFiltros);
+        document.getElementById('filterPago').addEventListener('change', aplicarFiltros);
+        document.getElementById('filterFechaDesde').addEventListener('change', aplicarFiltros);
+        document.getElementById('filterFechaHasta').addEventListener('change', aplicarFiltros);
 
-    document.getElementById('modalNota').addEventListener('click', function(e) {
-        if (e.target === this) cerrarModalNota();
-    });
+        renderVentas(allSales);
 
-    document.getElementById('modalPDFPreview').addEventListener('click', function(e) {
-        if (e.target === this) cerrarModalPDFPreview();
-    });
+        const formGasto = document.getElementById('formGasto');
+        if (formGasto) {
+            formGasto.addEventListener('submit', function(e) {
+                e.preventDefault(); // <-- ESTO EVITA LA RECARGA DE PÁGINA
+                guardarGasto();
+            });
+        }
 
-    document.getElementById('busqueda').addEventListener('input', aplicarFiltros);
-    document.getElementById('filterEstado').addEventListener('change', aplicarFiltros);
-    document.getElementById('filterPago').addEventListener('change', aplicarFiltros);
-    document.getElementById('filterFechaDesde').addEventListener('change', aplicarFiltros);
-    document.getElementById('filterFechaHasta').addEventListener('change', aplicarFiltros);
-
-    document.addEventListener('DOMContentLoaded', () => {
-        renderVentas();
-        ventasFiltradas = allSales;
+        // Listener para el Modal Nota
+        const formNota = document.getElementById('formNota');
+        if (formNota) {
+            formNota.addEventListener('submit', function(e) {
+                e.preventDefault(); // <-- ESTO EVITA LA RECARGA DE PÁGINA
+                guardarNota();
+            });
+        }
     });
 </script>
-
 </body>
 </html>

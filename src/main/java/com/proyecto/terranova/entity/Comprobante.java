@@ -18,7 +18,11 @@ public class Comprobante {
 
     private LocalDateTime fechaSubida;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "id_info_comprobante")
     private InfoComprobante infoComprobante;
+
+    @ManyToOne
+    @JoinColumn(name = "id_venta")
+    private Venta venta;
 }

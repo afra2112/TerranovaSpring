@@ -1,23 +1,27 @@
 package com.proyecto.terranova.controller;
 
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import com.proyecto.terranova.config.enums.*;
+import com.proyecto.terranova.dto.ComprobanteDTO;
 import com.proyecto.terranova.dto.VentaDTO;
 import com.proyecto.terranova.entity.*;
-import com.proyecto.terranova.repository.AsistenciaRepository;
-import com.proyecto.terranova.repository.CiudadRepository;
+import com.proyecto.terranova.repository.*;
 import com.proyecto.terranova.service.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.awt.*;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/vendedor")
@@ -46,6 +50,9 @@ public class VendedorController {
 
     @Autowired
     NotificacionService notificacionService;
+
+    @Autowired
+    ComprobanteRepository comprobanteRepository;
 
     @Autowired
     ModelMapper modelMapper;
@@ -114,25 +121,52 @@ public class VendedorController {
 
     @GetMapping("/ventas")
     public String ventas(Model model, Authentication authentication) {
+
         List<Venta> ventas = ventaService.encontrarPorVendedor(
                 usuarioService.findByEmail(authentication.getName())
         );
 
-        Long ingresosTotales = 0L;
-        Long gastosTotales = 0L;
-        Long balanceFinal = 0L;
+        long ingresosTotales = 0;
+        long gastosTotales = 0;
 
-        for (Venta venta : ventas) {
-            ingresosTotales += venta.getProducto().getPrecioProducto();
-            gastosTotales += venta.getTotalGastos();
-            balanceFinal = ingresosTotales - gastosTotales;
+        for (Venta v : ventas) {
+            ingresosTotales += v.getProducto().getPrecioProducto();
+            gastosTotales += v.getTotalGastos();
         }
 
-        String nombreCompleto = usuario(authentication).getNombres() + " " + usuario(authentication).getApellidos();
+        long balanceFinal = ingresosTotales - gastosTotales;
+
+        String nombreCompleto =
+                usuario(authentication).getNombres() + " " +
+                        usuario(authentication).getApellidos();
 
         List<VentaDTO> ventasDTO = ventas.stream()
-                .map(venta -> modelMapper.map(venta, VentaDTO.class))
-                .collect(Collectors.toList());
+                .map(venta -> {
+
+                    VentaDTO dto = modelMapper.map(venta, VentaDTO.class);
+
+                    List<Comprobante> comprobantesVenta =
+                            comprobanteRepository.findByVenta(venta);
+
+                    List<ComprobanteDTO> comprobantesDTO = comprobantesVenta.stream()
+                            .map(comp -> {
+                                InfoComprobante info = comp.getInfoComprobante();
+
+                                ComprobanteDTO c = new ComprobanteDTO();
+                                c.setIdComprobante(comp.getIdComprobante());
+                                c.setRutaArchivo(comp.getRutaArchivo());
+                                c.setFechaSubida(comp.getFechaSubida());
+                                c.setNombreComprobante(info.getNombreComprobante());
+                                c.setNombreMostrar(info.getNombreMostrar());
+                                return c;
+                            })
+                            .toList();
+
+                    dto.setListaComprobantes(comprobantesDTO);
+
+                    return dto;
+                })
+                .toList();
 
         model.addAttribute("posicionVentas", true);
         model.addAttribute("ingresosTotales", ingresosTotales);
@@ -144,6 +178,7 @@ public class VendedorController {
 
         return "vendedor/ventas";
     }
+
 
     @PostMapping("/venta/enviar-peticion-venta")
     public String enviarPeticionVenta(@ModelAttribute Venta venta, @RequestParam(name = "comprobantes") int comprobantes, RedirectAttributes redirectAttributes, Authentication authentication) throws IOException {
@@ -190,5 +225,26 @@ public class VendedorController {
         model.addAttribute("asistentesConfirmados", asistenciaService.encontrarAsistenciasPorCitaYEstadoAsistencia(id, EstadoAsistenciaEnum.INSCRITO));
         model.addAttribute("asistentesEspera", asistenciaService.encontrarAsistenciasPorCitaYEstadoAsistencia(id, EstadoAsistenciaEnum.EN_ESPERA));
         return "comprador/detalleCita";
+    }
+
+    @GetMapping("/descargar/comprobante/{id}")
+    public ResponseEntity<Resource> descargarComprobante(@PathVariable Long id) {
+        try {
+            Comprobante comprobante = comprobanteRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Comprobante no encontrado"));
+
+            Path rutaArchivo = Paths.get("uploads/documentos/").resolve(comprobante.getRutaArchivo());
+            Resource resource = new UrlResource(rutaArchivo.toUri());
+
+            if (resource.exists() && resource.isReadable()) {
+                return ResponseEntity.ok()
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + comprobante.getRutaArchivo() + "\"")
+                        .body(resource);
+            } else {
+                throw new RuntimeException("No se pudo leer el archivo");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error al descargar el archivo", e);
+        }
     }
 }

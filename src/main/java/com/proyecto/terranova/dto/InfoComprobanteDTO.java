@@ -1,19 +1,12 @@
-package com.proyecto.terranova.entity;
+package com.proyecto.terranova.dto;
 
 import com.proyecto.terranova.config.enums.NombreComprobanteEnum;
-import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
-@Entity
-@Table(name = "infos_comprobantes")
-public class InfoComprobante {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class InfoComprobanteDTO {
     private Long idInfoComprobante;
 
-    @Enumerated(EnumType.STRING)
     private NombreComprobanteEnum nombreComprobante;
 
     private String nombreMostrar;
