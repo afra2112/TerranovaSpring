@@ -1153,27 +1153,19 @@
                             </div>
                         </div>
 
-                        <!-- Certificado de Venta Finalizada -->
-                        <div class="bg-gradient-to-br from-emerald-50 to-green-50 border-2 border-emerald-300 rounded-xl p-6">
+                        <div th:if="${venta.venta.estado.name() == 'FINALIZADA'}" class="bg-gradient-to-br from-emerald-50 to-green-50 border-2 border-emerald-300 rounded-xl p-6 mt-6">
                             <div class="text-center">
                                 <div class="w-16 h-16 bg-emerald-200 rounded-full flex items-center justify-center mx-auto mb-4">
                                     <i class='bx bx-award text-3xl text-emerald-700'></i>
                                 </div>
-                                <p class="font-bold text-emerald-900 text-xl mb-2">Venta Completada Exitosamente</p>
+                                <p class="font-bold text-emerald-900 text-xl mb-2">¡Venta Completada Exitosamente!</p>
                                 <p class="text-sm text-emerald-800 mb-4">
-                                    La transacción ha finalizado con éxito. Todos los registros y documentación han sido guardados
-                                    en el sistema para trazabilidad completa.
+                                    El proceso de venta ha finalizado correctamente. Puedes consultar toda la información en tu panel.
                                 </p>
-                                <div class="flex gap-3 justify-center">
-                                    <button class="px-6 py-3 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition flex items-center gap-2">
-                                        <i class='bx bx-download'></i>
-                                        Descargar Certificado
-                                    </button>
-                                    <button class="px-6 py-3 bg-white text-emerald-700 border-2 border-emerald-300 rounded-xl font-semibold hover:bg-emerald-50 transition flex items-center gap-2">
-                                        <i class='bx bx-printer'></i>
-                                        Imprimir Resumen
-                                    </button>
-                                </div>
+                                <a th:href="@{/vendedor/ventas}" class="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white font-semibold py-2 px-6 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl">
+                                    <i class='bx bx-bar-chart-alt-2'></i>
+                                    Ver Panel de Ventas
+                                </a>
                             </div>
                         </div>
                     </div>

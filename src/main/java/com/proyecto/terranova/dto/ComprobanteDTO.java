@@ -12,6 +12,8 @@ public class ComprobanteDTO {
 
     private NombreComprobanteEnum nombreComprobante;
 
+    private InfoComprobanteDTO infoComprobante;
+
     private String nombreMostrar;
 
     private String descripcion;

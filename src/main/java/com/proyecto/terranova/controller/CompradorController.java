@@ -1,12 +1,14 @@
 package com.proyecto.terranova.controller;
 
 import com.proyecto.terranova.config.enums.*;
+import com.proyecto.terranova.dto.*;
 import com.proyecto.terranova.entity.*;
 import com.proyecto.terranova.repository.*;
 import com.proyecto.terranova.service.*;
 import com.proyecto.terranova.service.CompradorService;
 import com.proyecto.terranova.service.ProductoService;
 import com.proyecto.terranova.service.UsuarioService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,6 +25,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/comprador")
@@ -78,6 +81,12 @@ public class CompradorController {
 
     @Autowired
     ComprobanteRepository comprobanteRepository;
+
+    @Autowired
+    TransporteRepository transporteRepository;
+
+    @Autowired
+    ModelMapper modelMapper;
 
     @ModelAttribute("usuario")
     public Usuario usuario(Authentication authentication){
@@ -181,6 +190,46 @@ public class CompradorController {
         model.addAttribute("posicionCompras", true);
         model.addAttribute("ventas", ventaService.encontrarPorComprador(usuario(authentication)));
         return "comprador/compras";
+    }
+
+    @GetMapping("/compras/detalle-compra/{id}")
+    public String detalleCompra(@PathVariable Long id, Model model, Authentication authentication) {
+        Venta venta = ventaService.findById(id);
+
+        if (!venta.getComprador().getEmail().equals(authentication.getName())) {
+            return "redirect:/comprador/compras";
+        }
+
+        String tipoProducto = venta.getProducto().getClass().getSimpleName().toUpperCase();
+
+
+        Transporte transporte = transporteRepository.findByVenta(venta).orElse(null);
+
+        Object ventaDetalle = null;
+        switch (tipoProducto) {
+            case "GANADO" -> {
+                ventaDetalle = ventaGanadoRepository.findByVenta(venta);
+            }
+            case "TERRENO" -> {
+                ventaDetalle = ventaTerrenoRepository.findByVenta(venta);
+            }
+            case "FINCA" -> {
+                ventaDetalle = ventaFincaRepository.findByVenta(venta);
+            }
+        }
+
+        boolean tieneOpcionales = venta.getListaComprobantes()
+                .stream()
+                .anyMatch(doc -> !doc.getInfoComprobante().isObligatorio());
+
+        model.addAttribute("tieneOpcionales", tieneOpcionales);
+        model.addAttribute("venta", venta);
+        model.addAttribute("transporte", transporte);
+        model.addAttribute("ventaDetalle", ventaDetalle);
+        model.addAttribute("tipoProducto", tipoProducto);
+        model.addAttribute("posicionCompras", true);
+
+        return "comprador/detalleCompra";
     }
 
     @GetMapping("/compras/detalle/{id}")

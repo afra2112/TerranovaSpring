@@ -67,6 +67,9 @@ public class Venta {
     @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GastoVenta> listaGastos = new ArrayList<>();
 
+    @OneToMany(mappedBy = "venta")
+    private List<Comprobante> listaComprobantes = new ArrayList<>();
+
     @Transient
     public Long getTotalGastos() {
         if (listaGastos == null) return 0L;

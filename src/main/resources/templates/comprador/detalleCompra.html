@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de Compra</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .gradient-hero {
+            background: linear-gradient(135deg, #064e3b 0%, #059669 50%, #10b981 100%);
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(249, 250, 251, 0.95) 100%);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(226, 232, 240, 0.6);
+            transition: all 0.3s ease;
+        }
+
+        .info-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(5, 150, 105, 0.12);
+            border-color: rgba(5, 150, 105, 0.3);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 40px;
+            padding-bottom: 30px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 40px;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, rgba(5, 150, 105, 0.5), transparent);
+        }
+
+        .timeline-item:last-child::before {
+            display: none;
+        }
+
+        .timeline-icon {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .timeline-icon.completed {
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: white;
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+        }
+
+        .timeline-icon.current {
+            background: linear-gradient(135deg, #3b82f6, #60a5fa);
+            color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        .timeline-icon.pending {
+            background: rgba(226, 232, 240, 0.8);
+            color: #94a3b8;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+            }
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 700;
+            backdrop-filter: blur(4px);
+        }
+
+        .badge-completada {
+            background: linear-gradient(135deg, rgba(220, 252, 231, 0.9), rgba(187, 247, 208, 0.9));
+            color: #166534;
+            border: 2px solid rgba(134, 239, 172, 0.6);
+        }
+
+        .badge-proceso {
+            background: linear-gradient(135deg, rgba(219, 234, 254, 0.9), rgba(191, 219, 254, 0.9));
+            color: #1e40af;
+            border: 2px solid rgba(147, 197, 253, 0.6);
+        }
+
+        .badge-cancelada {
+            background: linear-gradient(135deg, rgba(254, 226, 226, 0.9), rgba(254, 202, 202, 0.9));
+            color: #991b1b;
+            border: 2px solid rgba(252, 165, 165, 0.6);
+        }
+
+        .doc-item {
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            background: linear-gradient(135deg, rgba(209, 250, 229, 0.6) 0%, rgba(240, 253, 244, 0.6) 100%);
+            border-radius: 12px;
+            text-decoration: none;
+            color: #047857;
+            border: 2px solid rgba(110, 231, 183, 0.4);
+        }
+
+        .doc-item:hover {
+            background: linear-gradient(135deg, rgba(167, 243, 208, 0.7) 0%, rgba(209, 250, 229, 0.8) 100%);
+            transform: translateX(4px);
+            border-color: rgba(16, 185, 129, 0.6);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+        }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .photo-item {
+            position: relative;
+            aspect-ratio: 16/9;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid rgba(226, 232, 240, 0.6);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .photo-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            border-color: rgba(5, 150, 105, 0.5);
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, rgba(248, 250, 252, 0.95) 0%, rgba(255, 255, 255, 0.95) 100%);
+            backdrop-filter: blur(8px);
+            border: 2px solid rgba(226, 232, 240, 0.7);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            border-color: rgba(5, 150, 105, 0.4);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(241, 245, 249, 0.5);
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(5, 150, 105, 0.5);
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(6, 78, 59, 0.7);
+        }
+
+        /* Modal para ver imágenes */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            max-width: 90%;
+            max-height: 90%;
+        }
+
+        @media (max-width: 768px) {
+            .photo-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-gray-100 min-h-screen">
+
+<div th:replace="~{fragments/comprador/navbarComprador :: navbarComprador}"></div>
+
+<div class="lg:ml-64 py-6 lg:py-10 px-4 lg:px-8">
+    <!-- Header con gradient -->
+    <div class="gradient-hero rounded-3xl p-6 lg:p-8 mb-8 text-white shadow-xl">
+        <div class="flex items-center gap-4 mb-4">
+            <a href="/comprador/compras" class="bg-white/20 hover:bg-white/30 p-3 rounded-xl transition-all">
+                <i class='bx bx-arrow-back text-2xl'></i>
+            </a>
+            <div>
+                <h1 class="text-3xl lg:text-4xl font-bold">Detalle de Compra</h1>
+                <p class="text-emerald-100 mt-1">Compra #<span th:text="${venta.idVenta}">123</span></p>
+            </div>
+        </div>
+
+        <!-- Estado y badges -->
+        <div class="flex flex-wrap items-center gap-3">
+            <span th:if="${venta.estado.name() == 'FINALIZADA'}" class="badge badge-completada">
+                <i class='bx bx-check-circle text-lg'></i> Completada
+            </span>
+            <span th:if="${venta.estado.name() == 'EN_PROCESO'}" class="badge badge-proceso">
+                <i class='bx bx-loader-circle text-lg'></i> En Proceso
+            </span>
+            <span th:if="${venta.estado.name() == 'CANCELADA'}" class="badge badge-cancelada">
+                <i class='bx bx-x-circle text-lg'></i> Cancelada
+            </span>
+
+            <span th:if="${venta.pagado}" class="badge" style="background: linear-gradient(135deg, rgba(209, 250, 229, 0.9), rgba(167, 243, 208, 0.9)); color: #065f46; border: 2px solid rgba(110, 231, 183, 0.6);">
+                <i class='bx bx-check text-lg'></i> Pagado
+            </span>
+            <span th:unless="${venta.pagado}" class="badge" style="background: linear-gradient(135deg, rgba(254, 243, 199, 0.9), rgba(253, 224, 71, 0.9)); color: #92400e; border: 2px solid rgba(252, 211, 77, 0.6);">
+                <i class='bx bx-time text-lg'></i> Pago Pendiente
+            </span>
+        </div>
+    </div>
+
+    <!-- Grid principal -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <!-- Resumen Financiero -->
+        <div class="lg:col-span-1">
+            <div class="info-card rounded-2xl p-6">
+                <h2 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+                    <i class='bx bx-wallet text-emerald-600 text-2xl'></i>
+                    Resumen Financiero
+                </h2>
+
+                <div class="space-y-4">
+                    <div class="stat-box">
+                        <p class="text-xs text-slate-600 font-semibold mb-1">PRECIO TOTAL</p>
+                        <p class="text-3xl font-black text-slate-900">
+                            $<span th:text="${#numbers.formatDecimal(venta.producto.precioProducto, 0, 'POINT', 0, 'COMMA')}">0</span>
+                        </p>
+                    </div>
+
+                    <div class="bg-emerald-50 rounded-xl p-4 border-2 border-emerald-200">
+                        <div class="flex items-center justify-between mb-2">
+                            <p class="text-sm font-semibold text-emerald-800">Estado del Pago</p>
+                            <i th:classappend="${venta.pagado} ? 'bx bx-check-circle text-emerald-600' : 'bx bx-time text-amber-600'" class="text-2xl"></i>
+                        </div>
+                        <p th:if="${venta.pagado}" class="text-emerald-700 font-bold">Pagado</p>
+                        <p th:unless="${venta.pagado}" class="text-amber-700 font-bold">Pendiente de Pago</p>
+
+                        <div th:if="${venta.pago != null && venta.pagado}" class="mt-3 pt-3 border-t border-emerald-200">
+                            <p class="text-xs text-emerald-700 font-semibold mb-1">MÉTODO DE PAGO</p>
+                            <p class="text-emerald-900 font-bold text-sm" th:text="${venta.pago.metodoPago}">Método</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-50 rounded-xl p-4 border-2 border-blue-200">
+                        <p class="text-xs text-blue-700 font-semibold mb-1">FECHA DE COMPRA</p>
+                        <p class="text-blue-900 font-bold" th:text="${#temporals.format(venta.fechaInicioVenta, 'dd/MMM/yyyy HH:mm')}">01/Ene/2025 10:00</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detalles del Producto y Vendedor -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Producto -->
+            <div class="info-card rounded-2xl p-6">
+                <h2 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+                    <i class='bx bx-package text-emerald-600 text-2xl'></i>
+                    Producto Adquirido
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-emerald-50 rounded-xl p-4 border-2 border-emerald-200">
+                        <p class="text-xs text-emerald-700 font-semibold mb-2">NOMBRE DEL PRODUCTO</p>
+                        <p class="text-emerald-900 font-bold text-lg" th:text="${venta.producto.nombreProducto}">Ganado Premium</p>
+                    </div>
+
+                    <div class="bg-emerald-50 rounded-xl p-4 border-2 border-emerald-200">
+                        <p class="text-xs text-emerald-700 font-semibold mb-2">TIPO</p>
+                        <p class="text-emerald-900 font-bold" th:text="${tipoProducto}">GANADO</p>
+                    </div>
+
+                    <div class="md:col-span-2 bg-emerald-50 rounded-xl p-4 border-2 border-emerald-200">
+                        <p class="text-xs text-emerald-700 font-semibold mb-2">DESCRIPCIÓN</p>
+                        <p class="text-emerald-800 text-sm" th:text="${venta.producto.descripcion ?: 'Sin descripción'}">Descripción del producto...</p>
+                    </div>
+
+                    <!-- Info específica de Ganado -->
+                    <div th:if="${tipoProducto == 'GANADO'}" class="md:col-span-2">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-emerald-50 rounded-xl p-4 border-2 border-emerald-200">
+                                <p class="text-xs text-emerald-700 font-semibold mb-2">CANTIDAD</p>
+                                <p class="text-emerald-900 font-bold text-2xl" th:text="${ventaDetalle.cantidadNegociada}">0</p>
+                            </div>
+                            <div class="bg-emerald-50 rounded-xl p-4 border-2 border-emerald-200">
+                                <p class="text-xs text-emerald-700 font-semibold mb-2">PRECIO NEGOCIADO</p>
+                                <p class="text-emerald-900 font-bold text-lg">
+                                    $<span th:text="${#numbers.formatDecimal(ventaDetalle.precioNegociado, 0, 'POINT', 0, 'COMMA')}">0</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div th:if="${ventaDetalle.observacionesSanitarias != null && !#strings.isEmpty(ventaDetalle.observacionesSanitarias)}"
+                             class="mt-4 bg-amber-50 rounded-xl p-4 border-2 border-amber-200">
+                            <p class="text-xs text-amber-700 font-semibold mb-2">OBSERVACIONES SANITARIAS</p>
+                            <p class="text-amber-800 text-sm" th:text="${ventaDetalle.observacionesSanitarias}">Observaciones...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vendedor -->
+            <div class="info-card rounded-2xl p-6">
+                <h2 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+                    <i class='bx bx-user-circle text-blue-600 text-2xl'></i>
+                    Información del Vendedor
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-blue-50 rounded-xl p-4 border-2 border-blue-200">
+                        <p class="text-xs text-blue-700 font-semibold mb-2">NOMBRE COMPLETO</p>
+                        <p class="text-blue-900 font-bold" th:text="${venta.vendedor.nombres + ' ' + venta.vendedor.apellidos}">Juan Pérez</p>
+                    </div>
+
+                    <div class="bg-blue-50 rounded-xl p-4 border-2 border-blue-200">
+                        <p class="text-xs text-blue-700 font-semibold mb-2">CÉDULA</p>
+                        <p class="text-blue-800 font-semibold" th:text="${venta.vendedor.cedula}">1234567890</p>
+                    </div>
+
+                    <div class="bg-blue-50 rounded-xl p-4 border-2 border-blue-200">
+                        <p class="text-xs text-blue-700 font-semibold mb-2">TELÉFONO</p>
+                        <p class="text-blue-800 font-semibold" th:text="${venta.vendedor.telefono}">+57 300 123 4567</p>
+                    </div>
+
+                    <div class="bg-blue-50 rounded-xl p-4 border-2 border-blue-200">
+                        <p class="text-xs text-blue-700 font-semibold mb-2">EMAIL</p>
+                        <p class="text-blue-800 font-semibold break-all text-sm" th:text="${venta.vendedor.email}">vendedor@email.com</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Documentación del Producto -->
+    <div th:if="${venta.listaComprobantes != null && !venta.listaComprobantes.isEmpty()}" class="info-card rounded-2xl p-6 mb-8">
+        <h2 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+            <i class='bx bx-file-blank text-emerald-600 text-2xl'></i>
+            Documentación del Producto
+        </h2>
+
+        <p class="text-sm text-slate-600 mb-4">
+            El vendedor ha proporcionado los siguientes documentos para garantizar la trazabilidad y legalidad de la transacción.
+        </p>
+
+        <!-- Documentos Obligatorios -->
+        <div class="mb-6">
+            <h3 class="text-sm font-bold text-red-700 mb-3 flex items-center gap-2">
+                <i class='bx bx-error'></i>
+                Documentos Obligatorios
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <a th:each="doc : ${venta.listaComprobantes}"
+                   th:if="${doc.infoComprobante.obligatorio}"
+                   th:href="@{'/documentos/' + ${doc.rutaArchivo}}"
+                   target="_blank"
+                   class="doc-item">
+                    <i class='bx text-3xl text-emerald-600' th:classappend="${'bxs-' + doc.infoComprobante.icono}"></i>
+                    <div class="flex-1 min-w-0">
+                        <p class="font-bold text-emerald-900 text-sm truncate" th:text="${doc.infoComprobante.nombreMostrar}">Documento</p>
+                        <p class="text-xs text-emerald-700" th:text="${#temporals.format(doc.fechaSubida, 'dd/MMM/yyyy HH:mm')}">01/Ene/2025 10:00</p>
+                    </div>
+                    <i class='bx bx-download text-xl text-emerald-700'></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Documentos Opcionales -->
+        <div th:if="${tieneOpcionales}">
+            <h3 class="text-sm font-bold text-emerald-700 mb-3 flex items-center gap-2">
+                <i class='bx bx-check-shield'></i>
+                Documentos Adicionales
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <a th:each="doc : ${venta.listaComprobantes}"
+                   th:if="${!doc.infoComprobante.obligatorio}"
+                   th:href="@{'/documentos/' + ${doc.rutaArchivo}}"
+                   target="_blank"
+                   class="doc-item">
+                    <i class='bx text-3xl text-emerald-600' th:classappend="${'bxs-' + doc.infoComprobante.icono}"></i>
+                    <div class="flex-1 min-w-0">
+                        <p class="font-bold text-emerald-900 text-sm truncate" th:text="${doc.infoComprobante.nombreMostrar}">Documento</p>
+                        <p class="text-xs text-emerald-700" th:text="${#temporals.format(doc.fechaSubida, 'dd/MMM/yyyy HH:mm')}">01/Ene/2025 10:00</p>
+                    </div>
+                    <i class='bx bx-download text-xl text-emerald-700'></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Timeline del Proceso de Compra -->
+    <div th:if="${venta.estado.name() == 'EN_PROCESO'}" class="info-card rounded-2xl p-6 mb-8">
+        <h2 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+            <i class='bx bx-time-five text-blue-600 text-2xl'></i>
+            Progreso de la Compra
+        </h2>
+
+        <div class="space-y-2">
+            <div class="timeline-item">
+                <div class="timeline-icon completed">
+                    <i class='bx bx-check'></i>
+                </div>
+                <div class="bg-white rounded-xl p-4 border-2 border-emerald-300">
+                    <p class="font-bold text-emerald-900">Compra Iniciada</p>
+                    <p class="text-sm text-emerald-700">La compra ha sido registrada exitosamente</p>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div th:classappend="${venta.pasoActual >= 2} ? 'timeline-icon completed' : 'timeline-icon current'">
+                    <i class='bx' th:classappend="${venta.pasoActual >= 2} ? 'bx-check' : 'bx-time'"></i>
+                </div>
+                <div class="bg-white rounded-xl p-4 border-2" th:classappend="${venta.pasoActual >= 2} ? 'border-emerald-300' : 'border-blue-300'">
+                    <p class="font-bold" th:classappend="${venta.pasoActual >= 2} ? 'text-emerald-900' : 'text-blue-900'">Validación del Vendedor</p>
+                    <p class="text-sm" th:classappend="${venta.pasoActual >= 2} ? 'text-emerald-700' : 'text-blue-700'">El vendedor está completando la documentación</p>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div th:classappend="${venta.pasoActual == 5} ? 'timeline-icon current' : (${venta.pasoActual > 5} ? 'timeline-icon completed' : 'timeline-icon pending')">
+                    <i class='bx' th:classappend="${venta.pasoActual >= 5} ? 'bx-truck' : 'bx-time'"></i>
+                </div>
+                <div class="bg-white rounded-xl p-4 border-2" th:classappend="${venta.pasoActual == 5} ? 'border-blue-300' : (${venta.pasoActual > 5} ? 'border-emerald-300' : 'border-slate-200')">
+                    <p class="font-bold" th:classappend="${venta.pasoActual == 5} ? 'text-blue-900' : (${venta.pasoActual > 5} ? 'text-emerald-900' : 'text-slate-700')">Transporte y Entrega</p>
+                    <p class="text-sm" th:classappend="${venta.pasoActual == 5} ? 'text-blue-700' : (${venta.pasoActual > 5} ? 'text-emerald-700' : 'text-slate-500')">Coordina el transporte y recepción del producto</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-6 bg-blue-50 rounded-xl p-4 border-2 border-blue-200">
+            <p class="text-sm text-blue-800 flex items-center gap-2">
+                <i class='bx bx-info-circle text-blue-600 text-lg'></i>
+                <strong>Paso Actual:</strong> <span th:text="${venta.pasoActual}">1</span> de 5
+            </p>
+        </div>
+
+        <div th:if="${venta.pasoActual == 5 && transporte == null}" class="mt-6">
+            <a href="#" onclick="scrollToTransport()" class="block w-full gradient-bg text-white text-center px-6 py-4 rounded-xl font-bold hover:shadow-lg transition-all">
+                <i class='bx bx-truck text-xl'></i>
+                Programar Transporte Ahora
+            </a>
+        </div>
+    </div>
+
+    <!-- Información de Transporte -->
+    <div th:if="${transporte != null}" class="info-card rounded-2xl p-6 mb-8">
+        <h2 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+            <i class='bx bx-truck text-purple-600 text-2xl'></i>
+            Información del Transporte
+        </h2>
+
+        <!-- Estado del Transporte -->
+        <div class="mb-6">
+            <div th:if="${transporte.estadoTransporte.name() == 'PROGRAMADO'}" class="bg-blue-50 rounded-xl p-5 border-2 border-blue-300">
+                <div class="flex items-center gap-3">
+                    <i class='bx bx-calendar-check text-4xl text-blue-600'></i>
+                    <div>
+                        <p class="font-bold text-blue-900 text-lg">Transporte Programado</p>
+                        <p class="text-sm text-blue-700">El transporte ha sido programado exitosamente. El vendedor está preparando la entrega.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${transporte.estadoTransporte.name() == 'EN_CAMINO'}" class="bg-amber-50 rounded-xl p-5 border-2 border-amber-300">
+                <div class="flex items-center gap-3">
+                    <i class='bx bx-truck text-4xl text-amber-600 animate-pulse'></i>
+                    <div>
+                        <p class="font-bold text-amber-900 text-lg">En Camino</p>
+                        <p class="text-sm text-amber-700">El producto está siendo transportado a tu ubicación. Recibirás una notificación cuando llegue.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${transporte.estadoTransporte.name() == 'COMPLETADO'}" class="bg-emerald-50 rounded-xl p-5 border-2 border-emerald-300">
+                <div class="flex items-center gap-3">
+                    <i class='bx bx-check-circle text-4xl text-emerald-600'></i>
+                    <div>
+                        <p class="font-bold text-emerald-900 text-lg">Entrega Completada</p>
+                        <p class="text-sm text-emerald-700">Has confirmado la recepción del producto exitosamente.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detalles del Transporte -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div class="bg-purple-50 rounded-xl p-4 border-2 border-purple-200">
+                <p class="text-xs text-purple-700 font-semibold mb-2">FECHA DE TRANSPORTE</p>
+                <p class="text-purple-900 font-bold text-lg" th:text="${#temporals.format(transporte.fechaTransporte, 'dd/MMM/yyyy')}">28/Ene/2025</p>
+            </div>
+
+            <div class="bg-purple-50 rounded-xl p-4 border-2 border-purple-200">
+                <p class="text-xs text-purple-700 font-semibold mb-2">HORA ESTIMADA</p>
+                <p class="text-purple-900 font-bold text-lg" th:text="${transporte.horaTransporte}">10:00 AM</p>
+            </div>
+
+            <div class="bg-purple-50 rounded-xl p-4 border-2 border-purple-200">
+                <p class="text-xs text-purple-700 font-semibold mb-2">EMPRESA TRANSPORTADORA</p>
+                <p class="text-purple-900 font-bold" th:text="${transporte.empresaTransporte}">Transportes Los Llanos</p>
+            </div>
+
+            <div class="bg-purple-50 rounded-xl p-4 border-2 border-purple-200">
+                <p class="text-xs text-purple-700 font-semibold mb-2">PLACA DEL VEHÍCULO</p>
+                <p class="text-purple-900 font-bold" th:text="${transporte.placaVehiculo}">ABC123</p>
+            </div>
+
+            <div class="bg-purple-50 rounded-xl p-4 border-2 border-purple-200">
+                <p class="text-xs text-purple-700 font-semibold mb-2">CONDUCTOR</p>
+                <p class="text-purple-900 font-bold" th:text="${transporte.nombreConductor}">Juan Pérez</p>
+            </div>
+
+            <div class="bg-purple-50 rounded-xl p-4 border-2 border-purple-200">
+                <p class="text-xs text-purple-700 font-semibold mb-2">TELÉFONO CONDUCTOR</p>
+                <p class="text-purple-900 font-bold" th:text="${transporte.telefonoConductor}">+57 300 123 4567</p>
+            </div>
+
+            <div class="md:col-span-2 bg-purple-50 rounded-xl p-4 border-2 border-purple-200">
+                <p class="text-xs text-purple-700 font-semibold mb-2">PUNTO DE ENTREGA</p>
+                <p class="text-purple-800 text-sm" th:text="${transporte.puntoEntrega}">Dirección de entrega...</p>
+            </div>
+
+            <div th:if="${transporte.observacionesComprador}" class="md:col-span-2 bg-amber-50 rounded-xl p-4 border-2 border-amber-200">
+                <p class="text-xs text-amber-700 font-semibold mb-2">TUS OBSERVACIONES</p>
+                <p class="text-amber-800 text-sm" th:text="${transporte.observacionesComprador}">Observaciones...</p>
+            </div>
+
+            <div th:if="${transporte.observacionesVendedor}" class="md:col-span-2 bg-blue-50 rounded-xl p-4 border-2 border-blue-200">
+                <p class="text-xs text-blue-700 font-semibold mb-2">OBSERVACIONES DEL VENDEDOR</p>
+                <p class="text-blue-800 text-sm" th:text="${transporte.observacionesVendedor}">Observaciones del vendedor...</p>
+            </div>
+        </div>
+
+        <!-- Fechas de Carga y Entrega -->
+        <div th:if="${transporte.fechaHoraCarga != null || transporte.fechaHoraEntrega != null}" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div th:if="${transporte.fechaHoraCarga != null}" class="bg-emerald-50 rounded-xl p-4 border-2 border-emerald-200">
+                <p class="text-xs text-emerald-700 font-semibold mb-2 flex items-center gap-2">
+                    <i class='bx bx-package'></i>
+                    FECHA Y HORA DE CARGA
+                </p>
+                <p class="text-emerald-900 font-bold" th:text="${#temporals.format(transporte.fechaHoraCarga, 'dd/MMM/yyyy HH:mm')}">28/Ene/2025 10:30</p>
+            </div>
+
+            <div th:if="${transporte.fechaHoraEntrega != null}" class="bg-emerald-50 rounded-xl p-4 border-2 border-emerald-200">
+                <p class="text-xs text-emerald-700 font-semibold mb-2 flex items-center gap-2">
+                    <i class='bx bx-check-circle'></i>
+                    FECHA Y HORA DE ENTREGA
+                </p>
+                <p class="text-emerald-900 font-bold" th:text="${#temporals.format(transporte.fechaHoraEntrega, 'dd/MMM/yyyy HH:mm')}">28/Ene/2025 16:45</p>
+            </div>
+        </div>
+
+        <!-- Fotos de Carga (del Vendedor) -->
+        <div class="mb-6">
+            <h3 class="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
+                <i class='bx bx-image text-emerald-600'></i>
+                Documentación Fotográfica de Carga
+            </h3>
+            <p class="text-sm text-slate-600 mb-4">Fotos tomadas por el vendedor al momento de la carga</p>
+
+            <div class="photo-grid">
+                <div th:each="archivo : ${transporte.archivosTransporte}"
+                     th:if="${archivo.tipoArchivo.name() == 'CAMION_VACIO' || archivo.tipoArchivo.name() == 'CARGA_GANADO' || archivo.tipoArchivo.name() == 'GSMI_CONDUCTOR'}"
+                     class="photo-item"
+                     th:data-ruta="@{'/transporte/' + ${archivo.rutaArchivo}}"
+                     onclick="openModal(this.getAttribute('data-ruta'))">
+                    <img th:src="@{'/transporte/' + ${archivo.rutaArchivo}}"
+                         th:alt="${archivo.descripcion}"
+                         class="w-full h-full object-cover">
+                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+                        <p class="text-white text-xs font-semibold" th:text="${archivo.descripcion}">Descripción</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fotos de Entrega (del Comprador) -->
+        <div th:with="tipos=${transporte.archivosTransporte.^map(tipoArchivo.name())}"
+             th:if="${tipos != null and (#lists.contains(tipos, 'GANADO_DESCARGADO') or #lists.contains(tipos, 'GANADO_NUEVO_LOTE'))}" class="mb-6">
+            <h3 class="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
+                <i class='bx bx-image text-blue-600'></i>
+                Documentación Fotográfica de Recepción
+            </h3>
+            <p class="text-sm text-slate-600 mb-4">Fotos que tomaste al confirmar la recepción</p>
+
+            <div class="photo-grid">
+                <div th:each="archivo : ${transporte.archivosTransporte}"
+                     th:if="${archivo.tipoArchivo.name() == 'GANADO_DESCARGADO' || archivo.tipoArchivo.name() == 'GANADO_NUEVO_LOTE'}"
+                     class="photo-item"
+                     th:data-ruta="@{'/transporte/' + ${archivo.rutaArchivo}}"
+                     onclick="openModal(this.dataset.ruta)">
+                    <img th:src="@{'/transporte/' + ${archivo.rutaArchivo}}"
+                         th:alt="${archivo.descripcion}"
+                         class="w-full h-full object-cover">
+                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+                        <p class="text-white text-xs font-semibold" th:text="${archivo.descripcion}">Descripción</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botón para ir al paso de transporte si aún no está programado -->
+        <div th:if="${transporte.estadoTransporte.name() == 'PROGRAMADO' && venta.pasoActual == 5}">
+            <a th:href="@{'/comprador/compras/detalle/' + ${venta.idVenta}}"
+               class="block w-full bg-blue-50 text-blue-700 text-center px-6 py-4 rounded-xl font-bold border-2 border-blue-300 hover:bg-blue-100 transition-all">
+                <i class='bx bx-refresh text-xl'></i>
+                Actualizar Estado del Transporte
+            </a>
+        </div>
+
+        <!-- Botón para confirmar recepción -->
+        <div th:if="${transporte.estadoTransporte.name() == 'EN_CAMINO'}">
+            <a href="/comprador/compras/detalle/"
+               class="block w-full gradient-bg text-white text-center px-6 py-4 rounded-xl font-bold hover:shadow-lg transition-all">
+                <i class='bx bx-check-circle text-xl'></i>
+                Confirmar Recepción del Producto
+            </a>
+        </div>
+    </div>
+
+    <!-- Botón para ir al proceso de compra si está en proceso -->
+    <div th:if="${venta.estado.name() == 'EN_PROCESO' && venta.pasoActual == 5}" class="info-card rounded-2xl p-6">
+        <div class="text-center">
+            <i class='bx bx-truck text-6xl text-emerald-600 mb-4'></i>
+            <h3 class="text-xl font-bold text-slate-900 mb-2">Listo para el Transporte</h3>
+            <p class="text-slate-600 mb-6">El vendedor ha completado todos los pasos. Ahora puedes programar el transporte del producto.</p>
+            <a th:href="@{'/comprador/compras/detalle/' + ${venta.idVenta}}"
+               class="inline-block gradient-bg text-white px-8 py-4 rounded-xl font-bold hover:shadow-lg transition-all">
+                <i class='bx bx-right-arrow-circle text-xl'></i>
+                Ver Proceso de Compra
+            </a>
+        </div>
+    </div>
+
+    <!-- Cita (si existe) -->
+    <div th:if="${venta.cita != null}" class="info-card rounded-2xl p-6 mb-8">
+        <h2 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+            <i class='bx bx-calendar text-indigo-600 text-2xl'></i>
+            Información de la Cita
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-indigo-50 rounded-xl p-4 border-2 border-indigo-200">
+                <p class="text-xs text-indigo-700 font-semibold mb-2">FECHA</p>
+                <p class="text-indigo-900 font-bold" th:text="${#temporals.format(venta.cita.fecha, 'dd/MMM/yyyy')}">01/Ene/2025</p>
+            </div>
+
+            <div class="bg-indigo-50 rounded-xl p-4 border-2 border-indigo-200">
+                <p class="text-xs text-indigo-700 font-semibold mb-2">HORARIO</p>
+                <p class="text-indigo-900 font-bold" th:text="${venta.cita.horaInicio + ' - ' + venta.cita.horaFin}">10:00 - 11:00</p>
+            </div>
+
+            <div class="bg-indigo-50 rounded-xl p-4 border-2 border-indigo-200">
+                <p class="text-xs text-indigo-700 font-semibold mb-2">ESTADO</p>
+                <p class="text-indigo-900 font-bold" th:text="${venta.cita.estadoCita}">CONFIRMADA</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Venta Completada -->
+    <div th:if="${venta.estado.name() == 'FINALIZADA'}" class="info-card rounded-2xl p-6">
+        <div class="text-center">
+            <div class="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class='bx bx-check text-5xl text-emerald-600'></i>
+            </div>
+            <h3 class="text-2xl font-bold text-slate-900 mb-2">¡Compra Completada!</h3>
+            <p class="text-slate-600 mb-6">Has completado exitosamente esta transacción. Gracias por usar Terranova.</p>
+            <a href="/comprador/compras"
+               class="inline-block gradient-bg text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition-all">
+                <i class='bx bx-left-arrow-alt'></i>
+                Volver a Mis Compras
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para ver imágenes en grande -->
+<div id="imageModal" class="modal">
+    <span class="absolute top-4 right-8 text-white text-5xl font-bold cursor-pointer z-10" onclick="closeModal()">&times;</span>
+    <img class="modal-content" id="modalImage">
+</div>
+
+<script>
+    function openModal(imageSrc) {
+        const modal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('modalImage');
+        modal.classList.add('active');
+        modalImg.src = imageSrc;
+    }
+
+    function closeModal() {
+        document.getElementById('imageModal').classList.remove('active');
+    }
+
+    function scrollToTransport() {
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+
+    // Cerrar modal al hacer clic fuera de la imagen
+    document.getElementById('imageModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeModal();
+        }
+    });
+</script>
+
+</body>
+</html>
