@@ -707,7 +707,7 @@
                             <div class="bg-emerald-50 border-2 border-emerald-200 rounded-xl p-6 mb-6">
                                 <div class="flex items-center gap-4">
                                     <img th:if="${venta.venta.comprador.foto != null}"
-                                         th:src="${venta.venta.comprador.foto}"
+                                         th:src="@{'/imagenes/' + ${venta.venta.comprador.foto}}"
                                          class="w-16 h-16 rounded-full object-cover border-3 border-emerald-500"
                                          th:alt="${venta.venta.comprador.nombres}">
                                     <div th:if="${venta.venta.comprador.foto == null}"
