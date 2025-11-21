@@ -678,27 +678,26 @@
 
 
             <!-- Mensaje para usuarios no autenticados -->
-                <div th:if="${usuario == null}" class="border-t-2 border-gray-200 pt-6 mt-6 text-center">
-                    <div class="bg-gradient-to-br from-gray-50 to-green-50 rounded-2xl p-8 border-2 border-green-100">
-                        <div class="w-16 h-16 gradient-bg rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class='bx bx-user-plus text-white text-3xl'></i>
-                        </div>
-                        <h5 class="text-xl font-bold text-gray-900 mb-2">¿Quieres dejar un comentario?</h5>
-                        <p class="text-gray-600 mb-5">Inicia sesión para compartir tu opinión sobre este producto</p>
-                        <button onclick="abrirModalInicio()"
-                                class="gradient-btn text-white font-bold py-3 px-8 rounded-xl inline-flex items-center gap-2 shadow-lg">
-                            <i class='bx bx-user text-xl'></i>
-                            Iniciar Sesión
-                        </button>
+            <div th:if="${usuario == null}" class="border-t-2 border-gray-200 pt-6 mt-6 text-center">
+                <div class="bg-gradient-to-br from-gray-50 to-green-50 rounded-2xl p-8 border-2 border-green-100">
+                    <div class="w-16 h-16 gradient-bg rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class='bx bx-user-plus text-white text-3xl'></i>
                     </div>
+                    <h5 class="text-xl font-bold text-gray-900 mb-2">¿Quieres dejar un comentario?</h5>
+                    <p class="text-gray-600 mb-5">Inicia sesión para compartir tu opinión sobre este producto</p>
+                    <button onclick="abrirModalInicio()"
+                            class="gradient-btn text-white font-bold py-3 px-8 rounded-xl inline-flex items-center gap-2 shadow-lg">
+                        <i class='bx bx-user text-xl'></i>
+                        Iniciar Sesión
+                    </button>
                 </div>
             </div>
-
         </div>
 
         <!-- Sidebar mejorado -->
+        <!-- Agregado sticky top-24 al contenedor para que el card del vendedor se quede fijo al hacer scroll -->
         <div th:if="${usuario != null}" class="space-y-6">
-            <div class="sticky top-4 space-y-6">
+            <div class="sticky top-24 space-y-6">
                 <!-- Card del vendedor -->
                 <div class="bg-white rounded-2xl shadow-lg p-6 fade-in-up">
                     <div class="flex items-center gap-2 mb-6">
