@@ -158,9 +158,26 @@
                         <div class="flex flex-col items-center">
                             <div class="relative mb-4">
                                 <div class="w-32 h-32 bg-primary rounded-full flex items-center justify-center overflow-hidden">
-                                    <img id="profileImage" th:if="${usuario.foto != null}" th:src="@{'/imagenes/' + ${usuario.foto}}" alt="Foto de perfil" class="w-full h-full object-cover">
-                                    <svg id="defaultAvatar" class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                    <!-- Imagen si el usuario tiene foto -->
+                                    <img
+                                            id="profileImage"
+                                            th:if="${usuario.foto != null}"
+                                            th:src="@{'/imagenes/' + ${usuario.foto}}"
+                                            alt="Foto de perfil"
+                                            class="absolute inset-0 w-full h-full object-cover"
+                                    >
+
+                                    <!-- Avatar por defecto si NO hay foto -->
+                                    <svg
+                                            id="defaultAvatar"
+                                            th:unless="${usuario.foto != null}"
+                                            class="w-16 h-16 text-white absolute inset-0 m-auto"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                    >
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                     </svg>
                                 </div>
                             </div>
